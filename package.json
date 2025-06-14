@@ -1,0 +1,27 @@
+{
+  "name": "intervume",
+  "version": "1.0.0",
+  "description": "IntervuMe",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npx nx run-many --target=build --all",
+    "start": "npx nx run-many --target=start --all",
+    "dev": "npx nx run-many --target=dev --all --parallel",
+    "test": "npx nx run-many --target=test --all",
+    "lint": "npx nx run-many --target=lint --all",
+    "clean": "npx nx run-many --target=clean --all"
+  },
+  "devDependencies": {
+    "@nx/workspace": "^17.0.0",
+    "nx": "^17.0.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {}
+}

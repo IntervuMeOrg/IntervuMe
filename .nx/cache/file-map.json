@@ -1,0 +1,144 @@
+{
+  "version": "6.0",
+  "nxVersion": "17.3.2",
+  "deps": {
+    "@nx/workspace": "^17.0.0",
+    "nx": "^17.0.0",
+    "typescript": "^5.3.3"
+  },
+  "pathMappings": {},
+  "nxJsonPlugins": [],
+  "fileMap": {
+    "nonProjectFiles": [
+      {
+        "file": ".gitignore",
+        "hash": "12518779734923030623"
+      },
+      {
+        "file": "env.example",
+        "hash": "6031884140358955473"
+      },
+      {
+        "file": "package.json",
+        "hash": "10843266471652849167"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "16778253412364322458"
+      },
+      {
+        "file": "nx.json",
+        "hash": "549597533231565790"
+      },
+      {
+        "file": "docker-compose.yml",
+        "hash": "408981855820278375"
+      },
+      {
+        "file": "README.md",
+        "hash": "12139547448681821837"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "10077325511621161744"
+      }
+    ],
+    "projectFileMap": {
+      "@intervume/server-api": [
+        {
+          "file": "packages/backend/Dockerfile",
+          "hash": "303230315871605776"
+        },
+        {
+          "file": "packages/backend/package.json",
+          "hash": "5745001624345137355"
+        },
+        {
+          "file": "packages/backend/src/index.ts",
+          "hash": "7724298629709640124",
+          "deps": [
+            "npm:fastify",
+            "npm:@fastify/cors",
+            "npm:dotenv"
+          ]
+        },
+        {
+          "file": "packages/backend/tsconfig.json",
+          "hash": "17557832863216346419"
+        }
+      ],
+      "@intervume/ui-core": [
+        {
+          "file": "packages/ui/Dockerfile",
+          "hash": "18029632876047367335"
+        },
+        {
+          "file": "packages/ui/index.html",
+          "hash": "12471552874313575434"
+        },
+        {
+          "file": "packages/ui/package.json",
+          "hash": "14471487355052082906",
+          "deps": [
+            "npm:react",
+            "npm:react-dom",
+            "npm:@types/react",
+            "npm:@types/react-dom",
+            "npm:@vitejs/plugin-react",
+            "npm:autoprefixer",
+            "npm:postcss",
+            "npm:tailwindcss",
+            "npm:typescript",
+            "npm:vite"
+          ]
+        },
+        {
+          "file": "packages/ui/postcss.config.cjs",
+          "hash": "2485431180204505080"
+        },
+        {
+          "file": "packages/ui/src/App.tsx",
+          "hash": "17810762135118159068",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "packages/ui/src/index.css",
+          "hash": "17713324658131714097"
+        },
+        {
+          "file": "packages/ui/src/main.tsx",
+          "hash": "14237771157573487843",
+          "deps": [
+            "npm:react",
+            "npm:react-dom"
+          ]
+        },
+        {
+          "file": "packages/ui/tailwind.config.cjs",
+          "hash": "14226652462316325645",
+          "deps": [
+            "npm:node:path"
+          ]
+        },
+        {
+          "file": "packages/ui/tsconfig.json",
+          "hash": "4994082246130075496"
+        },
+        {
+          "file": "packages/ui/tsconfig.node.json",
+          "hash": "3399001416637810735"
+        },
+        {
+          "file": "packages/ui/vite.config.ts",
+          "hash": "7125430209658668398",
+          "deps": [
+            "npm:vite",
+            "npm:@vitejs/plugin-react"
+          ]
+        }
+      ]
+    }
+  }
+}

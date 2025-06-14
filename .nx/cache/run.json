@@ -1,0 +1,21 @@
+{
+  "run": {
+    "command": "nx run @intervume/ui-core:build",
+    "startTime": "2025-06-14T22:12:54.532Z",
+    "endTime": "2025-06-14T22:12:56.698Z",
+    "inner": false
+  },
+  "tasks": [
+    {
+      "taskId": "@intervume/ui-core:build",
+      "target": "build",
+      "projectName": "@intervume/ui-core",
+      "hash": "16222615403221500394",
+      "startTime": "2025-06-14T22:12:54.539Z",
+      "endTime": "2025-06-14T22:12:56.694Z",
+      "params": "",
+      "cacheStatus": "cache-miss",
+      "status": 1
+    }
+  ]
+}
