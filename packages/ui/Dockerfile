@@ -12,9 +12,7 @@ RUN npm install
 # Copy source code
 COPY packages/ui ./packages/ui
 
-# Build UI
-RUN npm run build --workspace=@intervume/ui-core
-
 EXPOSE 3000
 
-CMD ["npm", "run", "start", "--workspace=@intervume/ui-core"] 
+# Use dev command instead of building
+CMD ["npm", "run", "dev", "--workspace=@intervume/ui-core"] 

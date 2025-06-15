@@ -1,39 +1,43 @@
 version: '3.8'
 
 services:
-  # Backend API
-  backend:
-    build:
-      context: .
-      dockerfile: packages/backend/Dockerfile
-    container_name: intervume-backend
-    ports:
-      - "5000:5000"
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: intervume-postgres
     environment:
-      - NODE_ENV=development
-      - PORT=5000
-      - HOST=0.0.0.0
-      - FRONTEND_URL=http://localhost:3000
+      POSTGRES_DB: intervume
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
     volumes:
-      - ./packages/backend:/app/packages/backend
-      - /app/node_modules
-    command: npm run dev --workspace=@intervume/server-api
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
-  # Frontend React App
-  frontend:
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: intervume-redis
+    ports:
+      - "6379:6379"
+
+  # Main Application (Backend + Frontend)
+  app:
     build:
       context: .
-      dockerfile: packages/ui/Dockerfile
-    container_name: intervume-frontend
+      dockerfile: Dockerfile
+    container_name: intervume-app
     ports:
-      - "3000:3000"
+      - "3000:3000"  # Frontend
+      - "5000:5000"  # Backend API
     environment:
-      - NODE_ENV=development
-    volumes:
-      - ./packages/ui:/app/packages/ui
-      - /app/node_modules
-    command: npm run dev --workspace=@intervume/ui-core
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/intervume
+      - REDIS_URL=redis://redis:6379
+      - REACT_APP_API_URL=http://localhost:5000
     depends_on:
-      - backend
+      - postgres
+      - redis
 
- 
+volumes:
+  postgres_data:

@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # Main Dev Container
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    container_name: intervume-dev
+    volumes:
+      - ../..:/workspaces:cached
+      - node_modules:/workspace/node_modules
+    command: sleep infinity
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/intervume
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - devcontainer
+
+  # PostgreSQL for Development
+  postgres:
+    image: postgres:14.4
+    container_name: intervume-dev-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: intervume
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - devcontainer
+
+  # Redis for Development  
+  redis:
+    image: redis:7.0.7
+    container_name: intervume-dev-redis
+    restart: unless-stopped
+    networks:
+      - devcontainer
+
+volumes:
+  postgres_data:
+  node_modules:
+
+networks:
+  devcontainer: 

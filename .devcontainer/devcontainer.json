@@ -1,0 +1,57 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+	"name": "IntervuMe Dev Container",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspace",
+	"shutdownAction": "stopCompose",
+	
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "18"
+		},
+		"ghcr.io/devcontainers/features/git:1": {}
+	},
+
+	"forwardPorts": [3000, 5000, 5432, 6379],
+	"portsAttributes": {
+		"3000": {
+			"label": "Frontend",
+			"onAutoForward": "notify"
+		},
+		"5000": {
+			"label": "Backend API",
+			"onAutoForward": "notify"  
+		},
+		"5432": {
+			"label": "PostgreSQL",
+			"onAutoForward": "silent"
+		},
+		"6379": {
+			"label": "Redis",
+			"onAutoForward": "silent"
+		}
+	},
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-typescript.vscode-typescript-next",
+				"bradlc.vscode-tailwindcss",
+				"esbenp.prettier-vscode",
+				"ms-vscode.vscode-json",
+				"formulahendry.auto-rename-tag",
+				"christian-kohler.path-intellisense"
+			],
+			"settings": {
+				"typescript.preferences.importModuleSpecifier": "relative",
+				"editor.formatOnSave": true,
+				"editor.defaultFormatter": "esbenp.prettier-vscode"
+			}
+		}
+	},
+
+	"postCreateCommand": "npm install",
+	"postStartCommand": "npm run dev"
+}
