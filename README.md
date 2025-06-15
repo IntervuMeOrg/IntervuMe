@@ -89,14 +89,8 @@ Build an **AI-powered, unified platform** that provides realistic mock interview
 ### 🔹 Back-End
 - **Node.js (Express)**: REST APIs and business logic
 - **Passport.js + JWT**: Authentication & authorization
-- **Sequelize / Prisma**: ORM for database access
+- **Typeorm**: ORM for database access
 - **PostgreSQL**: Data storage
-
-### 🔹 AI & NLP
-- **Python**: NLP and model handling
-- **LangChain**: LLM orchestration
-- **Qwen Distilled DeepSeek**: LLM for simulations
-- **Google Colab**: Model prototyping
 
 ### 🔹 Real-Time + Caching
 - **Redis**: Interview session state, caching
