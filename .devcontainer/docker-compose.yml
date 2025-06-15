@@ -36,8 +36,10 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - devcontainer
+    ports:
+      - "5432:5432"
 
-  # Redis for Development  
+  # Redis for Development
   redis:
     image: redis:7.0.7
     container_name: intervume-dev-redis
@@ -50,4 +52,4 @@ volumes:
   node_modules:
 
 networks:
-  devcontainer: 
+  devcontainer:
