@@ -18,11 +18,12 @@ RUN npm install -g tsx nodemon
 
 # Create non-root user (good practice for dev containers)
 ARG USERNAME=vscode
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
 
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+# Conditionally create user and group
+RUN if ! id -u $USERNAME >/dev/null 2>&1; then \
+        useradd --create-home --shell /bin/bash $USERNAME; \
+    fi \
     && chown -R $USERNAME:$USERNAME /workspace
 
-USER $USERNAME 
+# Switch to non-root user
+USER $USERNAME
