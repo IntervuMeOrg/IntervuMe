@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "build": "npx nx run-many --target=build --all",
-    "start": "npx nx run-many --target=start --all",
+    "start": "npm i && npm run dev",
     "dev": "npx nx run-many --target=dev --all --parallel",
     "test": "npx nx run-many --target=test --all",
     "lint": "npx nx run-many --target=lint --all",
@@ -23,5 +23,8 @@
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@fastify/type-provider-typebox": "^5.1.0",
+    "zod": "^3.25.64"
+  }
 }

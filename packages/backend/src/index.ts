@@ -1,11 +1,21 @@
+import "reflect-metadata";
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import jwt from '@fastify/jwt';
 import { config } from 'dotenv';
+import { AppDataSource } from './database/data-source.js';
+import { authenticationController } from './auth/auth.controller.js';
+import { userController } from './user/user.controller.js';
 
 config();
 
 const fastify = Fastify({
   logger: true
+});
+
+// Register JWT
+await fastify.register(jwt, {
+  secret: process.env.JWT_SECRET || 'your-secret-key-change-in-production'
 });
 
 // Register CORS
@@ -14,6 +24,17 @@ await fastify.register(cors, {
   credentials: true
 });
 
+// Initialize database (optional - won't crash if DB is not available)
+let databaseConnected = false;
+try {
+  await AppDataSource.initialize();
+  databaseConnected = true;
+  console.log('✅ Database connection established');
+} catch (error) {
+  console.warn('⚠️  Database connection failed (continuing without database):', error instanceof Error ? error.message : String(error));
+  console.warn('💡 To fix: Make sure PostgreSQL is running and environment variables are set correctly');
+}
+
 // Health check route
 fastify.get('/health', async () => {
   return {
@@ -21,7 +42,8 @@ fastify.get('/health', async () => {
     data: {
       status: 'ok',
       timestamp: new Date().toISOString(),
-      uptime: process.uptime()
+      uptime: process.uptime(),
+      database: databaseConnected ? 'connected' : 'disconnected'
     },
     message: 'Server is healthy'
   };
@@ -34,11 +56,33 @@ fastify.get('/api/health', async () => {
     data: {
       status: 'ok',
       timestamp: new Date().toISOString(),
-      uptime: process.uptime()
+      uptime: process.uptime(),
+      database: databaseConnected ? 'connected' : 'disconnected'
     },
     message: 'Server is healthy'
   };
 });
+
+// Register auth routes (only if database is connected)
+if (databaseConnected) {
+  await fastify.register(authenticationController, { prefix: '/api/auth' });
+  await fastify.register(userController, { prefix: '/api/user' });
+} else {
+  // Fallback routes when database is not available
+  fastify.get('/api/auth/*', async () => {
+    return {
+      success: false,
+      message: 'Database not connected. Please set up PostgreSQL to use auth endpoints.'
+    };
+  });
+  
+  fastify.get('/api/user/*', async () => {
+    return {
+      success: false,
+      message: 'Database not connected. Please set up PostgreSQL to use user endpoints.'
+    };
+  });
+}
 
 fastify.get('/api/hello', async () => {
   return {
@@ -59,7 +103,12 @@ const start = async () => {
     await fastify.listen({ port, host });
     console.log(`🚀 Server running on http://${host}:${port}`);
     console.log(`📚 Health check: http://${host}:${port}/health`);
-    console.log(`🔗 API endpoint: http://${host}:${port}/api/hello`);
+    if (databaseConnected) {
+      console.log(`🔗 Auth endpoints: http://${host}:${port}/api/auth`);
+      console.log(`👤 User endpoints: http://${host}:${port}/api/user`);
+    } else {
+      console.log(`⚠️  Auth/User endpoints disabled - database not connected`);
+    }
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
