@@ -1,6 +1,6 @@
 import { EntitySchema } from 'typeorm'
 import { User, UserRole, UserIdentityProvider } from './user-types.js'
-import { BaseColumnSchemaPart } from '../common/base-model.js'
+import { BaseColumnSchemaPart, TIMESTAMP_COLUMN_TYPE } from '../common/base-model.js'
 
 export const UserEntity = new EntitySchema<User>({
     name: 'user',
@@ -37,6 +37,14 @@ export const UserEntity = new EntitySchema<User>({
             type: String,
             nullable: true,
         },
+        resetToken: {
+            type: String,
+            nullable: true,
+        },
+        resetTokenExpiry:{
+            type: TIMESTAMP_COLUMN_TYPE,
+            nullable: true,
+        }
     },
     indices: [
         {

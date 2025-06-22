@@ -25,13 +25,15 @@ export const authService = {
             lastName: request.lastName,
             password: request.password,
             provider: request.provider,
-            role: UserRole.USER
+            role: UserRole.USER,
+            tokenVersion: '0'
         });
 
         // Generate JWT token
         const token = jwtSign({
             sub: user.id,
-            role: user.role
+            role: user.role,
+            tokenVersion: user.tokenVersion,
         });
 
         // Return user without password
@@ -63,7 +65,8 @@ export const authService = {
         // Generate JWT token
         const token = jwtSign({
             sub: user.id,
-            role: user.role
+            role: user.role,
+            tokenVersion: user.tokenVersion,
         });
 
         // Return user without password

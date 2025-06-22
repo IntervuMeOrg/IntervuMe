@@ -1,17 +1,20 @@
-import 'fastify';
+import "fastify";
 
-declare module 'fastify' {
+declare module "fastify" {
   interface FastifyInstance {
     authenticate: any;
   }
+}
 
-  interface FastifyRequest {
-    // JWT payload
+declare module "@fastify/jwt" {
+  interface FastifyJWT {
+    payload: { role: string };
     user: {
-      sub: string
-      role: string
-      iat: number   // issued-at timestamp
-      exp: number   // expiration timestamp
-    }
+      sub: string;
+      role: string;
+      iat: number;
+      exp: number;
+      tokenVersion: string
+    };
   }
 }
