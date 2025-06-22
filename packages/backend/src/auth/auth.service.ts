@@ -30,8 +30,7 @@ export const authService = {
 
         // Generate JWT token
         const token = jwtSign({
-            id: user.id,
-            email: user.email,
+            sub: user.id,
             role: user.role
         });
 
@@ -63,8 +62,7 @@ export const authService = {
 
         // Generate JWT token
         const token = jwtSign({
-            id: user.id,
-            email: user.email,
+            sub: user.id,
             role: user.role
         });
 
