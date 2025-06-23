@@ -1,8 +1,6 @@
 import { FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox';
 import { userService } from './user.service.js';
-import { ForgotPasswordRequest, ResetPasswordRequest, UpdateUserRequest, User } from './user-types.js';
-import { request } from 'http';
-import { tr } from 'zod/v4/locales';
+import { UpdateUserRequest, User } from './user-types.js';
 
 
 export const userController: FastifyPluginAsyncTypebox = async (app) => {
@@ -89,42 +87,6 @@ export const userController: FastifyPluginAsyncTypebox = async (app) => {
         try{
             await userService.logout(userId);
             return reply.code(200).send({message: 'Logged out successfully'});
-        }catch(err){
-            return reply.code(400).send({message: (err as Error).message});
-        }
-    });
-
-    app.post('/forgot-password', {
-        schema:{
-            body: ForgotPasswordRequest,
-            response:{
-                200: Type.Object({ message: Type.String() }),
-                400: Type.Object({ message: Type.String() }),
-            }
-        }
-    }, async(request, reply) =>{
-        const email = (request.body as ForgotPasswordRequest).email;
-        try{
-            await userService.initializePasswordReset(email);
-            return reply.code(200).send({message: 'Reset code sent to your email'});
-        }catch(err){
-            return reply.code(400).send({message: (err as Error).message});
-        }
-    });
-
-    app.post('/reset-password', {
-        schema: {
-            body: ResetPasswordRequest,
-            response:{
-                200: Type.Object({ message: Type.String() }),
-                400: Type.Object({ message: Type.String() }),
-            }
-        }
-    }, async(request, reply) =>{
-        const data = request.body as ResetPasswordRequest;
-        try{
-            await userService.resetPassword(data);
-            return reply.code(200).send({message: 'Password reset successfully'});
         }catch(err){
             return reply.code(400).send({message: (err as Error).message});
         }
