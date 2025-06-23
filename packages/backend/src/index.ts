@@ -5,6 +5,7 @@ import { config } from "dotenv";
 import { AppDataSource } from "./database/data-source.js";
 import { authenticationController } from "./auth/auth.controller.js";
 import { userController } from "./user/user.controller.js";
+import { profileController } from "./profile/profile.controller.js";
 import jwtPlugin from "./plugins/jwt";
 
 config();
@@ -69,6 +70,7 @@ fastify.get("/api/health", async () => {
 if (databaseConnected) {
   await fastify.register(authenticationController, { prefix: "/api/auth" });
   await fastify.register(userController, { prefix: "/api/user" });
+  await fastify.register(profileController, { prefix: "/api/profile" });
 } else {
   // Fallback routes when database is not available
   fastify.get("/api/auth/*", async () => {

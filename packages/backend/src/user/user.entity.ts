@@ -15,14 +15,6 @@ export const UserEntity = new EntitySchema<User>({
             type: String,
             nullable: false,
         },
-        firstName: {
-            type: String,
-            nullable: false,
-        },
-        lastName: {
-            type: String,
-            nullable: false,
-        },
         role: {
             type: 'enum',
             enum: UserRole,
@@ -45,6 +37,16 @@ export const UserEntity = new EntitySchema<User>({
             type: TIMESTAMP_COLUMN_TYPE,
             nullable: true,
         }
+    },
+    relations: {
+    profile: {
+        type:        'one-to-one',
+        target:      'profile',
+        inverseSide: 'user',
+        joinColumn:  true,
+        cascade:     ['insert', 'update'], 
+        eager:       false,
+        },
     },
     indices: [
         {

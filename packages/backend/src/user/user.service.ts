@@ -1,23 +1,29 @@
 import nodemailer from 'nodemailer';
-import { User, UserRole, UserIdentityProvider, CreateUserRequest, UpdateUserRequest, ResetPasswordRequest} from "./user-types.js";
+import { User, UserRole, UserIdentityProvider, CreateUserRequest, UpdateUserRequest} from "./user-types.js";
 import { UserEntity } from "./user.entity.js";
 import { AppDataSource } from "../database/data-source.js";
 import bcrypt from "bcrypt";
 import { apId } from "../common/id-generator.js";
 import { addMinutes, isBefore } from 'date-fns';
+import { ResetPasswordRequest } from '../auth/auth-types.js';
+import { EntityManager } from 'typeorm';
 
 const userRepository = () => {
     return AppDataSource.getRepository(UserEntity);
 };
 
 export const userService = {
-    async create(request: CreateUserRequest): Promise<User> {
+    async create(request: CreateUserRequest, opts: { manager?: EntityManager } = {}): Promise<User> {
+        const repo = opts.manager
+        ? opts.manager.getRepository(UserEntity)
+        : userRepository();
+
         const { password, ...userData } = request;
         // Hash password
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        const user = userRepository().create({
+        const user = repo.create({
             id: apId(),
             created: new Date().toISOString(),
             updated: new Date().toISOString(),
@@ -27,7 +33,7 @@ export const userService = {
             provider: request.provider || UserIdentityProvider.EMAIL
         });
 
-        return await userRepository().save(user);
+        return await repo.save(user);
     },
 
     async update(id: string, updates: UpdateUserRequest): Promise<User>{
@@ -121,7 +127,7 @@ export const userService = {
 
     async list(): Promise<Partial<User>[]> {
         return await userRepository().find({
-            select: ['id', 'email', 'firstName', 'lastName', 'role', 'created', 'updated']
+            select: ['id', 'email', 'role', 'created', 'updated']
         });
     }
 }; 

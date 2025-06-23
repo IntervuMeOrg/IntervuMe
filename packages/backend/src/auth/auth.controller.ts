@@ -1,7 +1,8 @@
 import { FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox'
 import { authService } from './auth.service.js'
-import { SignUpRequest, SignInRequest, UserIdentityProvider, ForgotPasswordRequest, ResetPasswordRequest } from '../user/user-types.js'
+import { SignUpRequest, SignInRequest, ForgotPasswordRequest, ResetPasswordRequest } from '../auth/auth-types.js'
 import { userService } from '../user/user.service.js';
+import { UserIdentityProvider } from '../user/user-types.js';
 
 export const authenticationController: FastifyPluginAsyncTypebox = async (
     app,
@@ -12,7 +13,6 @@ export const authenticationController: FastifyPluginAsyncTypebox = async (
         }
     }, async (request) => {
         const body = request.body as SignUpRequest;
-        
         const signUpResponse = await authService.signUp({
             ...body,
             provider: UserIdentityProvider.EMAIL,

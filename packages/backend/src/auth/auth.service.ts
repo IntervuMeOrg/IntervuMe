@@ -1,5 +1,8 @@
 import { userService } from "../user/user.service.js";
-import { User, SignUpRequest, SignInRequest, UserRole } from "../user/user-types.js";
+import { SignUpRequest, SignInRequest } from "../auth/auth-types.js";
+import { User, UserRole } from "../user/user-types.js";
+import { AppDataSource } from "../database/data-source.js";
+import { profileService } from "../profile/profile.service.js";
 
 export type AuthResponse = {
     success: boolean;
@@ -18,16 +21,34 @@ export const authService = {
             throw new Error('User with this email already exists');
         }
 
-        // Create new user
-        const user = await userService.create({
+        const { user, profile } = await AppDataSource.transaction(async manager => {
+      
+        const user = await userService.create(
+            {
             email: request.email,
-            firstName: request.firstName,
-            lastName: request.lastName,
             password: request.password,
             provider: request.provider,
             role: UserRole.USER,
-            tokenVersion: '0'
-        });
+            tokenVersion: '0',
+            },
+            { manager }
+        )
+
+        const profile = await profileService.create(
+            {
+                firstName: request.profile.firstName,
+                lastName: request.profile.lastName,
+                phone: request.profile.phone,
+                gender: request.profile.gender,
+                dob: request.profile.dob,
+            },
+            user.id,
+            { manager }
+        )
+
+            return { user, profile }
+        })
+
 
         // Generate JWT token
         const token = jwtSign({
