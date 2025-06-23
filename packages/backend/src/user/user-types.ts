@@ -9,7 +9,6 @@ export enum UserRole {
 export enum UserIdentityProvider {
     EMAIL = 'EMAIL',
     GOOGLE = 'GOOGLE',
-    GITHUB = 'GITHUB',
 }
 
 export const User = Type.Object({
