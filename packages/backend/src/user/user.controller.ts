@@ -1,95 +1,108 @@
-import { FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox';
-import { userService } from './user.service.js';
-import { UpdateUserRequest, User } from './user-types.js';
-
+import {
+  FastifyPluginAsyncTypebox,
+  Type,
+} from "@fastify/type-provider-typebox";
+import { userService } from "./user.service.js";
+import {
+  UpdateUserRequestBody,
+  User,
+  UserWithoutPassword,
+} from "./user-types.js";
+import { StatusCodes } from "http-status-codes";
 
 export const userController: FastifyPluginAsyncTypebox = async (app) => {
-    app.addHook('onRequest', app.authenticate);
+  app.addHook("onRequest", app.authenticate);
 
-    app.get('/profile', {
-        schema: {
-            response: {
-            200: User
-            }
-      }
-    }, async (request, reply) => {
-        const userId = request.user.sub;
-        const user = await userService.getById(userId);
-        if (!user) {
-            return reply.code(404).send({ message: 'User not found' });
-        }       
-        return user;
-    });
+  app.get("/", GetUserRequest, async (request, reply) => {
+    const userId = request.user.sub;
+    const user = await userService.get(userId);
+    return user;
+  });
 
-    
-    app.get('/admin/users', async (request, reply) => {
-        if(request.user.role !== 'admin'){
-            return reply.code(403).send({message: 'Forbidden: admins only'})
-        }
+  app.get("/admin/users", async (request, reply) => {
+    if (request.user.role !== "admin") {
+      return reply
+        .status(StatusCodes.FORBIDDEN)
+        .send({ message: "Forbidden: admins only" });
+    }
 
-        const users = await userService.list();
-        return {
-            success: true,
-            data: users,
-            message: 'Users retrieved successfully'
-        };
-    });
+    const users = await userService.list();
+    return {
+      success: true,
+      data: users,
+      message: "Users retrieved successfully",
+    };
+  });
 
-    app.put('/', {
-        schema: {
-            body : UpdateUserRequest,
-            response: {
-                200: Type.Omit(User, ['password'])
-            }
-        }
-    }, async(request, reply) => {
-        const userId = request.user.sub;
-        const updates = request.body as UpdateUserRequest;
+  app.put("/", UpdateUserRequest, async (request, reply) => {
+    const userId = request.user.sub;
+    const updates = request.body as UpdateUserRequestBody;
 
-        try{
-            const updatedUser = await userService.update(userId, updates);
-            const {password, ...rest} = updatedUser;
+    try {
+      const updatedUser = await userService.update(userId, updates);
+      const { password, ...rest } = updatedUser;
 
-            return rest;
-        }catch (err){
-            return reply.code(400).send({message: (err as Error).message});
-        }
-    });
+      return rest;
+    } catch (err) {
+      return reply
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ message: (err as Error).message });
+    }
+  });
 
-    app.delete('/', {
-        schema: {
-            response: {
-                204: Type.Null(),
-                400: Type.Object({ message: Type.String() })
-            }
-        }
-    }, async(request, reply) => {
-        const userId = request.user.sub;
+  app.delete("/", DeleteUserRequest, async (request, reply) => {
+    const userId = request.user.sub;
+    await userService.delete(userId);
+    return reply.status(StatusCodes.NO_CONTENT).send();
+  });
 
-        try{
-            await userService.delete(userId);
-            return reply.code(204).send();
-        }catch(err){
-            return reply.code(400).send({message: (err as Error).message});
-        }
-    });
+  app.post("/logout", LogoutRequest, async (request, reply) => {
+    const userId = request.user.sub;
 
-    app.post('/logout', {
-        schema: {
-            response: {
-                200: Type.Object({ message: Type.String() }),
-                400: Type.Object({ message: Type.String() }),
-            }
-        }
-    }, async(request, reply) => {
-        const userId = request.user.sub;
+    try {
+      await userService.logout(userId);
+      return reply
+        .status(StatusCodes.OK)
+        .send({ message: "Logged out successfully" });
+    } catch (err) {
+      return reply
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ message: (err as Error).message });
+    }
+  });
+};
 
-        try{
-            await userService.logout(userId);
-            return reply.code(200).send({message: 'Logged out successfully'});
-        }catch(err){
-            return reply.code(400).send({message: (err as Error).message});
-        }
-    });
+const GetUserRequest = {
+  schema: {
+    response: {
+      [StatusCodes.OK]: User,
+    },
+  },
+};
 
-}; 
+const UpdateUserRequest = {
+  schema: {
+    body: UpdateUserRequestBody,
+    response: {
+      [StatusCodes.OK]: UserWithoutPassword,
+    },
+  },
+};
+
+const DeleteUserRequest = {
+  schema: {
+    response: {
+      [StatusCodes.NO_CONTENT]: Type.Never(),
+      [StatusCodes.BAD_REQUEST]: Type.Object({ message: Type.String() }),
+    },
+  },
+};
+
+const LogoutRequest = {
+  schema: {
+    response: {
+      [StatusCodes.OK]: Type.Object({ message: Type.String() }),
+      [StatusCodes.BAD_REQUEST]: Type.Object({ message: Type.String() }),
+    },
+  },
+};
