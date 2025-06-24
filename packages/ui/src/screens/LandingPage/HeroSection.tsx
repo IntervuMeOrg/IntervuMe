@@ -80,4 +80,3 @@ export const HeroSection = (
 			</motion.section>
 		</div>
 	);}
-export default HeroSection;

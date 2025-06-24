@@ -68,5 +68,3 @@ export const OurViewSection = ({ navigate }: OurViewSectionProps) => {
 		</motion.section>
 	);
 };
-
-export default OurViewSection;
