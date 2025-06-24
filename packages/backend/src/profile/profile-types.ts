@@ -1,23 +1,21 @@
-import { Static, Type } from '@fastify/type-provider-typebox';
+import { Static, Type } from "@fastify/type-provider-typebox";
 
 export const ProfileInput = Type.Object({
-    firstName: Type.String(),
-    lastName: Type.String(),
-    gender: Type.String(),
-    dob: Type.String({ format: 'date' }),
-    phone: Type.String(),
+  firstName: Type.String(),
+  lastName: Type.String(),
+  gender: Type.String(),
+  dob: Type.String({ format: "date" }),
+  phone: Type.String(),
 });
 
 export type ProfileInput = Static<typeof ProfileInput>;
 
-export const UpdateProfileRequest = Type.Partial(
-    Type.Object({
-    firstName: Type.String(),
-    lastName: Type.String(),
-    gender: Type.String(),
-    dob: Type.String({ format: 'date' }),
-    phone: Type.String(),
-    })
-);
+export const UpdateProfileBody = Type.Object({
+  firstName: Type.Optional(Type.String()),
+  lastName: Type.Optional(Type.String()),
+  gender: Type.Optional(Type.String()),
+  dob: Type.Optional(Type.String({ format: "date" })),
+  phone: Type.Optional(Type.String()),
+});
 
-export type UpdateProfileRequest = Static<typeof UpdateProfileRequest>;
+export type UpdateProfileBody = Static<typeof UpdateProfileBody>;

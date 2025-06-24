@@ -1,56 +1,63 @@
-import { EntitySchema } from 'typeorm'
-import { Profile} from './profile-entity-types.js'
-import { BaseColumnSchemaPart, TIMESTAMP_COLUMN_TYPE } from '../common/base-model.js'
+import { EntitySchema } from "typeorm";
+import { Profile } from "./profile-entity-types.js";
+import {
+  BaseColumnSchemaPart,
+  TIMESTAMP_COLUMN_TYPE,
+} from "../common/base-model.js";
+import { User } from "../user/user-types.js";
 
-export const ProfileEntity = new EntitySchema<Profile>({
-    name: 'profile',
-    columns: {
-        ...BaseColumnSchemaPart,
-        userId: {
-            type: String,
-            nullable: false,
-            unique: true,
-        },
-        firstName: {
-            type: String,
-            nullable: false,
-        },
-        lastName: {
-            type: String,
-            nullable: false,
-        },
-        gender:{
-            type : String,
-            nullable: false,
-        },
-        dob: {
-            type : TIMESTAMP_COLUMN_TYPE,
-            nullable: false,
-        },
-        phone:{
-            type : String,
-            nullable: false,
-        }
+type ProfileSchema = Profile & {
+  user: User;
+};
+
+export const ProfileEntity = new EntitySchema<ProfileSchema>({
+  name: "profile",
+  columns: {
+    ...BaseColumnSchemaPart,
+    userId: {
+      type: String,
+      nullable: false,
+      unique: true,
     },
-
-    relations: {
-        user: {
-            type: 'one-to-one',
-            target: 'user',               
-            joinColumn: {
-                name: 'userId',
-            },
-            inverseSide: 'profile',
-            cascade:     ['insert', 'update'], 
-            onDelete: 'CASCADE',
-        },
+    firstName: {
+      type: String,
+      nullable: false,
     },
+    lastName: {
+      type: String,
+      nullable: false,
+    },
+    gender: {
+      type: String,
+      nullable: false,
+    },
+    dob: {
+      type: TIMESTAMP_COLUMN_TYPE,
+      nullable: false,
+    },
+    phone: {
+      type: String,
+      nullable: false,
+    },
+  },
 
-    indices: [
-        {
-            name: 'idx_profile_userId',
-            columns: ['userId'],
-            unique: true,
-        },
-    ],
-})
+  relations: {
+    user: {
+      type: "one-to-one",
+      target: "user",
+      joinColumn: {
+        name: "userId",
+      },
+      inverseSide: "profile",
+      onDelete: "CASCADE",
+    },
+  },
+
+  indices: [
+    {
+      name: "idx_profile_userId",
+      columns: ["userId"],
+      unique: true,
+    },
+  ],
+});
