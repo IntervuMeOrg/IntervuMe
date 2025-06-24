@@ -158,7 +158,7 @@ export const LandingPage = (): JSX.Element => {
 				<HeroSection homeSectionRef={homeSectionRef} steps={steps} />
 
 				{/* Our View section */}
-				<OurViewSection />
+				<OurViewSection navigate={navigate} />
 
 				{/* Features Section */}
 				<FeaturesSection

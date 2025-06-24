@@ -3,13 +3,13 @@ import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 type NavigationBarProps = {
-    navigate: ReturnType<typeof useNavigate>;
-    navItems: {
-        name: string;
-        active: boolean;
-    }[];
-    featuresSectionRef: React.RefObject<HTMLElement>;
-    contactSectionRef: React.RefObject<HTMLElement>;
+	navigate: ReturnType<typeof useNavigate>;
+	navItems: {
+		name: string;
+		active: boolean;
+	}[];
+	featuresSectionRef: React.RefObject<HTMLElement>;
+	contactSectionRef: React.RefObject<HTMLElement>;
 };
 export const NavigationBar = ({
 	navigate,
