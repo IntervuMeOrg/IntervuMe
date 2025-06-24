@@ -20,7 +20,7 @@ const userRepository = () => {
 
 export const userService = {
   async create(
-    request: CreateUserRequest,
+    request: CreateUserRequestBody,
     opts: { manager?: EntityManager } = {}
   ): Promise<User> {
     const repo = opts.manager
@@ -45,7 +45,7 @@ export const userService = {
     return user;
   },
 
-  async update(id: string, updates: UpdateUserRequest): Promise<User> {
+  async update(id: string, updates: UpdateUserRequestBody): Promise<User> {
     const user = await userRepository().findOne({ where: { id } });
     if (!user) throw new Error("User not found");
 

@@ -2,6 +2,8 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { UserEntity } from "../user/user.entity.js";
 import { ProfileEntity } from "../profile/profile.entity.js";
+import { CodingQuestionEntity } from "../codingQuestion/codingQuestion.entity.js";
+import { TestCaseEntity } from "../testCase/testCase.entity.js";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -12,7 +14,7 @@ export const AppDataSource = new DataSource({
     database: process.env.DB_NAME || "intervume",
     synchronize: process.env.NODE_ENV === "development", // Only for development
     logging: false,
-    entities: [UserEntity, ProfileEntity],
+    entities: [UserEntity, ProfileEntity, CodingQuestionEntity, TestCaseEntity],
     migrations: ["src/database/migrations/*.ts"],
     subscribers: ["src/database/subscribers/*.ts"],
 }); 

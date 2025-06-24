@@ -7,6 +7,7 @@ import jwtPlugin from "./plugins/jwt";
 import { authenticationModule } from "./authentication/authentication.module.js";
 import { userModule } from "./user/user.module.js";
 import { profileModule } from "./profile/profile.module.js";
+import { codingQuestionModule } from "./codingQuestion/codingQuestion.module.js";
 
 config();
 
@@ -71,6 +72,7 @@ if (databaseConnected) {
   await fastify.register(authenticationModule);
   await fastify.register(userModule);
   await fastify.register(profileModule);
+  await fastify.register(codingQuestionModule);
 } else {
   // Fallback routes when database is not available
   fastify.get("/api/auth/*", async () => {
