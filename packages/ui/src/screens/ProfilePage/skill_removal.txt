@@ -1,0 +1,28 @@
+											{/* Skill removal in edit mode */}
+											{isEditing && userProfile.skills.length > 0 && (
+												<div className="mt-4 w-full">
+													<p className="text-sm text-[#666] mb-2">
+														Click on a skill to remove it:
+													</p>
+													<div className="flex flex-wrap gap-2">
+														{userProfile.skills.map((skill, index) => (
+															<div
+																key={`remove-${index}`}
+																className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium flex items-center cursor-pointer hover:bg-red-200"
+																onClick={() => {
+																	const updatedSkills = [...userProfile.skills];
+																	updatedSkills.splice(index, 1);
+																	setUserProfile({
+																		...userProfile,
+																		skills: updatedSkills,
+																	});
+																	showToast(`Skill "${skill}" removed`, "info");
+																}}
+															>
+																<XCircleIcon className="h-4 w-4 mr-1" />
+																{skill}
+															</div>
+														))}
+													</div>
+												</div>
+											)}
