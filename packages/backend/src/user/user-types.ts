@@ -1,54 +1,55 @@
-import { Static, Type } from '@fastify/type-provider-typebox';
-import { BaseModelSchema } from '../common/base-model.js';
+import { Static, Type } from "@fastify/type-provider-typebox";
+import { BaseModelSchema } from "../common/base-model.js";
+import { Profile } from "../profile/profile-entity-types.js";
 
 export enum UserRole {
-    USER = 'user',
-    ADMIN = 'admin',
+  USER = "user",
+  ADMIN = "admin",
 }
 
 export enum UserIdentityProvider {
-    EMAIL = 'EMAIL',
-    GOOGLE = 'GOOGLE',
-    GITHUB = 'GITHUB',
+  EMAIL = "EMAIL",
+  GOOGLE = "GOOGLE",
 }
 
 export const User = Type.Object({
-    ...BaseModelSchema,
-    firstName: Type.String(),
-    lastName: Type.String(),
-    email: Type.String(),
-    password: Type.String(),
-    role: Type.Enum(UserRole),
-    provider: Type.Enum(UserIdentityProvider),
-    tokenVersion: Type.Optional(Type.String()),
-})
-
-export type User = Static<typeof User>
-
-export const CreateUserRequest = Type.Object({
-    email: Type.String({ format: 'email' }),
-    firstName: Type.String({ minLength: 1 }),
-    lastName: Type.String({ minLength: 1 }),
-    password: Type.String({ minLength: 6 }),
-    role: Type.Optional(Type.Enum(UserRole)),
-    provider: Type.Optional(Type.Enum(UserIdentityProvider)),
+  ...BaseModelSchema,
+  email: Type.String(),
+  password: Type.String(),
+  role: Type.Enum(UserRole),
+  provider: Type.Enum(UserIdentityProvider),
+  tokenVersion: Type.Optional(Type.String()),
+  resetToken: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  resetTokenExpiry: Type.Optional(Type.Union([Type.Date(), Type.Null()])),
 });
 
-export type CreateUserRequest = Static<typeof CreateUserRequest>;
+export type User = Static<typeof User>;
 
-export const SignUpRequest = Type.Object({
-    email: Type.String({ format: 'email' }),
-    firstName: Type.String({ minLength: 1 }),
-    lastName: Type.String({ minLength: 1 }),
-    password: Type.String({ minLength: 6 }),
-    provider: Type.Enum(UserIdentityProvider),
+export const UserWithoutPassword = Type.Omit(User, ["password"]);
+
+export type UserWithoutPassword = Static<typeof UserWithoutPassword>;
+
+export const UserWithProfile = Type.Composite([
+  UserWithoutPassword,
+  Type.Pick(Profile, ["firstName", "lastName", "gender", "dob", "phone"]),
+]);
+
+export type UserWithProfile = Static<typeof UserWithProfile>;
+
+export const CreateUserRequestBody = Type.Object({
+  email: Type.String({ format: "email" }),
+  password: Type.String({ minLength: 6 }),
+  role: Type.Optional(Type.Enum(UserRole)),
+  provider: Type.Optional(Type.Enum(UserIdentityProvider)),
+  tokenVersion: Type.Optional(Type.String()),
 });
 
-export type SignUpRequest = Static<typeof SignUpRequest>;
+export type CreateUserRequestBody = Static<typeof CreateUserRequestBody>;
 
-export const SignInRequest = Type.Object({
-    email: Type.String({ format: 'email' }),
-    password: Type.String({ minLength: 1 }),
-});
+export const UpdateUserRequestBody = Type.Partial(
+  Type.Object({
+    email: Type.String({ format: "email" }),
+  })
+);
 
-export type SignInRequest = Static<typeof SignInRequest>; 
+export type UpdateUserRequestBody = Static<typeof UpdateUserRequestBody>;

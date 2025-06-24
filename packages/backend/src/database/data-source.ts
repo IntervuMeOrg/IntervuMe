@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { UserEntity } from "../user/user.entity.js";
+import { ProfileEntity } from "../profile/profile.entity.js";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -10,8 +11,8 @@ export const AppDataSource = new DataSource({
     password: process.env.DB_PASSWORD || "password",
     database: process.env.DB_NAME || "intervume",
     synchronize: process.env.NODE_ENV === "development", // Only for development
-    logging: process.env.NODE_ENV === "development",
-    entities: [UserEntity],
+    logging: false,
+    entities: [UserEntity, ProfileEntity],
     migrations: ["src/database/migrations/*.ts"],
     subscribers: ["src/database/subscribers/*.ts"],
 }); 

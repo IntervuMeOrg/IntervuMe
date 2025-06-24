@@ -1,11 +1,12 @@
 import "reflect-metadata";
-import Fastify, { FastifyReply, FastifyRequest } from "fastify";
+import Fastify from "fastify";
 import cors from "@fastify/cors";
 import { config } from "dotenv";
 import { AppDataSource } from "./database/data-source.js";
-import { authenticationController } from "./auth/auth.controller.js";
-import { userController } from "./user/user.controller.js";
 import jwtPlugin from "./plugins/jwt";
+import { authenticationModule } from "./authentication/authentication.module.js";
+import { userModule } from "./user/user.module.js";
+import { profileModule } from "./profile/profile.module.js";
 
 config();
 
@@ -13,7 +14,7 @@ const fastify = Fastify({
   logger: true,
 });
 
-fastify.register(jwtPlugin)
+fastify.register(jwtPlugin);
 
 // Register CORS
 await fastify.register(cors, {
@@ -67,8 +68,9 @@ fastify.get("/api/health", async () => {
 
 // Register auth routes (only if database is connected)
 if (databaseConnected) {
-  await fastify.register(authenticationController, { prefix: "/api/auth" });
-  await fastify.register(userController, { prefix: "/api/user" });
+  await fastify.register(authenticationModule);
+  await fastify.register(userModule);
+  await fastify.register(profileModule);
 } else {
   // Fallback routes when database is not available
   fastify.get("/api/auth/*", async () => {

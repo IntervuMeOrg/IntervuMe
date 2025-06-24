@@ -1,8 +1,13 @@
 import { EntitySchema } from 'typeorm'
 import { User, UserRole, UserIdentityProvider } from './user-types.js'
-import { BaseColumnSchemaPart } from '../common/base-model.js'
+import { BaseColumnSchemaPart, TIMESTAMP_COLUMN_TYPE } from '../common/base-model.js'
+import { Profile } from '../profile/profile-entity-types.js'
 
-export const UserEntity = new EntitySchema<User>({
+type UserSchema = User & {
+    profile: Profile
+}
+
+export const UserEntity = new EntitySchema<UserSchema>({
     name: 'user',
     columns: {
         ...BaseColumnSchemaPart,
@@ -12,14 +17,6 @@ export const UserEntity = new EntitySchema<User>({
             unique: true,
         },
         password: {
-            type: String,
-            nullable: false,
-        },
-        firstName: {
-            type: String,
-            nullable: false,
-        },
-        lastName: {
             type: String,
             nullable: false,
         },
@@ -36,6 +33,23 @@ export const UserEntity = new EntitySchema<User>({
         tokenVersion: {
             type: String,
             nullable: true,
+        },
+        resetToken: {
+            type: String,
+            nullable: true,
+        },
+        resetTokenExpiry: {
+            type: TIMESTAMP_COLUMN_TYPE,
+            nullable: true,
+        }
+    },
+    relations: {
+        profile: {
+            type: 'one-to-one',
+            target: 'profile',
+            inverseSide: 'user',
+            cascade: true,
+            eager: false,
         },
     },
     indices: [
