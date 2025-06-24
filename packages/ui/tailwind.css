@@ -1,0 +1,149 @@
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .all-\[unset\] {
+    all: unset;
+  }
+}
+
+:root {
+  --shadow-neutral-sm: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  --text-3xl-leading-9-font-medium-font-family: "Inter", Helvetica;
+  --text-3xl-leading-9-font-medium-font-size: 30px;
+  --text-3xl-leading-9-font-medium-font-style: normal;
+  --text-3xl-leading-9-font-medium-font-weight: 500;
+  --text-3xl-leading-9-font-medium-letter-spacing: 0px;
+  --text-3xl-leading-9-font-medium-line-height: 36px;
+  --text-base-leading-6-font-medium-font-family: "Inter", Helvetica;
+  --text-base-leading-6-font-medium-font-size: 16px;
+  --text-base-leading-6-font-medium-font-style: normal;
+  --text-base-leading-6-font-medium-font-weight: 500;
+  --text-base-leading-6-font-medium-letter-spacing: 0px;
+  --text-base-leading-6-font-medium-line-height: 24px;
+  --text-base-leading-6-font-normal-font-family: "Inter", Helvetica;
+  --text-base-leading-6-font-normal-font-size: 16px;
+  --text-base-leading-6-font-normal-font-style: normal;
+  --text-base-leading-6-font-normal-font-weight: 400;
+  --text-base-leading-6-font-normal-letter-spacing: 0px;
+  --text-base-leading-6-font-normal-line-height: 24px;
+  --text-base-leading-6-font-semibold-font-family: "Inter", Helvetica;
+  --text-base-leading-6-font-semibold-font-size: 16px;
+  --text-base-leading-6-font-semibold-font-style: normal;
+  --text-base-leading-6-font-semibold-font-weight: 600;
+  --text-base-leading-6-font-semibold-letter-spacing: 0px;
+  --text-base-leading-6-font-semibold-line-height: 24px;
+  --text-lg-leading-7-font-bold-font-family: "Inter", Helvetica;
+  --text-lg-leading-7-font-bold-font-size: 18px;
+  --text-lg-leading-7-font-bold-font-style: normal;
+  --text-lg-leading-7-font-bold-font-weight: 700;
+  --text-lg-leading-7-font-bold-letter-spacing: 0px;
+  --text-lg-leading-7-font-bold-line-height: 28px;
+  --text-tiny-font-family: "Inter", Helvetica;
+  --text-tiny-font-size: 12px;
+  --text-tiny-font-style: normal;
+  --text-tiny-font-weight: 400;
+  --text-tiny-letter-spacing: 0px;
+  --text-tiny-line-height: 16px;
+  --text-xl-leading-7-font-bold-font-family: "Inter", Helvetica;
+  --text-xl-leading-7-font-bold-font-size: 20px;
+  --text-xl-leading-7-font-bold-font-style: normal;
+  --text-xl-leading-7-font-bold-font-weight: 700;
+  --text-xl-leading-7-font-bold-letter-spacing: 0px;
+  --text-xl-leading-7-font-bold-line-height: 28px;
+  --text-xs-leading-4-font-bold-font-family: "Inter", Helvetica;
+  --text-xs-leading-4-font-bold-font-size: 12px;
+  --text-xs-leading-4-font-bold-font-style: normal;
+  --text-xs-leading-4-font-bold-font-weight: 700;
+  --text-xs-leading-4-font-bold-letter-spacing: 0px;
+  --text-xs-leading-4-font-bold-line-height: 16px;
+  --text-xs-leading-4-font-medium-font-family: "Inter", Helvetica;
+  --text-xs-leading-4-font-medium-font-size: 12px;
+  --text-xs-leading-4-font-medium-font-style: normal;
+  --text-xs-leading-4-font-medium-font-weight: 500;
+  --text-xs-leading-4-font-medium-letter-spacing: 0px;
+  --text-xs-leading-4-font-medium-line-height: 16px;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+
+    --card: transparent;
+    --card-foreground: 222.2 47.4% 11.2%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 215 20.2% 65.1%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+
+    --muted: 223 47% 11%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+
+    --accent: 216 34% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 215 20.2% 65.1%;
+
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+
+    --card: transparent;
+    --card-foreground: 213 31% 91%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 1.2%;
+
+    --secondary: 222.2 47.4% 11.2%;
+    --secondary-foreground: 210 40% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 216 34% 17%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
