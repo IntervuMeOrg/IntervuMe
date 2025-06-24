@@ -43,8 +43,6 @@ export const UserEntity = new EntitySchema<User>({
         type:        'one-to-one',
         target:      'profile',
         inverseSide: 'user',
-        joinColumn:  true,
-        cascade:     ['insert', 'update'], 
         eager:       false,
         },
     },

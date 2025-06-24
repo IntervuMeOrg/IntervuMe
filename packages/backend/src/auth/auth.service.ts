@@ -42,7 +42,7 @@ export const authService = {
                 gender: request.profile.gender,
                 dob: request.profile.dob,
             },
-            user.id,
+            user,
             { manager }
         )
 

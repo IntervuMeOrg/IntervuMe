@@ -39,8 +39,9 @@ export const ProfileEntity = new EntitySchema<Profile>({
             target: 'user',               
             joinColumn: {
                 name: 'userId',
-        },
+            },
             inverseSide: 'profile',
+            cascade:     ['insert', 'update'], 
             onDelete: 'CASCADE',
         },
     },

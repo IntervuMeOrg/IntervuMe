@@ -4,13 +4,14 @@ import { ProfileEntity } from "./profile.entity";
 import { EntityManager } from "typeorm";
 import { apId } from "../common/id-generator";
 import { AppDataSource } from "../database/data-source";
+import { User } from "../user/user-types";
 
 const profileRepository = () => {
     return AppDataSource.getRepository(ProfileEntity);
 };
 
 export const profileService = {
-    async create(request: ProfileInput, userId: string, opts: { manager?: EntityManager } = {}): Promise<Profile> {
+    async create(request: ProfileInput, user: User, opts: { manager?: EntityManager } = {}): Promise<Profile> {
         const repo = opts.manager
         ? opts.manager.getRepository(ProfileEntity)
         : profileRepository();
@@ -20,7 +21,7 @@ export const profileService = {
             created: new Date().toISOString(),
             updated: new Date().toISOString(),
             ...request,
-            userId: userId
+            user: user
         });
 
         return await repo.save(profile);
