@@ -52,3 +52,9 @@ export const UpdateCodingQuestionSchema = Type.Partial(
 );
 
 export type UpdateCodingQuestionSchema = Static<typeof UpdateCodingQuestionSchema>;
+
+export const GetCodingQuestion = Type.Object({
+    id: Type.String({ minLength: 21, maxLength: 21})
+});
+
+export type GetCodingQuestion = Static<typeof GetCodingQuestion>;
