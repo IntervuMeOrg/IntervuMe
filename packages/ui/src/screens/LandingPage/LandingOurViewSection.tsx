@@ -3,7 +3,7 @@ import { Button } from "../../components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 type OurViewSectionProps = {
-    navigate: ReturnType<typeof useNavigate>;
+	navigate: ReturnType<typeof useNavigate>;
 };
 
 export const OurViewSection = ({ navigate }: OurViewSectionProps) => {

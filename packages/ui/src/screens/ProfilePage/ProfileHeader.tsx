@@ -3,9 +3,9 @@ import { Button } from "../../components/ui/button";
 import { SaveIcon, PencilIcon } from "lucide-react";
 
 type ProfileHeaderProps = {
-    isEditing: boolean;
-    toggleEditMode: () => void;
-    saveProfileChanges: () => void;
+	isEditing: boolean;
+	toggleEditMode: () => void;
+	saveProfileChanges: () => void;
 };
 
 export const ProfileHeader = ({

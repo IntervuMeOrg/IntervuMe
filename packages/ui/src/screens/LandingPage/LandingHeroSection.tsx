@@ -4,10 +4,8 @@ type HeroSectionProps = {
 	homeSectionRef: React.RefObject<HTMLElement>;
 	steps: { id: number; title: string; image: string; alt: string }[];
 };
-export const HeroSection = (
-    { homeSectionRef, steps }: HeroSectionProps
-) => {
-  return (
+export const HeroSection = ({ homeSectionRef, steps }: HeroSectionProps) => {
+	return (
 		<div className="bg-white w-full min-h-screen relative z-0">
 			{/* Background image */}
 			<img
@@ -79,4 +77,5 @@ export const HeroSection = (
 				</div>
 			</motion.section>
 		</div>
-	);}
+	);
+};

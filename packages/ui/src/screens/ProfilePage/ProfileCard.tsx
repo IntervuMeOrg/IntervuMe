@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 import { UserProfile } from "../../types/userProfile";
 
 type UserProfileProps = {
-    userProfile: UserProfile;
-    isEditing: boolean;
-    setUserProfile: (profile: UserProfile) => void;
+	userProfile: UserProfile;
+	isEditing: boolean;
+	setUserProfile: (profile: UserProfile) => void;
 };
 
 export const ProfileCard = ({
