@@ -13,9 +13,22 @@ export const TestCaseSchema = Type.Object({
 export type TestCaseSchema = Static<typeof TestCaseSchema>;
 
 export const TestCaseCreateSchema = Type.Object({
+  codingQuestionId: ApId,
   input: Type.String(),
   expectedOutput: Type.String(),
   isHidden: Type.Boolean({ default: false }),
 });
 
 export type TestCaseCreateSchema = Static<typeof TestCaseCreateSchema>;
+
+export const UpdateTestCaseSchema = Type.Partial(
+  TestCaseCreateSchema
+);
+
+export type UpdateTestCaseSchema = Static<typeof UpdateTestCaseSchema>;
+
+export const GetTestCase = Type.Object({
+  id: Type.String({ minLength: 21, maxLength: 21 })
+});
+
+export type GetTestCase = Static<typeof GetTestCase>;
