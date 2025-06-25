@@ -1,6 +1,3 @@
-/**
- * SkillInputDialog component for adding new skills
- */
 import { useState } from "react";
 import { Button } from "./button";
 import { Input } from "./input";
