@@ -7,13 +7,13 @@ import { DashboardActionButtons } from "./DashboardActionButtons";
 import { DashboardRecentActivity } from "./DashboardRecentActivity";
 import { LightbulbIcon, TrendingUpIcon } from "lucide-react";
 
-type AppDashboardSectionProbs = {
+type AppDashboardSectionProps = {
 	historySectionRef: React.RefObject<HTMLElement>;
 };
 
 export const AppDashboardSection = ({
 	historySectionRef,
-}: AppDashboardSectionProbs) => {
+}: AppDashboardSectionProps) => {
 	// Navigation hook for routing
 	const navigate = useNavigate();
 	// Reference for carousel container

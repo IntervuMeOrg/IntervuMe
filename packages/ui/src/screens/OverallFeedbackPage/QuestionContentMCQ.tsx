@@ -4,7 +4,7 @@ import { CheckCircleIcon, AlertCircleIcon } from "lucide-react";
 import { MCQQuestion } from "../../types/questions";
 
 
-type QuestionContentMCQProbs = {
+type QuestionContentMCQProps = {
 	questions: MCQQuestion[];
 	userAnswers: Record<string, string>;
 	currentQuestionIndex: number;
@@ -16,7 +16,7 @@ export const QuestionContentMCQ = ({
 	userAnswers,
 	currentQuestionIndex,
 	isMCQAnswerCorrect,
-}: QuestionContentMCQProbs) => {
+}: QuestionContentMCQProps) => {
 	return (
 		<div>
 			<div className="mb-4">

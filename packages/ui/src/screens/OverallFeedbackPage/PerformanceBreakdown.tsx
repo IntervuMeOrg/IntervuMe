@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Progress } from "../../components/ui/progress";
 import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
 
-type PerformanceBreakdownProbs = {
+type PerformanceBreakdownProps = {
 	questions: (MCQQuestion | ProblemSolvingQuestion)[];
 	userAnswers: Record<string, string>;
 };
@@ -10,7 +10,7 @@ type PerformanceBreakdownProbs = {
 export const PerformanceBreakdown = ({
 	questions,
 	userAnswers,
-}: PerformanceBreakdownProbs) => {
+}: PerformanceBreakdownProps) => {
 	// Calculate category performance
 	const categoryPerformance = {
 		mcq: {

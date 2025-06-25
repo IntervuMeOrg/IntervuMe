@@ -7,7 +7,7 @@ import { TemplateSelection } from "./TemplateSelection";
 import { CustomJobDescription } from "./CustomJobDescription";
 import { FileTextIcon, ClipboardIcon } from "lucide-react";
 
-type StartInverviewFormPanelProbs = {
+type StartInverviewFormPanelProps = {
 	inputMethod: "custom" | "template";
 	setInputMethod: (method: "custom" | "template") => void;
 };
@@ -15,7 +15,7 @@ type StartInverviewFormPanelProbs = {
 export const StartInverviewFormPanel = ({
 	inputMethod,
 	setInputMethod,
-}: StartInverviewFormPanelProbs) => {
+}: StartInverviewFormPanelProps) => {
 	// global counter
 	const [count, setCount] = useState(0);
 	// Navigation hook for routing

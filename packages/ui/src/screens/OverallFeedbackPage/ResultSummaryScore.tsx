@@ -3,13 +3,13 @@ import { Progress } from "../../components/ui/progress";
 import { AwardIcon } from "lucide-react";
 import { InterviewData } from "../../types/interviewData";
 
-type ResultSummaryScoreProbs = {
+type ResultSummaryScoreProps = {
 	interviewData: InterviewData;
 };
 
 export const ResultSummaryScore = ({
 	interviewData,
-}: ResultSummaryScoreProbs) => {
+}: ResultSummaryScoreProps) => {
 	return (
 		<motion.div
 			variants={{

@@ -7,7 +7,7 @@ import { QuestionContent } from "./QuestionContent";
 import { QuestionNavigation } from "./QuestionNavigation";
 import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
 
-type DetailedFeedbackViewProbs = {
+type DetailedFeedbackViewProps = {
 	questions: (MCQQuestion | ProblemSolvingQuestion)[];
 	userAnswers: Record<string, string>;
 	setShowDetailedFeedback: (show: boolean) => void;
@@ -17,7 +17,7 @@ export const DetailedFeedbackView = ({
 	questions,
 	userAnswers,
 	setShowDetailedFeedback,
-}: DetailedFeedbackViewProbs) => {
+}: DetailedFeedbackViewProps) => {
 	// State for current question index in detailed feedback
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 

@@ -8,7 +8,7 @@ import { PerformanceBreakdown } from "./PerformanceBreakdown";
 import { ResultSummaryQuestionSolved } from "./ResultSummaryQuestionSolved";
 import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
 
-type ResultSummaryCardProbs = {
+type ResultSummaryCardProps = {
 	questions: (MCQQuestion | ProblemSolvingQuestion)[];
 	userAnswers: Record<string, string>;
 	setShowDetailedFeedback: (show: boolean) => void;
@@ -18,7 +18,7 @@ export const ResultSummaryCard = ({
 	questions,
 	userAnswers,
 	setShowDetailedFeedback,
-}: ResultSummaryCardProbs) => {
+}: ResultSummaryCardProps) => {
 	// Get location state from navigation
 	const location = useLocation();
 	// Mock interview data (in a real app, this would come from the previous page)

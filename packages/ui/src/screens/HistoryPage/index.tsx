@@ -5,9 +5,6 @@ import { motion } from "framer-motion";
 import {
 	CalendarIcon,
 	ClockIcon,
-	BarChart4Icon,
-	LineChartIcon,
-	PieChartIcon,
 	PlusIcon,
 } from "lucide-react";
 import { Button } from "../../components/ui/button";

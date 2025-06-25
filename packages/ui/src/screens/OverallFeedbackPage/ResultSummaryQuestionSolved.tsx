@@ -4,13 +4,13 @@ import { Progress } from "../../components/ui/progress";
 import { InterviewData } from "../../types/interviewData";
 
 
-type ResultSummaryQuestionSolvedProbs = {
+type ResultSummaryQuestionSolvedProps = {
 	interviewData: InterviewData;
 };
 
 export const ResultSummaryQuestionSolved = ({
 	interviewData,
-}: ResultSummaryQuestionSolvedProbs) => {
+}: ResultSummaryQuestionSolvedProps) => {
 	return (
 		<motion.div
 			variants={{

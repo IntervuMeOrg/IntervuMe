@@ -1,7 +1,7 @@
 import { Textarea } from "../../components/ui/textarea";
 import { Button } from "../../components/ui/button";
 
-type CustomJobDescriptionProbs = {
+type CustomJobDescriptionProps = {
 	jobDescription: string;
 	setJobDescription: (value: string) => void;
 	handleStartInterview: () => void;
@@ -11,7 +11,7 @@ export const CustomJobDescription = ({
 	jobDescription,
 	setJobDescription,
 	handleStartInterview,
-}: CustomJobDescriptionProbs) => {
+}: CustomJobDescriptionProps) => {
 	return (
 		<div>
 			<h2 className="font-['Nunito',Helvetica] font-bold text-[1.5rem] mb-4 text-[#1d1d20]">
