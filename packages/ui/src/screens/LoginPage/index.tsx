@@ -18,7 +18,7 @@ export const LoginPage = (): JSX.Element => {
 
 	const handleLogin = () => {
 		// Handle login logic here
-		navigate("/main-page-after-login");
+		navigate("/app");
 	};
 	return (
 		<div className="bg-white w-full h-screen">

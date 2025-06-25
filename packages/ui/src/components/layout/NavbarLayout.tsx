@@ -57,14 +57,14 @@ export const NavbarLayout = ({
     if (item.name === "History") {
       navigate("/history");
     } else if (item.name === "Contact Us") {
-      navigate("/main-page-after-login");
+      navigate("/app");
       setTimeout(() => {
         document.getElementById("contact-section")?.scrollIntoView({
           block: "nearest",
         });
       }, 100);
     } else if (item.name === "FAQ") {
-      navigate("/main-page-after-login");
+      navigate("/app");
       setTimeout(() => {
         document.getElementById("faq-section")?.scrollIntoView({
           block: "nearest",
@@ -74,7 +74,7 @@ export const NavbarLayout = ({
       window.scrollTo({
         top: 0,
       });
-      navigate("/main-page-after-login");
+      navigate("/app");
     }
   };
 
@@ -90,7 +90,7 @@ export const NavbarLayout = ({
               className="[text-shadow:0px_4px_4px_#00000040] font-['Nunito',Helvetica] font-extrabold text-white text-[1.5vw] text-center tracking-[0.05em] cursor-pointer"
               onClick={() => {
                 window.scrollTo(0, 0);
-                navigate("/main-page-after-login");
+                navigate("/app");
               }}
             >
               INTERVU ME

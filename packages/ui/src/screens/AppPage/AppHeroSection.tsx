@@ -81,7 +81,7 @@ export const AppHeroSection = ({
 									navigate("/history");
 								} else if (step.id === 3) {
 									// Interview Tips
-									navigate("/main-page-after-login");
+									navigate("/app");
 									setTimeout(() => {
 										document.getElementById("tipsAndTricks")?.scrollIntoView({
 											block: "start",
