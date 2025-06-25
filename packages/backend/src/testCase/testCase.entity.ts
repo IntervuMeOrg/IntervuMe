@@ -1,6 +1,6 @@
 import { EntitySchema } from 'typeorm'
 import { TestCaseSchema } from './testCase-types.js'
-import { BaseColumnSchemaPart, TIMESTAMP_COLUMN_TYPE } from '../common/base-model.js'
+import { BaseColumnSchemaPart } from '../common/base-model.js'
 import { CodingQuestionSchema } from '../codingQuestion/codingQuestion-types.js'
 
 type TestCaseQuestionSchema = TestCaseSchema & {
