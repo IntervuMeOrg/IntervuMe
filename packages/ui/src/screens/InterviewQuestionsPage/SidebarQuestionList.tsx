@@ -47,7 +47,7 @@ export const QuestionListSidebar = ({
 						<motion.img
 							src="/sidebar.png"
 							alt="Sidebar"
-							className="fixed absolute h-5 w-5 mr-3"
+							className="absolute h-5 w-5 mr-3"
 						/>
 					</Button>
 				</div>
