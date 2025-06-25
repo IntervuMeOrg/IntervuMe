@@ -29,7 +29,7 @@ createRoot(document.getElementById("app") as HTMLElement).render(
           element={<CreateNewPasswordPage />}
         />
 
-        <Route path="/main-page-after-login" element={<AppPage />} />
+        <Route path="/app" element={<AppPage />} />
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/settings" element={<SettingsPage />} />
