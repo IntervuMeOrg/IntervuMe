@@ -4,6 +4,8 @@ import { UserEntity } from "../user/user.entity.js";
 import { ProfileEntity } from "../profile/profile.entity.js";
 import { CodingQuestionEntity } from "../codingQuestion/codingQuestion.entity.js";
 import { TestCaseEntity } from "../testCase/testCase.entity.js";
+import { MCQOptionEntity } from "../mcqOption/mcqOption.entity.js";
+import { MCQQuestionEntity } from "../mcqQuestion/mcqQuestion.entity.js";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -14,7 +16,7 @@ export const AppDataSource = new DataSource({
     database: process.env.DB_NAME || "intervume",
     synchronize: process.env.NODE_ENV === "development", // Only for development
     logging: false,
-    entities: [UserEntity, ProfileEntity, CodingQuestionEntity, TestCaseEntity],
+    entities: [UserEntity, ProfileEntity, CodingQuestionEntity, TestCaseEntity, MCQOptionEntity, MCQQuestionEntity],
     migrations: ["src/database/migrations/*.ts"],
     subscribers: ["src/database/subscribers/*.ts"],
 }); 
