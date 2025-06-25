@@ -51,7 +51,7 @@ export const ExitConfirmationModel = ({
 							<Button
 								onClick={() => {
 									setExitConfirmation(false);
-									navigate("/");
+									navigate("/app");
 								}}
 								className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full"
 							>
