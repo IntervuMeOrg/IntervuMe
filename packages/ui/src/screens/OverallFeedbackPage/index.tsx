@@ -3,34 +3,7 @@ import { motion } from "framer-motion";
 import { NavbarLayout } from "../../components/layout/NavbarLayout";
 import { DetailedFeedbackView } from "./DetailedFeedbackView";
 import { ResultSummaryCard } from "./ResultSummaryCard";
-// Question type definitions (same as InterviewQuestionsPage)
-type MCQOption = {
-	id: string;
-	text: string;
-};
-
-type MCQQuestion = {
-	id: number;
-	type: "mcq";
-	text: string;
-	options: MCQOption[];
-	points: number;
-	correctOptionId?: string; // Added for feedback
-	explanation?: string; // Added for feedback
-};
-
-type ProblemSolvingQuestion = {
-	id: number;
-	type: "problem_solving";
-	name: string;
-	difficulty: string;
-	text: string;
-	examples: { input: string; output: string; explanation?: string }[];
-	constraints: string[];
-	points: number;
-	solution?: string; // Added for feedback
-	explanation?: string; // Added for feedback
-};
+import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
 
 type Question = MCQQuestion | ProblemSolvingQuestion;
 
