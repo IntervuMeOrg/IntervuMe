@@ -1,12 +1,11 @@
-import {Card, CardContent } from "../../components/ui/card";
+import { Card, CardContent } from "../../components/ui/card";
 import { Label } from "../../components/ui/label";
 import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
 import { TabsContent } from "../../components/ui/tabs";
 
-
-type PrivacyTabProps = {  
-      profileVisibility: string;
-    setProfileVisibility: (value: string) => void;
+type PrivacyTabProps = {
+	profileVisibility: string;
+	setProfileVisibility: (value: string) => void;
 };
 
 export const PrivacyTab = ({

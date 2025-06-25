@@ -8,12 +8,13 @@ import {
 	TrendingUpIcon,
 } from "lucide-react";
 
-
 type ProfileStatsCardsProps = {
 	interviewStats: InterviewStats;
 };
 
-export const ProfileStatsCards = ({ interviewStats }: ProfileStatsCardsProps) => {
+export const ProfileStatsCards = ({
+	interviewStats,
+}: ProfileStatsCardsProps) => {
 	return (
 		<div className="grid grid-cols-4 gap-6 mb-8">
 			{[0, 1, 2, 3].map((index) => (

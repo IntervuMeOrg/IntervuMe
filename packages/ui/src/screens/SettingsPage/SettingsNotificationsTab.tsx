@@ -1,15 +1,15 @@
-import { Card, CardContent } from '../../components/ui/card';
-import { Label } from '../../components/ui/label';
-import { Switch } from '../../components/ui/switch';
-import { TabsContent } from '../../components/ui/tabs';
+import { Card, CardContent } from "../../components/ui/card";
+import { Label } from "../../components/ui/label";
+import { Switch } from "../../components/ui/switch";
+import { TabsContent } from "../../components/ui/tabs";
 
 type NotificationTabProps = {
-    emailNotifications: boolean;
-    setEmailNotifications: (value: boolean) => void;
-    pushNotifications: boolean;
-    setPushNotifications: (value: boolean) => void;
-    marketingEmails: boolean;
-    setMarketingEmails: (value: boolean) => void;
+	emailNotifications: boolean;
+	setEmailNotifications: (value: boolean) => void;
+	pushNotifications: boolean;
+	setPushNotifications: (value: boolean) => void;
+	marketingEmails: boolean;
+	setMarketingEmails: (value: boolean) => void;
 };
 
 export const NotificationTab = ({

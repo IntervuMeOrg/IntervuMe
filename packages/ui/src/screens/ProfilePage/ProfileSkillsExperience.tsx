@@ -10,8 +10,6 @@ import {
 	XCircleIcon,
 } from "lucide-react";
 
-
-
 type ProfileSkillsExperienceProps = {
 	userProfile: UserProfile;
 	isEditing: boolean;

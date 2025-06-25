@@ -2,9 +2,8 @@ import { Card, CardContent } from "../../components/ui/card";
 import { motion } from "framer-motion";
 import { InterviewStats } from "../../types/interviewStats";
 
-
 type ProfileSkillAnalysisProps = {
-    interviewStats: InterviewStats;
+	interviewStats: InterviewStats;
 };
 
 export const ProfileSkillAnalysis = ({

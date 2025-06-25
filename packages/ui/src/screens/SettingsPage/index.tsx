@@ -11,11 +11,10 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { NavbarLayout } from "../../components/layout/NavbarLayout";
-import { NotificationTab } from "./NotificationsTab";
-import { AppearanceTab } from "./AppearanceTab";
-import { LanguageTab } from "./LanguageTab";
-import { PrivacyTab } from "./PrivacyTab";
-
+import { NotificationTab } from "./SettingsNotificationsTab";
+import { AppearanceTab } from "./SettingsAppearanceTab";
+import { LanguageTab } from "./SettingsLanguageTab";
+import { PrivacyTab } from "./SettingsPrivacyTab";
 
 export const SettingsPage = (): JSX.Element => {
 	// State for active navigation item tracking
@@ -35,7 +34,6 @@ export const SettingsPage = (): JSX.Element => {
 	const [profileVisibility, setProfileVisibility] = useState("public");
 	// State for form submission feedback
 	const [showSaveSuccess, setShowSaveSuccess] = useState(false);
-
 
 	// Handle save settings
 	const handleSaveSettings = () => {
@@ -57,7 +55,6 @@ export const SettingsPage = (): JSX.Element => {
 			setShowSaveSuccess(false);
 		}, 3000);
 	};
-
 
 	// Animation variants for success message
 	const successVariants = {
