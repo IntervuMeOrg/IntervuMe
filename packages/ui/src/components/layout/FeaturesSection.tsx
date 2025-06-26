@@ -56,7 +56,7 @@ export const FeaturesSection = ({
     <motion.section
       ref={featuresSectionRef}
       id="features"
-      className="relative z-10 py-[10vh] bg-[#1d1d20] w-full"
+      className="relative z-10 py-16 md:py-20 lg:py-24 bg-[#1d1d20] w-full"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-20% 0px" }}
@@ -69,20 +69,20 @@ export const FeaturesSection = ({
         src="/rectangle.png"
       />
       <div className="absolute inset-0 [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18] z-[1]" />
-      <div className="max-w-[1500px] mx-auto px-[8vw] pt-[5vh] relative z-10">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 pt-8 md:pt-12 relative z-10">
         {/* Features heading */}
-        <section className="flex flex-col items-start w-full">
-          <div className="flex flex-col items-start gap-4 w-full">
+        <section className="flex flex-col items-start w-full mb-12 md:mb-16">
+          <div className="flex flex-col items-start gap-4 md:gap-6 w-full">
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-20% 0px" }}
               transition={{ type: "spring", stiffness: 100, damping: 12 }}
-              className="font-['Nunito',Helvetica] font-bold text-black text-[40px] leading-normal"
+              className="font-['Nunito',Helvetica] font-bold text-black text-2xl md:text-3xl lg:text-4xl xl:text-5xl leading-normal"
             >
               {headingTitle}
             </motion.h1>
-            <p className="font-['Nunito',Helvetica] font-normal text-black-light text-lg leading-[29px]">
+            <p className="font-['Nunito',Helvetica] font-normal text-black-light text-base md:text-lg lg:text-xl leading-relaxed max-w-4xl">
               {headingDescription}
             </p>
           </div>
@@ -98,7 +98,7 @@ export const FeaturesSection = ({
               transition: { staggerChildren: 0.1, delayChildren: 0.2 },
             },
           }}
-          className="grid grid-cols-4 gap-[2vw] py-[1vh] w-full"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 py-8 w-full"
         >
           {featureCards.map((card, index) => (
             <motion.div
@@ -123,36 +123,23 @@ export const FeaturesSection = ({
             >
               {/* Feature card with expandable content */}
               <Card
-                className={`w-[100%] top-[40px] ${
+                className={`w-full ${
                   expandedCard === card.id
-                    ? "h-[80vh] min-h-[641px]"
-                    : "h-[65vh] min-h-[521px]"
+                    ? "h-auto min-h-[600px]"
+                    : "h-[450px]"
                 } bg-[#1d1d20] rounded-2xl overflow-hidden shadow-[0px_2px_4px_#0000001a] relative transition-all duration-300`}
               >
                 <div className="h-full rounded-[3px] [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18]" />
-                <CardContent className="p-0">
-                  {/* Card image - fades out when expanded */}
-                  <motion.div
-                    layoutId={`image-${card.id}`}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{
-                      opacity: expandedCard === card.id ? 0 : 1,
-                      scale: expandedCard === card.id ? 0.8 : 1,
-                    }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 300,
-                      damping: 25,
-                      duration: 0.3,
-                      opacity: { duration: 0.2 },
-                    }}
-                  >
+                <CardContent className="p-6 h-full flex flex-col">
+                  {/* Card image - simple show/hide */}
+                  {expandedCard !== card.id && (
                     <img
                       className="w-[168px] h-[168px] absolute top-8 left-8 object-cover"
                       alt={card.title}
                       src={card.image}
                     />
-                  </motion.div>
+                  )}
+
                   <motion.h2
                     layout
                     className="absolute w-[212px] left-8 font-['Nunito',Helvetica] font-bold text-[#e8eef2] text-[32px] leading-normal"
@@ -162,6 +149,7 @@ export const FeaturesSection = ({
                   >
                     {card.title}
                   </motion.h2>
+
                   <motion.p
                     layout
                     className={`absolute ${
@@ -173,8 +161,10 @@ export const FeaturesSection = ({
                       top: expandedCard === card.id ? "120px" : "317px",
                       whiteSpace:
                         expandedCard === card.id ? "pre-line" : "normal",
-                      height: expandedCard === card.id ? "auto" : "auto",
                       paddingTop: expandedCard === card.id ? "20px" : "0",
+                      overflow: expandedCard === card.id ? "auto" : "hidden",
+                      textOverflow:
+                        expandedCard === card.id ? "unset" : "ellipsis",
                     }}
                   >
                     {expandedCard === card.id
@@ -200,7 +190,7 @@ export const FeaturesSection = ({
                       }}
                       className="inline-flex items-start border-b border-[#e8eef2] hover:border-opacity-50 transition-colors"
                     >
-                      <span className="font-['Nunito',Helvetica] font-medium text-[#e8eef2] text-[16px] leading-6 whitespace-nowrap">
+                      <span className="font-['Nunito',Helvetica] font-medium text-[#e8eef2] text-[14px] leading-6 whitespace-nowrap">
                         {expandedCard === card.id ? "Show less" : "Read more"}
                       </span>
                     </a>
