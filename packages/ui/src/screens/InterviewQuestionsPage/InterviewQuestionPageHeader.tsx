@@ -87,7 +87,7 @@ export const InterviewQuestionsPageHeader = ({
 						</div>
 						{/* Timer, Solved, Exit button */}
 						<div className="flex items-center gap-4">
-							<div className="flex items-center gap-2 px-3 py-1 rounded-md shadow-sm">
+							<div className="flex items-center gap-2 py-1 rounded-md shadow-sm">
 								<TimerIcon className="h-4 w-4 text-[#E8EEF2]" />
 								<span className="font-['Nunito',Helvetica] font-semibold text-[#E8EEF2]">
 									{formatTime(remainingTime)}
@@ -101,7 +101,7 @@ export const InterviewQuestionsPageHeader = ({
 							</div>
 							<Button
 								onClick={() => setExitConfirmation(true)}
-								className="h-8 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full shadow-md flex items-center gap-1 transition-all duration-200"
+								className="h-8 bg-red-500 hover:bg-red-600 text-white px-5 py-1 rounded-full shadow-md flex items-center gap-1 transition-all duration-200"
 							>
 								<XIcon className="h-4 w-4" />
 								<span>Exit</span>

@@ -39,7 +39,7 @@ export const HeroSection = ({ homeSectionRef, steps }: HeroSectionProps) => {
 				</div>
 
 				{/* Process steps cards */}
-				<div className="flex justify-center gap-[9vw] px-[5%] w-full pt-[55px]">
+				<div className="flex justify-center gap-9 px-[5%] w-full pt-[55px]">
 					{steps.map((step) => (
 						<motion.div
 							key={step.id}
@@ -51,7 +51,7 @@ export const HeroSection = ({ homeSectionRef, steps }: HeroSectionProps) => {
 						>
 							{/* Step image */}
 							<motion.img
-								className="w-full max-w-[90%] md:max-w-[55vw] h-[35vh] object-contain"
+								className="w-[clamp(150px,55vw,380px)] h-[clamp(180px,35vh,3200px)] object-contain"
 								alt={step.alt}
 								src={step.image}
 								whileHover={{ y: -5 }}

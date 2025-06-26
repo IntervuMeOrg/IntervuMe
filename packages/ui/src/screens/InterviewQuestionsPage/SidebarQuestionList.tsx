@@ -34,55 +34,59 @@ export const QuestionListSidebar = ({
 			className="fixed left-0 top-[8vh] h-[92vh] w-[350px] bg-[#1d1d20] shadow-lg z-40 overflow-y-auto"
 		>
 			<div className="absolute h-[1600px] inset-0 [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18] z-[-1]" />
-			<div className="p-4">
-				<div className="flex justify-between items-center mb-4">
+
+			{/* Sticky Header */}
+			<div className="sticky top-0 bg-[#1d1d20] p-4 border-b border-gray-600 z-10">
+				<div className="flex justify-between items-center">
 					<h2 className="font-['Nunito',Helvetica] font-bold text-[1.2rem] text-[#E8EEF2]">
 						All Questions
 					</h2>
 					<Button
 						onClick={() => setSidebarVisible(false)}
-						className=" p-1 rounded-full"
+						className="p-1 rounded-full hover:bg-gray-700"
 					>
-						{/* <XIcon className="h-5 w-5 text-[#1d1d20]" /> */}
 						<motion.img
 							src="/sidebar.png"
-							alt="Sidebar"
-							className="absolute h-5 w-5 mr-3"
+							alt="Close Sidebar"
+							className="h-5 w-5"
 						/>
 					</Button>
 				</div>
+			</div>
 
-				<div className="space-y-2">
-					{questions.map((question, index) => (
-						<div
-							key={question.id}
-							className={`p-3 rounded-md cursor-pointer transition-colors ${
-								currentQuestionIndex === index
-									? "bg-[#0667D0] text-white"
-									: "bg-white hover:bg-gray-300 text-[#1d1d20]"
-							}
-										${isQuestionAnswered(question.id) ? "border-l-4 border-green-500" : ""}`}
-							onClick={() => goToQuestion(index)}
-						>
-							<div className="flex justify-between items-center">
-								<span className="font-['Nunito',Helvetica] font-medium">
-									Question {index + 1}
-								</span>
-								<div className="flex items-center gap-2">
-									<span className="text-sm">{question.points} pts</span>
-									{isQuestionAnswered(question.id) && (
-										<CheckCircleIcon className="h-4 w-4 text-green-500" />
-									)}
-								</div>
+			{/* Scrollable Content */}
+			<div className="p-4 space-y-2">
+				{questions.map((question, index) => (
+					<div
+						key={question.id}
+						className={`p-3 rounded-md cursor-pointer transition-colors ${
+							currentQuestionIndex === index
+								? "bg-[#0667D0] text-white"
+								: "bg-white hover:bg-gray-300 text-[#1d1d20]"
+						}
+                ${
+									isQuestionAnswered(question.id)
+										? "border-l-4 border-green-500"
+										: ""
+								}`}
+						onClick={() => goToQuestion(index)}
+					>
+						<div className="flex justify-between items-center">
+							<span className="font-['Nunito',Helvetica] font-medium">
+								Question {index + 1}
+							</span>
+							<div className="flex items-center gap-2">
+								<span className="text-sm">{question.points} pts</span>
+								{isQuestionAnswered(question.id) && (
+									<CheckCircleIcon className="h-4 w-4 text-green-500" />
+								)}
 							</div>
-							<p className="text-sm truncate mt-1">
-								{question.type === "mcq"
-									? "Multiple Choice"
-									: "Problem Solving"}
-							</p>
 						</div>
-					))}
-				</div>
+						<p className="text-sm truncate mt-1">
+							{question.type === "mcq" ? "Multiple Choice" : "Problem Solving"}
+						</p>
+					</div>
+				))}
 			</div>
 		</motion.div>
 	);

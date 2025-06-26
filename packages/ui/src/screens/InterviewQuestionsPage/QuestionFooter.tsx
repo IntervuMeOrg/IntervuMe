@@ -41,7 +41,7 @@ export const QuestionFooter = ({
 				initial={{ opacity: 0, y: 50 }}
 				animate={{ opacity: footerVisible ? 1 : 0, y: footerVisible ? 0 : 50 }}
 				transition={{ duration: 0.5 }}
-				className={`fixed bottom-0 left-0 right-0 bg-[#1d1d20] bg-opacity-95 backdrop-blur-sm py-4 px-8 z-50 shadow-[0_-4px_10px_rgba(0,0,0,0.1)] ${
+				className={`fixed bottom-0 left-0 right-0 bg-[#1d1d20] bg-opacity-95 backdrop-blur-sm py-5 px-8 z-50 shadow-[0_-4px_10px_rgba(0,0,0,0.1)] ${
 					sidebarVisible ? "hidden" : ""
 				}`}
 			>
@@ -51,7 +51,7 @@ export const QuestionFooter = ({
 						whileTap={{ scale: 0.95 }}
 						onClick={goToPreviousQuestion}
 						disabled={currentQuestionIndex === 0}
-						className={` min-w-[200px] h-3 flex items-center gap-2 px-6 py-3 rounded-full transition-all duration-300 ${
+						className={` min-w-[200px] h-8 flex items-center gap-2 px-6 py-3 rounded-full transition-all duration-300 ${
 							currentQuestionIndex === 0
 								? "bg-gray-700 bg-opacity-50 cursor-not-allowed text-gray-400"
 								: "bg-[#0667D0] hover:bg-[#054E9D] text-white"
@@ -87,7 +87,7 @@ export const QuestionFooter = ({
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
 							onClick={() => setSubmitConfirmation(true)}
-							className="mt-1 w-full h-3 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full transition-all duration-300 flex items-center gap-2 shadow-lg"
+							className="mt-1 w-full h-8 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full transition-all duration-300 flex items-center gap-2 shadow-lg"
 						>
 							<SendIcon className="min-h-4 min-w-4" />
 							<span className="font-['Nunito',Helvetica] font-semibold">
@@ -100,7 +100,7 @@ export const QuestionFooter = ({
 							whileTap={{ scale: 0.95 }}
 							onClick={goToNextQuestion}
 							disabled={currentQuestionIndex === questions.length - 1}
-							className={`mt-1 w-full h-3 flex items-center gap-2 px-6 py-3 rounded-full transition-all duration-300 ${
+							className={`mt-1 w-full h-8 flex items-center gap-2 px-6 py-3 rounded-full transition-all duration-300 ${
 								currentQuestionIndex === questions.length - 1
 									? "bg-gray-700 bg-opacity-50 cursor-not-allowed text-gray-400"
 									: "bg-[#0667D0] hover:bg-[#054E9D] text-white"
