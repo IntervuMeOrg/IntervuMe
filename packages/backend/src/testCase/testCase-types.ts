@@ -21,6 +21,14 @@ export const TestCaseCreateSchema = Type.Object({
 
 export type TestCaseCreateSchema = Static<typeof TestCaseCreateSchema>;
 
+export const TestCaseUpdateQuestionSchema = Type.Object({
+  input: Type.String(),
+  expectedOutput: Type.String(),
+  isHidden: Type.Boolean({ default: false }),
+});
+
+export type TestCaseUpdateQuestionSchema = Static<typeof TestCaseUpdateQuestionSchema>;
+
 export const UpdateTestCaseSchema = Type.Partial(
   TestCaseCreateSchema
 );

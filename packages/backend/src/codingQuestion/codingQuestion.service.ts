@@ -6,6 +6,7 @@ import {
   UpdateCodingQuestionSchema,
 } from "./codingQuestion-types";
 import { apId } from "../common/id-generator";
+import { TestCaseEntity } from "../testCase/testCase.entity";
 
 const codingQuestionRepository = () => {
   return AppDataSource.getRepository(CodingQuestionEntity);
@@ -97,20 +98,44 @@ export const codingQuestionService = {
     });
   },
 
-  //TODO
-  // async update(id: string, updates: UpdateCodingQuestionSchema): Promise<CodingQuestionSchema | null>{
-  //   const question = await codingQuestionRepository().findOne({ where: { id } });
+  async update(
+    id: string,
+    updates: UpdateCodingQuestionSchema
+  ): Promise<CodingQuestionSchema | null> {
+    const question = await codingQuestionRepository().findOne({
+      where: { id },
+    });
+    const testCaseRepo = AppDataSource.getRepository(TestCaseEntity);
 
-  //   if (!question) {
-  //     throw new Error('Coding question not found');
-  //   }
+    if (!question) {
+      throw new Error("Coding question not found");
+    }
 
-  //   const { testCases, ...restUpdates } = updates;
+    const { testCases, ...restUpdates } = updates;
 
-  //   Object.assign(question, restUpdates, { updated: new Date().toISOString() });
+    if (testCases) {
+      await testCaseRepo.delete({ codingQuestionId: id });
 
-  //   // Testcase?
+      const normalizedTestCases = testCases.map(
+        ({ input, expectedOutput, isHidden = false }) => ({
+          id: apId(),
+          input,
+          expectedOutput,
+          isHidden,
+        })
+      );
 
-  //   return await codingQuestionRepository().save(question);
-  // }
+      const updatedCodingQuestion = codingQuestionRepository().create({
+        ...question,
+        ...updates,
+        testCases: normalizedTestCases,
+        updated: new Date().toISOString(),
+      });
+
+      return await codingQuestionRepository().save(updatedCodingQuestion);
+    }
+
+    Object.assign(question, restUpdates, { updated: new Date().toISOString() });
+    return await codingQuestionRepository().save(question);
+  },
 };

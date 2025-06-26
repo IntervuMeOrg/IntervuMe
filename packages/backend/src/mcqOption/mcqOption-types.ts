@@ -11,6 +11,7 @@ export const MCQOptionSchema = Type.Object({
 export type MCQOptionSchema = Static<typeof MCQOptionSchema>;
 
 export const CreateMCQOptionSchema = Type.Object({
+  mcqQuestionId: Type.String(),
   optionText: Type.String({ minLength: 1, maxLength: 500 }),
   isCorrect: Type.Boolean(),
 });
@@ -19,7 +20,14 @@ export type CreateMCQOptionSchema = Static<typeof CreateMCQOptionSchema>;
 
 export const UpdateMCQOptionSchema = Type.Partial(CreateMCQOptionSchema);
 
-export type UpdateTestCaseSchema = Static<typeof UpdateMCQOptionSchema>;
+export type UpdateMCQOptionSchema = Static<typeof UpdateMCQOptionSchema>;
+
+export const MCQOptionUpdateQuestionSchema = Type.Object({
+  optionText: Type.String({ minLength: 1, maxLength: 500 }),
+  isCorrect: Type.Boolean(),
+});
+
+export type MCQOptionUpdateQuestionSchema = Static<typeof MCQOptionUpdateQuestionSchema>;
 
 export const GetMCQOption = Type.Object({
   id: Type.String({ minLength: 21, maxLength: 21 }),

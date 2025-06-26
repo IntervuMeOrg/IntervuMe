@@ -82,13 +82,12 @@ export const codingQuestionController: FastifyPluginAsyncTypebox = async (
     return await codingQuestionService.list();
   });
 
-  // TODO
-  // app.put("/:id", updateCodingQuestionRequest, async(request, reply) => {
-  //   const { id } = request.params as GetCodingQuestion;
-  //   const updates = request.body as UpdateCodingQuestionSchema;
+  app.put("/:id", updateCodingQuestionRequest, async (request, reply) => {
+    const { id } = request.params as GetCodingQuestion;
+    const updates = request.body as UpdateCodingQuestionSchema;
 
-  //   return await codingQuestionService.update(id, updates);
-  // })
+    return await codingQuestionService.update(id, updates);
+  });
 };
 
 const createCodingQuestionRequest = {

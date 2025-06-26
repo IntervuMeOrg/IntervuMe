@@ -3,6 +3,7 @@ import { BaseModelSchema } from "../common/base-model";
 import {
   CreateMCQOptionSchema,
   MCQOptionSchema,
+  MCQOptionUpdateQuestionSchema,
 } from "../mcqOption/mcqOption-types";
 
 export enum DifficultyLevel {
@@ -32,7 +33,15 @@ export const CreateMCQQuestionSchema = Type.Object({
 
 export type CreateMCQQuestionSchema = Static<typeof CreateMCQQuestionSchema>;
 
-export const UpdateMCQQuestionSchema = Type.Partial(CreateMCQQuestionSchema);
+export const UpdateMCQQuestionSchema = Type.Partial(
+  Type.Object({
+    ...CreateMCQQuestionSchema.properties,
+    options: Type.Array(MCQOptionUpdateQuestionSchema, {
+      minItems: 2,
+      maxItems: 6,
+    }),
+  })
+);
 
 export type UpdateMCQQuestionSchema = Static<typeof UpdateMCQQuestionSchema>;
 

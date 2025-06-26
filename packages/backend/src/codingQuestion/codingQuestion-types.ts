@@ -1,6 +1,6 @@
 import { Static, Type } from "@fastify/type-provider-typebox";
 import { BaseModelSchema } from "../common/base-model";
-import { TestCaseSchema, TestCaseCreateSchema } from "../testCase/testCase-types";
+import { TestCaseSchema, TestCaseCreateSchema, TestCaseUpdateQuestionSchema } from "../testCase/testCase-types";
 
 
 export enum DifficultyLevel {
@@ -48,8 +48,12 @@ export const CreateCodingQuestionSchema = Type.Object({
 export type CreateCodingQuestionSchema = Static<typeof CreateCodingQuestionSchema>;
 
 export const UpdateCodingQuestionSchema = Type.Partial(
-    CreateCodingQuestionSchema
+  Type.Object({
+    ...CreateCodingQuestionSchema.properties,
+    testCases: Type.Array(TestCaseUpdateQuestionSchema, { minItems: 1 }),
+  })
 );
+
 
 export type UpdateCodingQuestionSchema = Static<typeof UpdateCodingQuestionSchema>;
 
