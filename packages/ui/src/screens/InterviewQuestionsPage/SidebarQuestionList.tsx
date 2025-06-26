@@ -2,6 +2,7 @@ import { CheckCircleIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "../../components/ui/button";
 import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
+import { useEffect, useRef } from "react";
 
 type QuestionListSidebarProps = {
 	currentQuestionIndex: number;
@@ -20,14 +21,41 @@ export const QuestionListSidebar = ({
 	setSidebarVisible,
 	isQuestionAnswered,
 }: QuestionListSidebarProps) => {
+	const sidebarRef = useRef<HTMLDivElement>(null);
+
+	// Handle clicks outside the sidebar
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				sidebarVisible &&
+				sidebarRef.current &&
+				!sidebarRef.current.contains(event.target as Node)
+			) {
+				setSidebarVisible(false);
+			}
+		};
+
+		// Add event listener when component mounts or sidebar becomes visible
+		if (sidebarVisible) {
+			document.addEventListener("mousedown", handleClickOutside);
+		}
+
+		// Cleanup event listener
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [sidebarVisible, setSidebarVisible]);
+
 	// Navigate to specific question
 	const goToQuestion = (index: number) => {
 		if (index >= 0 && index < questions.length) {
 			setCurrentQuestionIndex(index);
 		}
 	};
+
 	return (
 		<motion.div
+			ref={sidebarRef}
 			initial={{ x: "-100%" }}
 			animate={{ x: sidebarVisible ? 0 : "-100%" }}
 			transition={{ type: "spring", stiffness: 300, damping: 30 }}
