@@ -59,9 +59,10 @@ export const QuestionListSidebar = ({
 			initial={{ x: "-100%" }}
 			animate={{ x: sidebarVisible ? 0 : "-100%" }}
 			transition={{ type: "spring", stiffness: 300, damping: 30 }}
-			className="fixed left-0 top-[8vh] h-[92vh] w-[350px] bg-[#1d1d20] shadow-lg z-40 overflow-y-auto"
+			className="fixed left-0 top-[8vh] h-[92vh] w-[350px] bg-[#1d1d20] shadow-lg z-40 flex flex-col"
 		>
-			<div className="absolute h-[1600px] inset-0 [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18] z-[-1]" />
+			{/* Decorative Background */}
+			<div className="absolute inset-0 [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18] z-[-1]" />
 
 			{/* Sticky Header */}
 			<div className="sticky top-0 bg-[#1d1d20] p-4 border-b border-gray-600 z-10">
@@ -83,7 +84,7 @@ export const QuestionListSidebar = ({
 			</div>
 
 			{/* Scrollable Content */}
-			<div className="p-4 space-y-2">
+			<div className="overflow-y-auto p-4 space-y-2 flex-1">
 				{questions.map((question, index) => (
 					<div
 						key={question.id}
@@ -92,11 +93,7 @@ export const QuestionListSidebar = ({
 								? "bg-[#0667D0] text-white"
 								: "bg-white hover:bg-gray-300 text-[#1d1d20]"
 						}
-                ${
-									isQuestionAnswered(question.id)
-										? "border-l-4 border-green-500"
-										: ""
-								}`}
+				${isQuestionAnswered(question.id) ? "border-l-4 border-green-500" : ""}`}
 						onClick={() => goToQuestion(index)}
 					>
 						<div className="flex justify-between items-center">

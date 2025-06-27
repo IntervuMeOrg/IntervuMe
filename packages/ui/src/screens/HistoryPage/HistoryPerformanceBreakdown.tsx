@@ -53,7 +53,7 @@ export const HistoryPerformanceBreakdown = () => {
 				>
 					<div className="flex justify-between mb-1">
 						<span className="text-sm font-medium text-[#e8eef2]">
-							Communication
+							Code Quality
 						</span>
 						<span className="text-sm font-medium text-[#e8eef2]">92%</span>
 					</div>

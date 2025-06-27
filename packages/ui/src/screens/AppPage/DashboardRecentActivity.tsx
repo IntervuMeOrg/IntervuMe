@@ -17,7 +17,7 @@ export const DashboardRecentActivity = () => {
 						Frontend Developer Interview
 					</p>
 					<p className="font-['Nunito',Helvetica] text-[#e8eef2] opacity-70">
-						2 days ago
+						Just now
 					</p>
 				</div>
 				<div className="flex justify-between items-center border-b border-white/10 pb-2">

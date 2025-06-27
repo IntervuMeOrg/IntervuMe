@@ -1,4 +1,5 @@
 import { Card, CardContent } from "../../components/ui/card";
+import { useNavigate } from "react-router-dom";
 import { Input } from "../../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { Button } from "../../components/ui/button";
@@ -15,6 +16,8 @@ export const RegistrationForm = ({
 	genders,
 	months,
 }: RegistrationFormProps) => {
+	// Navigation hook for routing
+	const navigate = useNavigate();
 	return (
 		<>
 			<div className="absolute w-[90%] max-w-[1200px] left-[300px] top-[22vh]">
@@ -164,7 +167,10 @@ export const RegistrationForm = ({
 								damping: 15,
 							}}
 						>
-							<Button className="w-[250px] h-[45px] [background:linear-gradient(90deg,#0667D0_31%,#054E9D_59%,#033464_98%)] hover:opacity-90 rounded-[5px]">
+							<Button
+								className="w-[250px] h-[45px] [background:linear-gradient(90deg,#0667D0_31%,#054E9D_59%,#033464_98%)] hover:opacity-90 rounded-[5px]"
+								onClick={() => navigate("/login")}
+							>
 								<span className="font-['Nunito',Helvetica] font-bold text-[#e8eef2] text-[19px] tracking-[1.14px]">
 									Sign Up
 								</span>

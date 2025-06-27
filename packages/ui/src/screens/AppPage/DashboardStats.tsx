@@ -13,7 +13,7 @@ export const DashboardStats = () => {
 					Interviews Completed
 				</h3>
 				<p className="font-['Nunito',Helvetica] text-[#e8eef2] text-3xl font-bold">
-					12
+					5
 				</p>
 				<p className="font-['Nunito',Helvetica] text-[#e8eef2] text-sm opacity-70 mt-2">
 					+3 this month

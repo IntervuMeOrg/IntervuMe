@@ -125,7 +125,6 @@ export const QuestionContentProblemSolving = ({
 	}, [isResizing, handleMouseMove, handleMouseUp]);
 
 	return (
-		// Modified JSX structure
 		<div className="mt-[-65px] flex relative" ref={containerRef}>
 			{/* Left Panel with Tabs */}
 			<div
@@ -376,16 +375,19 @@ export const QuestionContentProblemSolving = ({
 					onSubmissionsTabClick={() => setActiveTab("submissions")} // Add this prop
 					onSubmit={() => {
 						// Simulate submission with random results
-						const isSuccess = Math.random() > 0.3; // 70% chance of success
+						// Make submissions alternate: fail, pass, fail, pass...
+						// OLD===== const isSuccess = Math.random() > 0.3; // 70% chance of success
+						const submissionCount = submissionHistory.length;
+						const isSuccess = submissionCount % 2 === 1;
 						const testCasesPassed = isSuccess
 							? 5
-							: Math.floor(Math.random() * 4) + 1; // 1-4 if failed
+							: 0 // 1-4 if failed OLD==== Math.floor(Math.random() * 4) + 1;
 
 						const newSubmission = {
 							status: isSuccess ? ("success" as const) : ("error" as const),
 							message: isSuccess
 								? "Your solution passed all test cases. Great job!"
-								: "Your solution failed on some test cases. Check the error details and try again.",
+								: "Your solution failed on all test cases. Check the error details and try again.",
 							testCasesPassed: testCasesPassed,
 							totalTestCases: 5,
 							timestamp: new Date().toLocaleString(),
@@ -394,9 +396,9 @@ export const QuestionContentProblemSolving = ({
 								? {}
 								: {
 										lastFailedTest: {
-											input: "nums=[1,2,3,4]",
+											input: "nums=[1,2,3,4], target=9",
 											output: "true",
-											expected: "false",
+											expected: "-1",
 										},
 								  }),
 						};

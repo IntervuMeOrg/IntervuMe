@@ -27,10 +27,10 @@ export const ResultSummaryCard = ({
 		totalTime: location.state?.totalTime || 45 * 60, // 45 minutes in seconds
 		timeSpent: location.state?.timeSpent || 38 * 60 + 45, // 38 minutes and 45 seconds
 		remainingTime: location.state?.remainingTime || 6 * 60 + 15, // 6 minutes and 15 seconds
-		totalQuestions: 10,
-		solvedQuestions: 8,
-		totalPoints: 150,
-		earnedPoints: 115,
+		totalQuestions: 3,
+		solvedQuestions: 3,
+		totalPoints: 40,
+		earnedPoints: 30,
 		jobDescription: location.state?.jobDescription || "",
 	});
 
@@ -110,9 +110,8 @@ export const ResultSummaryCard = ({
 							userAnswers={userAnswers}
 						/>
 
-						{/* Overall Feedback */}
-						<div className="mt-8 bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-							<h3 className="text-lg font-semibold mb-4">Overall Feedback</h3>
+						{/* Overall Feedback
+						OLD:
 							<p className="text-gray-700 mb-4">
 								{correctAnswers === questions.length
 									? "Excellent performance! You've demonstrated a strong understanding of the concepts tested in this interview."
@@ -122,6 +121,38 @@ export const ResultSummaryCard = ({
 									? "Good effort! You've passed this interview but there's room for improvement. Focus on the areas where you struggled."
 									: "You need more practice in the areas covered by this interview. Review the detailed feedback to identify your weak points."}
 							</p>
+						*/}
+						<div className="mt-8 bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+							<h3 className="text-2xl font-semibold mb-4">Overall Feedback</h3>
+							
+							<div className="text-gray-700 leading-relaxed">
+								<p className="text-green-700 font-bold mb-2">Great effort!</p>
+
+								<ul className="list-disc pl-5 space-y-1">
+									<li>
+										You correctly answered <strong>2 out of 3 questions</strong>
+										, including solving the coding challenge.
+									</li>
+									<li>
+										Your answers reflect a{" "}
+										<strong>strong grasp of core concepts</strong> and good
+										practical application.
+									</li>
+									<li>
+										One multiple-choice question was answered incorrectly. It
+										involved identifying <strong>React Hooks</strong>.
+									</li>
+									<li>
+										Consider reviewing the official React documentation to
+										solidify your understanding of built-in hooks.
+									</li>
+								</ul>
+
+								<p className="mt-3">
+									Keep up the great work and continue refining your skills.
+									You're making excellent progress!
+								</p>
+							</div>
 							<div className="flex justify-center mt-6">
 								<motion.button
 									whileHover={{ scale: 1.05 }}

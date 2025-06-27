@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { TemplateSelection } from "./TemplateSelection";
 import { CustomJobDescription } from "./CustomJobDescription";
 import { FileTextIcon, ClipboardIcon } from "lucide-react";
+import { LoadingOverlay } from "./LoadingOverlay";
 
 type StartInverviewFormPanelProps = {
 	inputMethod: "custom" | "template";
@@ -26,6 +27,11 @@ export const StartInverviewFormPanel = ({
 	const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
 	// State for selected template category
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+	// Loading state for interview preparation
+	const [isPreparingInterview, setIsPreparingInterview] = useState(false);
+	const [preparationStep, setPreparationStep] = useState("");
+	const [progressPercentage, setProgressPercentage] = useState(0);
+
 	// Template categories and items
 	const templates = [
 		{
@@ -84,6 +90,7 @@ export const StartInverviewFormPanel = ({
 			],
 		},
 	];
+
 	// Handle template selection
 	const handleTemplateSelect = (template: string, categoryIndex: number) => {
 		setSelectedTemplate(template);
@@ -94,102 +101,144 @@ export const StartInverviewFormPanel = ({
 		setJobDescription(description);
 	};
 
-	// Handle starting the interview
-	const handleStartInterview = () => {
-		// Log interview details
-		console.log(
-			"Starting interview with:",
-			selectedTemplate || "Custom Job Description"
-		);
-		console.log("Job Description:", jobDescription);
-		window.scrollTo(0, 0);
-		// Navigate to interview questions page with the interview data
-		navigate("/interview-questions", {
-			state: {
-				title: selectedTemplate || "Custom Job Interview",
-				jobDescription: jobDescription,
-				totalTime: 45 * 60, // 45 minutes in seconds
-				// You can add more data here as needed
-			},
-		});
+	// Handle starting the interview with loading states
+	const handleStartInterview = async () => {
+		setIsPreparingInterview(true);
+		setProgressPercentage(0);
+
+		// Simulate interview preparation steps
+		const preparationSteps = [
+			"Analyzing job description...",
+			"Generating interview questions...",
+			"Setting up interview environment...",
+			"Preparing assessment criteria...",
+			"Almost ready...",
+		];
+
+		try {
+			// Log interview details
+			console.log(
+				"Starting interview with:",
+				selectedTemplate || "Custom Job Description"
+			);
+			console.log("Job Description:", jobDescription);
+
+			// Simulate preparation process with steps
+			for (let i = 0; i < preparationSteps.length; i++) {
+				setPreparationStep(preparationSteps[i]);
+				setProgressPercentage(((i + 1) / preparationSteps.length) * 100);
+				await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second between steps
+			}
+
+			window.scrollTo(0, 0);
+
+			// Navigate to interview questions page with the interview data
+			navigate("/interview-questions", {
+				state: {
+					title: selectedTemplate || "Custom Job Interview",
+					jobDescription: jobDescription,
+					totalTime: 45 * 60, // 45 minutes in seconds
+					// You can add more data here as needed
+				},
+			});
+		} catch (error) {
+			console.error("Error preparing interview:", error);
+			setIsPreparingInterview(false);
+			setProgressPercentage(0);
+		}
 	};
-    
+
 	return (
-		<motion.div
-			initial={{ opacity: 0, y: 20 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.5, delay: 0.2 }}
-			className="max-w-[1000px] mx-auto mb-[2vh]"
-		>
-			<Card className="bg-[#E8EEF2] shadow-lg border-0 overflow-hidden">
-				<CardContent className="p-6">
-					{/* Input Method Selection Buttons - Now Inside Card */}
-					<div className="flex justify-center gap-6 mb-5">
-						<Button
-							id="card-job-section"
-							className={`rounded-[5px] h-[6vh] w-[19vw] min-w-60 ${
-								inputMethod === "custom"
-									? "[background:linear-gradient(90deg,#0667D0_31%,#054E9D_59%,#033464_98%)] text-white"
-									: "bg-white text-[#1d1d20] border border-[#1d1d20]"
-							} hover:opacity-90 transition-all duration-300`}
-							onClick={() => setInputMethod("custom")}
-						>
-							<FileTextIcon className="mr-2 h-5 w-5" />
-							<span className="font-['Nunito',Helvetica] font-semibold text-[1.1rem]">
-								Custom Description
-							</span>
-						</Button>
-						<Button
-							className={`rounded-[5px] h-[6vh] w-[19vw] min-w-60  ${
-								inputMethod === "template"
-									? "[background:linear-gradient(90deg,#0667D0_31%,#054E9D_59%,#033464_98%)] text-white"
-									: "bg-white text-[#1d1d20] border border-[#1d1d20]"
-							} hover:opacity-90 transition-all duration-100`}
-							onClick={() => {
-								setTimeout(() => {
-									document.getElementById("card-job-section")?.scrollIntoView({
-										behavior: "smooth",
-										block: "start",
+		<>
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.5, delay: 0.2 }}
+				className="max-w-[1000px] mx-auto mb-[2vh]"
+			>
+				<Card className="bg-[#E8EEF2] shadow-lg border-0 overflow-hidden">
+					<CardContent className="p-6">
+						{/* Input Method Selection Buttons - Now Inside Card */}
+						<div className="flex justify-center gap-6 mb-5">
+							<Button
+								id="card-job-section"
+								className={`rounded-[5px] h-[6vh] w-[19vw] min-w-60 ${
+									inputMethod === "custom"
+										? "[background:linear-gradient(90deg,#0667D0_31%,#054E9D_59%,#033464_98%)] text-white"
+										: "bg-white text-[#1d1d20] border border-[#1d1d20]"
+								} hover:opacity-90 transition-all duration-300`}
+								onClick={() => setInputMethod("custom")}
+								disabled={isPreparingInterview}
+							>
+								<FileTextIcon className="mr-2 h-5 w-5" />
+								<span className="font-['Nunito',Helvetica] font-semibold text-[1.1rem]">
+									Custom Description
+								</span>
+							</Button>
+							<Button
+								className={`rounded-[5px] h-[6vh] w-[19vw] min-w-60  ${
+									inputMethod === "template"
+										? "[background:linear-gradient(90deg,#0667D0_31%,#054E9D_59%,#033464_98%)] text-white"
+										: "bg-white text-[#1d1d20] border border-[#1d1d20]"
+								} hover:opacity-90 transition-all duration-100`}
+								onClick={() => {
+									setTimeout(() => {
+										document
+											.getElementById("card-job-section")
+											?.scrollIntoView({
+												behavior: "smooth",
+												block: "start",
+											});
 									});
-								});
-								setInputMethod("template");
-							}}
-						>
-							<ClipboardIcon className="mr-2 h-5 w-5" />
-							<span className="font-['Nunito',Helvetica] font-semibold text-[1.1rem]">
-								Use Template
-							</span>
-						</Button>
-					</div>
+									setInputMethod("template");
+								}}
+								disabled={isPreparingInterview}
+							>
+								<ClipboardIcon className="mr-2 h-5 w-5" />
+								<span className="font-['Nunito',Helvetica] font-semibold text-[1.1rem]">
+									Use Template
+								</span>
+							</Button>
+						</div>
 
-					{/* Divider */}
-					<div className="border-t border-gray-300 mb-4"></div>
+						{/* Divider */}
+						<div className="border-t border-gray-300 mb-4"></div>
 
-					{/* Custom Job Description Input */}
-					{inputMethod === "custom" && (
-						<CustomJobDescription
-							jobDescription={jobDescription}
-							setJobDescription={setJobDescription}
-							handleStartInterview={handleStartInterview}
-						/>
-					)}
+						{/* Custom Job Description Input */}
+						{inputMethod === "custom" && (
+							<CustomJobDescription
+								jobDescription={jobDescription}
+								setJobDescription={setJobDescription}
+								handleStartInterview={handleStartInterview}
+							/>
+						)}
 
-					{/* Template Selection */}
-					{inputMethod === "template" && (
-						<TemplateSelection
-							jobDescription={jobDescription}
-							templates={templates}
-							selectedTemplate={selectedTemplate}
-							handleTemplateSelect={handleTemplateSelect}
-							setSelectedCategory={setSelectedCategory}
-							selectedCategory={selectedCategory}
-							count={count}
-							setCount={setCount}
-							handleStartInterview={handleStartInterview}
-						/>
-					)}
-				</CardContent>
-			</Card>
-		</motion.div>
+						{/* Template Selection */}
+						{inputMethod === "template" && (
+							<TemplateSelection
+								jobDescription={jobDescription}
+								templates={templates}
+								selectedTemplate={selectedTemplate}
+								handleTemplateSelect={handleTemplateSelect}
+								setSelectedCategory={setSelectedCategory}
+								selectedCategory={selectedCategory}
+								count={count}
+								setCount={setCount}
+								handleStartInterview={handleStartInterview}
+							/>
+						)}
+					</CardContent>
+				</Card>
+			</motion.div>
+
+			<AnimatePresence>
+				{isPreparingInterview && (
+					<LoadingOverlay
+						preparationStep={preparationStep}
+						progressPercentage={progressPercentage}
+					/>
+				)}
+			</AnimatePresence>
+		</>
 	);
 };
