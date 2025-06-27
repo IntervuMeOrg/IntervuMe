@@ -1,0 +1,159 @@
+{
+  "averagePerformance": {
+    "job_title": "Full Stack Developer",
+    "total_questions": 12,
+    "overall_score": 8,
+    "mcq_score": 5,
+    "problem_solving_score": 2,
+    "mcq_questions": [
+      {
+        "type": "mcq",
+        "tags": ["React", "Frontend", "JavaScript", "Components"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["React", "Hooks", "State Management", "Frontend"],
+        "is_correct": false
+      },
+      {
+        "type": "mcq",
+        "tags": ["HTTP", "REST API", "Backend", "Web Development"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["SQL", "Database", "Backend"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["JavaScript", "Data Types", "Programming Fundamentals"],
+        "is_correct": false
+      },
+      {
+        "type": "mcq",
+        "tags": ["JavaScript", "Async Programming", "Promises", "ES6"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["CSS", "Frontend", "Styling"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["Node.js", "Backend", "JavaScript", "Server-side"],
+        "is_correct": false
+      }
+    ],
+    "problem_solving_questions": [
+      {
+        "type": "problem_solving",
+        "tags": [
+          "Algorithms",
+          "String Manipulation",
+          "Problem Solving",
+          "JavaScript"
+        ],
+        "is_correct": true
+      },
+      {
+        "type": "problem_solving",
+        "tags": ["Algorithms", "Mathematics", "Problem Solving", "Logic"],
+        "is_correct": false
+      },
+      {
+        "type": "problem_solving",
+        "tags": ["Arrays", "Data Structures", "Problem Solving", "JavaScript"],
+        "is_correct": true
+      },
+      {
+        "type": "problem_solving",
+        "tags": ["Arrays", "Data Structures", "Problem Solving", "ES6"],
+        "is_correct": false
+      }
+    ]
+  },
+  "poorPerformance": {
+    "job_title": "Frontend Developer",
+    "total_questions": 8,
+    "overall_score": 1,
+    "mcq_score": 0,
+    "problem_solving_score": 1,
+    "mcq_questions": [
+      {
+        "type": "mcq",
+        "tags": ["HTML", "Frontend", "Web Development"],
+        "is_correct": false
+      },
+      {
+        "type": "mcq",
+        "tags": ["CSS", "Layout", "Frontend"],
+        "is_correct": false
+      },
+      {
+        "type": "mcq",
+        "tags": ["JavaScript", "Variables", "Syntax"],
+        "is_correct": false
+      }
+    ],
+    "problem_solving_questions": [
+      {
+        "type": "problem_solving",
+        "tags": ["Basic Programming", "Functions", "JavaScript"],
+        "is_correct": true
+      },
+      {
+        "type": "problem_solving",
+        "tags": ["String Processing", "Algorithms", "JavaScript"],
+        "is_correct": false
+      }
+    ]
+  },
+  "excellentPerformance": {
+    "job_title": "Senior Full Stack Developer",
+    "total_questions": 10,
+    "overall_score": 5,
+    "mcq_score": 3,
+    "problem_solving_score": 2,
+    "mcq_questions": [
+      {
+        "type": "mcq",
+        "tags": ["Algorithms", "Complexity Analysis", "Data Structures"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["Design Patterns", "State Management", "Architecture"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["API Design", "REST", "GraphQL", "Backend"],
+        "is_correct": true
+      }
+    ],
+    "problem_solving_questions": [
+      {
+        "type": "problem_solving",
+        "tags": [
+          "Dynamic Programming",
+          "Algorithms",
+          "Advanced Problem Solving"
+        ],
+        "is_correct": true
+      },
+      {
+        "type": "problem_solving",
+        "tags": [
+          "System Design",
+          "Rate Limiting",
+          "Architecture",
+          "Scalability"
+        ],
+        "is_correct": true
+      }
+    ]
+  }
+}

@@ -5,6 +5,7 @@ import {
 
 import { StatusCodes } from "http-status-codes";
 import { aiService } from "./ai.service";
+import { AssessmentResults } from "./types";
 
 export const aiController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);
@@ -12,14 +13,15 @@ export const aiController: FastifyPluginAsyncTypebox = async (app) => {
   app.post("/test", TestRequest, async (request, reply) => {
     const jobDescription = (request.body as { jobDescription: string })
       .jobDescription;
+    const modelName = (request.body as { modelName: string }).modelName;
     const keywordOutput = JSON.parse(
-      await aiService.getKeywords(jobDescription, "deepseek-r1")
+      await aiService.getKeywords(jobDescription, modelName)
     );
 
     const langs = keywordOutput.programming_languages;
 
     const mcqAllocOutput = JSON.parse(
-      await aiService.getMcqAlloc(jobDescription, langs, 5, "deepseek-r1")
+      await aiService.getMcqAlloc(jobDescription, langs, 5, modelName)
     );
 
     const jobParsedSkills = ["Python", "SQL", "Machine Learning"];
@@ -58,7 +60,7 @@ export const aiController: FastifyPluginAsyncTypebox = async (app) => {
       "Critical Thinking",
     ];
     const similarityOutput = JSON.parse(
-      await aiService.getSimilarity(jobParsedSkills, categories, "deepseek-r1")
+      await aiService.getSimilarity(jobParsedSkills, categories, modelName)
     );
 
     return {
@@ -68,12 +70,22 @@ export const aiController: FastifyPluginAsyncTypebox = async (app) => {
       similarityOutput,
     };
   });
-};
+
+  app.post("/feedback", FeedbackRequest, async (request, reply) => {
+    const { modelName, assessmentResults } = request.body as {
+      modelName: string;
+      assessmentResults: AssessmentResults;
+    };
+    const feedback = await aiService.getFeedback(assessmentResults, modelName);
+    return feedback;
+  });
+};  
 
 const TestRequest = {
   schema: {
     body: Type.Object({
       jobDescription: Type.String(),
+      modelName: Type.String(),
     }),
     response: {
       [StatusCodes.OK]: Type.Object({
@@ -83,5 +95,14 @@ const TestRequest = {
         similarityOutput: Type.Any(),
       }),
     },
+  },
+};
+
+const FeedbackRequest = {
+  schema: {
+    body: Type.Object({
+      assessmentResults: Type.Any(),
+      modelName: Type.String(),
+    }),
   },
 };

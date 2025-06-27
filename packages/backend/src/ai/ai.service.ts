@@ -1,36 +1,71 @@
 import { extractJson } from "./utils";
-import { keywordPrompt, mcqAllocPrompt, similarityPrompt } from "./prompts";
+import {
+  feedbackPrompt,
+  keywordPrompt,
+  mcqAllocPrompt,
+  similarityPrompt,
+  simplifyAssessmentResults,
+} from "./prompts";
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
+import { AssessmentResults, FeedbackResponse } from "./types";
 
 // Model configuration
 const MODEL_CONFIGS = {
   // OpenAI models
   "gpt-4o": {
     provider: "openai",
-    baseURL: "https://api.openai.com/v1",
+    baseURL: process.env.OPENAI_BASE_URL,
     apiKey: process.env.OPENAI_API_KEY,
     model: "gpt-4o",
   },
   "gpt-4o-mini": {
     provider: "openai",
-    baseURL: "https://api.openai.com/v1",
+    baseURL: process.env.OPENAI_BASE_URL,
     apiKey: process.env.OPENAI_API_KEY,
     model: "gpt-4o-mini",
   },
   // OpenRouter/DeepSeek models
   "deepseek-r1": {
     provider: "openrouter",
-    baseURL: "https://openrouter.ai/api/v1",
+    baseURL: process.env.OPENROUTER_BASE_URL,
     apiKey: process.env.OPENROUTER_API_KEY,
     model: "deepseek/deepseek-r1:free",
+  },
+
+  "gemini-2.5-flash": {
+    provider: "google",
+    baseURL: process.env.GEMINI_BASE_URL,
+    apiKey: process.env.GEMINI_API_KEY,
+    model: "gemini-2.5-flash",
+  },
+
+  "gemini-2.5-flash-lite": {
+    provider: "google",
+    baseURL: process.env.GEMINI_BASE_URL,
+    apiKey: process.env.GEMINI_API_KEY,
+    model: "gemini-2.5-flash-lite",
+  },
+
+  "gemini-2.0-flash": {
+    provider: "google",
+    baseURL: process.env.GEMINI_BASE_URL,
+    apiKey: process.env.GEMINI_API_KEY,
+    model: "gemini-2.0-flash",
+  },
+
+  "gemini-2.0-flash-lite": {
+    provider: "google",
+    baseURL: process.env.GEMINI_BASE_URL,
+    apiKey: process.env.GEMINI_API_KEY,
+    model: "gemini-2.0-flash-lite",
   },
 } as const;
 
 export const aiService = {
   async getKeywords(
     jobDescription: string,
-    modelName: keyof typeof MODEL_CONFIGS
+    modelName: string
   ): Promise<string> {
     const model = this.getModel(modelName);
     const generatedText = await generateText({
@@ -49,7 +84,7 @@ export const aiService = {
     jobDescription: string,
     langs: string[],
     numQuestions: number,
-    modelName: keyof typeof MODEL_CONFIGS
+    modelName: string
   ): Promise<string> {
     const model = this.getModel(modelName);
     const generatedText = await generateText({
@@ -67,7 +102,7 @@ export const aiService = {
   async getSimilarity(
     jobParsedSkills: string[],
     categories: string[],
-    modelName: keyof typeof MODEL_CONFIGS
+    modelName: string
   ): Promise<string> {
     const model = this.getModel(modelName);
     const generatedText = await generateText({
@@ -82,8 +117,31 @@ export const aiService = {
     return json;
   },
 
-  getModel(modelName: keyof typeof MODEL_CONFIGS) {
-    const config = MODEL_CONFIGS[modelName];
+  async getFeedback(
+    assessmentResults: AssessmentResults,
+    modelName: string
+  ): Promise<FeedbackResponse> {
+    const model = this.getModel(modelName);
+
+    // Simplify the assessment results to reduce context window
+    const simplifiedResults = simplifyAssessmentResults(assessmentResults);
+
+    const generatedText = await generateText({
+      model,
+      prompt: feedbackPrompt(simplifiedResults),
+    });
+
+    // Parse the JSON response
+    const parsedJson = extractJson(generatedText.text);
+    if (!parsedJson) {
+      throw new Error("Failed to parse feedback response as JSON");
+    }
+    const feedback = JSON.parse(parsedJson) as FeedbackResponse;
+    return feedback;
+  },
+
+  getModel(modelName: string) {
+    const config = MODEL_CONFIGS[modelName as keyof typeof MODEL_CONFIGS];
     if (!config) {
       throw new Error(`Model ${modelName} not found in configuration`);
     }
