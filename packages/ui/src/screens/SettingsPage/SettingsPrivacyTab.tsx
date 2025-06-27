@@ -2,6 +2,7 @@ import { Card, CardContent } from "../../components/ui/card";
 import { Label } from "../../components/ui/label";
 import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
 import { TabsContent } from "../../components/ui/tabs";
+import { GlobeIcon, LockIcon } from "lucide-react";
 
 type PrivacyTabProps = {
 	profileVisibility: string;
@@ -30,21 +31,44 @@ export const PrivacyTab = ({
 								onValueChange={setProfileVisibility}
 								className="flex flex-col space-y-3"
 							>
-								<div className="flex items-center space-x-3 rounded-md border border-gray-300 p-3 hover:bg-gray-100 transition-colors cursor-pointer">
-									<RadioGroupItem value="public" id="visibility-public" />
-									<Label htmlFor="visibility-public" className="cursor-pointer">
-										Public
-									</Label>
-								</div>
-								<div className="flex items-center space-x-3 rounded-md border border-gray-300 p-3 hover:bg-gray-100 transition-colors cursor-pointer">
-									<RadioGroupItem value="private" id="visibility-private" />
-									<Label
-										htmlFor="visibility-private"
-										className="cursor-pointer"
-									>
-										Private
-									</Label>
-								</div>
+												<div className="flex items-center space-x-3 rounded-md border border-gray-300 p-3 hover:bg-gray-100 transition-colors cursor-pointer">
+													<RadioGroupItem
+														value="public"
+														id="visibility-public"
+													/>
+													<Label
+														htmlFor="visibility-public"
+														className="flex items-center cursor-pointer"
+													>
+														<GlobeIcon className="h-5 w-5 mr-2 text-green-500" />
+														<div>
+															<span className="font-medium">Public</span>
+															<p className="text-sm text-gray-500">
+																Anyone can view your profile and interview
+																history
+															</p>
+														</div>
+													</Label>
+												</div>
+														<div className="flex items-center space-x-3 rounded-md border border-gray-300 p-3 hover:bg-gray-100 transition-colors cursor-pointer">
+													<RadioGroupItem
+														value="private"
+														id="visibility-private"
+													/>
+													<Label
+														htmlFor="visibility-private"
+														className="flex items-center cursor-pointer"
+													>
+														<LockIcon className="h-5 w-5 mr-2 text-red-500" />
+														<div>
+															<span className="font-medium">Private</span>
+															<p className="text-sm text-gray-500">
+																Only you can view your profile and interview
+																history
+															</p>
+														</div>
+													</Label>
+												</div>
 								<div className="flex items-center space-x-3 rounded-md border border-gray-300 p-3 hover:bg-gray-100 transition-colors cursor-pointer">
 									<RadioGroupItem value="custom" id="visibility-custom" />
 									<Label htmlFor="visibility-custom" className="cursor-pointer">
