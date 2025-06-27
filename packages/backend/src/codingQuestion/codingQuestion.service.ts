@@ -35,7 +35,7 @@ export const codingQuestionService = {
     return await codingQuestionRepository().save(codingQuestion);
   },
 
-  async get(id: string): Promise<CodingQuestionSchema | null> {
+  async getById(id: string): Promise<CodingQuestionSchema | null> {
     return await codingQuestionRepository().findOne({ where: { id } });
   },
 

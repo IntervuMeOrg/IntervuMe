@@ -31,7 +31,7 @@ export const codingQuestionController: FastifyPluginAsyncTypebox = async (
 
   app.get("/:id", getCodingQuestionRequest, async (request, reply) => {
     const { id } = request.params as GetCodingQuestion;
-    const codingQuestion = await codingQuestionService.get(id);
+    const codingQuestion = await codingQuestionService.getById(id);
     return codingQuestion;
   });
 
