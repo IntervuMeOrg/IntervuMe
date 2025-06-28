@@ -45,7 +45,7 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 			id: 3,
 			type: "problem_solving",
 			name: "Two Sum",
-			difficulty: "Medium",
+			difficulty: "Easy",
 			text: "You are given an array of integers nums and an integer target. Your task is to return the indices of any two distinct elements in the array whose sum is equal to the target. If no such pair exists, print -1. Note that there may be multiple correct answers — returning any one valid pair is acceptable.",
 			examples: [
 				{

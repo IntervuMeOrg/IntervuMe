@@ -315,7 +315,7 @@ export const QuestionContentProblemSolving = ({
 					</Card>
 				)}
 
-				{activeTab === "notes" && (
+				{/* {activeTab === "notes" && (
 					<Card className="shadow-md border border-gray-200 overflow-visible h-auto">
 						<CardContent className="p-6">
 							<h3 className="font-bold text-xl mb-4">Notes</h3>
@@ -325,9 +325,9 @@ export const QuestionContentProblemSolving = ({
 							/>
 						</CardContent>
 					</Card>
-				)}
+				)} */}
 			</div>
-			
+
 			{/* Resize Handle */}
 			<div
 				className="w-1 cursor-col-resize bg-gray-300 hover:bg-blue-400 transition-colors flex-shrink-0 relative group border-l border-r border-gray-300"
@@ -379,9 +379,7 @@ export const QuestionContentProblemSolving = ({
 						// OLD===== const isSuccess = Math.random() > 0.3; // 70% chance of success
 						const submissionCount = submissionHistory.length;
 						const isSuccess = submissionCount % 2 === 1;
-						const testCasesPassed = isSuccess
-							? 5
-							: 0 // 1-4 if failed OLD==== Math.floor(Math.random() * 4) + 1;
+						const testCasesPassed = isSuccess ? 5 : 0; // 1-4 if failed OLD==== Math.floor(Math.random() * 4) + 1;
 
 						const newSubmission = {
 							status: isSuccess ? ("success" as const) : ("error" as const),

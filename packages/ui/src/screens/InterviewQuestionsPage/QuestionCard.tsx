@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "../../components/ui/card";
 import { QuestionContentMCQ } from "./QuestionContentMCQ";
@@ -17,6 +18,20 @@ export const QuestionCard = ({
 	userAnswers,
 	setUserAnswers,
 }: QuestionCardProps) => {
+	const currentQuestion = questions[currentQuestionIndex];
+	const isProblemSolving = currentQuestion.type === "problem_solving";
+	const isMCQ = currentQuestion.type === "mcq";
+
+	const cardRef = useRef<HTMLDivElement>(null);
+
+	// Auto-scroll to top when question index changes
+	useEffect(() => {
+		if (currentQuestion.type === "mcq") {
+			cardRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+		} else if (currentQuestion.type === "problem_solving") {
+			window.scrollTo({ top: 0, behavior: "auto" });
+		}
+	}, [currentQuestionIndex, currentQuestion.type]);
 	const cardVariants = {
 		hidden: { opacity: 0, y: 20 },
 		visible: {
@@ -24,72 +39,80 @@ export const QuestionCard = ({
 			y: 0,
 			transition: {
 				duration: 0.5,
-				type: "spring" as const,
+				type: "spring" as "spring",
 				stiffness: 100,
 				damping: 15,
 			},
 		},
 	};
+
 	return (
-		<div className="flex justify-between items-center">
-			<motion.div
-				key={currentQuestionIndex}
-				initial="hidden"
-				animate="visible"
-				variants={cardVariants}
-				className="w-full mx-auto"
-			>
-				<Card
-					className={`bg-[#E8EEF2] shadow-lg border-0 overflow-hidden ${
-						questions[currentQuestionIndex].type === "problem_solving"
-							? "h-[calc(120vh-150px)] w-full"
-							: ""
+		<motion.div
+			ref={cardRef}
+			key={currentQuestionIndex}
+			initial="hidden"
+			animate="visible"
+			variants={cardVariants}
+			className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4"
+		>
+			<Card className="bg-[#E8EEF2] shadow-xl border-0 overflow-hidden">
+				<CardContent
+					className={`p-4 sm:p-6 lg:p-8 ${
+						currentQuestion.type === "problem_solving" ? "lg:pt-10" : ""
 					}`}
 				>
-					<CardContent className="p-6 flex flex-col h-full">
-						<div className="flex justify-between items-start mb-4">
-							<div>
-								<h2 className="font-['Nunito',Helvetica] font-bold text-[1.5rem] text-[#1d1d20]">
-									{questions[currentQuestionIndex].type === "problem_solving"
-										? ""
-										: `Question ${currentQuestionIndex + 1}`}
-								</h2>
-								<p className="text-sm text-gray-500">
-									{questions[currentQuestionIndex].type === "mcq"
-										? "Multiple Choice Question"
-										: ""}
-								</p>
-							</div>
-							<div className="bg-[#0667D0] text-white px-3 py-1 rounded-full text-sm font-semibold">
-								{questions[currentQuestionIndex].type === "problem_solving"
-									? ""
-									: questions[currentQuestionIndex].points + " points"}
-							</div>
+					{/* Header Section */}
+					<div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-3">
+						<div className="flex-1">
+							{!isProblemSolving && (
+								<>
+									<h2 className="font-['Nunito'] font-bold text-xl sm:text-2xl lg:text-3xl text-[#1d1d20]">
+										Question {currentQuestionIndex + 1}
+									</h2>
+									<p className="text-sm sm:text-base text-gray-600 mt-1">
+										Multiple Choice Question
+									</p>
+								</>
+							)}
 						</div>
 
-						{/* Question Content - MCQ or Problem Solving */}
-						{questions[currentQuestionIndex].type === "mcq" ? (
+						{!isProblemSolving && (
+							<div className="self-start sm:self-auto">
+								<span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-[#0667D0] text-white">
+									{currentQuestion.points} points
+								</span>
+							</div>
+						)}
+					</div>
+
+					{/* Question Content Container */}
+					<div
+						className={`${
+							isProblemSolving
+								? "min-h-[500px] lg:min-h-[600px]"
+								: "min-h-[350px] sm:min-h-[350px]"
+						}`}
+					>
+						{isMCQ ? (
 							<QuestionContentMCQ
-								questions={questions as MCQQuestion[]}
+								questions={
+									questions.filter((q) => q.type === "mcq") as MCQQuestion[]
+								}
 								userAnswers={userAnswers}
 								setUserAnswers={setUserAnswers}
 								currentQuestionIndex={currentQuestionIndex}
 							/>
 						) : (
-							<>
-								{/* Problem Solving Question Content */}
-								<QuestionContentProblemSolving
-									questions={questions as ProblemSolvingQuestion[]}
-									userAnswers={userAnswers}
-									setUserAnswers={setUserAnswers}
-									currentQuestionIndex={currentQuestionIndex}
-								/>
-							</>
+							<QuestionContentProblemSolving
+								questions={questions as ProblemSolvingQuestion[]}
+								userAnswers={userAnswers}
+								setUserAnswers={setUserAnswers}
+								currentQuestionIndex={currentQuestionIndex}
+							/>
 						)}
-						{/* Removed navigation buttons from card */}
-					</CardContent>
-				</Card>
-			</motion.div>
-		</div>
+					</div>
+				</CardContent>
+			</Card>
+		</motion.div>
 	);
 };
