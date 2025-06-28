@@ -15,27 +15,23 @@ export const OTPVerifyButton = ({
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: 10 }}
-			whileInView={{ opacity: 1, y: 0 }}
-			transition={{
-				delay: 0.6,
-				type: "spring",
-				stiffness: 120,
-				damping: 12,
-				mass: 0.8,
-			}}
+			animate={{ opacity: 1, y: 0 }}
+				transition={{ delay: 0.3, duration: 0.5 }}
 		>
 			<Button
-				className="absolute w-[422px] top-[calc(30vh+240px)] left-[61px] h-[59px] rounded-[5px] [background:linear-gradient(90deg,#0667D0_31%,#054E9D_59%,#033464_98%)] hover:opacity-90 font-['Nunito',Helvetica] font-normal text-white text-[17px] tracking-[1.02px] flex items-center justify-center"
+				className="w-full h-8 sm:h-10 lg:h-10 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
+					hover:opacity-90 rounded-md font-['Nunito'] text-sm sm:text-base tracking-wide
+					disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
 				onClick={handleVerifyOTP}
 				disabled={otp.join("").length !== 6 || isVerifying}
 			>
-				{isVerifying ? (
+				{isVerifying && (
 					<motion.div
 						animate={{ rotate: 360 }}
 						transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-						className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"
+						className="w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"
 					/>
-				) : null}
+				)}
 				{isVerifying ? "Verifying..." : "Verify & Continue"}
 			</Button>
 		</motion.div>
