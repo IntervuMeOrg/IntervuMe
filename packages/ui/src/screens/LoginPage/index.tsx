@@ -65,7 +65,7 @@ export const LoginPage = (): JSX.Element => {
 									{/* Email input */}
 									<div>
 										<Input
-											className="h-6 sm:h-8 lg:h-10 bg-[#e8eef2] rounded-md px-3 sm:px-4 text-black font-['Nunito'] shadow-md w-full text-sm sm:text-base"
+											className="h-8 sm:h-10 lg:h-10 bg-[#e8eef2] rounded-md px-3 sm:px-4 text-black font-['Nunito'] shadow-md w-full text-sm sm:text-base"
 											placeholder="Email"
 											type="email"
 										/>
@@ -74,7 +74,7 @@ export const LoginPage = (): JSX.Element => {
 									{/* Password input */}
 									<div>
 										<Input
-											className="h-6 sm:h-8 lg:h-10 bg-[#e8eef2] rounded-md px-3 sm:px-4 text-black font-['Nunito'] shadow-md w-full text-sm sm:text-base"
+											className="h-8 sm:h-10 lg:h-10 bg-[#e8eef2] rounded-md px-3 sm:px-4 text-black font-['Nunito'] shadow-md w-full text-sm sm:text-base"
 											placeholder="Password"
 											type="password"
 										/>
@@ -111,7 +111,7 @@ export const LoginPage = (): JSX.Element => {
 										transition={{ delay: 0.3, duration: 0.5 }}
 									>
 										<Button
-											className="w-full h-6 sm:h-8 lg:h-10 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
+											className="w-full h-8 sm:h-10 lg:h-10 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
                                hover:opacity-90 rounded-md font-['Nunito'] text-sm sm:text-base tracking-wide mt-5"
 											onClick={handleLogin}
 										>
@@ -123,7 +123,7 @@ export const LoginPage = (): JSX.Element => {
 									<div>
 										<Button
 											variant="outline"
-											className="w-full h-6 sm:h-8 lg:h-10 bg-[#e8eef2] hover:bg-[#d8dee2] rounded-md flex items-center justify-center gap-2 sm:gap-3 text-black
+											className="w-full h-8 sm:h-10 lg:h-10 bg-[#e8eef2] hover:bg-[#d8dee2] rounded-md flex items-center justify-center gap-2 sm:gap-3 text-black
 											overflow-hidden"
 										>
 											<img
