@@ -1,179 +1,292 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { LogOutIcon, SettingsIcon, UserIcon } from "lucide-react";
+import { LogOutIcon, SettingsIcon, UserIcon, Menu, X } from "lucide-react";
 
 type NavItem = {
-  name: string;
-  active: boolean;
-  path?: string;
-  sectionId?: string;
+	name: string;
+	active: boolean;
+	path?: string;
+	sectionId?: string;
 };
 
 type NavbarLayoutProps = {
-  children: React.ReactNode;
-  activeNavItem?: string;
-  userName?: string;
-  navItems?: NavItem[];
-  onNavItemClick?: (item: NavItem) => void;
+	children: React.ReactNode;
+	activeNavItem?: string;
+	userName?: string;
+	navItems?: NavItem[];
+	onNavItemClick?: (item: NavItem) => void;
 };
 
 export const NavbarLayout = ({
-  children,
-  activeNavItem = "Home",
-  userName = "User Name",
-  navItems = [
-    { name: "Home", active: true },
-    { name: "History", active: false },
-    { name: "Contact Us", active: false },
-    { name: "FAQ", active: false },
-  ],
-  onNavItemClick,
+	children,
+	activeNavItem = "Home",
+	userName = "User Name",
+	navItems = [
+		{ name: "Home", active: true },
+		{ name: "History", active: false },
+		{ name: "Contact Us", active: false },
+		{ name: "FAQ", active: false },
+	],
+	onNavItemClick,
 }: NavbarLayoutProps): JSX.Element => {
-  const navigate = useNavigate();
+	const navigate = useNavigate();
+	const [isOpen, setIsOpen] = useState(false);
 
-  // Update active state based on activeNavItem prop
-  const updatedNavItems = navItems.map((item) => ({
-    ...item,
-    active: item.name === activeNavItem,
-  }));
+	// Update active state based on activeNavItem prop
+	const updatedNavItems = navItems.map((item) => ({
+		...item,
+		active: item.name === activeNavItem,
+	}));
 
-  // Default navigation handler if none provided
-  const handleNavItemClick = (item: NavItem) => {
-    if (onNavItemClick) {
-      onNavItemClick(item);
-      return;
-    }
+	// Get user initials
+	const getUserInitials = () => {
+		const names = userName.split(" ");
+		return names.length > 1
+			? `${names[0].charAt(0)}${names[1].charAt(0)}`
+			: userName.charAt(0);
+	};
 
-    // Default navigation behavior
-    if (item.name === "History") {
-      navigate("/history");
-    } else if (item.name === "Contact Us") {
-      navigate("/app");
-      setTimeout(() => {
-        document.getElementById("contact-section")?.scrollIntoView({
-          block: "nearest",
-        });
-      }, 100);
-    } else if (item.name === "FAQ") {
-      navigate("/app");
-      setTimeout(() => {
-        document.getElementById("faq-section")?.scrollIntoView({
-          block: "nearest",
-        });
-      }, 100);
-    } else if (item.name === "Home") {
-      window.scrollTo({
-        top: 0,
-      });
-      navigate("/app");
-    }
-  };
+	// Default navigation handler
+	const handleNavItemClick = (item: NavItem) => {
+		setIsOpen(false);
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      {/* Navigation bar */}
-      <motion.header className="sticky top-0 z-[999] w-full h-[8vh]">
-        <nav className="w-full h-[8vh] bg-[#1d1d20] shadow-md">
-          <div className="absolute inset-0 [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18]" />
-          <div className="relative h-full flex items-center justify-between px-[3vw]">
-            {/* Logo */}
-            <div
-              className="[text-shadow:0px_4px_4px_#00000040] font-['Nunito',Helvetica] font-extrabold text-white text-[1.5vw] text-center tracking-[0.05em] cursor-pointer"
-              onClick={() => {
-                window.scrollTo(0, 0);
-                navigate("/app");
-              }}
-            >
-              INTERVU ME
-            </div>
+		if (onNavItemClick) {
+			onNavItemClick(item);
+			return;
+		}
 
-            {/* Navigation links */}
-            <div className="flex space-x-12 gap-[4vw] mr-[80px]">
-              {updatedNavItems.map((item) => (
-                <div
-                  key={item.name}
-                  className={`font-['Nunito',Helvetica] font-semibold text-white text-[1.2vw] text-center tracking-[1.32px] ${
-                    item.active ? "underline" : "opacity-70"
-                  } cursor-pointer`}
-                  onClick={() => handleNavItemClick(item)}
-                >
-                  {item.name}
-                </div>
-              ))}
-            </div>
+		// Default navigation behavior
+		switch (item.name) {
+			case "History":
+				navigate("/history");
+				break;
+			case "Contact Us":
+				navigate("/app");
+				setTimeout(() => {
+					document.getElementById("contact-section")?.scrollIntoView({
+						block: "nearest",
+					});
+				}, 100);
+				break;
+			case "FAQ":
+				navigate("/app");
+				setTimeout(() => {
+					document.getElementById("faq-section")?.scrollIntoView({
+						block: "nearest",
+					});
+				}, 100);
+				break;
+			case "Home":
+				window.scrollTo({ top: 0 });
+				navigate("/app");
+				break;
+		}
+	};
 
-            {/* User profile button with dropdown menu */}
-            <DropdownMenu modal={false}>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  className="rounded-full h-[6vh] w-[7vh] [background:linear-gradient(90deg,#0667D0_31%,#054E9D_59%,#033464_98%)] hover:opacity-90 flex items-center justify-center relative overflow-hidden group"
-                  title={userName}
-                >
-                  <span className="font-['Nunito',Helvetica] font-black text-white text-[1.2vw] text-center z-10">
-                    {userName.split(" ").length > 1
-                      ? `${userName.split(" ")[0].charAt(0)}${userName
-                          .split(" ")[1]
-                          .charAt(0)}`
-                      : userName.charAt(0)}
-                  </span>
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-white transition-opacity duration-300"></div>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-[200px] bg-[#1d1d20] shadow-md border-[#333] text-[#e8eef2] mt-[10px]"
-              >
-                <div className="px-2 py-2 text-sm font-medium border-b border-[#333] mb-1">
-                  {userName}
-                </div>
-                <DropdownMenuItem
-                  className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2]"
-                  onClick={() => {
-                    window.scrollTo(0, 0);
-                    navigate("/profile");
-                  }}
-                >
-                  <UserIcon className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2]"
-                  onClick={() => {
-                    window.scrollTo(0, 0);
-                    navigate("/settings");
-                  }}
-                >
-                  <SettingsIcon className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-[#333]" />
-                <DropdownMenuItem
-                  className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2]"
-                  onClick={() => {
-                    window.scrollTo(0, 0);
-                    navigate("/");
-                  }}
-                >
-                  <LogOutIcon className="mr-2 h-4 w-4" />
-                  <span>Logout</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </nav>
-      </motion.header>
+	const handleLogoClick = () => {
+		window.scrollTo({ top: 0 });
+		navigate("/app");
+		setIsOpen(false);
+	};
 
-      {/* Page content */}
-      <div className="flex-1">{children}</div>
-    </div>
-  );
+	const handleProfileAction = (action: string) => {
+		window.scrollTo({ top: 0 });
+		navigate(action);
+	};
+
+	return (
+		<div className="min-h-screen flex flex-col">
+			{/* Navigation bar */}
+			<motion.header className="sticky top-0 z-50 w-full">
+				<nav className="bg-[#1d1d20] shadow-lg">
+					{/* Gradient overlay */}
+					<div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent pointer-events-none" />
+
+					<div className="relative">
+						<div className="max-w-7xl 2xl:max-w-full mx-auto px-2 sm:px-4 lg:px-6 xl:px-8">
+							<div className="flex items-center justify-between h-12">
+								{/* Logo - flex-1 for equal space */}
+								<div className="flex-1">
+									<div
+										onClick={handleLogoClick}
+										className="inline-block cursor-pointer"
+									>
+										<h1 className="font-['Nunito'] font-extrabold text-white text-sm sm:text-base lg:text-lg tracking-wider drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+											INTERVU ME
+										</h1>
+									</div>
+								</div>
+
+								{/* Desktop Navigation - centered */}
+								<div className="hidden md:flex items-center justify-center space-x-8 lg:space-x-12 2xl:space-x-32">
+									{updatedNavItems.map((item) => (
+										<button
+											key={item.name}
+											onClick={() => handleNavItemClick(item)}
+											className={`font-['Nunito'] font-semibold text-xs lg:text-sm xl:text-base tracking-wide transition-all duration-200
+                        ${
+													item.active
+														? "text-white underline underline-offset-4"
+														: "text-white/70 hover:text-white"
+												}`}
+										>
+											{item.name}
+										</button>
+									))}
+								</div>
+
+								{/* Desktop User Profile - flex-1 and justify-end */}
+								<div className="hidden md:flex flex-1 justify-end items-center">
+									<DropdownMenu modal={false}>
+										<DropdownMenuTrigger asChild>
+											<Button
+												className="rounded-full h-10 w-10 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
+                                 hover:opacity-90 flex items-center justify-center relative overflow-hidden group
+                                 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+												title={userName}
+											>
+												<span className="font-['Nunito'] font-black text-white text-sm z-10">
+													{getUserInitials()}
+												</span>
+												<div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-white transition-opacity duration-300" />
+											</Button>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent
+											align="end"
+											className="w-56 bg-[#1d1d20] shadow-md border-[#333] text-[#e8eef2] mt-2"
+										>
+											<div className="px-3 py-2 text-sm font-medium border-b border-[#333] mb-1">
+												{userName}
+											</div>
+											<DropdownMenuItem
+												className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2] text-[#e8eef2]"
+												onClick={() => handleProfileAction("/profile")}
+											>
+												<UserIcon className="mr-2 h-4 w-4" />
+												<span>Profile</span>
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2] text-[#e8eef2]"
+												onClick={() => handleProfileAction("/settings")}
+											>
+												<SettingsIcon className="mr-2 h-4 w-4" />
+												<span>Settings</span>
+											</DropdownMenuItem>
+											<DropdownMenuSeparator className="bg-[#333]" />
+											<DropdownMenuItem
+												className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2] text-[#e8eef2]"
+												onClick={() => handleProfileAction("/")}
+											>
+												<LogOutIcon className="mr-2 h-4 w-4" />
+												<span>Logout</span>
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
+								</div>
+
+								{/* Mobile menu button */}
+								<div className="md:hidden flex items-center space-x-2">
+									{/* Mobile User Profile */}
+									<DropdownMenu modal={false}>
+										<DropdownMenuTrigger asChild>
+											<Button
+												className="rounded-full h-9 w-9 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
+                                 hover:opacity-90 flex items-center justify-center relative overflow-hidden group"
+												title={userName}
+											>
+												<span className="font-['Nunito'] font-black text-white text-xs z-10">
+													{getUserInitials()}
+												</span>
+											</Button>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent
+											align="end"
+											className="w-48 bg-[#1d1d20] shadow-md border-[#333] text-[#e8eef2] mt-2"
+										>
+											<div className="px-3 py-2 text-xs font-medium border-b border-[#333] mb-1">
+												{userName}
+											</div>
+											<DropdownMenuItem
+												className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2] text-[#e8eef2] text-sm"
+												onClick={() => handleProfileAction("/profile")}
+											>
+												<UserIcon className="mr-2 h-3 w-3" />
+												<span>Profile</span>
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2] text-[#e8eef2] text-sm"
+												onClick={() => handleProfileAction("/settings")}
+											>
+												<SettingsIcon className="mr-2 h-3 w-3" />
+												<span>Settings</span>
+											</DropdownMenuItem>
+											<DropdownMenuSeparator className="bg-[#333]" />
+											<DropdownMenuItem
+												className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2] text-[#e8eef2] text-sm"
+												onClick={() => handleProfileAction("/")}
+											>
+												<LogOutIcon className="mr-2 h-3 w-3" />
+												<span>Logout</span>
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
+
+									{/* Hamburger Menu */}
+									<button
+										onClick={() => setIsOpen(!isOpen)}
+										className="p-2 rounded-md text-white hover:bg-white/10 
+                             focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+										aria-label="Toggle menu"
+									>
+										{isOpen ? (
+											<X className="h-6 w-6" />
+										) : (
+											<Menu className="h-6 w-6" />
+										)}
+									</button>
+								</div>
+							</div>
+						</div>
+
+						{/* Mobile menu */}
+						<motion.div
+							initial={false}
+							animate={{ height: isOpen ? "auto" : 0 }}
+							transition={{ duration: 0.2 }}
+							className="md:hidden overflow-hidden bg-[#1d1d20] border-t border-white/10"
+						>
+							<div className="px-4 py-4 space-y-2">
+								{updatedNavItems.map((item) => (
+									<button
+										key={item.name}
+										onClick={() => handleNavItemClick(item)}
+										className={`block w-full text-left px-3 py-3 rounded-md font-['Nunito'] font-semibold text-base
+                      ${
+												item.active
+													? "text-white bg-white/10"
+													: "text-white/70 hover:text-white hover:bg-white/5"
+											} transition-colors duration-200`}
+									>
+										{item.name}
+									</button>
+								))}
+							</div>
+						</motion.div>
+					</div>
+				</nav>
+			</motion.header>
+
+			{/* Page content */}
+			<main className="flex-1">{children}</main>
+		</div>
+	);
 };
