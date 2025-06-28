@@ -1,81 +1,104 @@
 import { motion } from "framer-motion";
 
+type Step = {
+	id: number;
+	title: string;
+	image: string;
+	alt: string;
+};
+
 type HeroSectionProps = {
 	homeSectionRef: React.RefObject<HTMLElement>;
-	steps: { id: number; title: string; image: string; alt: string }[];
+	steps: Step[];
 };
+
 export const HeroSection = ({ homeSectionRef, steps }: HeroSectionProps) => {
 	return (
-		<div className="bg-white w-full min-h-screen relative z-0">
+		<section
+			ref={homeSectionRef}
+			className="relative min-h-screen w-full bg-white overflow-hidden flex items-center"
+		>
 			{/* Background image */}
 			<img
-				className="h-[100vh] object-cover w-full absolute top-0 left-0"
-				alt="Rectangle"
+				className="absolute inset-0 h-full w-full object-cover"
+				alt="Background"
 				src="/rectangle.png"
 			/>
 
 			{/* Main content */}
-			<motion.section
+			<motion.div
 				initial={{ opacity: 0, y: 20 }}
-				ref={homeSectionRef}
 				whileInView={{ opacity: 1, y: 0 }}
-				viewport={{ once: true, margin: "-20% 0px" }}
-				transition={{
-					type: "spring",
-					stiffness: 90,
-					damping: 15,
-					mass: 0.5,
-					delay: 0.3,
-				}}
-				className="relative z-10 pt-[15vh] flex flex-col items-center pb-[2vh] h-[75vh]"
+				viewport={{ once: true }}
+				transition={{ duration: 0.6, ease: "easeOut" }}
+				className="relative z-10 w-full py-16 sm:py-20"
 			>
-				{/* Headline */}
-				<div className="text-center mb-[5vh]">
-					<h1 className="font-['Nunito',Helvetica] font-black text-[#1d1d20] text-[80px] text-center tracking-[0] leading-[73.2px] [text-shadow:0_4px_4px_rgba(0,0,0,0.3)]">
-						Mock Interview Assistant
-						<br />
-						powered by AI
-					</h1>
-				</div>
-
-				{/* Process steps cards */}
-				<div className="flex justify-center gap-9 px-[5%] w-full pt-[55px]">
-					{steps.map((step) => (
-						<motion.div
-							key={step.id}
-							className="flex flex-col items-center relative h-[41vh]"
-							whileHover={{
-								scale: 1.05,
-								transition: { duration: 0.3 },
-							}}
-						>
-							{/* Step image */}
-							<motion.img
-								className="w-[clamp(150px,55vw,380px)] h-[clamp(180px,35vh,3200px)] object-contain"
-								alt={step.alt}
-								src={step.image}
-								whileHover={{ y: -5 }}
-								transition={{ type: "spring", stiffness: 300 }}
-							/>
-							{/* Step title bar */}
-							<motion.div
-								className="absolute bottom-[14px] w-[340px] h-[48px] bg-[#1d1d20] rounded-[5px] shadow-lg shadow-black/50"
-								whileHover={{
-									boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.4)",
-									y: -2,
-								}}
+				{/* Container wrapper */}
+				<div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
+					<div className="flex flex-col items-center">
+						{/* Headline - Responsive margins */}
+						<div className="text-center mb-8 sm:mb-12 md:mb-16 lg:mb-20 -mt-1 sm:-mt-2 md:-mt-4 lg:-mt-8">
+							<h1
+								className="font-['Nunito'] font-black text-[#1d1d20] 
+                         text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 
+                         leading-tight tracking-tight drop-shadow-lg [text-shadow:0_4px_4px_rgba(0,0,0,0.3)]"
 							>
-								<div className="absolute inset-0 [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18] z-[1]" />
-								<div className="relative flex items-center px-1 h-full">
-									<div className="font-['Nunito',Helvetica] font-semibold text-[#e8eef2] text-[16px] px-2">
-										{step.title}
-									</div>
-								</div>
-							</motion.div>
-						</motion.div>
-					))}
+								Mock Interview Assistant
+								<br />
+								powered by AI
+							</h1>
+						</div>
+
+						{/* Process steps cards */}
+						<div className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 w-full">
+							{steps.map((step) => (
+								<motion.div
+									key={step.id}
+									className="relative flex flex-col items-center w-full sm:w-auto max-w-[200px] sm:max-w-none"
+									whileHover={{
+										scale: 1.05,
+										transition: { duration: 0.3 },
+									}}
+								>
+									{/* Step image - Progressive sizing */}
+									<motion.img
+										className="w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 
+                          h-20 sm:h-28 md:h-32 lg:h-40 xl:h-48 
+                          object-contain mb-6 sm:mb-8 md:mb-10 lg:mb-12"
+										alt={step.alt}
+										src={step.image}
+										whileHover={{ y: -5 }}
+										transition={{ type: "spring", stiffness: 300 }}
+									/>
+
+									{/* Step title bar - Progressive sizing */}
+									<motion.div
+										className="absolute bottom-0
+                          w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 
+                          h-7 sm:h-8 md:h-9 lg:h-10 
+                          bg-[#1d1d20] rounded-md shadow-lg shadow-black/50
+                          overflow-hidden"
+										whileHover={{
+											boxShadow: "0 2.5rem 3rem -1.5rem rgba(0, 0, 0, 0.4)",
+										}}
+									>
+										<div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-md" />
+										<div className="relative h-full flex items-center justify-center px-2">
+											<h3
+												className="font-['Nunito'] font-semibold text-[#e8eef2] 
+                                 text-xs sm:text-xs md:text-sm lg:text-sm 
+                                 text-center leading-tight"
+											>
+												{step.title}
+											</h3>
+										</div>
+									</motion.div>
+								</motion.div>
+							))}
+						</div>
+					</div>
 				</div>
-			</motion.section>
-		</div>
+			</motion.div>
+		</section>
 	);
 };
