@@ -2,9 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { OTPFormPanel } from "./OTPFormPanel";
-import { OTPInputFields } from "./OTPInputFields";
-import { OTPTimerResend } from "./OTPTimerResend";
-import { OTPVerifyButton } from "./OTPVerifyButton";
 
 export const OTPVerificationPage = (): JSX.Element => {
 	const navigate = useNavigate();
