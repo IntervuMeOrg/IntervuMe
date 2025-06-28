@@ -1,42 +1,29 @@
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 
 export const HistoyHeader = () => {
-	return (
-		<motion.section
-			initial={{ opacity: 0, y: 20 }}
-			whileInView={{ opacity: 1, y: 0 }}
-			viewport={{ once: true, margin: "-10% 0px" }}
-			transition={{
-				type: "spring",
-				stiffness: 90,
-				damping: 15,
-				mass: 0.5,
-				delay: 0.1,
-			}}
-			className="w-full mb-8"
-		>
-			{/* Back button */}
-			{/* <div className="self-start mb-6">
-							<Button
-								className="bg-transparent hover:bg-white/10 text-[#1d1d20] flex items-center gap-2"
-								onClick={() => navigate("/main-page-after-login")}
-							>
-								<ArrowLeftIcon className="h-4 w-4" />
-								<span className="font-['Nunito',Helvetica] font-medium">
-									Back to Dashboard
-								</span>
-							</Button>
-						</div> */}
-
-			{/* Page Title */}
-			<motion.h1
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ delay: 0.2 }}
-				className="font-['Nunito',Helvetica] font-black text-[#1d1d20] text-[40px] mb-8 text-center"
-			>
-				Your Interview History
-			</motion.h1>
-		</motion.section>
-	);
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-10% 0px" }}
+      transition={{
+        type: "spring",
+        stiffness: 90,
+        damping: 15,
+        mass: 0.5,
+        delay: 0.1,
+      }}
+      className="w-full mb-8 sm:mb-10 md:mb-12"
+    >
+      {/* Page Title */}
+      <motion.h1
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="font-['Nunito'] font-black text-[#1d1d20] text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-6 sm:mb-8 text-center leading-tight"
+      >
+        Your Interview History
+      </motion.h1>
+    </motion.section>
+  );
 };

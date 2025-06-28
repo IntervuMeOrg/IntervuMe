@@ -2,111 +2,120 @@ import { motion } from "framer-motion";
 import { CalendarIcon, ClockIcon, BarChart4Icon } from "lucide-react";
 
 type interviewHistory = {
-	id: number;
-	title: string;
-	date: string;
-	time: string;
-	duration: string;
-	score: number;
-	questions: number;
-	skills: string[];
+  id: number;
+  title: string;
+  date: string;
+  time: string;
+  duration: string;
+  score: number;
+  questions: number;
+  skills: string[];
 };
 
 type HistoryStatsOverviewProps = {
-	interviewHistory: interviewHistory[];
+  interviewHistory: interviewHistory[];
 };
 
 export const HistoryStatsOverview = ({
-	interviewHistory,
+  interviewHistory,
 }: HistoryStatsOverviewProps) => {
-	return (
-		<motion.section
-			initial={{ opacity: 0, y: 20 }}
-			whileInView={{ opacity: 1, y: 0 }}
-			viewport={{ once: true, margin: "-10% 0px" }}
-			transition={{
-				type: "spring",
-				stiffness: 90,
-				damping: 15,
-				mass: 0.5,
-				delay: 0.1,
-			}}
-			className="grid grid-cols-3 gap-6 w-full mb-10"
-		>
-			<motion.div
-				initial={{ opacity: 0, y: 20 }}
-				whileInView={{ opacity: 1, y: 0 }}
-				viewport={{ once: true }}
-				transition={{ delay: 0.2 }}
-				className="bg-[#1d1d20] rounded-lg p-6 shadow-lg relative overflow-hidden group"
-				whileHover={{ y: -5, transition: { duration: 0.2 } }}
-			>
-				<div className="absolute inset-0 [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18]"></div>
-				<div className="flex items-center gap-3 mb-2 relative z-10">
-					<CalendarIcon className="h-5 w-5 text-[#e8eef2]" />
-					<h3 className="font-['Nunito',Helvetica] font-bold text-[#e8eef2] text-xl">
-						Total Interviews
-					</h3>
-				</div>
-				<p className="font-['Nunito',Helvetica] text-[#e8eef2] text-3xl font-bold relative z-10">
-					{interviewHistory.length}
-				</p>
-				<p className="font-['Nunito',Helvetica] text-[#e8eef2] text-sm opacity-70 mt-2 relative z-10">
-					Last 30 days
-				</p>
-			</motion.div>
-			<motion.div
-				initial={{ opacity: 0, y: 20 }}
-				whileInView={{ opacity: 1, y: 0 }}
-				viewport={{ once: true }}
-				transition={{ delay: 0.3 }}
-				className="bg-[#1d1d20] rounded-lg p-6 shadow-lg relative overflow-hidden group"
-				whileHover={{ y: -5, transition: { duration: 0.2 } }}
-			>
-				<div className="absolute inset-0 [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18]"></div>
-				<div className="flex items-center gap-3 mb-2 relative z-10">
-					<BarChart4Icon className="h-5 w-5 text-[#e8eef2]" />
-					<h3 className="font-['Nunito',Helvetica] font-bold text-[#e8eef2] text-xl">
-						Average Score
-					</h3>
-				</div>
-				<p className="font-['Nunito',Helvetica] text-[#e8eef2] text-3xl font-bold relative z-10">
-					{Math.round(
-						interviewHistory.reduce(
-							(acc, interview) => acc + interview.score,
-							0
-						) / interviewHistory.length
-					)}
-					%
-				</p>
-				<p className="font-['Nunito',Helvetica] text-[#e8eef2] text-sm opacity-70 mt-2 relative z-10">
-					Across all interviews
-				</p>
-			</motion.div>
-			{/*						<div className="[background:linear-gradient(90deg,#0667D0_31%,#054E9D_59%,#033464_98%)] rounded-lg p-6 shadow-lg relative overflow-hidden group">
-			 */}
-			<motion.div
-				initial={{ opacity: 0, y: 20 }}
-				whileInView={{ opacity: 1, y: 0 }}
-				viewport={{ once: true }}
-				transition={{ delay: 0.4 }}
-				className="bg-[#1d1d20] rounded-lg p-6 shadow-lg relative overflow-hidden group"
-				whileHover={{ y: -5, transition: { duration: 0.2 } }}
-			>
-				<div className="absolute inset-0 [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18]"></div>
-				<div className="flex items-center gap-3 mb-2 relative z-10">
-					<ClockIcon className="h-5 w-5 text-[#e8eef2]" />
-					<h3 className="font-['Nunito',Helvetica] font-bold text-[#e8eef2] text-xl">
-						Total Practice Time
-					</h3>
-				</div>
-				<p className="font-['Nunito',Helvetica] text-[#e8eef2] text-3xl font-bold relative z-10">
-					3.3 hrs
-				</p>
-				<p className="font-['Nunito',Helvetica] text-[#e8eef2] text-sm opacity-70 mt-2 relative z-10">
-					Across all sessions
-				</p>
-			</motion.div>
-		</motion.section>
-	);
+  // Calculate total practice time from duration strings
+  const calculateTotalTime = () => {
+    const totalMinutes = interviewHistory.reduce((acc, interview) => {
+      const minutes = parseInt(interview.duration.split(' ')[0]);
+      return acc + minutes;
+    }, 0);
+    
+    const hours = Math.floor(totalMinutes / 60);
+    const remainingMinutes = totalMinutes % 60;
+    
+    if (hours > 0) {
+      return `${hours}.${Math.round((remainingMinutes / 60) * 10)} hrs`;
+    }
+    return `${totalMinutes} min`;
+  };
+
+  const stats = [
+    {
+      icon: <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#e8eef2] flex-shrink-0" />,
+      title: "Total Interviews",
+      value: interviewHistory.length.toString(),
+      subtitle: "Last 30 days",
+      delay: 0.2,
+    },
+    {
+      icon: <BarChart4Icon className="h-4 w-4 sm:h-5 sm:w-5 text-[#e8eef2] flex-shrink-0" />,
+      title: "Average Score",
+      value: `${Math.round(
+        interviewHistory.reduce((acc, interview) => acc + interview.score, 0) /
+          interviewHistory.length
+      )}%`,
+      subtitle: "Across all interviews",
+      delay: 0.3,
+    },
+    {
+      icon: <ClockIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#e8eef2] flex-shrink-0" />,
+      title: "Total Practice Time",
+      value: calculateTotalTime(),
+      subtitle: "Across all sessions",
+      delay: 0.4,
+    },
+  ];
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-10% 0px" }}
+      transition={{
+        type: "spring",
+        stiffness: 90,
+        damping: 15,
+        mass: 0.5,
+        delay: 0.1,
+      }}
+      className="w-full mb-8 sm:mb-10 md:mb-12"
+    >
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        {stats.map((stat, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: stat.delay }}
+            className="bg-[#1d1d20] rounded-lg p-4 sm:p-5 md:p-6 shadow-lg relative overflow-hidden group"
+            whileHover={{ 
+              y: -5, 
+              boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+              transition: { duration: 0.2 } 
+            }}
+          >
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent pointer-events-none" />
+            
+            <div className="relative z-10">
+              {/* Header with icon and title */}
+              <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                {stat.icon}
+                <h3 className="font-['Nunito'] font-bold text-[#e8eef2] text-sm sm:text-base md:text-lg lg:text-xl leading-tight">
+                  {stat.title}
+                </h3>
+              </div>
+              
+              {/* Value */}
+              <p className="font-['Nunito'] text-[#e8eef2] text-xl sm:text-2xl md:text-3xl font-bold mb-2">
+                {stat.value}
+              </p>
+              
+              {/* Subtitle */}
+              <p className="font-['Nunito'] text-[#e8eef2] text-xs sm:text-sm opacity-70">
+                {stat.subtitle}
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </motion.section>
+  );
 };
