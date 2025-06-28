@@ -1,7 +1,12 @@
-import { Card, CardContent } from "../../components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { Input } from "../../components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "../../components/ui/select";
 import { Button } from "../../components/ui/button";
 import { motion } from "framer-motion";
 
@@ -16,71 +21,84 @@ export const RegistrationForm = ({
 	genders,
 	months,
 }: RegistrationFormProps) => {
-	// Navigation hook for routing
 	const navigate = useNavigate();
+
 	return (
-		<>
-			<div className="absolute w-[90%] max-w-[1200px] left-[300px] top-[22vh]">
-				<div className="flex flex-wrap gap-4 mb-4">
-					{/* First Name field */}
-					<Card className="w-[calc(35%-6px)] h-[45px] border-0 pt-[20px]">
-						<CardContent className="p-0">
+		<div className="flex-1 p-6 sm:p-8 lg:p-8 2xl:p-8 2xl:pt-0">
+			{/* User Details title */}
+			<motion.div
+				initial={{ opacity: 0, y: -10 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ delay: 0.4, duration: 0.5 }}
+				className="max-w-4xl mx-auto mb-5"
+			>
+				<h2 className="font-['Nunito'] font-bold text-[#e8eef2] text-sm sm:text-base lg:text-lg tracking-wide">
+					User Details
+				</h2>
+				<p className="text-sm text-[#c7d3dd] font-['Nunito'] opacity-80 mt-0.5">
+					Please fill in your basic information to continue
+				</p>
+			</motion.div>
+
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ delay: 0.2, duration: 0.6 }}
+				className="max-w-4xl mx-auto"
+			>
+				<form className="space-y-6 sm:space-y-8">
+					{/* Name fields - responsive grid */}
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+						<div>
 							<Input
-								className="h-[45px] bg-[#e8eef2] rounded-[5px] px-4 font-['Nunito',Helvetica] text-sm"
+								className="h-10 sm:h-12 bg-[#e8eef2] rounded-md px-4 font-['Nunito'] text-sm sm:text-base shadow-sm"
 								placeholder="First Name"
+								type="text"
 							/>
-						</CardContent>
-					</Card>
-
-					{/* Last Name field */}
-					<Card className="w-[calc(35%-6px)] h-[45px] border-0 pt-[20px]">
-						<CardContent className="p-0">
+						</div>
+						<div>
 							<Input
-								className="h-[45px] bg-[#e8eef2] rounded-[5px] px-4 font-['Nunito',Helvetica] text-sm"
+								className="h-10 sm:h-12 bg-[#e8eef2] rounded-md px-4 font-['Nunito'] text-sm sm:text-base shadow-sm"
 								placeholder="Last Name"
+								type="text"
 							/>
-						</CardContent>
-					</Card>
+						</div>
+					</div>
 
-					{/* Email field */}
-					<Card className="w-[calc(71%)] h-[45px] mt-2 border-0 pt-[20px]">
-						<CardContent className="p-0">
-							<Input
-								className="h-[45px] bg-[#e8eef2] rounded-[5px] px-4 font-['Nunito',Helvetica] text-sm"
-								placeholder="Email"
-							/>
-						</CardContent>
-					</Card>
+					{/* Email field - full width */}
+					<div>
+						<Input
+							className="h-10 sm:h-12 bg-[#e8eef2] rounded-md px-4 font-['Nunito'] text-sm sm:text-base shadow-sm w-full"
+							placeholder="Email"
+							type="email"
+						/>
+					</div>
 
-					{/* Password field */}
-					<Card className="w-[calc(50%)] h-[45px] mt-2 border-0 pt-[20px]">
-						<CardContent className="p-0 relative">
+					{/* Password fields - responsive grid */}
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+						<div>
 							<Input
 								type="password"
-								className="h-[45px] bg-[#e8eef2] rounded-[5px] px-4 pr-12 font-['Nunito',Helvetica] text-sm"
+								className="h-10 sm:h-12 bg-[#e8eef2] rounded-md px-4 font-['Nunito'] text-sm sm:text-base shadow-sm"
 								placeholder="Password"
 							/>
-						</CardContent>
-					</Card>
-
-					{/* Confirm Password field */}
-					<Card className="w-[calc(50%)] h-[45px] mt-2 border-0 pt-[20px]">
-						<CardContent className="p-0 relative">
+						</div>
+						<div>
 							<Input
 								type="password"
-								className="h-[45px] bg-[#e8eef2] rounded-[5px] px-4 pr-12 font-['Nunito',Helvetica] text-sm"
+								className="h-10 sm:h-12 bg-[#e8eef2] rounded-md px-4 font-['Nunito'] text-sm sm:text-base shadow-sm"
 								placeholder="Confirm Password"
 							/>
-						</CardContent>
-					</Card>
+						</div>
+					</div>
 
-					{/* Two-column layout for Phone and Gender */}
-					<div className="w-full flex gap-3 mt-2 pt-[20px]">
+					{/* Phone and Gender - responsive layout */}
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
 						{/* Phone Number with country code */}
-						<div className="w-1/2 flex">
+						<div className="flex gap-2 sm:gap-3">
 							<Select defaultValue="+20">
-								<SelectTrigger className="w-[110px] h-[45px] bg-[#e8eef2] rounded-[5px] font-['Nunito',Helvetica] text-xs opacity-[0.67]">
-									<SelectValue placeholder="+20" />
+								<SelectTrigger className="w-20 sm:w-24 h-10 sm:h-12 bg-[#e8eef2] rounded-md font-['Nunito'] text-xs sm:text-sm">
+									<SelectValue />
 								</SelectTrigger>
 								<SelectContent>
 									{countryCodes.map((code) => (
@@ -90,21 +108,17 @@ export const RegistrationForm = ({
 									))}
 								</SelectContent>
 							</Select>
-
-							<Card className="w-[500px] h-[45px] ml-[10px] border-0">
-								<CardContent className="p-0">
-									<Input
-										className="h-[45px] bg-[#e8eef2] rounded-[5px] px-4 font-['Nunito',Helvetica] text-sm"
-										placeholder="Phone Number"
-									/>
-								</CardContent>
-							</Card>
+							<Input
+								className="flex-1 h-10 sm:h-12 bg-[#e8eef2] rounded-md px-4 font-['Nunito'] text-sm sm:text-base shadow-sm"
+								placeholder="Phone Number"
+								type="tel"
+							/>
 						</div>
 
 						{/* Gender field */}
-						<div className="w-1/2 h-[45px]">
+						<div>
 							<Select>
-								<SelectTrigger className="w-[150px] h-[45px] bg-[#e8eef2] rounded-[5px] font-['Nunito',Helvetica] text-sm">
+								<SelectTrigger className="h-10 sm:h-12 bg-[#e8eef2] rounded-md font-['Nunito'] text-sm sm:text-base">
 									<SelectValue placeholder="Gender" />
 								</SelectTrigger>
 								<SelectContent>
@@ -118,67 +132,67 @@ export const RegistrationForm = ({
 						</div>
 					</div>
 
-					{/* Date of Birth fields */}
-					<div className="w-full flex gap-3 mt-2">
+					{/* Date of Birth fields - responsive layout */}
+					<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
 						{/* Month */}
-						<Select>
-							<SelectTrigger className="w-[170px] h-[45px] bg-[#e8eef2] rounded-[5px] font-['Nunito',Helvetica] text-sm">
-								<SelectValue placeholder="Month" />
-							</SelectTrigger>
-							<SelectContent>
-								{months.map((month, index) => (
-									<SelectItem key={index} value={month.toLowerCase()}>
-										{month}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
+						<div>
+							<Select>
+								<SelectTrigger className="h-10 sm:h-12 bg-[#e8eef2] rounded-md font-['Nunito'] text-sm sm:text-base">
+									<SelectValue placeholder="Month" />
+								</SelectTrigger>
+								<SelectContent>
+									{months.map((month, index) => (
+										<SelectItem key={index} value={month.toLowerCase()}>
+											{month}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
 
 						{/* Day */}
-						<Card className="w-[130px] h-[45px] border-0">
-							<CardContent className="p-0">
-								<Input
-									className="h-[45px] bg-[#e8eef2] rounded-[5px] px-4 font-['Nunito',Helvetica] text-sm"
-									placeholder="Day"
-								/>
-							</CardContent>
-						</Card>
+						<div>
+							<Input
+								className="h-10 sm:h-12 bg-[#e8eef2] rounded-md px-4 font-['Nunito'] text-sm sm:text-base shadow-sm"
+								placeholder="Day"
+								type="number"
+								min="1"
+								max="31"
+							/>
+						</div>
 
 						{/* Year */}
-						<Card className="w-[130px] h-[45px] border-0">
-							<CardContent className="p-0">
-								<Input
-									className="h-[45px] bg-[#e8eef2] rounded-[5px] px-4 font-['Nunito',Helvetica] text-sm"
-									placeholder="Year"
-								/>
-							</CardContent>
-						</Card>
+						<div>
+							<Input
+								className="h-10 sm:h-12 bg-[#e8eef2] rounded-md px-4 font-['Nunito'] text-sm sm:text-base shadow-sm"
+								placeholder="Year"
+								type="number"
+								min="1900"
+								max="2024"
+							/>
+						</div>
 					</div>
 
 					{/* Sign Up button */}
-					<div className="w-full flex justify-end mt-4">
+					<div className="flex justify-center sm:justify-end pt-6 sm:pt-6">
 						<motion.div
 							initial={{ opacity: 0, y: 10 }}
 							whileInView={{ opacity: 1, y: 0 }}
-							transition={{
-								delay: 0.6,
-								type: "spring",
-								stiffness: 100,
-								damping: 15,
-							}}
+							viewport={{ once: true, amount: 0.5 }}
+							transition={{ delay: 0.4, duration: 0.5 }}
 						>
 							<Button
-								className="w-[250px] h-[45px] [background:linear-gradient(90deg,#0667D0_31%,#054E9D_59%,#033464_98%)] hover:opacity-90 rounded-[5px]"
+								className="w-full sm:w-64 h-10 sm:h-12 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
+								hover:opacity-90 rounded-md font-['Nunito'] font-bold text-sm sm:text-base lg:text-lg 
+								tracking-wide shadow-lg"
 								onClick={() => navigate("/login")}
 							>
-								<span className="font-['Nunito',Helvetica] font-bold text-[#e8eef2] text-[19px] tracking-[1.14px]">
-									Sign Up
-								</span>
+								Sign Up
 							</Button>
 						</motion.div>
 					</div>
-				</div>
-			</div>
-		</>
+				</form>
+			</motion.div>
+		</div>
 	);
 };
