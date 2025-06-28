@@ -3,7 +3,6 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { useNavigate } from "react-router-dom";
 
-
 type CreateNewPasswordFormPanelProps = {
 	handleSetPassword?: () => void;
 	handleBackToLogin?: () => void;
@@ -43,8 +42,29 @@ export const CreateNewPasswordFormPanel = ({
 							</h1>
 						</motion.div>
 
+						{/* Back button - MOVED HERE */}
+						<motion.div
+							initial={{ opacity: 0, x: -10 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ delay: 0.2 }}
+							className="mb-4"
+						>
+							<Button
+								variant="link"
+								onClick={handleBackToLogin}
+								className="font-['Nunito'] font-bold text-[#c7d3dd] text-xs sm:text-sm p-0 h-auto flex items-center gap-1 hover:text-white"
+							>
+								<img
+									src="/back.png"
+									alt="Back"
+									className="w-3 h-3 sm:w-4 sm:h-4"
+								/>
+								Back to Login
+							</Button>
+						</motion.div>
+
 						{/* Form container */}
-						<div className="flex flex-col justify-center min-h-[calc(100vh-8rem)] sm:min-h-[calc(100vh-15rem)]">
+						<div className="flex flex-col justify-center min-h-[calc(100vh-12rem)] sm:min-h-[calc(100vh-15rem)]">
 							<div className="w-full max-w-sm mx-auto lg:mx-2">
 								{/* Header */}
 								<div className="mb-6 sm:mb-8">
@@ -52,7 +72,8 @@ export const CreateNewPasswordFormPanel = ({
 										Create New Password
 									</h2>
 									<p className="font-['Nunito'] font-medium text-[#c7d3dd] text-xs sm:text-sm">
-										Your new password must be different from previous used passwords
+										Your new password must be different from previous used
+										passwords
 									</p>
 								</div>
 
@@ -108,17 +129,6 @@ export const CreateNewPasswordFormPanel = ({
 											Set Password
 										</Button>
 									</motion.div>
-
-									{/* Back to login link */}
-									<div className="text-center pt-2 sm:pt-4">
-										<Button
-											variant="link"
-											onClick={handleBackToLogin}
-											className="font-['Nunito'] font-medium text-[#c7d3dd] text-xs sm:text-sm p-0 h-auto hover:text-white"
-										>
-											← Back to Login
-										</Button>
-									</div>
 								</form>
 							</div>
 						</div>
