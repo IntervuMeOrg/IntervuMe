@@ -3,7 +3,7 @@ import { BaseColumnSchemaPart } from '../common/base-model';
 import { AnswerSchema } from './answer-types';
 import { InterviewSchema } from '../interview/interview-types';
 
-type AnswerEntity = AnswerSchema & {
+export type AnswerEntity = AnswerSchema & {
   interview: InterviewSchema;
 };
 
@@ -44,7 +44,6 @@ export const AnswerEntitySchema = new EntitySchema<AnswerEntity>({
     interview: {
       type: 'many-to-one',
       target: 'Interview',
-      //inverseSide
       joinColumn: { name: 'interviewId' }
     }
   },

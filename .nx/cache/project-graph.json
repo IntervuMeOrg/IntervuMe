@@ -1457,6 +1457,15 @@
         "hash": "sha512-6atioO8Y75fNcbmj0G7UjI9lXN2pQ/IGJ2FWT4a/btd0Lk9lQalHLKhkgKVZ3r+spnmWUKfbMi1GEe9wyHQfNQ=="
       }
     },
+    "npm:@types/date-fns": {
+      "type": "npm",
+      "name": "npm:@types/date-fns",
+      "data": {
+        "version": "2.5.3",
+        "packageName": "@types/date-fns",
+        "hash": "sha512-4KVPD3g5RjSgZtdOjvI/TDFkLNUHhdoWxmierdQbDeEg17Rov0hbBYtIzNaQA67ORpteOhvR9YEMTb6xeDCang=="
+      }
+    },
     "npm:@types/estree": {
       "type": "npm",
       "name": "npm:@types/estree",
@@ -1473,6 +1482,15 @@
         "version": "20.19.0",
         "packageName": "@types/node",
         "hash": "sha512-hfrc+1tud1xcdVTABC2JiomZJEklMcXYNTVtZLAeqTVWD+qL5jkHKT+1lOtqDdGxt+mB53DTtiz673vfjU8D1Q=="
+      }
+    },
+    "npm:@types/nodemailer": {
+      "type": "npm",
+      "name": "npm:@types/nodemailer",
+      "data": {
+        "version": "6.4.17",
+        "packageName": "@types/nodemailer",
+        "hash": "sha512-I9CCaIp6DTldEg7vyUTZi8+9Vo0hi1/T8gv3C89yk1rSAAzoKQ8H8ki/jBYJSFoH/BisgLP8tkZMlQ91CIquww=="
       }
     },
     "npm:@types/pg": {
@@ -2139,6 +2157,15 @@
         "version": "3.1.3",
         "packageName": "csstype",
         "hash": "sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw=="
+      }
+    },
+    "npm:date-fns": {
+      "type": "npm",
+      "name": "npm:date-fns",
+      "data": {
+        "version": "4.1.0",
+        "packageName": "date-fns",
+        "hash": "sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg=="
       }
     },
     "npm:dayjs": {
@@ -2933,6 +2960,15 @@
         "hash": "sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ=="
       }
     },
+    "npm:http-status-codes": {
+      "type": "npm",
+      "name": "npm:http-status-codes",
+      "data": {
+        "version": "2.3.0",
+        "packageName": "http-status-codes",
+        "hash": "sha512-RJ8XvFvpPM/Dmc5SV+dC4y5PCeOhT3x1Hq0NU3rjGeg5a/CqlhZ7uudknPwZFz4aeAXDcbAyaeP7GAo9lvngtA=="
+      }
+    },
     "npm:https-proxy-agent": {
       "type": "npm",
       "name": "npm:https-proxy-agent",
@@ -3534,6 +3570,15 @@
         "version": "2.0.19",
         "packageName": "node-releases",
         "hash": "sha512-xxOWJsBKtzAq7DY0J+DTzuz58K8e7sJbdgwkbMWQe8UYB6ekmsQ45q0M/tJDsGaZmbC+l7n57UV8Hl5tHxO9uw=="
+      }
+    },
+    "npm:nodemailer": {
+      "type": "npm",
+      "name": "npm:nodemailer",
+      "data": {
+        "version": "7.0.3",
+        "packageName": "nodemailer",
+        "hash": "sha512-Ajq6Sz1x7cIK3pN6KesGTah+1gnwMnx5gKl3piQlQQE/PwyJ4Mbc8is2psWYxK3RJTVeqsDaCv8ZzXLCDHMTZw=="
       }
     },
     "npm:nopt": {
@@ -4756,11 +4801,6 @@
     "@intervume/server-api": [
       {
         "source": "@intervume/server-api",
-        "target": "npm:fastify",
-        "type": "static"
-      },
-      {
-        "source": "@intervume/server-api",
         "target": "npm:@fastify/cors",
         "type": "static"
       },
@@ -4771,27 +4811,12 @@
       },
       {
         "source": "@intervume/server-api",
-        "target": "npm:dotenv",
-        "type": "static"
-      },
-      {
-        "source": "@intervume/server-api",
-        "target": "npm:typeorm",
-        "type": "static"
-      },
-      {
-        "source": "@intervume/server-api",
-        "target": "npm:pg",
-        "type": "static"
-      },
-      {
-        "source": "@intervume/server-api",
         "target": "npm:bcrypt",
         "type": "static"
       },
       {
         "source": "@intervume/server-api",
-        "target": "npm:reflect-metadata",
+        "target": "npm:class-transformer",
         "type": "static"
       },
       {
@@ -4801,7 +4826,42 @@
       },
       {
         "source": "@intervume/server-api",
-        "target": "npm:class-transformer",
+        "target": "npm:date-fns",
+        "type": "static"
+      },
+      {
+        "source": "@intervume/server-api",
+        "target": "npm:dotenv",
+        "type": "static"
+      },
+      {
+        "source": "@intervume/server-api",
+        "target": "npm:fastify",
+        "type": "static"
+      },
+      {
+        "source": "@intervume/server-api",
+        "target": "npm:http-status-codes",
+        "type": "static"
+      },
+      {
+        "source": "@intervume/server-api",
+        "target": "npm:pg",
+        "type": "static"
+      },
+      {
+        "source": "@intervume/server-api",
+        "target": "npm:reflect-metadata",
+        "type": "static"
+      },
+      {
+        "source": "@intervume/server-api",
+        "target": "npm:typeorm",
+        "type": "static"
+      },
+      {
+        "source": "@intervume/server-api",
+        "target": "npm:@types/bcrypt",
         "type": "static"
       },
       {
@@ -4816,17 +4876,12 @@
       },
       {
         "source": "@intervume/server-api",
-        "target": "npm:@types/bcrypt",
+        "target": "npm:tsx",
         "type": "static"
       },
       {
         "source": "@intervume/server-api",
         "target": "npm:typescript",
-        "type": "static"
-      },
-      {
-        "source": "@intervume/server-api",
-        "target": "npm:tsx",
         "type": "static"
       },
       {
@@ -4842,6 +4897,16 @@
       {
         "source": "@intervume/server-api",
         "target": "npm:nanoid",
+        "type": "static"
+      },
+      {
+        "source": "@intervume/server-api",
+        "target": "npm:fastify-plugin",
+        "type": "static"
+      },
+      {
+        "source": "@intervume/server-api",
+        "target": "npm:nodemailer",
         "type": "static"
       }
     ],
@@ -5611,6 +5676,13 @@
       {
         "source": "npm:@types/node",
         "target": "npm:undici-types",
+        "type": "static"
+      }
+    ],
+    "npm:@types/nodemailer": [
+      {
+        "source": "npm:@types/nodemailer",
+        "target": "npm:@types/node",
         "type": "static"
       }
     ],

@@ -2,12 +2,14 @@ import { EntitySchema } from "typeorm";
 import { BaseColumnSchemaPart } from "../common/base-model";
 import { InterviewQuestionSchema } from "../interviewQuestion/interviewQuestion-types";
 import { InterviewSchema, Status } from "./interview-types";
+import { CodeSubmissionEntity } from "../codeSubmission/codeSubmission.entity";
+import { AnswerEntity } from "../answer/answer.entity";
 
 
-type InterviewEntity = InterviewSchema & {
+export type InterviewEntity = InterviewSchema & {
   interviewQuestions?: InterviewQuestionSchema[];
-//   answers?: AnswerEntity[];
-//   codeSubmissions?: CodeSubmissionEntity[];
+  answers?: AnswerEntity[];
+  codeSubmissions?: CodeSubmissionEntity[];
 };
 
 export const InterviewEntitySchema = new EntitySchema<InterviewEntity>({
@@ -70,16 +72,16 @@ export const InterviewEntitySchema = new EntitySchema<InterviewEntity>({
       inverseSide: 'interview',
       cascade: true
     },
-    // answers: {
-    //   type: 'one-to-many',
-    //   target: 'Answer',
-    //   inverseSide: 'interview'
-    // },
-    // codeSubmissions: {
-    //   type: 'one-to-many',
-    //   target: 'CodeSubmission',
-    //   inverseSide: 'interview'
-    // }
+    answers: {
+      type: 'one-to-many',
+      target: 'Answer',
+      inverseSide: 'interview'
+    },
+    codeSubmissions: {
+      type: 'one-to-many',
+      target: 'CodeSubmission',
+      inverseSide: 'interview'
+    }
   },
   indices: [
     {

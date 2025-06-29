@@ -3,72 +3,17 @@
   "nxVersion": "17.3.2",
   "deps": {
     "@fastify/type-provider-typebox": "^5.1.0",
+    "nodemailer": "^7.0.3",
     "zod": "^3.25.64",
     "@nx/workspace": "^17.0.0",
+    "@types/date-fns": "^2.5.3",
+    "@types/nodemailer": "^6.4.17",
     "nx": "^17.0.0",
     "typescript": "^5.3.3"
   },
   "pathMappings": {},
   "nxJsonPlugins": [],
   "fileMap": {
-    "nonProjectFiles": [
-      {
-        "file": ".devcontainer/docker-compose.yml",
-        "hash": "17336117886476539549"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "12518779734923030623"
-      },
-      {
-        "file": "env.example",
-        "hash": "12139377202670724549"
-      },
-      {
-        "file": "tsconfig.json",
-        "hash": "16778253412364322458"
-      },
-      {
-        "file": ".devcontainer/devcontainer.json",
-        "hash": "17412489785421744031"
-      },
-      {
-        "file": ".devcontainer/Dockerfile",
-        "hash": "12002412169711758323"
-      },
-      {
-        "file": "packages/shared/src/index.ts",
-        "hash": "3244421341483603138"
-      },
-      {
-        "file": "docker-compose.yml",
-        "hash": "3811455898956405298"
-      },
-      {
-        "file": "README.md",
-        "hash": "12139547448681821837"
-      },
-      {
-        "file": "Dockerfile",
-        "hash": "17530752268659931059"
-      },
-      {
-        "file": "package.json",
-        "hash": "207316431325448118"
-      },
-      {
-        "file": "nx.json",
-        "hash": "549597533231565790"
-      },
-      {
-        "file": "docker/start.sh",
-        "hash": "1439425319295549504"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "4907513618507574216"
-      }
-    ],
     "projectFileMap": {
       "@intervume/ui-core": [
         {
@@ -81,7 +26,7 @@
         },
         {
           "file": "packages/ui/package.json",
-          "hash": "14471487355052082906",
+          "hash": "13858724149087950824",
           "deps": [
             "npm:react",
             "npm:react-dom",
@@ -90,7 +35,6 @@
             "npm:@vitejs/plugin-react",
             "npm:autoprefixer",
             "npm:postcss",
-            "npm:tailwindcss",
             "npm:typescript",
             "npm:vite"
           ]
@@ -102,6 +46,20 @@
         {
           "file": "packages/ui/src/App.tsx",
           "hash": "2781864363458299474",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "packages/ui/src/components/AuthForm.tsx",
+          "hash": "16053126086595176632",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "packages/ui/src/components/UserDashboard.tsx",
+          "hash": "13427220109897343543",
           "deps": [
             "npm:react"
           ]
@@ -140,20 +98,6 @@
             "npm:vite",
             "npm:@vitejs/plugin-react"
           ]
-        },
-        {
-          "file": "packages/ui/src/components/AuthForm.tsx",
-          "hash": "16053126086595176632",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "packages/ui/src/components/UserDashboard.tsx",
-          "hash": "13427220109897343543",
-          "deps": [
-            "npm:react"
-          ]
         }
       ],
       "@intervume/server-api": [
@@ -163,35 +107,85 @@
         },
         {
           "file": "packages/backend/package.json",
-          "hash": "9430796796414155987",
+          "hash": "7497172542627757658",
           "deps": [
-            "npm:fastify",
             "npm:@fastify/cors",
             "npm:@fastify/jwt",
-            "npm:dotenv",
-            "npm:typeorm",
-            "npm:pg",
             "npm:bcrypt",
-            "npm:reflect-metadata",
-            "npm:class-validator",
             "npm:class-transformer",
+            "npm:class-validator",
+            "npm:date-fns",
+            "npm:dotenv",
+            "npm:fastify",
+            "npm:http-status-codes",
+            "npm:pg",
+            "npm:reflect-metadata",
+            "npm:typeorm",
+            "npm:@types/bcrypt",
             "npm:@types/node",
             "npm:@types/pg",
-            "npm:@types/bcrypt",
-            "npm:typescript",
-            "npm:tsx"
+            "npm:tsx",
+            "npm:typescript"
           ]
         },
         {
-          "file": "packages/backend/src/auth/auth.controller.ts",
-          "hash": "5601431206653764097",
+          "file": "packages/backend/src/authentication/authentication-types.ts",
+          "hash": "5886074645025402482",
           "deps": [
             "npm:@fastify/type-provider-typebox"
           ]
         },
         {
-          "file": "packages/backend/src/auth/auth.service.ts",
-          "hash": "5577757706049931204"
+          "file": "packages/backend/src/authentication/authentication.controller.ts",
+          "hash": "4215453523477227597",
+          "deps": [
+            "npm:@fastify/type-provider-typebox",
+            "npm:http-status-codes"
+          ]
+        },
+        {
+          "file": "packages/backend/src/authentication/authentication.module.ts",
+          "hash": "5803659925442680847",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/authentication/authentication.service.ts",
+          "hash": "7296183715872205921"
+        },
+        {
+          "file": "packages/backend/src/codingQuestion/codingQuestion-types.ts",
+          "hash": "11919073866925185948",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/codingQuestion/codingQuestion.controller.ts",
+          "hash": "4287816236102693759",
+          "deps": [
+            "npm:@fastify/type-provider-typebox",
+            "npm:http-status-codes"
+          ]
+        },
+        {
+          "file": "packages/backend/src/codingQuestion/codingQuestion.entity.ts",
+          "hash": "6250735350791123957",
+          "deps": [
+            "npm:typeorm"
+          ]
+        },
+        {
+          "file": "packages/backend/src/codingQuestion/codingQuestion.module.ts",
+          "hash": "3418404309159243488",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/codingQuestion/codingQuestion.service.ts",
+          "hash": "2014422998953961597"
         },
         {
           "file": "packages/backend/src/common/base-model.ts",
@@ -202,66 +196,357 @@
           ]
         },
         {
-          "file": "packages/backend/src/database/data-source.ts",
-          "hash": "14958683943413785492",
-          "deps": [
-            "npm:reflect-metadata",
-            "npm:typeorm"
-          ]
-        },
-        {
-          "file": "packages/backend/src/index.ts",
-          "hash": "6429118139382364942",
-          "deps": [
-            "npm:reflect-metadata",
-            "npm:fastify",
-            "npm:@fastify/cors",
-            "npm:@fastify/jwt",
-            "npm:dotenv"
-          ]
-        },
-        {
-          "file": "packages/backend/src/user/user-types.ts",
-          "hash": "5323102825912810561",
-          "deps": [
-            "npm:@fastify/type-provider-typebox"
-          ]
-        },
-        {
-          "file": "packages/backend/src/user/user.controller.ts",
-          "hash": "11182781317648887224",
-          "deps": [
-            "npm:@fastify/type-provider-typebox"
-          ]
-        },
-        {
-          "file": "packages/backend/src/user/user.entity.ts",
-          "hash": "9439291931793043200",
-          "deps": [
-            "npm:typeorm"
-          ]
-        },
-        {
-          "file": "packages/backend/src/user/user.service.ts",
-          "hash": "8766319507767432416",
-          "deps": [
-            "npm:typeorm",
-            "npm:bcrypt"
-          ]
-        },
-        {
-          "file": "packages/backend/tsconfig.json",
-          "hash": "17557832863216346419"
-        },
-        {
           "file": "packages/backend/src/common/id-generator.ts",
           "hash": "13118836436988296683",
           "deps": [
             "npm:@sinclair/typebox",
             "npm:nanoid"
           ]
+        },
+        {
+          "file": "packages/backend/src/common/utils.ts",
+          "hash": "5077546352531232564"
+        },
+        {
+          "file": "packages/backend/src/database/data-source.ts",
+          "hash": "14559293378579373920",
+          "deps": [
+            "npm:reflect-metadata",
+            "npm:typeorm"
+          ]
+        },
+        {
+          "file": "packages/backend/src/fastify.d.ts",
+          "hash": "13450624148808436005",
+          "deps": [
+            "npm:fastify"
+          ]
+        },
+        {
+          "file": "packages/backend/src/index.ts",
+          "hash": "16053158079027789820",
+          "deps": [
+            "npm:reflect-metadata",
+            "npm:fastify",
+            "npm:@fastify/cors",
+            "npm:dotenv"
+          ]
+        },
+        {
+          "file": "packages/backend/src/interview/interview-types.ts",
+          "hash": "18438023053701480311",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/interview/interview.controller.ts",
+          "hash": "15928488238052974695",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/interview/interview.entity.ts",
+          "hash": "7326711290621615873",
+          "deps": [
+            "npm:typeorm"
+          ]
+        },
+        {
+          "file": "packages/backend/src/interview/interview.module.ts",
+          "hash": "6282694162563277353",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/interview/interview.service.ts",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "packages/backend/src/interviewQuestion/interviewQuestion-types.ts",
+          "hash": "9648953515061946138",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/interviewQuestion/interviewQuestion.controller.ts",
+          "hash": "15359134505519569430",
+          "deps": [
+            "npm:@fastify/type-provider-typebox",
+            "npm:http-status-codes"
+          ]
+        },
+        {
+          "file": "packages/backend/src/interviewQuestion/interviewQuestion.entity.ts",
+          "hash": "11021402662603941377",
+          "deps": [
+            "npm:typeorm"
+          ]
+        },
+        {
+          "file": "packages/backend/src/interviewQuestion/interviewQuestion.module.ts",
+          "hash": "8007644901893975305",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/interviewQuestion/interviewQuestion.service.ts",
+          "hash": "4349965987991936233"
+        },
+        {
+          "file": "packages/backend/src/mcqOption/mcqOption-types.ts",
+          "hash": "12223956919065528263",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/mcqOption/mcqOption.controller.ts",
+          "hash": "17905914212623620794",
+          "deps": [
+            "npm:@fastify/type-provider-typebox",
+            "npm:http-status-codes"
+          ]
+        },
+        {
+          "file": "packages/backend/src/mcqOption/mcqOption.entity.ts",
+          "hash": "4841057377779946698",
+          "deps": [
+            "npm:typeorm"
+          ]
+        },
+        {
+          "file": "packages/backend/src/mcqOption/mcqOption.module.ts",
+          "hash": "12147520771923750222",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/mcqOption/mcqOption.service.ts",
+          "hash": "15383621590881986844"
+        },
+        {
+          "file": "packages/backend/src/mcqQuestion/mcqQuestion-types.ts",
+          "hash": "5377341481965791260",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/mcqQuestion/mcqQuestion.controller.ts",
+          "hash": "13580806073803346719",
+          "deps": [
+            "npm:@fastify/type-provider-typebox",
+            "npm:http-status-codes",
+            "npm:http"
+          ]
+        },
+        {
+          "file": "packages/backend/src/mcqQuestion/mcqQuestion.entity.ts",
+          "hash": "9344580120719780198",
+          "deps": [
+            "npm:typeorm"
+          ]
+        },
+        {
+          "file": "packages/backend/src/mcqQuestion/mcqQuestion.module.ts",
+          "hash": "3498786651047833084",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/mcqQuestion/mcqQuestion.service.ts",
+          "hash": "13822681427474799068",
+          "deps": [
+            "npm:stream/consumers"
+          ]
+        },
+        {
+          "file": "packages/backend/src/plugins/jwt.ts",
+          "hash": "8583059603497307879",
+          "deps": [
+            "npm:fastify-plugin",
+            "npm:fastify",
+            "npm:@fastify/jwt"
+          ]
+        },
+        {
+          "file": "packages/backend/src/profile/profile-entity-types.ts",
+          "hash": "6897060298133076064",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/profile/profile-types.ts",
+          "hash": "13880524970146649410",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/profile/profile.controller.ts",
+          "hash": "8740615333898584853",
+          "deps": [
+            "npm:@fastify/type-provider-typebox",
+            "npm:http-status-codes"
+          ]
+        },
+        {
+          "file": "packages/backend/src/profile/profile.entity.ts",
+          "hash": "6247825355767064320",
+          "deps": [
+            "npm:typeorm"
+          ]
+        },
+        {
+          "file": "packages/backend/src/profile/profile.module.ts",
+          "hash": "2318771209308189033",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/profile/profile.service.ts",
+          "hash": "458647657184192433",
+          "deps": [
+            "npm:typeorm"
+          ]
+        },
+        {
+          "file": "packages/backend/src/testCase/testCase-types.ts",
+          "hash": "17775894295239639688",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/testCase/testCase.controller.ts",
+          "hash": "4625272631581126224",
+          "deps": [
+            "npm:@fastify/type-provider-typebox",
+            "npm:http-status-codes",
+            "npm:http"
+          ]
+        },
+        {
+          "file": "packages/backend/src/testCase/testCase.entity.ts",
+          "hash": "6667701153354935957",
+          "deps": [
+            "npm:typeorm"
+          ]
+        },
+        {
+          "file": "packages/backend/src/testCase/testCase.module.ts",
+          "hash": "8719420580233341903",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/testCase/testCase.service.ts",
+          "hash": "3709674993264155845"
+        },
+        {
+          "file": "packages/backend/src/user/user-types.ts",
+          "hash": "2752433018408440841",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/user/user.controller.ts",
+          "hash": "10602475974592442800",
+          "deps": [
+            "npm:@fastify/type-provider-typebox",
+            "npm:http-status-codes"
+          ]
+        },
+        {
+          "file": "packages/backend/src/user/user.entity.ts",
+          "hash": "13320213605665019010",
+          "deps": [
+            "npm:typeorm"
+          ]
+        },
+        {
+          "file": "packages/backend/src/user/user.module.ts",
+          "hash": "7909722045692628138",
+          "deps": [
+            "npm:@fastify/type-provider-typebox"
+          ]
+        },
+        {
+          "file": "packages/backend/src/user/user.service.ts",
+          "hash": "4384888674539004994",
+          "deps": [
+            "npm:nodemailer",
+            "npm:bcrypt",
+            "npm:date-fns",
+            "npm:typeorm"
+          ]
+        },
+        {
+          "file": "packages/backend/tsconfig.json",
+          "hash": "16514926923254425211"
         }
       ]
-    }
+    },
+    "nonProjectFiles": [
+      {
+        "file": ".devcontainer/Dockerfile",
+        "hash": "5376027927462598801"
+      },
+      {
+        "file": ".devcontainer/devcontainer.json",
+        "hash": "6167817158193959469"
+      },
+      {
+        "file": ".devcontainer/docker-compose.yml",
+        "hash": "9094149669899375489"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "12518779734923030623"
+      },
+      {
+        "file": "Dockerfile",
+        "hash": "17530752268659931059"
+      },
+      {
+        "file": "README.md",
+        "hash": "13693282834837848652"
+      },
+      {
+        "file": "docker-compose.yml",
+        "hash": "3811455898956405298"
+      },
+      {
+        "file": "docker/start.sh",
+        "hash": "1439425319295549504"
+      },
+      {
+        "file": "nx.json",
+        "hash": "549597533231565790"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "3968051612863509566"
+      },
+      {
+        "file": "package.json",
+        "hash": "13721259050775134016"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "16778253412364322458"
+      }
+    ]
   }
 }
