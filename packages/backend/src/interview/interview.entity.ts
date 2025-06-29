@@ -4,7 +4,7 @@ import { InterviewQuestionSchema } from "../interviewQuestion/interviewQuestion-
 import { InterviewSchema, Status } from "./interview-types";
 
 
-export type InterviewEntity = typeof InterviewSchema & {
+type InterviewEntity = InterviewSchema & {
   interviewQuestions?: InterviewQuestionSchema[];
 //   answers?: AnswerEntity[];
 //   codeSubmissions?: CodeSubmissionEntity[];

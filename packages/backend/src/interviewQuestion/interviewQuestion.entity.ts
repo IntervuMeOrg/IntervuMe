@@ -24,6 +24,7 @@ export const InterviewQuestionEntitySchema =
       interview: {
         type: "many-to-one",
         target: "Interview",
+        // inverseSide
         joinColumn: { name: "interviewId" },
       },
     },

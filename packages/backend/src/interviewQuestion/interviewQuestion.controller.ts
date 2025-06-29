@@ -1,4 +1,4 @@
-import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
+import { FastifyPluginAsyncTypebox, Type } from "@fastify/type-provider-typebox";
 import { interviewQuestionService } from "./interviewQuestion.service";
 import {
   CreateInterviewQuestionSchema,
@@ -6,6 +6,7 @@ import {
   InterviewQuestionSchema,
   GetInterviewQuestion,
   GetInterviewQuestionForInterview,
+  InterviewQuestionWithDetailsSchema,
 } from "./interviewQuestion-types";
 import { StatusCodes } from "http-status-codes";
 
@@ -36,7 +37,7 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
 
   app.get(
     "/:id/details",
-    GetInterviewQuestionRequest,
+    GetInterviewQuestionWithDetailsRequest,
     async (request, reply) => {
       const { id } = request.params as GetInterviewQuestion;
 
@@ -49,7 +50,7 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
 
   app.get(
     "/interview/:interviewId",
-    GetInterviewQuestionRequest,
+    GetInterviewQuestionsforInterviewRequest,
     async (request, reply) => {
       const { id } = request.params as GetInterviewQuestionForInterview;
       const interviewQuestions =
@@ -61,7 +62,7 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
 
   app.get(
     "/interview/:interviewId/details",
-    GetInterviewQuestionRequest,
+    GetInterviewQuestionsforInterviewWithDetailsRequest,
     async (request, reply) => {
       const { id } = request.params as GetInterviewQuestionForInterview;
       const interviewQuestions =
@@ -109,6 +110,33 @@ const GetInterviewQuestionRequest = {
     params: GetInterviewQuestion,
     response: {
       [StatusCodes.OK]: InterviewQuestionSchema,
+    },
+  },
+};
+
+const GetInterviewQuestionWithDetailsRequest = {
+  schema: {
+    params: GetInterviewQuestion,
+    response: {
+      [StatusCodes.OK]: InterviewQuestionWithDetailsSchema,
+    },
+  },
+};
+
+const GetInterviewQuestionsforInterviewRequest = {
+  schema: {
+    params: GetInterviewQuestionForInterview,
+    response: {
+      [StatusCodes.OK]: Type.Array(InterviewQuestionSchema),
+    },
+  },
+};
+
+const GetInterviewQuestionsforInterviewWithDetailsRequest = {
+  schema: {
+    params: GetInterviewQuestionForInterview,
+    response: {
+      [StatusCodes.OK]: Type.Array(InterviewQuestionWithDetailsSchema),
     },
   },
 };
