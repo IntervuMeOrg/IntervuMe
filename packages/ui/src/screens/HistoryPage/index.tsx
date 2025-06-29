@@ -236,7 +236,10 @@ export const HistoryPage = (): JSX.Element => {
 								>
 									<Button
 										className="rounded-md h-12 sm:h-14 md:h-16 px-6 sm:px-8 md:px-10 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] hover:opacity-90 transition-opacity duration-200 flex items-center gap-2 sm:gap-3 border-0"
-										onClick={() => navigate("/start-interview")}
+										onClick={() => {
+											window.scrollTo(0, 0);
+											navigate("/start-interview");
+										}}
 									>
 										<PlusIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
 										<span className="font-['Nunito'] font-semibold text-white text-sm sm:text-base md:text-lg">
