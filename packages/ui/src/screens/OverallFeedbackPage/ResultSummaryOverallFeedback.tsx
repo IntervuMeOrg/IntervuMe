@@ -2,14 +2,14 @@ import { motion } from "framer-motion";
 import { BarChart3Icon } from "lucide-react";
 
 type ResultSummaryOverallFeedbackProps = {
-	percentage: number;
+	overallPercentage: number;
 	accuracy: number;
 	totalQuestions: number;
 	correctAnswers: number;
 };
 
 export const ResultSummaryOverallFeedback = ({
-	percentage,
+	overallPercentage,
 	accuracy,
 	totalQuestions,
 	correctAnswers,
@@ -37,7 +37,7 @@ export const ResultSummaryOverallFeedback = ({
 						Strengths:
 					</h4>
 					<ul className="text-[#e8eef2] text-sm space-y-1 ml-4">
-						{percentage >= 80 && (
+						{overallPercentage >= 80 && (
 							<li>• Excellent understanding of core concepts</li>
 						)}
 						{accuracy >= 70 && <li>• Good problem-solving approach</li>}
@@ -54,7 +54,7 @@ export const ResultSummaryOverallFeedback = ({
 						Areas for Improvement:
 					</h4>
 					<ul className="text-[#e8eef2] text-sm space-y-1 ml-4">
-						{percentage < 70 && <li>• Review fundamental concepts</li>}
+						{overallPercentage < 70 && <li>• Review fundamental concepts</li>}
 						{accuracy < 60 && <li>• Practice more coding problems</li>}
 						<li>• Consider edge cases in solutions</li>
 						<li>• Optimize time complexity when possible</li>

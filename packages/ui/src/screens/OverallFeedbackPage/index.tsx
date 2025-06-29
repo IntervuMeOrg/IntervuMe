@@ -82,6 +82,43 @@ export const OverallFeedbackPage = (): JSX.Element => {
 	// State for active navigation item tracking
 	const activeNavItem = "";
 
+	const totalPoints = questions.reduce((sum, q) => sum + q.points, 0);
+	const totalQuestions = questions.length;
+	let correctAnswers = 0;
+	let earnedPoints = 0;
+	let mcqCorrect = 0;
+	let mcqTotal = 0;
+	let problemSolvingCorrect = 0;
+	let problemSolvingTotal = 0;
+
+	questions.forEach((question) => {
+		const userAnswer = userAnswers[question.id];
+		if (question.type === "mcq") {
+			mcqTotal++;
+			if (userAnswer === question.correctOptionId) {
+				correctAnswers++;
+				earnedPoints += question.points;
+				mcqCorrect++;
+			}
+		} else if (question.type === "problem_solving") {
+			problemSolvingTotal++;
+			if (userAnswer && userAnswer.trim().length > 0) {
+				correctAnswers++;
+				earnedPoints += Math.floor(question.points * 0.8);
+				problemSolvingCorrect++;
+			}
+		}
+	});
+
+	const overallPercentage = Math.round((earnedPoints / totalPoints) * 100);
+	const accuracy = Math.round((correctAnswers / totalQuestions) * 100);
+	const mcqPercentage =
+		mcqTotal > 0 ? Math.round((mcqCorrect / mcqTotal) * 100) : 0;
+	const problemSolvingPercentage =
+		problemSolvingTotal > 0
+			? Math.round((problemSolvingCorrect / problemSolvingTotal) * 100)
+			: 0;
+
 	return (
 		<NavbarLayout activeNavItem={activeNavItem} userName={userName}>
 			<main className="bg-white w-full relative min-h-screen">
@@ -112,6 +149,12 @@ export const OverallFeedbackPage = (): JSX.Element => {
 							<ResultSummaryCard
 								questions={questions}
 								userAnswers={userAnswers}
+								overallPercentage={overallPercentage}
+								earnedPoints={earnedPoints}
+								totalPoints={totalPoints}
+								totalQuestions={totalQuestions}
+								correctAnswers={correctAnswers}
+								accuracy={accuracy}
 								setShowDetailedFeedback={setShowDetailedFeedback}
 							/>
 						</motion.div>
@@ -120,6 +163,13 @@ export const OverallFeedbackPage = (): JSX.Element => {
 						<DetailedFeedbackView
 							questions={questions}
 							userAnswers={userAnswers}
+							overallPercentage={overallPercentage}
+							mcqPercentage={mcqPercentage}
+							mcqCorrect={mcqCorrect}
+							mcqTotal={mcqTotal}
+							problemSolvingPercentage={problemSolvingPercentage}
+							problemSolvingCorrect={problemSolvingCorrect}
+							problemSolvingTotal={problemSolvingTotal}
 							setShowDetailedFeedback={setShowDetailedFeedback}
 						/>
 					)}

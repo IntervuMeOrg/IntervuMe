@@ -2,15 +2,15 @@ import { motion } from "framer-motion";
 import { CheckCircleIcon, XCircleIcon } from "lucide-react";
 import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
 
-type PerformanceBreakdownProps = {
+type ResultSummaryPerformanceBreakdownProps = {
 	questions: (MCQQuestion | ProblemSolvingQuestion)[];
 	userAnswers: Record<string, string>;
 };
 
-export const PerformanceBreakdown = ({
+export const ResultSummaryPerformanceBreakdown = ({
 	questions,
 	userAnswers,
-}: PerformanceBreakdownProps) => {
+}: ResultSummaryPerformanceBreakdownProps) => {
 	return (
 		<motion.div
 			variants={{

@@ -1,16 +1,22 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { TrophyIcon } from "lucide-react";
-import { Button } from "../../components/ui/button";
 import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
 import { ResultSummaryOverallFeedback } from "./ResultSummaryOverallFeedback";
-import { PerformanceBreakdown } from "./PerformanceBreakdown";
+import { ResultSummaryPerformanceBreakdown } from "./ResultSummaryPerformanceBreakdown";
 import { ResultSummaryStatsGrid } from "./ResultSummaryStatsGrid";
+import { ResultSummaryActionButtons } from "./ResultSummaryActionButtons";
 
 type Question = MCQQuestion | ProblemSolvingQuestion;
 
 interface ResultSummaryCardProps {
 	questions: Question[];
+	correctAnswers: number;
+	earnedPoints: number;
+	totalPoints: number;
+	totalQuestions: number;
+	overallPercentage:number;
+	accuracy:number;
 	userAnswers: Record<number, string>;
 	setShowDetailedFeedback: (show: boolean) => void;
 }
@@ -18,34 +24,16 @@ interface ResultSummaryCardProps {
 export const ResultSummaryCard = ({
 	questions,
 	userAnswers,
+	totalQuestions,
+	totalPoints,
+	earnedPoints,
+	correctAnswers,
+	overallPercentage,
+	accuracy,
 	setShowDetailedFeedback,
 }: ResultSummaryCardProps) => {
+
 	const navigate = useNavigate();
-	// Calculate results
-	const totalQuestions = questions.length;
-	const totalPoints = questions.reduce((sum, q) => sum + q.points, 0);
-
-	let correctAnswers = 0;
-	let earnedPoints = 0;
-
-	questions.forEach((question) => {
-		const userAnswer = userAnswers[question.id];
-		if (question.type === "mcq") {
-			if (userAnswer === question.correctOptionId) {
-				correctAnswers++;
-				earnedPoints += question.points;
-			}
-		} else if (question.type === "problem_solving") {
-			// For problem solving, we'll assume partial credit based on solution quality
-			if (userAnswer && userAnswer.trim().length > 0) {
-				correctAnswers++;
-				earnedPoints += Math.floor(question.points * 0.8); // 80% credit for attempt
-			}
-		}
-	});
-
-	const percentage = Math.round((earnedPoints / totalPoints) * 100);
-	const accuracy = Math.round((correctAnswers / totalQuestions) * 100);
 
 	// Determine performance level
 	const getPerformanceLevel = (score: number) => {
@@ -80,7 +68,7 @@ export const ResultSummaryCard = ({
 		};
 	};
 
-	const performance = getPerformanceLevel(percentage);
+	const performance = getPerformanceLevel(overallPercentage);
 
 	return (
 		<motion.div
@@ -122,7 +110,7 @@ export const ResultSummaryCard = ({
 						className="inline-block"
 					>
 						<div className="text-6xl sm:text-7xl md:text-8xl font-bold text-white mb-2">
-							{percentage}%
+							{overallPercentage}%
 						</div>
 						<div
 							className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${performance.bgColor}`}
@@ -150,41 +138,17 @@ export const ResultSummaryCard = ({
 					accuracy={accuracy}
 					totalQuestions={totalQuestions}
 					correctAnswers={correctAnswers}
-					percentage={percentage}
+					overallPercentage={overallPercentage}
 				/>
 
 				{/* Performance Breakdown */}
-				<PerformanceBreakdown questions={questions} userAnswers={userAnswers} />
+				<ResultSummaryPerformanceBreakdown questions={questions} userAnswers={userAnswers} />
 
 				{/* Action Buttons */}
-				<motion.div
-					variants={{
-						hidden: { opacity: 0, y: 20 },
-						visible: { opacity: 1, y: 0 },
-					}}
-					transition={{ delay: 1.0 }}
-					className="flex flex-col sm:flex-row gap-4 justify-center"
-				>
-					<Button
-						onClick={() => {
-							window.scrollTo(0, 0);
-							setShowDetailedFeedback(true);
-						}}
-						className="bg-gradient-to-r from-[#0667D0] to-[#033464] hover:opacity-90 text-white px-6 py-3 rounded-md transition-all"
-					>
-						View Detailed Feedback
-					</Button>
-
-					<Button
-						onClick={() => {
-							window.scrollTo(0, 0);
-							navigate("/start-interview");
-						}}
-						className="bg-white/20 hover:bg-white/30 text-white border border-white/30 px-6 py-3 rounded-md transition-all"
-					>
-						Take Another Interview
-					</Button>
-				</motion.div>
+				<ResultSummaryActionButtons
+					navigate={navigate}
+					setShowDetailedFeedback={setShowDetailedFeedback}
+				/>
 			</div>
 		</motion.div>
 	);
