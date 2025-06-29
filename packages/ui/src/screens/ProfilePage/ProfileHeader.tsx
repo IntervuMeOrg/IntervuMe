@@ -1,56 +1,66 @@
 import { motion } from "framer-motion";
+import { EditIcon, SaveIcon } from "lucide-react";
 import { Button } from "../../components/ui/button";
-import { SaveIcon, PencilIcon } from "lucide-react";
 
 type ProfileHeaderProps = {
-	isEditing: boolean;
-	toggleEditMode: () => void;
-	saveProfileChanges: () => void;
+  isEditing: boolean;
+  toggleEditMode: () => void;
+  saveProfileChanges: () => void;
 };
 
 export const ProfileHeader = ({
-	isEditing,
-	toggleEditMode,
-	saveProfileChanges,
+  isEditing,
+  toggleEditMode,
+  saveProfileChanges,
 }: ProfileHeaderProps) => {
-	return (
-		<motion.section
-			initial={{ opacity: 0, y: 20 }}
-			whileInView={{ opacity: 1, y: 0 }}
-			viewport={{ once: true, margin: "-10% 0px" }}
-			transition={{
-				type: "spring",
-				stiffness: 90,
-				damping: 15,
-				mass: 0.5,
-			}}
-			className="w-full flex flex-col items-center mb-8"
-		>
-			<div className="flex items-center justify-between w-full mb-6">
-				<h1 className="font-['Nunito',Helvetica] font-black text-[40px] text-[#1d1d20]">
-					My Profile
-				</h1>
-				<Button
-					onClick={isEditing ? saveProfileChanges : toggleEditMode}
-					className="rounded-[5px] h-[52px] px-6 [background:linear-gradient(90deg,#0667D0_31%,#054E9D_59%,#033464_98%)] hover:opacity-90"
-				>
-					{isEditing ? (
-						<>
-							<SaveIcon className="mr-2 h-5 w-5" />
-							<span className="font-['Nunito',Helvetica] font-semibold text-white text-[18px]">
-								Save Changes
-							</span>
-						</>
-					) : (
-						<>
-							<PencilIcon className="mr-2 h-5 w-5" />
-							<span className="font-['Nunito',Helvetica] font-semibold text-white text-[18px]">
-								Edit Profile
-							</span>
-						</>
-					)}
-				</Button>
-			</div>
-		</motion.section>
-	);
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-10% 0px" }}
+      transition={{
+        type: "spring",
+        stiffness: 90,
+        damping: 15,
+        mass: 0.5,
+        delay: 0.1,
+      }}
+      className="w-full mb-6 sm:mb-8 md:mb-10"
+    >
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+        {/* Page Title - Reduced sizes across all breakpoints */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="font-['Nunito'] font-black text-[#1d1d20] text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-tight"
+        >
+          My Profile
+        </motion.h1>
+
+        {/* Edit/Save Button - Slightly smaller */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Button
+            onClick={isEditing ? saveProfileChanges : toggleEditMode}
+            className="rounded-md h-9 sm:h-10 px-3 sm:px-5 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] hover:opacity-90 transition-opacity duration-200 flex items-center gap-2 border-0"
+          >
+            {isEditing ? (
+              <SaveIcon className="h-4 w-4" />
+            ) : (
+              <EditIcon className="h-4 w-4" />
+            )}
+            <span className="font-['Nunito'] font-semibold text-white text-sm">
+              {isEditing ? "Save Changes" : "Edit Profile"}
+            </span>
+          </Button>
+        </motion.div>
+      </div>
+    </motion.section>
+  );
 };
