@@ -55,6 +55,7 @@ export const StartInterviewFormPanel = ({
 		setIsLoading(true);
 		// Loading overlay will handle the timing and call handleLoadingComplete when done
 	};
+	const [count, setCount] = useState(0);
 
 	// Check if form is valid
 	const isFormValid =
@@ -135,7 +136,20 @@ export const StartInterviewFormPanel = ({
 							<motion.button
 								whileHover={{ scale: 1.02 }}
 								whileTap={{ scale: 0.98 }}
-								onClick={() => setInputMethod("template")}
+								onClick={() => {
+									if (count === 0) {
+										setTimeout(() => {
+											document
+												.getElementById("template-header")
+												?.scrollIntoView({
+													behavior: "smooth",
+													block: "start",
+												});
+										});
+										setCount(1);
+									}
+									setInputMethod("template");
+								}}
 								disabled={isLoading}
 								className={`p-4 sm:p-5 md:p-6 rounded-lg border-2 transition-all duration-200 ${
 									inputMethod === "template"
@@ -169,6 +183,7 @@ export const StartInterviewFormPanel = ({
 
 					{/* Content Area */}
 					<motion.div
+						id={"template-header"}
 						key={inputMethod}
 						initial={{ opacity: 0, x: 20 }}
 						animate={{ opacity: 1, x: 0 }}

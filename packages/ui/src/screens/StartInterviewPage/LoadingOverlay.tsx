@@ -1,11 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-	Loader2Icon,
-	CheckCircleIcon,
-	Loader2,
-	CheckCircle,
-} from "lucide-react";
+import { Loader2, CheckCircle } from "lucide-react";
 
 interface LoadingOverlayProps {
 	isVisible: boolean;

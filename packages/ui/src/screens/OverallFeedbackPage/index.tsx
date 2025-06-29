@@ -70,43 +70,6 @@ export const OverallFeedbackPage = (): JSX.Element => {
 			explanation:
 				"This solution uses a hash map to store each number and its index. For each number, we check if its complement (target - current number) exists in the map. If it does, we've found our pair. This approach has O(n) time complexity.",
 		},
-		// {
-		// 	id: 4,
-		// 	type: "mcq",
-		// 	text: "Which lifecycle method is called after a component is rendered for the first time?",
-		// 	options: [
-		// 		{ id: "a", text: "componentDidMount" },
-		// 		{ id: "b", text: "componentWillMount" },
-		// 		{ id: "c", text: "componentDidUpdate" },
-		// 		{ id: "d", text: "componentWillUpdate" },
-		// 	],
-		// 	points: 10,
-		// 	correctOptionId: "a",
-		// 	explanation:
-		// 		"componentDidMount is called after a component is mounted (inserted into the DOM tree). This is a good place to set up subscriptions or fetch data from an API.",
-		// },
-		// {
-		// 	id: 5,
-		// 	type: "problem_solving",
-		// 	name: "Valid Palindrome",
-		// 	difficulty: "Easy",
-		// 	text: "Implement a function to check if a string is a palindrome, ignoring case and non-alphanumeric characters.",
-		// 	examples: [
-		// 		{
-		// 			input: "'A man, a plan, a canal: Panama'",
-		// 			output: "true",
-		// 			explanation: "'amanaplanacanalpanama' is a palindrome",
-		// 		},
-		// 	],
-		// 	constraints: [
-		// 		"The input string may contain printable ASCII characters",
-		// 		"We define empty string as valid palindrome",
-		// 	],
-		// 	points: 15,
-		// 	solution: `function isPalindrome(s) {\n  // Remove non-alphanumeric characters and convert to lowercase\n  const cleanStr = s.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();\n  \n  // Check if the string reads the same forward and backward\n  let left = 0;\n  let right = cleanStr.length - 1;\n  \n  while (left < right) {\n    if (cleanStr[left] !== cleanStr[right]) {\n      return false;\n    }\n    left++;\n    right--;\n  }\n  \n  return true;\n}`,
-		// 	explanation:
-		// 		"This solution first cleans the string by removing non-alphanumeric characters and converting to lowercase. Then it uses two pointers (from start and end) to check if the string reads the same in both directions.",
-		// },
 	]);
 
 	// Mock user answers
@@ -114,8 +77,6 @@ export const OverallFeedbackPage = (): JSX.Element => {
 		1: "d", // Correct
 		2: "b", // Incorrect (correct is c)
 		3: `function twoSum(nums, target) {\n  for (let i = 0; i < nums.length; i++) {\n    for (let j = i + 1; j < nums.length; j++) {\n      if (nums[i] + nums[j] === target) {\n        return [i, j];\n      }\n    }\n  }\n  return [];\n}`, // Correct but inefficient
-		4: "a", // Correct
-		5: `function isPalindrome(s) {\n  const alphanumeric = s.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();\n  return alphanumeric === alphanumeric.split('').reverse().join('');\n}`, // Correct
 	});
 
 	// State for active navigation item tracking
