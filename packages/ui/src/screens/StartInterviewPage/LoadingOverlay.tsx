@@ -1,53 +1,197 @@
-import { motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+	Loader2Icon,
+	CheckCircleIcon,
+	Loader2,
+	CheckCircle,
+} from "lucide-react";
 
-type LoadingOverlayProps = {
-	preparationStep: string;
-	progressPercentage: number;
-};
+interface LoadingOverlayProps {
+	isVisible: boolean;
+	onComplete?: () => void;
+}
 
-export const LoadingOverlay = ({
-	preparationStep,
-	progressPercentage,
-}: LoadingOverlayProps) => {
+export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
+	isVisible,
+	onComplete,
+}) => {
+	const [currentStep, setCurrentStep] = React.useState(0);
+	const [progress, setProgress] = React.useState(0);
+	const [isComplete, setIsComplete] = React.useState(false);
+
+	const preparationSteps = [
+		"Analyzing job requirements...",
+		"Processing technical skills...",
+		"Generating interview questions...",
+		"Calibrating difficulty levels...",
+		"Setting up environment...",
+		"Preparing scenarios...",
+		"Finalizing sequences...",
+		"Almost ready!",
+	];
+
+	React.useEffect(() => {
+		if (!isVisible) {
+			setCurrentStep(0);
+			setProgress(0);
+			setIsComplete(false);
+			return;
+		}
+
+		// Simplified timing - 90 seconds total
+		const totalDuration = 5000;
+		const stepDuration = totalDuration / preparationSteps.length; // ~11.25 seconds per step
+		const progressUpdateInterval = 500; // Update every 500ms for better performance
+		const progressIncrement = 100 / (totalDuration / progressUpdateInterval);
+
+		let progressTimer: NodeJS.Timeout;
+		let stepTimers: NodeJS.Timeout[] = [];
+
+		// Smooth progress updates
+		progressTimer = setInterval(() => {
+			setProgress((prev) => {
+				const newProgress = prev + progressIncrement;
+				if (newProgress >= 100) {
+					clearInterval(progressTimer);
+					setIsComplete(true);
+					// Call onComplete after a brief delay to show completion state
+					setTimeout(() => {
+						onComplete?.();
+					}, 1500);
+					return 100;
+				}
+				return newProgress;
+			});
+		}, progressUpdateInterval);
+
+		// Schedule all step updates at once
+		preparationSteps.forEach((_, index) => {
+			if (index > 0) {
+				const timer = setTimeout(() => {
+					setCurrentStep(index);
+				}, stepDuration * index);
+				stepTimers.push(timer);
+			}
+		});
+
+		// Cleanup
+		return () => {
+			if (progressTimer) clearInterval(progressTimer);
+			stepTimers.forEach((timer) => clearTimeout(timer));
+		};
+	}, [isVisible, onComplete]);
+
 	return (
-		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-			<motion.div
-				initial={false}
-				animate={{ scale: 1, opacity: 1 }}
-				className="bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-2xl"
-			>
-				<div className="flex flex-col items-center space-y-5">
-					<Loader2 className="h-12 w-12 animate-spin text-blue-600" />
+		<AnimatePresence>
+			{isVisible && (
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					transition={{ duration: 0.2, ease: "easeOut" }}
+					className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+					style={{
+						WebkitBackdropFilter: "blur(8px)",
+					}}
+				>
+					<motion.div
+						initial={{ opacity: 0, scale: 0.95 }}
+						animate={{ opacity: 1, scale: 1 }}
+						exit={{ opacity: 0, scale: 0.95 }}
+						transition={{ duration: 0.2, ease: "easeOut" }}
+						className="bg-[#1d1d20] rounded-xl p-6 sm:p-8 max-w-lg w-full mx-4 text-center shadow-2xl relative overflow-hidden"
+					>
+						{/* Gradient overlay */}
+						<div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none" />
 
-					<h3 className="font-['Nunito',Helvetica] font-black text-[#1d1d20] text-2xl mt-[-7px] tracking-[0] leading-tight">
-						Preparing Your Interview
-					</h3>
+						<div className="relative z-10 flex flex-col items-center space-y-6">
+							{/* Loading Icon - Optimized animation */}
+							<div className="relative">
+								{!isComplete ? (
+									<>
+										<Loader2 className="h-16 w-16 text-[#0667D0] animate-spin" />
+										<div className="absolute inset-0 rounded-full border-2 border-[#0667D0] animate-ping" />
+									</>
+								) : (
+									<>
+										<CheckCircle className="h-16 w-16 text-green-400" />
+										<div className="absolute inset-0 rounded-full bg-green-400/20 animate-ping" />
+									</>
+								)}
+							</div>
 
-					{/* Text area with fixed height and fallback */}
-					<div className="relative w-full min-h-[24px]">
-						<p className="text-gray-700 text-base font-medium">
-							{preparationStep}
-						</p>
-						<p className="invisible absolute text-base font-medium">
-							Finalizing environment setup and loading questions...
-						</p>
-					</div>
+							{/* Title */}
+							<h3 className="font-['Nunito'] font-bold text-white text-xl sm:text-2xl">
+								{isComplete ? "Interview Ready!" : "Preparing Your Interview"}
+							</h3>
 
-					<div className="w-full bg-gray-200 rounded-full h-3">
-						<motion.div
-							initial={false}
-							animate={{ width: `${progressPercentage}%` }}
-							transition={{ duration: 0.5, ease: "easeOut" }}
-							className="bg-blue-600 h-3 rounded-full"
-						/>
-					</div>
+							{/* Current Step - Optimized transition */}
+							<div className="w-full min-h-[3rem] flex items-center justify-center">
+								<motion.p
+									key={currentStep}
+									initial={{ opacity: 0 }}
+									animate={{ opacity: 1 }}
+									transition={{ duration: 0.2 }}
+									className="text-[#e8eef2] text-sm sm:text-base text-center"
+								>
+									{isComplete
+										? "Your personalized interview is ready to begin!"
+										: preparationSteps[currentStep]}
+								</motion.p>
+							</div>
 
-					<p className="text-sm text-gray-500">
-						{Math.round(progressPercentage)}% Complete
-					</p>
-				</div>
-			</motion.div>
-		</div>
+							{/* Progress Bar - Hardware accelerated */}
+							<div className="w-full space-y-3">
+								<div className="w-full bg-white/20 rounded-full h-3 overflow-hidden">
+									<div
+										style={{
+											width: `${progress}%`,
+											transform: "translateZ(0)", // Force hardware acceleration
+											willChange: "width",
+										}}
+										className="bg-gradient-to-r from-[#0667D0] to-[#033464] h-full rounded-full transition-all duration-300 ease-out"
+									/>
+								</div>
+
+								{/* Progress info */}
+								<div className="flex justify-between text-xs text-[#e8eef2] opacity-80">
+									<span>{Math.round(progress)}% Complete</span>
+									<span>
+										{isComplete
+											? "Ready!"
+											: `${Math.max(
+													1,
+													Math.round(((100 - progress) * 5) / 100)
+											  )}s remaining`}
+									</span>
+								</div>
+							</div>
+
+							{/* Step Indicators - Optimized */}
+							<div className="flex justify-center space-x-2">
+								{preparationSteps.map((_, index) => (
+									<div
+										key={index}
+										style={{ transform: "translateZ(0)" }}
+										className={`w-2 h-2 rounded-full transition-all duration-200 ${
+											index <= currentStep
+												? "bg-[#0667D0] scale-125"
+												: "bg-white/30"
+										}`}
+									/>
+								))}
+							</div>
+
+							{/* Simple loading message */}
+							<p className="text-xs text-[#e8eef2] opacity-60 text-center">
+								Please wait while we create your personalized interview
+								experience
+							</p>
+						</div>
+					</motion.div>
+				</motion.div>
+			)}
+		</AnimatePresence>
 	);
 };

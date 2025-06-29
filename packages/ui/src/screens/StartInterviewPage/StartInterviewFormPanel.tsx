@@ -1,244 +1,230 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Button } from "../../components/ui/button";
-import { Card, CardContent } from "../../components/ui/card";
-import { TemplateSelection } from "./TemplateSelection";
+import {
+	FileTextIcon,
+	BookTemplateIcon as TemplateIcon,
+	PlayIcon,
+	CheckIcon,
+} from "lucide-react";
 import { CustomJobDescription } from "./CustomJobDescription";
-import { FileTextIcon, ClipboardIcon } from "lucide-react";
+import { TemplateSelection } from "./TemplateSelection";
 import { LoadingOverlay } from "./LoadingOverlay";
 
-type StartInverviewFormPanelProps = {
-	inputMethod: "custom" | "template";
-	setInputMethod: (method: "custom" | "template") => void;
-};
+type InputMethod = "custom" | "template";
 
-export const StartInverviewFormPanel = ({
+interface StartInterviewFormPanelProps {
+	inputMethod: InputMethod;
+	setInputMethod: (method: InputMethod) => void;
+}
+
+export const StartInterviewFormPanel = ({
 	inputMethod,
 	setInputMethod,
-}: StartInverviewFormPanelProps) => {
-	// global counter
-	const [count, setCount] = useState(0);
-	// Navigation hook for routing
+}: StartInterviewFormPanelProps) => {
 	const navigate = useNavigate();
-	// State for custom job description
+
+	// State for form data
 	const [jobDescription, setJobDescription] = useState("");
-	// State for selected template
-	const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-	// State for selected template category
-	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-	// Loading state for interview preparation
-	const [isPreparingInterview, setIsPreparingInterview] = useState(false);
-	const [preparationStep, setPreparationStep] = useState("");
-	const [progressPercentage, setProgressPercentage] = useState(0);
+	const [selectedTemplate, setSelectedTemplate] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
 
-	// Template categories and items
-	const templates = [
-		{
-			category: "Software Engineering",
-			items: [
-				"Frontend Developer",
-				"Backend Developer",
-				"Full Stack Developer",
-				"Mobile Developer",
-			],
-			descriptions: [
-				"Develop user interfaces using React, Angular, or Vue. Implement responsive designs and optimize web performance.",
-				"Build server-side applications using Node.js, Python, or Java. Design and implement APIs and database schemas.",
-				"Create end-to-end applications handling both frontend and backend development. Coordinate between different system layers.",
-				"Develop native or cross-platform mobile applications for iOS and Android using React Native, Flutter, or native technologies.",
-			],
-		},
-		{
-			category: "Dev Ops",
-			items: ["DevOps Engineer", "Site Reliability Engineer", "Cloud Engineer"],
-			descriptions: [
-				"Implement CI/CD pipelines and automate deployment processes. Manage infrastructure as code using tools like Terraform or Ansible.",
-				"Ensure system reliability, availability, and performance. Implement monitoring and alerting systems.",
-				"Design and implement cloud infrastructure on AWS, Azure, or GCP. Optimize cloud resources and implement security best practices.",
-			],
-		},
-		{
-			category: "Back End",
-			items: [
-				"Java Developer",
-				"Python Developer",
-				"Node.js Developer",
-				".NET Developer",
-			],
-			descriptions: [
-				"Develop enterprise applications using Java and related frameworks like Spring. Design and implement RESTful APIs.",
-				"Build backend services using Python and frameworks like Django or Flask. Implement data processing pipelines.",
-				"Create scalable server-side applications using Node.js and Express. Implement real-time features using WebSockets.",
-				"Develop enterprise applications using .NET Core or Framework. Implement microservices architecture.",
-			],
-		},
-		{
-			category: "Google SW-1",
-			items: ["Software Engineer L3", "Software Engineer L4"],
-			descriptions: [
-				"Entry-level software engineer position at Google. Focus on implementing features and fixing bugs under supervision.",
-				"Mid-level software engineer position at Google. Design and implement medium-sized features independently.",
-			],
-		},
-		{
-			category: "Amazon SW-2",
-			items: ["SDE I", "SDE II"],
-			descriptions: [
-				"Entry-level software development engineer at Amazon. Implement well-defined features and participate in code reviews.",
-				"Mid-level software development engineer at Amazon. Design and implement complex features and mentor junior engineers.",
-			],
-		},
-	];
-
-	// Handle template selection
-	const handleTemplateSelect = (template: string, categoryIndex: number) => {
-		setSelectedTemplate(template);
-		const templateIndex = templates[categoryIndex].items.findIndex(
-			(item) => item === template
-		);
-		const description = templates[categoryIndex].descriptions[templateIndex];
-		setJobDescription(description);
+	// Handle loading completion and navigation
+	const handleLoadingComplete = () => {
+		setIsLoading(false);
+		// Navigate to interview-questions page
+		navigate("/interview-questions", {
+			state: {
+				inputMethod,
+				jobDescription,
+				selectedTemplate,
+			},
+		});
 	};
 
-	// Handle starting the interview with loading states
+	// Handle form submission
 	const handleStartInterview = async () => {
-		setIsPreparingInterview(true);
-		setProgressPercentage(0);
-
-		// Simulate interview preparation steps
-		const preparationSteps = [
-			"Analyzing job description...",
-			"Generating interview questions...",
-			"Setting up interview environment...",
-			"Preparing assessment criteria...",
-			"Almost ready...",
-		];
-
-		try {
-			// Log interview details
-			console.log(
-				"Starting interview with:",
-				selectedTemplate || "Custom Job Description"
-			);
-			console.log("Job Description:", jobDescription);
-
-			// Simulate preparation process with steps
-			for (let i = 0; i < preparationSteps.length; i++) {
-				setPreparationStep(preparationSteps[i]);
-				setProgressPercentage(((i + 1) / preparationSteps.length) * 100);
-				await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second between steps
-			}
-
-			window.scrollTo(0, 0);
-
-			// Navigate to interview questions page with the interview data
-			navigate("/interview-questions", {
-				state: {
-					title: selectedTemplate || "Custom Job Interview",
-					jobDescription: jobDescription,
-					totalTime: 45 * 60, // 45 minutes in seconds
-					// You can add more data here as needed
-				},
-			});
-		} catch (error) {
-			console.error("Error preparing interview:", error);
-			setIsPreparingInterview(false);
-			setProgressPercentage(0);
+		if (inputMethod === "custom" && !jobDescription.trim()) {
+			return; // Don't proceed if no job description
 		}
+		if (inputMethod === "template" && !selectedTemplate) {
+			return; // Don't proceed if no template selected
+		}
+
+		setIsLoading(true);
+		// Loading overlay will handle the timing and call handleLoadingComplete when done
 	};
+
+	// Check if form is valid
+	const isFormValid =
+		inputMethod === "custom"
+			? jobDescription.trim().length > 0
+			: selectedTemplate.length > 0;
 
 	return (
 		<>
+			{/* Loading Overlay */}
+			<LoadingOverlay
+				isVisible={isLoading}
+				onComplete={handleLoadingComplete}
+			/>
+
 			<motion.div
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.5, delay: 0.2 }}
-				className="max-w-[1000px] mx-auto mb-[2vh]"
+				initial={{ opacity: 0, y: 30 }}
+				whileInView={{ opacity: 1, y: 0 }}
+				viewport={{ once: true }}
+				transition={{
+					type: "spring",
+					stiffness: 80,
+					damping: 12,
+					delay: 0.1,
+				}}
+				className="bg-[#1d1d20] rounded-lg shadow-xl relative overflow-hidden"
+				whileHover={{
+					boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+					transition: { duration: 0.3 },
+				}}
 			>
-				<Card className="bg-[#E8EEF2] shadow-lg border-0 overflow-hidden">
-					<CardContent className="p-6">
-						{/* Input Method Selection Buttons - Now Inside Card */}
-						<div className="flex justify-center gap-6 mb-5">
-							<Button
-								id="card-job-section"
-								className={`rounded-[5px] h-[6vh] w-[19vw] min-w-60 ${
-									inputMethod === "custom"
-										? "[background:linear-gradient(90deg,#0667D0_31%,#054E9D_59%,#033464_98%)] text-white"
-										: "bg-white text-[#1d1d20] border border-[#1d1d20]"
-								} hover:opacity-90 transition-all duration-300`}
+				{/* Gradient overlay */}
+				<div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent pointer-events-none" />
+
+				<div className="relative z-10 p-6 sm:p-8 md:p-10">
+					{/* Input Method Selection */}
+					<div className="mb-6 sm:mb-8">
+						<h2 className="font-['Nunito'] font-bold text-white text-lg sm:text-xl md:text-2xl mb-4 sm:mb-6">
+							Choose Your Approach
+						</h2>
+
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+							{/* Custom Job Description Option */}
+							<motion.button
+								whileHover={{ scale: 1.02 }}
+								whileTap={{ scale: 0.98 }}
 								onClick={() => setInputMethod("custom")}
-								disabled={isPreparingInterview}
+								disabled={isLoading}
+								className={`p-4 sm:p-5 md:p-6 rounded-lg border-2 transition-all duration-200 ${
+									inputMethod === "custom"
+										? "border-[#0667D0] bg-[#0667D0]/20"
+										: "border-white/20 bg-white/10 hover:border-white/40"
+								} ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
 							>
-								<FileTextIcon className="mr-2 h-5 w-5" />
-								<span className="font-['Nunito',Helvetica] font-semibold text-[1.1rem]">
-									Custom Description
-								</span>
-							</Button>
-							<Button
-								className={`rounded-[5px] h-[6vh] w-[19vw] min-w-60  ${
+								<div className="flex flex-col items-center gap-2 sm:gap-3 text-center">
+									<div className="relative">
+										<FileTextIcon className="h-6 w-6 sm:h-8 sm:w-8 text-[#e8eef2]" />
+										{inputMethod === "custom" && (
+											<motion.div
+												initial={{ scale: 0 }}
+												animate={{ scale: 1 }}
+												className="absolute -top-1 -right-1 bg-[#0667D0] rounded-full p-1"
+											>
+												<CheckIcon className="h-3 w-3 text-white" />
+											</motion.div>
+										)}
+									</div>
+									<div className="text-white font-semibold text-sm sm:text-base">
+										Custom Job Description
+									</div>
+									<div className="text-[#e8eef2] text-xs sm:text-sm opacity-70">
+										Paste your specific job posting
+									</div>
+								</div>
+							</motion.button>
+
+							{/* Template Selection Option */}
+							<motion.button
+								whileHover={{ scale: 1.02 }}
+								whileTap={{ scale: 0.98 }}
+								onClick={() => setInputMethod("template")}
+								disabled={isLoading}
+								className={`p-4 sm:p-5 md:p-6 rounded-lg border-2 transition-all duration-200 ${
 									inputMethod === "template"
-										? "[background:linear-gradient(90deg,#0667D0_31%,#054E9D_59%,#033464_98%)] text-white"
-										: "bg-white text-[#1d1d20] border border-[#1d1d20]"
-								} hover:opacity-90 transition-all duration-100`}
-								onClick={() => {
-									setTimeout(() => {
-										document
-											.getElementById("card-job-section")
-											?.scrollIntoView({
-												behavior: "smooth",
-												block: "start",
-											});
-									});
-									setInputMethod("template");
-								}}
-								disabled={isPreparingInterview}
+										? "border-[#0667D0] bg-[#0667D0]/20"
+										: "border-white/20 bg-white/10 hover:border-white/40"
+								} ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
 							>
-								<ClipboardIcon className="mr-2 h-5 w-5" />
-								<span className="font-['Nunito',Helvetica] font-semibold text-[1.1rem]">
-									Use Template
-								</span>
-							</Button>
+								<div className="flex flex-col items-center gap-2 sm:gap-3 text-center">
+									<div className="relative">
+										<TemplateIcon className="h-6 w-6 sm:h-8 sm:w-8 text-[#e8eef2]" />
+										{inputMethod === "template" && (
+											<motion.div
+												initial={{ scale: 0 }}
+												animate={{ scale: 1 }}
+												className="absolute -top-1 -right-1 bg-[#0667D0] rounded-full p-1"
+											>
+												<CheckIcon className="h-3 w-3 text-white" />
+											</motion.div>
+										)}
+									</div>
+									<div className="text-white font-semibold text-sm sm:text-base">
+										Use Template
+									</div>
+									<div className="text-[#e8eef2] text-xs sm:text-sm opacity-70">
+										Choose from predefined roles
+									</div>
+								</div>
+							</motion.button>
 						</div>
+					</div>
 
-						{/* Divider */}
-						<div className="border-t border-gray-300 mb-4"></div>
-
-						{/* Custom Job Description Input */}
-						{inputMethod === "custom" && (
+					{/* Content Area */}
+					<motion.div
+						key={inputMethod}
+						initial={{ opacity: 0, x: 20 }}
+						animate={{ opacity: 1, x: 0 }}
+						transition={{ duration: 0.3 }}
+						className="mb-6 sm:mb-8"
+					>
+						{inputMethod === "custom" ? (
 							<CustomJobDescription
 								jobDescription={jobDescription}
 								setJobDescription={setJobDescription}
-								handleStartInterview={handleStartInterview}
 							/>
-						)}
-
-						{/* Template Selection */}
-						{inputMethod === "template" && (
+						) : (
 							<TemplateSelection
-								jobDescription={jobDescription}
-								templates={templates}
 								selectedTemplate={selectedTemplate}
-								handleTemplateSelect={handleTemplateSelect}
-								setSelectedCategory={setSelectedCategory}
-								selectedCategory={selectedCategory}
-								count={count}
-								setCount={setCount}
-								handleStartInterview={handleStartInterview}
+								setSelectedTemplate={setSelectedTemplate}
 							/>
 						)}
-					</CardContent>
-				</Card>
-			</motion.div>
+					</motion.div>
 
-			<AnimatePresence>
-				{isPreparingInterview && (
-					<LoadingOverlay
-						preparationStep={preparationStep}
-						progressPercentage={progressPercentage}
-					/>
-				)}
-			</AnimatePresence>
+					{/* Start Interview Button */}
+					<div className="flex justify-center">
+						<motion.div
+							whileHover={{ scale: isFormValid && !isLoading ? 1.05 : 1 }}
+							whileTap={{ scale: isFormValid && !isLoading ? 0.95 : 1 }}
+						>
+							<Button
+								onClick={handleStartInterview}
+								disabled={!isFormValid || isLoading}
+								className={`rounded-md h-12 sm:h-14 md:h-16 px-6 sm:px-8 md:px-10 transition-all duration-200 flex items-center gap-2 sm:gap-3 border-0 ${
+									isFormValid && !isLoading
+										? "bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] hover:opacity-90 cursor-pointer"
+										: "bg-gray-500 opacity-50 cursor-not-allowed"
+								}`}
+							>
+								<PlayIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
+								<span className="font-['Nunito'] font-semibold text-white text-sm sm:text-base md:text-lg">
+									{isLoading ? "Preparing..." : "Start Interview"}
+								</span>
+							</Button>
+						</motion.div>
+					</div>
+
+					{/* Form validation message */}
+					{!isFormValid && !isLoading && (
+						<motion.p
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							className="text-center text-[#e8eef2] text-xs sm:text-sm opacity-70 mt-3"
+						>
+							{inputMethod === "custom"
+								? "Please enter a job description to continue"
+								: "Please select a template to continue"}
+						</motion.p>
+					)}
+				</div>
+			</motion.div>
 		</>
 	);
 };

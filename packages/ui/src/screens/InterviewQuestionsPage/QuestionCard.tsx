@@ -26,11 +26,10 @@ export const QuestionCard = ({
 
 	// Auto-scroll to top when question index changes
 	useEffect(() => {
-		if (currentQuestion.type === "mcq") {
+		window.scrollTo({ top: 0, behavior: "auto" });
+		if (currentQuestion.type === "mcq")
 			cardRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-		} else if (currentQuestion.type === "problem_solving") {
-			window.scrollTo({ top: 0, behavior: "auto" });
-		}
+
 	}, [currentQuestionIndex, currentQuestion.type]);
 	const cardVariants = {
 		hidden: { opacity: 0, y: 20 },
