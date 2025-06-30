@@ -3,7 +3,7 @@ import { BaseModelSchema } from "../../common/base-model";
 import {
   CreateMcqOptionRequestBody,
   McqOption,
-  McqOptionsUpdateBody,
+  UpdateMcqOptionsRequestBody,
 } from "../mcq-option/mcq-option-types";
 
 export enum DifficultyLevel {
@@ -41,7 +41,7 @@ export const UpdateMcqQuestionRequestBody = Type.Object({
   allowMultiple: Type.Optional(Type.Boolean({ default: false })),
   explanation: Type.Optional(Type.String({ maxLength: 1000 })),
   options: Type.Optional(
-    Type.Array(McqOptionsUpdateBody, {
+    Type.Array(UpdateMcqOptionsRequestBody, {
       minItems: 2,
       maxItems: 6,
     })

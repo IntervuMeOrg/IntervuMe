@@ -1,6 +1,6 @@
 import { Static, Type } from "@fastify/type-provider-typebox";
 import { BaseModelSchema } from "../../common/base-model";
-import { CodingQuestionSchema } from "../../coding/codingQuestion/codingQuestion-types";
+import { CodingQuestion } from "../../coding/coding-question/codingQuestion-types";
 import { McqQuestion } from "../../mcq/mcqQuestion/mcqQuestion-types";
 import { ApId } from "../../common/id-generator";
 
@@ -42,7 +42,7 @@ export type UpdateInterviewQuestionRequestBody = Static<
 export const InterviewQuestionWithDetailsRequestBody = Type.Composite([
   InterviewQuestion,
   Type.Object({
-    questionDetails: Type.Union([McqQuestion, CodingQuestionSchema]),
+    questionDetails: Type.Union([McqQuestion, CodingQuestion]),
   }),
 ]);
 

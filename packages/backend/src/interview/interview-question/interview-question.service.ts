@@ -9,7 +9,7 @@ import {
 } from "./interview-question-types";
 import { McqQuestionService } from "../McqQuestion/McqQuestion.service";
 import { codingQuestionService } from "../codingQuestion/codingQuestion.service";
-import { CodingQuestionSchema } from "../codingQuestion/codingQuestion-types";
+import { CodingQuestion } from "../codingQuestion/codingQuestion-types";
 import { McqQuestionSchema } from "../McqQuestion/McqQuestion-types";
 
 const InterviewQuestionRepository = () => {

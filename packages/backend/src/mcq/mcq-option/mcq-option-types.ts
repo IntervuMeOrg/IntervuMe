@@ -22,7 +22,6 @@ export type CreateMcqOptionRequestBody = Static<
 >;
 
 export const UpdateMcqOptionRequestBody = Type.Object({
-  mcqQuestionId: ApId,
   optionText: Type.Optional(Type.String({ minLength: 1, maxLength: 500 })),
   isCorrect: Type.Optional(Type.Boolean()),
 });
@@ -31,9 +30,9 @@ export type UpdateMcqOptionRequestBody = Static<
   typeof UpdateMcqOptionRequestBody
 >;
 
-export const McqOptionsUpdateBody = Type.Object({
+export const UpdateMcqOptionsRequestBody = Type.Object({
   optionText: Type.String({ minLength: 1, maxLength: 500 }),
   isCorrect: Type.Boolean(),
 });
 
-export type McqOptionsUpdateBody = Static<typeof McqOptionsUpdateBody>;
+export type UpdateMcqOptionsRequestBody = Static<typeof UpdateMcqOptionsRequestBody>;
