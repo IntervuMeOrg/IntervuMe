@@ -3,9 +3,9 @@ import {
   CreateMcqQuestionRequestBody,
   McqQuestion,
   UpdateMcqQuestionRequestBody,
-} from "./mcqQuestion-types";
+} from "./mcq-question-types";
 import { StatusCodes } from "http-status-codes";
-import { McqQuestionService } from "./mcqQuestion.service";
+import { mcqQuestionService } from "./mcq-question.service";
 import { ApId } from "../../common/id-generator";
 
 export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
@@ -19,7 +19,7 @@ export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
     }
 
     const body = request.body as CreateMcqQuestionRequestBody;
-    const question = McqQuestionService.create(body);
+    const question = mcqQuestionService.create(body);
 
     return question;
   });
@@ -31,12 +31,12 @@ export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
         .send({ message: "Forbidden: admins only" });
     }
 
-    return await McqQuestionService.list();
+    return await mcqQuestionService.list();
   });
 
   app.get("/:id", GetMcqQuestionRequest, async (request) => {
     const { id } = request.params as { id: string };
-    const question = await McqQuestionService.getById(id);
+    const question = await mcqQuestionService.getById(id);
     return question;
   });
 
@@ -44,7 +44,7 @@ export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
     const { id } = request.params as { id: string };
     const body = request.body as UpdateMcqQuestionRequestBody;
 
-    const question = await McqQuestionService.update(id, body);
+    const question = await mcqQuestionService.update(id, body);
     return question;
   });
 
@@ -56,7 +56,7 @@ export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
     }
 
     const { id } = request.params as { id: string };
-    await McqQuestionService.delete(id);
+    await mcqQuestionService.delete(id);
   });
 };
 

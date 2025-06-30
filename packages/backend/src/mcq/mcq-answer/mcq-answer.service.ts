@@ -6,7 +6,7 @@ import {
   McqAnswer,
   UpdateMcqAnswerRequestBody,
 } from "./mcq-answer-types";
-import { McqQuestionService } from "../mcqQuestion/mcqQuestion.service";
+import { mcqQuestionService } from "../mcq-question/mcq-question.service";
 import { interviewService } from "../../interview/interview.service";
 import { McqOption } from "../mcq-option/mcq-option-types";
 
@@ -16,7 +16,7 @@ const mcqAnswerRepository = () => {
 
 export const mcqAnswerService = {
   async create(request: CreateMcqAnswerRequestBody): Promise<McqAnswer> {
-    const mcqQuestion = await McqQuestionService.getById(request.questionId);
+    const mcqQuestion = await mcqQuestionService.getById(request.questionId);
     if (!mcqQuestion) {
       throw new Error("Mcq Question not found");
     }
@@ -115,7 +115,7 @@ export const mcqAnswerService = {
       updates.selectedOptionId &&
       updates.selectedOptionId !== answer.selectedOptionId
     ) {
-      const mcqQuestion = await McqQuestionService.getById(answer.questionId);
+      const mcqQuestion = await mcqQuestionService.getById(answer.questionId);
       if (!mcqQuestion) throw new Error("Question not found");
 
       const newSelectedOption = mcqQuestion.options.find(

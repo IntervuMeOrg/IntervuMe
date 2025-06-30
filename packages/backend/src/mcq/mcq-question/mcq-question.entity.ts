@@ -1,5 +1,5 @@
 import { EntitySchema } from "typeorm";
-import { DifficultyLevel, McqQuestion } from "./mcqQuestion-types";
+import { DifficultyLevel, McqQuestion } from "./mcq-question-types";
 import { BaseColumnSchemaPart } from "../../common/base-model";
 
 export const McqQuestionEntity = new EntitySchema<McqQuestion>({
@@ -26,6 +26,12 @@ export const McqQuestionEntity = new EntitySchema<McqQuestion>({
       length: 1000,
       nullable: true,
     },
+
+    tags: {
+      type: String,
+      array: true,
+      nullable: false,
+    },
   },
   relations: {
     options: {
@@ -36,4 +42,11 @@ export const McqQuestionEntity = new EntitySchema<McqQuestion>({
       eager: true,
     },
   },
+  indices: [
+    {
+      name: "idx_mcq_question_tags",
+      unique: false,
+      columns: ["tags"],
+    },
+  ],
 });

@@ -1,7 +1,7 @@
 import { EntitySchema } from "typeorm";
 import { McqOption } from "./mcq-option-types";
 import { BaseColumnSchemaPart } from "../../common/base-model";
-import { McqQuestion } from "../mcqQuestion/mcqQuestion-types";
+import { McqQuestion } from "../mcq-question/mcq-question-types";
 
 type McqOptionSchema = McqOption & {
   mcqQuestion: McqQuestion;

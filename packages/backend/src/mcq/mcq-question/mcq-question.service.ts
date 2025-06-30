@@ -6,15 +6,15 @@ import {
   DifficultyLevel,
   McqQuestion,
   UpdateMcqQuestionRequestBody,
-} from "./mcqQuestion-types";
-import { McqQuestionEntity } from "./mcqQuestion.entity";
+} from "./mcq-question-types";
+import { McqQuestionEntity } from "./mcq-question.entity";
 import { McqOptionEntity } from "../mcq-option/mcq-option.entity";
 
-const McqQuestionRepository = () => {
+const mcqQuestionRepository = () => {
   return AppDataSource.getRepository(McqQuestionEntity);
 };
 
-export const McqQuestionService = {
+export const mcqQuestionService = {
   async create(request: CreateMcqQuestionRequestBody): Promise<McqQuestion> {
     const { options, ...questionFields } = request;
 
@@ -24,25 +24,25 @@ export const McqQuestionService = {
       isCorrect,
     }));
 
-    const question = McqQuestionRepository().create({
+    const question = mcqQuestionRepository().create({
       id: apId(),
       ...questionFields,
       difficulty: questionFields.difficulty || DifficultyLevel.MEDIUM,
       options: normalizedOptions,
     });
 
-    return await McqQuestionRepository().save(question);
+    return await mcqQuestionRepository().save(question);
   },
 
   async getById(id: string): Promise<McqQuestion | null> {
-    const question = await McqQuestionRepository().findOne({ where: { id } });
+    const question = await mcqQuestionRepository().findOne({ where: { id } });
     if (!question) throw new Error("Question not found");
 
     return question;
   },
 
   async list(): Promise<Partial<McqQuestion>[]> {
-    return await McqQuestionRepository().find({
+    return await mcqQuestionRepository().find({
       select: ["id", "text", "difficulty", "allowMultiple", "explanation"],
     });
   },
@@ -51,7 +51,7 @@ export const McqQuestionService = {
     id: string,
     updates: UpdateMcqQuestionRequestBody
   ): Promise<McqQuestion> {
-    const questionRepo = McqQuestionRepository();
+    const questionRepo = mcqQuestionRepository();
     const optionRepo = AppDataSource.getRepository(McqOptionEntity);
 
     const question = await questionRepo.findOne({ where: { id } });
@@ -90,7 +90,7 @@ export const McqQuestionService = {
   },
 
   async delete(id: string): Promise<void> {
-    const question = await McqQuestionRepository().findOne({
+    const question = await mcqQuestionRepository().findOne({
       where: { id },
     });
 
@@ -98,6 +98,20 @@ export const McqQuestionService = {
       throw new Error("Question not found");
     }
 
-    await McqQuestionRepository().remove(question);
+    await mcqQuestionRepository().remove(question);
+  },
+
+  async getRandomByTagsAndCount(
+    tags: string[],
+    count: number
+  ): Promise<McqQuestion[]> {
+    const questions = await mcqQuestionRepository()
+      .createQueryBuilder("mcq")
+      .where("mcq.tags && :tags::text[]", { tags })
+      .orderBy("RANDOM()")
+      .take(count)
+      .getMany();
+
+    return questions;
   },
 };

@@ -19,6 +19,7 @@ export const McqQuestion = Type.Object({
   allowMultiple: Type.Optional(Type.Boolean({ default: false })),
   explanation: Type.Optional(Type.String({ maxLength: 1000 })),
   options: Type.Array(McqOption, { minItems: 2, maxItems: 6 }),
+  tags: Type.Array(Type.String()),
 });
 
 export type McqQuestion = Static<typeof McqQuestion>;
@@ -29,6 +30,7 @@ export const CreateMcqQuestionRequestBody = Type.Object({
   allowMultiple: Type.Optional(Type.Boolean({ default: false })),
   explanation: Type.Optional(Type.String({ maxLength: 1000 })),
   options: Type.Array(CreateMcqOptionRequestBody, { minItems: 2, maxItems: 6 }),
+  tags: Type.Array(Type.String()),
 });
 
 export type CreateMcqQuestionRequestBody = Static<
@@ -40,6 +42,7 @@ export const UpdateMcqQuestionRequestBody = Type.Object({
   difficulty: Type.Optional(Type.Enum(DifficultyLevel)),
   allowMultiple: Type.Optional(Type.Boolean({ default: false })),
   explanation: Type.Optional(Type.String({ maxLength: 1000 })),
+  tags: Type.Optional(Type.Array(Type.String())),
   options: Type.Optional(
     Type.Array(UpdateMcqOptionsRequestBody, {
       minItems: 2,
