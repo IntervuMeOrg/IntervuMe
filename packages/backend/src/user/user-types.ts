@@ -15,7 +15,7 @@ export enum UserIdentityProvider {
 export const User = Type.Object({
   ...BaseModelSchema,
   email: Type.String(),
-  password: Type.String(),
+  password: Type.Optional(Type.String()),
   role: Type.Enum(UserRole),
   provider: Type.Enum(UserIdentityProvider),
   tokenVersion: Type.Optional(Type.String()),
@@ -38,7 +38,7 @@ export type UserWithProfile = Static<typeof UserWithProfile>;
 
 export const CreateUserRequestBody = Type.Object({
   email: Type.String({ format: "email" }),
-  password: Type.String({ minLength: 6 }),
+  password: Type.Optional(Type.String({ minLength: 6 })),
   role: Type.Optional(Type.Enum(UserRole)),
   provider: Type.Optional(Type.Enum(UserIdentityProvider)),
   tokenVersion: Type.Optional(Type.String()),
@@ -53,3 +53,12 @@ export const UpdateUserRequestBody = Type.Partial(
 );
 
 export type UpdateUserRequestBody = Static<typeof UpdateUserRequestBody>;
+
+export const GoogleUserInfo = Type.Object({
+  email: Type.String({ format: "email" }),
+  firstName: Type.String(),
+  lastName: Type.String(),
+  provider: Type.Optional(Type.Enum(UserIdentityProvider)),
+});
+
+export type GoogleUserInfo = Static<typeof GoogleUserInfo>;

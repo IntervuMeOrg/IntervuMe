@@ -12,7 +12,13 @@ import {
 import { userService } from "../user/user.service.js";
 import { UserIdentityProvider } from "../user/user-types.js";
 import { StatusCodes } from "http-status-codes";
-import { AuthResponse } from "./authentication-types.js";
+import {
+  AuthResponse,
+  GoogleSignInRequestBody,
+} from "./authentication-types.js";
+import { OAuth2Client } from "google-auth-library";
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const authenticationController: FastifyPluginAsyncTypebox = async (
   app
@@ -53,6 +59,40 @@ export const authenticationController: FastifyPluginAsyncTypebox = async (
           .status(StatusCodes.BAD_REQUEST)
           .send({ message: (err as Error).message });
       }
+    }
+  );
+
+  app.post(
+    "/google-sign-in",
+    {
+      schema: {
+        body: GoogleSignInRequestBody,
+      },
+    },
+    async (request, reply) => {
+      const { idToken } = request.body as GoogleSignInRequestBody;
+
+      // verify Google ID token
+      const ticket = await googleClient.verifyIdToken({
+        idToken,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+      if (!payload?.email) {
+        return reply
+          .status(StatusCodes.BAD_REQUEST)
+          .send("Invalid Google ID token");
+      }
+
+      const userInfo = {
+        email: payload.email,
+        firstName: payload.given_name?? '',
+        lastName: payload.family_name?? '',
+        provider: UserIdentityProvider.GOOGLE,
+      };
+
+      const result = await authService.signInWithGoogle(userInfo, app.jwt.sign);
+      return reply.send(result);
     }
   );
 

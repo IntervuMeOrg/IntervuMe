@@ -20,7 +20,7 @@ const userRepository = () => {
 
 export const userService = {
   async create(
-    request: CreateUserRequest,
+    request: CreateUserRequestBody,
     opts: { manager?: EntityManager } = {}
   ): Promise<User> {
     const repo = opts.manager
@@ -28,9 +28,13 @@ export const userService = {
       : userRepository();
 
     const { password, ...userData } = request;
-    // Hash password
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Hash password only if provided (for regular email/password users)
+    let hashedPassword;
+    if (password) {
+      const saltRounds = 10;
+      hashedPassword = await bcrypt.hash(password, saltRounds);
+    }
 
     const user = repo.save({
       id: apId(),
@@ -45,7 +49,7 @@ export const userService = {
     return user;
   },
 
-  async update(id: string, updates: UpdateUserRequest): Promise<User> {
+  async update(id: string, updates: UpdateUserRequestBody): Promise<User> {
     const user = await userRepository().findOne({ where: { id } });
     if (!user) throw new Error("User not found");
 

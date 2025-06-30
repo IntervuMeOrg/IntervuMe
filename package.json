@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@fastify/type-provider-typebox": "^5.1.0",
+    "google-auth-library": "^10.1.0",
     "nodemailer": "^7.0.3",
     "zod": "^3.25.64"
   }
