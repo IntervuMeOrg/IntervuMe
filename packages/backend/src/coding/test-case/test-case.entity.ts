@@ -1,13 +1,13 @@
 import { EntitySchema } from "typeorm";
-import { TestCaseSchema } from "./testCase-types.js";
+import { TestCase } from "./test-case-types.js";
 import { BaseColumnSchemaPart } from "../../common/base-model.js";
-import { CodingQuestionSchema } from "../codingQuestion/codingQuestion-types.js";
+import { CodingQuestion } from "../coding-question/codingQuestion-types.js";
 
-type TestCaseQuestionSchema = TestCaseSchema & {
-  codingQuestion: CodingQuestionSchema;
+type TestCaseSchema = TestCase & {
+  codingQuestion: CodingQuestion;
 };
 
-export const TestCaseEntity = new EntitySchema<TestCaseQuestionSchema>({
+export const TestCaseEntity = new EntitySchema<TestCaseSchema>({
   name: "test_case",
   columns: {
     ...BaseColumnSchemaPart,
@@ -20,7 +20,7 @@ export const TestCaseEntity = new EntitySchema<TestCaseQuestionSchema>({
   relations: {
     codingQuestion: {
       type: "many-to-one",
-      target: "codingQuestion",
+      target: "coding_question",
       joinColumn: { name: "codingQuestionId" },
       inverseSide: "testCases",
       onDelete: "CASCADE",
@@ -29,7 +29,7 @@ export const TestCaseEntity = new EntitySchema<TestCaseQuestionSchema>({
 
   indices: [
     {
-      name: "idx_test_case_question",
+      name: "idx_test_case_coding_question_id",
       columns: ["codingQuestionId"],
     },
   ],
