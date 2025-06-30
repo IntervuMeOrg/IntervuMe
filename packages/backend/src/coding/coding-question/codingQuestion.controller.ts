@@ -4,33 +4,37 @@ import {
 } from "@fastify/type-provider-typebox";
 import { codingQuestionService } from "./codingQuestion.service.js";
 import {
-  CodingQuestionSchema,
-  CreateCodingQuestionSchema,
-  GetCodingQuestion,
-  UpdateCodingQuestionSchema,
+  CodingQuestion,
+  CreateCodingQuestionRequestBody,
+  UpdateCodingQuestionRequestBody,
 } from "./codingQuestion-types.js";
 import { StatusCodes } from "http-status-codes";
+import { ApId } from "../../common/id-generator.js";
 
 export const codingQuestionController: FastifyPluginAsyncTypebox = async (
   app
 ) => {
   app.addHook("onRequest", app.authenticate);
 
-  app.post("/", createCodingQuestionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
-      return reply
-        .status(StatusCodes.FORBIDDEN)
-        .send({ message: "Forbidden: admins only" });
+  app.post(
+    "/",
+    CreateCodingQuestionRequestBodyRequest,
+    async (request, reply) => {
+      if (request.user.role !== "admin") {
+        return reply
+          .status(StatusCodes.FORBIDDEN)
+          .send({ message: "Forbidden: admins only" });
+      }
+
+      const body = request.body as CreateCodingQuestionRequestBody;
+      const codingQuestion = await codingQuestionService.create(body);
+
+      return codingQuestion;
     }
-
-    const body = request.body as CreateCodingQuestionSchema;
-    const codingQuestion = await codingQuestionService.create(body);
-
-    return codingQuestion;
-  });
+  );
 
   app.get("/:id", getCodingQuestionRequest, async (request, reply) => {
-    const { id } = request.params as GetCodingQuestion;
+    const { id } = request.params as { id: string };
     const codingQuestion = await codingQuestionService.getById(id);
     return codingQuestion;
   });
@@ -45,7 +49,7 @@ export const codingQuestionController: FastifyPluginAsyncTypebox = async (
           .send({ message: "Forbidden: admins only" });
       }
 
-      const { id } = request.params as GetCodingQuestion;
+      const { id } = request.params as { id: string };
       return await codingQuestionService.deactivate(id);
     }
   );
@@ -57,7 +61,7 @@ export const codingQuestionController: FastifyPluginAsyncTypebox = async (
         .send({ message: "Forbidden: admins only" });
     }
 
-    const { id } = request.params as GetCodingQuestion;
+    const { id } = request.params as { id: string };
     return await codingQuestionService.activate(id);
   });
 
@@ -68,7 +72,7 @@ export const codingQuestionController: FastifyPluginAsyncTypebox = async (
         .send({ message: "Forbidden: admins only" });
     }
 
-    const { id } = request.params as GetCodingQuestion;
+    const { id } = request.params as { id: string };
     return await codingQuestionService.delete(id);
   });
 
@@ -82,38 +86,46 @@ export const codingQuestionController: FastifyPluginAsyncTypebox = async (
     return await codingQuestionService.list();
   });
 
-  app.put("/:id", updateCodingQuestionRequest, async (request, reply) => {
-    const { id } = request.params as GetCodingQuestion;
-    const updates = request.body as UpdateCodingQuestionSchema;
+  app.put(
+    "/:id",
+    UpdateCodingQuestionRequestBodyRequest,
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      const updates = request.body as UpdateCodingQuestionRequestBody;
 
-    return await codingQuestionService.update(id, updates);
-  });
+      return await codingQuestionService.update(id, updates);
+    }
+  );
 };
 
-const createCodingQuestionRequest = {
+const CreateCodingQuestionRequestBodyRequest = {
   schema: {
-    body: CreateCodingQuestionSchema,
+    body: CreateCodingQuestionRequestBody,
     response: {
-      [StatusCodes.OK]: CodingQuestionSchema,
+      [StatusCodes.OK]: CodingQuestion,
     },
   },
 };
 
 const getCodingQuestionRequest = {
   schema: {
-    params: GetCodingQuestion,
+    params: {
+      id: ApId,
+    },
     response: {
-      200: CodingQuestionSchema,
+      200: CodingQuestion,
     },
   },
 };
 
-const updateCodingQuestionRequest = {
+const UpdateCodingQuestionRequestBodyRequest = {
   schema: {
-    params: GetCodingQuestion,
-    body: UpdateCodingQuestionSchema,
+    params: {
+      id: ApId,
+    },
+    body: UpdateCodingQuestionRequestBody,
     response: {
-      200: CodingQuestionSchema,
+      200: CodingQuestion,
     },
   },
 };

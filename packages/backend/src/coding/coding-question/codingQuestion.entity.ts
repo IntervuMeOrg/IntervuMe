@@ -1,26 +1,23 @@
 import { EntitySchema } from "typeorm";
+import { CodingQuestion, DifficultyLevel } from "./codingQuestion-types.js";
 import {
-  CodingQuestionSchema,
-  DifficultyLevel,
-} from "./codingQuestion-types.js";
-import {
+  ARRAY_COLUMN_TYPE,
   BaseColumnSchemaPart,
-} from "../common/base-model.js";
+} from "../../common/base-model.js";
 
-export const CodingQuestionEntity = new EntitySchema<CodingQuestionSchema>({
-  name: "codingQuestion",
+export const CodingQuestionEntity = new EntitySchema<CodingQuestion>({
+  name: "coding_question",
   columns: {
     ...BaseColumnSchemaPart,
 
     title: {
       type: String,
-      length: 200,
       nullable: false,
     },
 
     difficulty: {
       type: "enum",
-      enum: DifficultyLevel, // Adjust based on your `DifficultyLevel` enum
+      enum: DifficultyLevel,
       nullable: false,
     },
 
@@ -36,19 +33,16 @@ export const CodingQuestionEntity = new EntitySchema<CodingQuestionSchema>({
 
     problemStatement: {
       type: String,
-      length: 5000,
       nullable: false,
     },
 
     starterCode: {
       type: String,
-      length: 10000,
       nullable: true,
     },
 
     solutionCode: {
       type: String,
-      length: 10000,
       nullable: true,
     },
 
@@ -58,17 +52,17 @@ export const CodingQuestionEntity = new EntitySchema<CodingQuestionSchema>({
     },
 
     constraints: {
-      type: "simple-array",
+      type: ARRAY_COLUMN_TYPE,
       nullable: true,
     },
 
     hints: {
-      type: "simple-array",
+      type: ARRAY_COLUMN_TYPE,
       nullable: true,
     },
 
     tags: {
-      type: "simple-array",
+      type: ARRAY_COLUMN_TYPE,
       nullable: true,
     },
 
@@ -83,7 +77,7 @@ export const CodingQuestionEntity = new EntitySchema<CodingQuestionSchema>({
     testCases: {
       type: "one-to-many",
       target: "test_case",
-      inverseSide: "codingQuestion",
+      inverseSide: "coding_question",
       cascade: true,
       eager: true,
     },

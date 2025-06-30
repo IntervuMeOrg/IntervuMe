@@ -1,19 +1,19 @@
-import { AppDataSource } from "../database/data-source";
+import { AppDataSource } from "../../database/data-source";
 import { CodingQuestionEntity } from "./codingQuestion.entity";
 import {
-  CodingQuestionSchema,
-  CreateCodingQuestionSchema,
-  UpdateCodingQuestionSchema,
+  CodingQuestion,
+  CreateCodingQuestionRequestBody,
+  UpdateCodingQuestionRequestBody,
 } from "./codingQuestion-types";
-import { apId } from "../common/id-generator";
-import { TestCaseEntity } from "../testCase/testCase.entity";
+import { apId } from "../../common/id-generator";
+import { TestCaseEntity } from "../test-case/test-case.entity";
 
 const codingQuestionRepository = () => {
   return AppDataSource.getRepository(CodingQuestionEntity);
 };
 
 export const codingQuestionService = {
-  async create(request: CreateCodingQuestionSchema) {
+  async create(request: CreateCodingQuestionRequestBody) {
     const { testCases, isActive = true, ...questionFields } = request;
 
     const normalizedTestCases = testCases.map(
@@ -35,11 +35,11 @@ export const codingQuestionService = {
     return await codingQuestionRepository().save(codingQuestion);
   },
 
-  async getById(id: string): Promise<CodingQuestionSchema | null> {
+  async getById(id: string): Promise<CodingQuestion | null> {
     return await codingQuestionRepository().findOne({ where: { id } });
   },
 
-  async deactivate(id: string): Promise<CodingQuestionSchema | null> {
+  async deactivate(id: string): Promise<CodingQuestion | null> {
     const question = await codingQuestionRepository().findOne({
       where: { id },
     });
@@ -55,7 +55,7 @@ export const codingQuestionService = {
     return question;
   },
 
-  async activate(id: string): Promise<CodingQuestionSchema | null> {
+  async activate(id: string): Promise<CodingQuestion | null> {
     const question = await codingQuestionRepository().findOne({
       where: { id },
     });
@@ -83,7 +83,7 @@ export const codingQuestionService = {
     await codingQuestionRepository().remove(question);
   },
 
-  async list(): Promise<Partial<CodingQuestionSchema>[]> {
+  async list(): Promise<Partial<CodingQuestion>[]> {
     return await codingQuestionRepository().find({
       select: [
         "id",
@@ -100,8 +100,8 @@ export const codingQuestionService = {
 
   async update(
     id: string,
-    updates: UpdateCodingQuestionSchema
-  ): Promise<CodingQuestionSchema | null> {
+    updates: UpdateCodingQuestionRequestBody
+  ): Promise<CodingQuestion | null> {
     const question = await codingQuestionRepository().findOne({
       where: { id },
     });
