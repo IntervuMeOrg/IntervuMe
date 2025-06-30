@@ -1,13 +1,13 @@
 import { EntitySchema } from "typeorm";
-import { MCQOptionSchema } from "./mcqOption-types";
+import { McqOption } from "./mcq-option-types";
 import { BaseColumnSchemaPart } from "../../common/base-model";
-import { MCQQuestionSchema } from "../mcqQuestion/mcqQuestion-types";
+import { McqQuestion } from "../mcqQuestion/mcqQuestion-types";
 
-type MCQOptionQuestionSchema = MCQOptionSchema & {
-  mcqQuestion: MCQQuestionSchema;
+type McqOptionSchema = McqOption & {
+  mcqQuestion: McqQuestion;
 };
 
-export const MCQOptionEntity = new EntitySchema<MCQOptionQuestionSchema>({
+export const McqOptionEntity = new EntitySchema<McqOptionSchema>({
   name: "mcq_option",
   columns: {
     ...BaseColumnSchemaPart,
@@ -36,7 +36,7 @@ export const MCQOptionEntity = new EntitySchema<MCQOptionQuestionSchema>({
   },
   indices: [
     {
-      name: "idx_mcq_question",
+      name: "idx_mcq_option_question_id",
       columns: ["mcqQuestionId"],
     },
   ],

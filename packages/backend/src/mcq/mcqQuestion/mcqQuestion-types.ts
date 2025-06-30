@@ -1,10 +1,10 @@
 import { Static, Type } from "@fastify/type-provider-typebox";
-import { BaseModelSchema } from "../common/base-model";
+import { BaseModelSchema } from "../../common/base-model";
 import {
-  CreateMCQOptionSchema,
-  MCQOptionSchema,
-  MCQOptionUpdateQuestionSchema,
-} from "../mcqOption/mcqOption-types";
+  CreateMcqOptionRequestBody,
+  McqOption,
+  McqOptionsUpdateBody,
+} from "../mcq-option/mcq-option-types";
 
 export enum DifficultyLevel {
   EASY = "easy",
@@ -12,41 +12,42 @@ export enum DifficultyLevel {
   HARD = "hard",
 }
 
-export const MCQQuestionSchema = Type.Object({
+export const McqQuestion = Type.Object({
   ...BaseModelSchema,
   text: Type.String({ minLength: 1, maxLength: 2000 }),
   difficulty: Type.Optional(Type.Enum(DifficultyLevel)),
   allowMultiple: Type.Optional(Type.Boolean({ default: false })),
   explanation: Type.Optional(Type.String({ maxLength: 1000 })),
-  options: Type.Array(MCQOptionSchema, { minItems: 2, maxItems: 6 }),
+  options: Type.Array(McqOption, { minItems: 2, maxItems: 6 }),
 });
 
-export type MCQQuestionSchema = Static<typeof MCQQuestionSchema>;
+export type McqQuestion = Static<typeof McqQuestion>;
 
-export const CreateMCQQuestionSchema = Type.Object({
+export const CreateMcqQuestionRequestBody = Type.Object({
   text: Type.String({ minLength: 1, maxLength: 2000 }),
   difficulty: Type.Optional(Type.Enum(DifficultyLevel)),
   allowMultiple: Type.Optional(Type.Boolean({ default: false })),
   explanation: Type.Optional(Type.String({ maxLength: 1000 })),
-  options: Type.Array(CreateMCQOptionSchema, { minItems: 2, maxItems: 6 }),
+  options: Type.Array(CreateMcqOptionRequestBody, { minItems: 2, maxItems: 6 }),
 });
 
-export type CreateMCQQuestionSchema = Static<typeof CreateMCQQuestionSchema>;
+export type CreateMcqQuestionRequestBody = Static<
+  typeof CreateMcqQuestionRequestBody
+>;
 
-export const UpdateMCQQuestionSchema = Type.Partial(
-  Type.Object({
-    ...CreateMCQQuestionSchema.properties,
-    options: Type.Array(MCQOptionUpdateQuestionSchema, {
+export const UpdateMcqQuestionRequestBody = Type.Object({
+  text: Type.Optional(Type.String({ minLength: 1, maxLength: 2000 })),
+  difficulty: Type.Optional(Type.Enum(DifficultyLevel)),
+  allowMultiple: Type.Optional(Type.Boolean({ default: false })),
+  explanation: Type.Optional(Type.String({ maxLength: 1000 })),
+  options: Type.Optional(
+    Type.Array(McqOptionsUpdateBody, {
       minItems: 2,
       maxItems: 6,
-    }),
-  })
-);
-
-export type UpdateMCQQuestionSchema = Static<typeof UpdateMCQQuestionSchema>;
-
-export const GetMCQQuestion = Type.Object({
-  id: Type.String({ minLength: 21, maxLength: 21 }),
+    })
+  ),
 });
 
-export type GetMCQQuestion = Static<typeof GetMCQQuestion>;
+export type UpdateMcqQuestionRequestBody = Static<
+  typeof UpdateMcqQuestionRequestBody
+>;

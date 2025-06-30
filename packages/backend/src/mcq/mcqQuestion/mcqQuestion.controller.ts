@@ -1,92 +1,93 @@
 import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import {
-  CreateMCQQuestionSchema,
-  GetMCQQuestion,
-  MCQQuestionSchema,
-  UpdateMCQQuestionSchema,
+  CreateMcqQuestionRequestBody,
+  McqQuestion,
+  UpdateMcqQuestionRequestBody,
 } from "./mcqQuestion-types";
 import { StatusCodes } from "http-status-codes";
-import { mcqQuestionService } from "./mcqQuestion.service";
-import { request } from "http";
+import { McqQuestionService } from "./mcqQuestion.service";
+import { ApId } from "../../common/id-generator";
 
 export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);
 
-  app.post("/", createMCQQuestionRequest, async (request, reply) => {
+  app.post("/", createMcqQuestionRequest, async (request, reply) => {
     if (request.user.role !== "admin") {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
     }
 
-    const body = request.body as CreateMCQQuestionSchema;
-    const question = mcqQuestionService.create(body);
+    const body = request.body as CreateMcqQuestionRequestBody;
+    const question = McqQuestionService.create(body);
 
     return question;
   });
 
-  app.get('/', async (request, reply) => {
+  app.get("/", async (request, reply) => {
     if (request.user.role !== "admin") {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
     }
 
-    return await mcqQuestionService.list();
+    return await McqQuestionService.list();
   });
 
-  app.get("/:id", GetMCQQuestionRequest, async (request, reply) => {
-    const { id } = request.params as GetMCQQuestion;
-    const question = await mcqQuestionService.getById(id);
+  app.get("/:id", GetMcqQuestionRequest, async (request) => {
+    const { id } = request.params as { id: string };
+    const question = await McqQuestionService.getById(id);
     return question;
   });
 
-  app.put("/:id", updateMCQQuestionRequest, async (request, reply) => {
-    const { id } = request.params as GetMCQQuestion;
-    const body = request.body as UpdateMCQQuestionSchema;
+  app.put("/:id", updateMcqQuestionRequest, async (request) => {
+    const { id } = request.params as { id: string };
+    const body = request.body as UpdateMcqQuestionRequestBody;
 
-    const question = await mcqQuestionService.update(id, body);
+    const question = await McqQuestionService.update(id, body);
     return question;
   });
 
-  app.delete("/:id", GetMCQQuestionRequest, async (request, reply) => {
+  app.delete("/:id", GetMcqQuestionRequest, async (request, reply) => {
     if (request.user.role !== "admin") {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
     }
 
-    const { id } = request.params as GetMCQQuestion;
-    await mcqQuestionService.delete(id);
+    const { id } = request.params as { id: string };
+    await McqQuestionService.delete(id);
   });
-
-
 };
 
-const createMCQQuestionRequest = {
+const createMcqQuestionRequest = {
   schema: {
-    body: CreateMCQQuestionSchema,
+    body: CreateMcqQuestionRequestBody,
     response: {
-      [StatusCodes.OK]: MCQQuestionSchema,
+      [StatusCodes.OK]: McqQuestion,
     },
   },
 };
 
-const updateMCQQuestionRequest = {
+const updateMcqQuestionRequest = {
   schema: {
-    params: GetMCQQuestion,
-    body: UpdateMCQQuestionSchema,
+    params: {
+      id: ApId,
+    },
+    body: UpdateMcqQuestionRequestBody,
     response: {
-      [StatusCodes.OK]: MCQQuestionSchema,
+      [StatusCodes.OK]: McqQuestion,
     },
   },
 };
 
-const GetMCQQuestionRequest = {
+const GetMcqQuestionRequest = {
   schema: {
-    params: GetMCQQuestion,
+    params: {
+      id: ApId,
+    },
     response: {
-      [StatusCodes.OK]: MCQQuestionSchema,
+      [StatusCodes.OK]: McqQuestion,
     },
   },
 };

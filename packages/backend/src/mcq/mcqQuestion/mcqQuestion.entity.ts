@@ -1,8 +1,8 @@
 import { EntitySchema } from "typeorm";
-import { DifficultyLevel, MCQQuestionSchema } from "./mcqQuestion-types";
-import { BaseColumnSchemaPart } from "../common/base-model";
+import { DifficultyLevel, McqQuestion } from "./mcqQuestion-types";
+import { BaseColumnSchemaPart } from "../../common/base-model";
 
-export const MCQQuestionEntity = new EntitySchema<MCQQuestionSchema>({
+export const McqQuestionEntity = new EntitySchema<McqQuestion>({
   name: "mcq_question",
   columns: {
     ...BaseColumnSchemaPart,
@@ -27,13 +27,13 @@ export const MCQQuestionEntity = new EntitySchema<MCQQuestionSchema>({
       nullable: true,
     },
   },
-  relations:{
+  relations: {
     options: {
-        type: 'one-to-many',
-        target: 'mcq_option',
-        inverseSide: 'mcqQuestion',
-        cascade: true,
-        eager: true,
-    }
+      type: "one-to-many",
+      target: "mcq_option",
+      inverseSide: "mcqQuestion",
+      cascade: true,
+      eager: true,
+    },
   },
 });

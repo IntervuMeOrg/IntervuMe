@@ -1,14 +1,14 @@
 import { EntitySchema } from "typeorm";
 import { BaseColumnSchemaPart } from "../../common/base-model";
-import { AnswerSchema } from "./answer-types";
-import { InterviewSchema } from "../../interview/interview-types";
+import { McqAnswer } from "./mcq-answer-types";
+import { Interview } from "../../interview/interview-types";
 
-export type AnswerEntity = AnswerSchema & {
-  interview: InterviewSchema;
+export type McqAnswerSchema = McqAnswer & {
+  interview: Interview;
 };
 
-export const AnswerEntitySchema = new EntitySchema<AnswerEntity>({
-  name: "answer",
+export const McqAnswerEntity = new EntitySchema<McqAnswerSchema>({
+  name: "mcq_answer",
   columns: {
     ...BaseColumnSchemaPart,
     interviewId: {
@@ -18,7 +18,7 @@ export const AnswerEntitySchema = new EntitySchema<AnswerEntity>({
     questionId: {
       type: String,
       nullable: false,
-      comment: "MCQ question ID",
+      comment: "Mcq question ID",
     },
     selectedOptionId: {
       type: String,
@@ -43,21 +43,21 @@ export const AnswerEntitySchema = new EntitySchema<AnswerEntity>({
   relations: {
     interview: {
       type: "many-to-one",
-      target: "Interview",
+      target: "interview",
       joinColumn: { name: "interviewId" },
     },
   },
   indices: [
     {
-      name: "IDX_ANSWER_INTERVIEW_ID",
+      name: "idx_mcq_answer_interview_id",
       columns: ["interviewId"],
     },
     {
-      name: "IDX_ANSWER_QUESTION_ID",
+      name: "idx_mcq_answer_question_id",
       columns: ["questionId"],
     },
     {
-      name: "IDX_ANSWER_INTERVIEW_QUESTION",
+      name: "idx_mcq_answer_interview_question",
       columns: ["interviewId", "questionId"],
       unique: true,
     },
