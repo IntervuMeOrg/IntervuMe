@@ -4,7 +4,7 @@ import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
 
 type ResultSummaryPerformanceBreakdownProps = {
 	questions: (MCQQuestion | ProblemSolvingQuestion)[];
-	userAnswers: Record<string, string>;
+	userAnswers: Record<number, string>;
 };
 
 export const ResultSummaryPerformanceBreakdown = ({
