@@ -1,41 +1,45 @@
 import { StatusCodes } from "http-status-codes";
 import { codeSubmissionService } from "./codeSubmission.service";
 import {
-  CodeSubmissionSchema,
-  CreateCodeSubmissionSchema,
-  UpdateCodeSubmissionSchema,
-  GetCodeSubmissionSchema,
-} from "./codeSubmission-types";
+  CodeSubmission,
+  CodeSubmissionRequestBody,
+  UpdateCodeSubmissionRequestBody,
+} from "./code-submission-types";
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
+import { ApId } from "../../common/id-generator";
 
 export const codeSubmissionController: FastifyPluginAsyncTypebox = async (
   app
 ) => {
   app.addHook("onRequest", app.authenticate);
 
-  app.post("/", CreateCodeSubmissionRequest, async (request, reply) => {
-    const body = request.body as CreateCodeSubmissionSchema;
+  app.post("/", CodeSubmissionRequestBodyRequest, async (request, reply) => {
+    const body = request.body as CodeSubmissionRequestBody;
     const codeSubmission = await codeSubmissionService.create(body);
     return codeSubmission;
   });
 
   app.get("/:id", GetCodeSubmissionRequest, async (request, reply) => {
-    const { id } = request.params as GetCodeSubmissionSchema;
+    const { id } = request.params as { id: string };
     const codeSubmission = await codeSubmissionService.getById(id);
     return codeSubmission;
   });
 
-  app.put("/:id", UpdateCodeSubmissionRequest, async (request, reply) => {
-    const { id } = request.params as GetCodeSubmissionSchema;
-    const body = request.body as UpdateCodeSubmissionSchema;
+  app.put(
+    "/:id",
+    UpdateCodeSubmissionRequestBodyRequest,
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      const body = request.body as UpdateCodeSubmissionRequestBody;
 
-    const codeSubmission = await codeSubmissionService.update(id, body);
-    return codeSubmission;
-  });
+      const codeSubmission = await codeSubmissionService.update(id, body);
+      return codeSubmission;
+    }
+  );
 
   app.delete("/:id", DeleteCodeSubmissionRequest, async (request, reply) => {
-    const { id } = request.params as GetCodeSubmissionSchema;
+    const { id } = request.params as { id: string };
     const deleted = await codeSubmissionService.delete(id);
   });
 
@@ -72,7 +76,7 @@ export const codeSubmissionController: FastifyPluginAsyncTypebox = async (
     "/:id/with-results",
     GetCodeSubmissionRequest,
     async (request, reply) => {
-      const { id } = request.params as GetCodeSubmissionSchema;
+      const { id } = request.params as { id: string };
       const codeSubmission = await codeSubmissionService.findWithTestResults(
         id
       );
@@ -82,20 +86,22 @@ export const codeSubmissionController: FastifyPluginAsyncTypebox = async (
   );
 };
 
-const CreateCodeSubmissionRequest = {
+const CodeSubmissionRequestBodyRequest = {
   schema: {
-    body: CreateCodeSubmissionSchema,
+    body: CodeSubmissionRequestBody,
     response: {
-      [StatusCodes.OK]: CodeSubmissionSchema,
+      [StatusCodes.OK]: CodeSubmission,
     },
   },
 };
 
 const GetCodeSubmissionRequest = {
   schema: {
-    params: GetCodeSubmissionSchema,
+    params: Type.Object({
+      id: ApId,
+    }),
     response: {
-      [StatusCodes.OK]: CodeSubmissionSchema,
+      [StatusCodes.OK]: CodeSubmission,
       [StatusCodes.NOT_FOUND]: Type.Object({
         message: Type.String(),
       }),
@@ -103,12 +109,14 @@ const GetCodeSubmissionRequest = {
   },
 };
 
-const UpdateCodeSubmissionRequest = {
+const UpdateCodeSubmissionRequestBodyRequest = {
   schema: {
-    params: GetCodeSubmissionSchema,
-    body: UpdateCodeSubmissionSchema,
+    params: Type.Object({
+      id: ApId,
+    }),
+    body: UpdateCodeSubmissionRequestBody,
     response: {
-      [StatusCodes.OK]: CodeSubmissionSchema,
+      [StatusCodes.OK]: CodeSubmission,
       [StatusCodes.NOT_FOUND]: Type.Object({
         message: Type.String(),
       }),
@@ -118,7 +126,9 @@ const UpdateCodeSubmissionRequest = {
 
 const DeleteCodeSubmissionRequest = {
   schema: {
-    params: GetCodeSubmissionSchema,
+    params: Type.Object({
+      id: ApId,
+    }),
     response: {
       [StatusCodes.OK]: Type.Object({
         message: Type.String(),
@@ -133,10 +143,10 @@ const DeleteCodeSubmissionRequest = {
 const GetCodeSubmissionsByInterviewRequest = {
   schema: {
     params: Type.Object({
-      interviewId: Type.String(),
+      interviewId: ApId,
     }),
     response: {
-      [StatusCodes.OK]: Type.Array(CodeSubmissionSchema),
+      [StatusCodes.OK]: Type.Array(CodeSubmission),
     },
   },
 };
@@ -144,11 +154,11 @@ const GetCodeSubmissionsByInterviewRequest = {
 const GetCodeSubmissionsByInterviewAndQuestionRequest = {
   schema: {
     params: Type.Object({
-      interviewId: Type.String(),
-      questionId: Type.String(),
+      interviewId: ApId,
+      questionId: ApId,
     }),
     response: {
-      [StatusCodes.OK]: Type.Array(CodeSubmissionSchema),
+      [StatusCodes.OK]: Type.Array(CodeSubmission),
     },
   },
 };
