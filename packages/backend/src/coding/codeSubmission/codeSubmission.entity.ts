@@ -1,11 +1,11 @@
 import { EntitySchema } from "typeorm";
 import { BaseColumnSchemaPart } from "../../common/base-model";
 import { CodeSubmissionSchema } from "./codeSubmission-types";
-import { InterviewSchema } from "../../interview/interview-types";
+import { Interview } from "../../interview/interview-types";
 import { TestCaseResultSchema } from "../testCaseResult/testCaseResult-types";
 
 export type CodeSubmissionEntity = CodeSubmissionSchema & {
-  interview: InterviewSchema;
+  interview: Interview;
   testCaseResults: TestCaseResultSchema[];
 };
 

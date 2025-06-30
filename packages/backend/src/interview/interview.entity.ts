@@ -1,7 +1,7 @@
 import { EntitySchema } from "typeorm";
 import { BaseColumnSchemaPart } from "../common/base-model";
 import { InterviewQuestionSchema } from "./interviewQuestion/interviewQuestion-types";
-import { InterviewSchema, Status } from "./interview-types";
+import { Interview, Status } from "./interview-types";
 import { CodeSubmissionEntity } from "../coding/codeSubmission/codeSubmission.entity";
 import { AnswerEntity } from "../answer/answer.entity";
 
