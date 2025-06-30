@@ -3,6 +3,7 @@ import { CodingQuestionEntity } from "./codingQuestion.entity";
 import {
   CodingQuestion,
   CreateCodingQuestionRequestBody,
+  DifficultyLevel,
   UpdateCodingQuestionRequestBody,
 } from "./codingQuestion-types";
 import { apId } from "../../common/id-generator";
@@ -137,5 +138,16 @@ export const codingQuestionService = {
 
     Object.assign(question, restUpdates, { updated: new Date().toISOString() });
     return await codingQuestionRepository().save(question);
+  },
+
+  async getRandomByDifficultyAndCount(difficulty: DifficultyLevel, count: number): Promise<CodingQuestion[]> {
+    const questions = await codingQuestionRepository()
+      .createQueryBuilder("coding")
+      .where("coding.difficulty = :difficulty", { difficulty })
+      .orderBy("RANDOM()")
+      .take(count)
+      .getMany();
+
+    return questions;
   },
 };

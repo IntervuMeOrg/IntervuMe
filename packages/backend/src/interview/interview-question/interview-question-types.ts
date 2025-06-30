@@ -1,7 +1,7 @@
 import { Static, Type } from "@fastify/type-provider-typebox";
 import { BaseModelSchema } from "../../common/base-model";
 import { CodingQuestion } from "../../coding/coding-question/codingQuestion-types";
-import { McqQuestion } from "../../mcq/mcqQuestion/mcqQuestion-types";
+import { McqQuestion } from "../../mcq/mcq-question/mcq-question-types";
 import { ApId } from "../../common/id-generator";
 
 export enum QuestionType {

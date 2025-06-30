@@ -5,7 +5,7 @@ import { ProfileEntity } from "../profile/profile.entity.js";
 import { CodingQuestionEntity } from "../coding/coding-question/codingQuestion.entity.js";
 import { TestCaseEntity } from "../coding/test-case/test-case.entity.js";
 import { McqOptionEntity } from "../mcq/mcq-option/mcq-option.entity.js";
-import { McqQuestionEntity } from "../mcq/mcqQuestion/mcqQuestion.entity.js";
+import { McqQuestionEntity } from "../mcq/mcq-question/mcq-question.entity.js";
 import { McqAnswerEntity } from "../mcq/mcq-answer/mcq-answer.entity.js";
 import { InterviewEntity } from "../interview/interview.entity.js";
 import { InterviewQuestionEntitySchema } from "../interview/interview-question/interview-question.entity.js";

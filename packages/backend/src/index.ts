@@ -10,7 +10,7 @@ import { profileModule } from "./profile/profile.module.js";
 import { codingQuestionModule } from "./coding/coding-question/codingQuestion.module.js";
 import { testCaseModule } from "./coding/test-case/test-case.module.js";
 import { mcqOptionModule } from "./mcq/mcq-option/mcq-option.module.js";
-import { mcqQuestionModule } from "./mcq/mcqQuestion/mcqQuestion.module.js";
+import { mcqQuestionModule } from "./mcq/mcq-question/mcq-question.module.js";
 import { interviewQuestionModule } from "./interview/interview-question/interview-question.module.js";
 import { mcqAnswerModule } from "./mcq/mcq-answer/mcq-answer.module.js";
 
