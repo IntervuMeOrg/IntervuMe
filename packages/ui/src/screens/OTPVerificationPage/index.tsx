@@ -117,7 +117,7 @@ export const OTPVerificationPage = (): JSX.Element => {
 
 			{/* Right panel with illustration */}
 			<div
-				className="hidden lg:flex lg:w-[68%] relative bg-cover bg-center"
+				className="hidden lg:flex lg:w-[68%] relative bg-cover bg-center overflow-hidden"
 				style={{ backgroundImage: "url(/rectangle.png)" }}
 			>
 				<motion.div
