@@ -1,5 +1,5 @@
 import { Static, Type } from "@fastify/type-provider-typebox";
-import { BaseModelSchema } from "../common/base-model";
+import { BaseModelSchema } from "../../common/base-model";
 
 export const MCQOptionSchema = Type.Object({
   ...BaseModelSchema,

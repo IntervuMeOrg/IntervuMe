@@ -1,6 +1,6 @@
 import { Static, Type } from "@fastify/type-provider-typebox";
-import { BaseModelSchema } from "../common/base-model";
-import { ApId } from "../common/id-generator";
+import { BaseModelSchema } from "../../common/base-model";
+import { ApId } from "../../common/id-generator";
 
 export const TestCaseSchema = Type.Object({
   ...BaseModelSchema,
@@ -27,16 +27,16 @@ export const TestCaseUpdateQuestionSchema = Type.Object({
   isHidden: Type.Boolean({ default: false }),
 });
 
-export type TestCaseUpdateQuestionSchema = Static<typeof TestCaseUpdateQuestionSchema>;
+export type TestCaseUpdateQuestionSchema = Static<
+  typeof TestCaseUpdateQuestionSchema
+>;
 
-export const UpdateTestCaseSchema = Type.Partial(
-  TestCaseCreateSchema
-);
+export const UpdateTestCaseSchema = Type.Partial(TestCaseCreateSchema);
 
 export type UpdateTestCaseSchema = Static<typeof UpdateTestCaseSchema>;
 
 export const GetTestCase = Type.Object({
-  id: Type.String({ minLength: 21, maxLength: 21 })
+  id: Type.String({ minLength: 21, maxLength: 21 }),
 });
 
 export type GetTestCase = Static<typeof GetTestCase>;

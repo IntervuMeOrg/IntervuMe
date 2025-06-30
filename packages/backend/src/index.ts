@@ -7,12 +7,12 @@ import jwtPlugin from "./plugins/jwt";
 import { authenticationModule } from "./authentication/authentication.module.js";
 import { userModule } from "./user/user.module.js";
 import { profileModule } from "./profile/profile.module.js";
-import { codingQuestionModule } from "./codingQuestion/codingQuestion.module.js";
-import { testCaseModule } from "./testCase/testCase.module.js";
-import { mcqOptionModule } from "./mcqOption/mcqOption.module.js";
-import { MCQQuestionModule } from "./mcqQuestion/mcqQuestion.module.js";
-import { interviewQuestionModule } from "./interviewQuestion/interviewQuestion.module.js";
-import { answerModule } from "./answer/answer.module.js";
+import { codingQuestionModule } from "./coding/codingQuestion/codingQuestion.module.js";
+import { testCaseModule } from "./coding/testCase/testCase.module.js";
+import { mcqOptionModule } from "./mcq/mcqOption/mcqOption.module.js";
+import { MCQQuestionModule } from "./mcq/mcqQuestion/mcqQuestion.module.js";
+import { interviewQuestionModule } from "./interview/interviewQuestion/interviewQuestion.module.js";
+import { answerModule } from "./mcq/mcqAnswer/answer.module.js";
 
 config();
 

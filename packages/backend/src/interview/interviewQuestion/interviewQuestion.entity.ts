@@ -1,6 +1,9 @@
 import { EntitySchema } from "typeorm";
-import { BaseColumnSchemaPart } from "../common/base-model";
-import { InterviewQuestionSchema, QuestionTypes } from "./interviewQuestion-types";
+import { BaseColumnSchemaPart } from "../../common/base-model";
+import {
+  InterviewQuestionSchema,
+  QuestionTypes,
+} from "./interviewQuestion-types";
 
 type InterviewQuestionEntity = InterviewQuestionSchema & {
   interview: InterviewQuestionSchema;

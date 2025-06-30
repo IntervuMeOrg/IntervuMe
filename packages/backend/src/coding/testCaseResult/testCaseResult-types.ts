@@ -1,11 +1,11 @@
 import { Static, Type } from "@sinclair/typebox";
-import { BaseModelSchema } from "../common/base-model";
+import { BaseModelSchema } from "../../common/base-model";
 
 export enum Verdict {
-  PASSED= 'passed',
-  WRONGANSWER= 'wrong answer',
-  TLE= 'time limit',
-  MLE = 'memory limit',
+  PASSED = "passed",
+  WRONGANSWER = "wrong answer",
+  TLE = "time limit",
+  MLE = "memory limit",
 }
 
 export const TestCaseResultSchema = Type.Object({
@@ -27,7 +27,9 @@ export const CreateTestCaseResultSchema = Type.Object({
   verdict: Type.Enum(Verdict),
 });
 
-export type CreateTestCaseResultSchema = Static<typeof CreateTestCaseResultSchema>;
+export type CreateTestCaseResultSchema = Static<
+  typeof CreateTestCaseResultSchema
+>;
 
 export const UpdateTestCaseResultSchema = Type.Object({
   userOutput: Type.Optional(Type.String()),
@@ -35,7 +37,9 @@ export const UpdateTestCaseResultSchema = Type.Object({
   verdict: Type.Enum(Verdict),
 });
 
-export type UpdateTestCaseResultSchema = Static<typeof UpdateTestCaseResultSchema>;
+export type UpdateTestCaseResultSchema = Static<
+  typeof UpdateTestCaseResultSchema
+>;
 
 export const GetTestCaseResultSchema = Type.Object({
   id: Type.String({ minLength: 21, maxLength: 21 }),

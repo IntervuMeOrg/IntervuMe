@@ -1,5 +1,5 @@
-import { AppDataSource } from "../database/data-source";
-import { apId } from "../common/id-generator";
+import { AppDataSource } from "../../database/data-source";
+import { apId } from "../../common/id-generator";
 import { AnswerEntitySchema } from "./answer.entity";
 import {
   CreateAnswerSchema,
@@ -7,7 +7,7 @@ import {
   UpdateAnswerSchema,
 } from "./answer-types";
 import { mcqQuestionService } from "../mcqQuestion/mcqQuestion.service";
-import { interviewService } from "../interview/interview.service";
+import { interviewService } from "../../interview/interview.service";
 
 const AnswerRepository = () => {
   return AppDataSource.getRepository(AnswerEntitySchema);
@@ -82,7 +82,9 @@ export const answerService = {
     interviewId: string,
     questionId: string
   ): Promise<AnswerSchema | null> {
-    const answer = await AnswerRepository().findOne({ where: { interviewId, questionId }});
+    const answer = await AnswerRepository().findOne({
+      where: { interviewId, questionId },
+    });
 
     if (!answer) {
       throw new Error("Answer not found for this question");
@@ -158,10 +160,16 @@ export const answerService = {
 
     const totalQuestions = answers.length;
     const correctAnswers = answers.filter((answer) => answer.isCorrect).length;
-    const totalPoints = answers.reduce((sum, answer) => sum + (answer.isCorrect ? 1 : 0), 0);
+    const totalPoints = answers.reduce(
+      (sum, answer) => sum + (answer.isCorrect ? 1 : 0),
+      0
+    );
     const maxPoints = answers.length;
     const percentage = (totalPoints / maxPoints) * 100;
-    const totalTimeSpent = answers.reduce((sum, answer) => sum + (answer.timeSpent || 0), 0);
+    const totalTimeSpent = answers.reduce(
+      (sum, answer) => sum + (answer.timeSpent || 0),
+      0
+    );
 
     return {
       totalQuestions,

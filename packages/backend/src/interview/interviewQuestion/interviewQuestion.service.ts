@@ -1,5 +1,5 @@
-import { AppDataSource } from "../database/data-source";
-import { apId } from "../common/id-generator";
+import { AppDataSource } from "../../database/data-source";
+import { apId } from "../../common/id-generator";
 import { InterviewQuestionEntitySchema } from "./interviewQuestion.entity";
 import {
   CreateInterviewQuestionSchema,
@@ -135,7 +135,9 @@ export const interviewQuestionService = {
       throw new Error("Interview Question not found");
     }
 
-    Object.assign(interviewQuestion, updates, { updatedAt: new Date().toISOString() });
+    Object.assign(interviewQuestion, updates, {
+      updatedAt: new Date().toISOString(),
+    });
     return await InterviewQuestionRepository().save(interviewQuestion);
   },
 
@@ -150,5 +152,4 @@ export const interviewQuestionService = {
 
     await InterviewQuestionRepository().remove(interviewQuestion);
   },
-  
 };

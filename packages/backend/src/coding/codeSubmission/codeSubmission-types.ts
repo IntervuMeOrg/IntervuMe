@@ -1,5 +1,5 @@
 import { Static, Type } from "@sinclair/typebox";
-import { BaseModelSchema } from "../common/base-model";
+import { BaseModelSchema } from "../../common/base-model";
 
 export const CodeSubmissionSchema = Type.Object({
   ...BaseModelSchema,
@@ -17,13 +17,17 @@ export const CreateCodeSubmissionSchema = Type.Object({
   code: Type.String(),
 });
 
-export type CreateCodeSubmissionSchema = Static<typeof CreateCodeSubmissionSchema>;
+export type CreateCodeSubmissionSchema = Static<
+  typeof CreateCodeSubmissionSchema
+>;
 
 export const UpdateCodeSubmissionSchema = Type.Object({
   code: Type.String(),
 });
 
-export type UpdateCodeSubmissionSchema = Static<typeof UpdateCodeSubmissionSchema>;
+export type UpdateCodeSubmissionSchema = Static<
+  typeof UpdateCodeSubmissionSchema
+>;
 
 export const GetCodeSubmissionSchema = Type.Object({
   id: Type.String({ minLength: 21, maxLength: 21 }),

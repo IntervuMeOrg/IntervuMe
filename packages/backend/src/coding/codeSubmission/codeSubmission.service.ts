@@ -1,4 +1,4 @@
-import { AppDataSource } from "../database/data-source";
+import { AppDataSource } from "../../database/data-source";
 import {
   CodeSubmissionEntitySchema,
   CodeSubmissionEntity,
@@ -8,7 +8,7 @@ import {
   CreateCodeSubmissionSchema,
   UpdateCodeSubmissionSchema,
 } from "./codeSubmission-types";
-import { apId } from "../common/id-generator";
+import { apId } from "../../common/id-generator";
 
 const CodeSubmissionRepository = () => {
   return AppDataSource.getRepository(CodeSubmissionEntitySchema);
@@ -31,19 +31,20 @@ export const codeSubmissionService = {
       where: { id },
     });
 
-    if(!codeSubmission)
-        throw new Error('Code submission not found');
+    if (!codeSubmission) throw new Error("Code submission not found");
     return codeSubmission;
   },
 
-  async getByInterviewId(interviewId: string): Promise<CodeSubmissionSchema[] | null> {
+  async getByInterviewId(
+    interviewId: string
+  ): Promise<CodeSubmissionSchema[] | null> {
     const codeSubmissions = await CodeSubmissionRepository().find({
       where: { interviewId },
       order: { submittedAt: "DESC" },
     });
 
-    if(!codeSubmissions)
-        throw new Error('No code submissions for this interview');
+    if (!codeSubmissions)
+      throw new Error("No code submissions for this interview");
 
     return codeSubmissions;
   },
@@ -57,8 +58,8 @@ export const codeSubmissionService = {
       order: { submittedAt: "DESC" },
     });
 
-    if(!codeSubmissions)
-        throw new Error('No code submissions for this interview or question');
+    if (!codeSubmissions)
+      throw new Error("No code submissions for this interview or question");
 
     return codeSubmissions;
   },
@@ -88,8 +89,7 @@ export const codeSubmissionService = {
       where: { id },
     });
 
-    if (!codeSubmission) 
-        throw new Error('Code submission not found');
+    if (!codeSubmission) throw new Error("Code submission not found");
 
     await CodeSubmissionRepository().delete(id);
   },
@@ -100,8 +100,7 @@ export const codeSubmissionService = {
       relations: ["testCaseResults"],
     });
 
-    if(!codeSubmission)
-        throw new Error('Code Submission not found');
+    if (!codeSubmission) throw new Error("Code Submission not found");
 
     return codeSubmission;
   },

@@ -1,5 +1,5 @@
 import { Static, Type } from "@sinclair/typebox";
-import { BaseModelSchema } from "../common/base-model";
+import { BaseModelSchema } from "../../common/base-model";
 
 export const AnswerSchema = Type.Object({
   ...BaseModelSchema,
@@ -46,7 +46,9 @@ export const GetAnswersForInterviewForQuestion = Type.Object({
   questionId: Type.String({ minLength: 21, maxLength: 21 }),
 });
 
-export type GetAnswersForInterviewForQuestion = Static<typeof GetAnswersForInterviewForQuestion>;
+export type GetAnswersForInterviewForQuestion = Static<
+  typeof GetAnswersForInterviewForQuestion
+>;
 
 export const AnswerSummarySchema = Type.Object({
   totalQuestions: Type.Integer(),
@@ -59,4 +61,3 @@ export const AnswerSummarySchema = Type.Object({
 });
 
 export type AnswerSummarySchema = Static<typeof AnswerSummarySchema>;
-
