@@ -1,8 +1,9 @@
 import { Static, Type } from "@fastify/type-provider-typebox";
 import { BaseModelSchema } from "../common/base-model";
 import { ApId } from "../common/id-generator";
+import { ApId } from "../common/id-generator";
 
-export enum Status {
+export enum InterviewStatus {
   SCHEDULED = "SCHEDULED",
   IN_PROGRESS = "IN_PROGRESS",
   COMPLETED = "COMPLETED",
@@ -11,12 +12,13 @@ export enum Status {
 }
 
 export const Interview = Type.Object({
+export const Interview = Type.Object({
   ...BaseModelSchema,
-  userId: Type.String(),
+  userId: ApId,
   startTime: Type.String({ format: "date-time" }),
   endTime: Type.Optional(Type.String({ format: "date-time" })),
   timeLimit: Type.Integer({ minimum: 5, maximum: 300 }), // in minutes
-  status: Type.Optional(Type.Enum(Status)),
+  status: Type.Optional(Type.Enum(InterviewStatus)),
   totalScore: Type.Optional(Type.Number({ minimum: 0 })),
   maxScore: Type.Optional(Type.Number({ minimum: 0 })),
   isPassed: Type.Optional(Type.Boolean()),
@@ -24,6 +26,7 @@ export const Interview = Type.Object({
   isActive: Type.Optional(Type.Boolean({ default: true })),
 });
 
+export type Interview = Static<typeof Interview>;
 export type Interview = Static<typeof Interview>;
 
 export const CreateInterviewRequestBody = Type.Object({

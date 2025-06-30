@@ -4,11 +4,15 @@ import { InterviewQuestionSchema } from "./interviewQuestion/interviewQuestion-t
 import { Interview, Status } from "./interview-types";
 import { CodeSubmissionEntity } from "../coding/codeSubmission/codeSubmission.entity";
 import { AnswerEntity } from "../answer/answer.entity";
+import { Interview, InterviewStatus } from "./interview-types";
+import { InterviewQuestion } from "./interview-types";
+import { CodeSubmissionSchema } from "../coding/codeSubmission/codeSubmission-types";
+import { McqAnswer } from "../mcq/mcq-answer/mcq-answer-types";
 
-export type InterviewEntity = InterviewSchema & {
-  interviewQuestions?: InterviewQuestionSchema[];
-  answers?: AnswerEntity[];
-  codeSubmissions?: CodeSubmissionEntity[];
+export type InterviewEntity = Interview & {
+  interviewQuestions: InterviewQuestion[];
+  answers: McqAnswer[];
+  codeSubmissions: CodeSubmissionSchema[];
 };
 
 export const InterviewEntitySchema = new EntitySchema<InterviewEntity>({
@@ -34,7 +38,7 @@ export const InterviewEntitySchema = new EntitySchema<InterviewEntity>({
     },
     status: {
       type: "enum",
-      enum: Status,
+      enum: InterviewStatus,
       default: "SCHEDULED",
       nullable: false,
     },

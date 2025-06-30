@@ -15,6 +15,8 @@ import { QuestionTypes } from "../interview/interviewQuestion/interviewQuestion-
 import { McqAnswer } from "../mcq/mcq-answer/mcq-answer-types";
 import { CodeSubmissionSchema } from "../coding/codeSubmission/codeSubmission-types";
 import { CodeSubmissionEntity } from "../coding/codeSubmission/codeSubmission.entity";
+import { Interview } from "./interview-types";
+import { InterviewEntitySchema } from "./interview.entity";
 
 const InterviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntitySchema);
@@ -230,5 +232,16 @@ export const interviewService = {
       },
       order: { startTime: "ASC" },
     });
+  },
+};
+
+  async getById(id: string): Promise<Interview | null> {
+    const interview = await interviewRepository().findOne({ where: { id } });
+
+    if (!interview) {
+      throw new Error("Interview not found");
+    }
+
+    return interview;
   },
 };
