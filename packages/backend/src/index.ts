@@ -7,8 +7,8 @@ import jwtPlugin from "./plugins/jwt";
 import { authenticationModule } from "./authentication/authentication.module.js";
 import { userModule } from "./user/user.module.js";
 import { profileModule } from "./profile/profile.module.js";
-import { codingQuestionModule } from "./coding/codingQuestion/codingQuestion.module.js";
-import { testCaseModule } from "./coding/testCase/testCase.module.js";
+import { codingQuestionModule } from "./coding/coding-question/codingQuestion.module.js";
+import { testCaseModule } from "./coding/test-case/test-case.module.js";
 import { mcqOptionModule } from "./mcq/mcq-option/mcq-option.module.js";
 import { mcqQuestionModule } from "./mcq/mcqQuestion/mcqQuestion.module.js";
 import { interviewQuestionModule } from "./interview/interview-question/interview-question.module.js";
@@ -81,9 +81,7 @@ if (databaseConnected) {
   await fastify.register(testCaseModule);
   await fastify.register(mcqOptionModule);
   await fastify.register(mcqQuestionModule);
-  await fastify.register(mcqQuestionModule);
   await fastify.register(interviewQuestionModule);
-  await fastify.register(mcqAnswerModule);
   await fastify.register(mcqAnswerModule);
 } else {
   // Fallback routes when database is not available

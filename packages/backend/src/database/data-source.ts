@@ -2,10 +2,15 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { UserEntity } from "../user/user.entity.js";
 import { ProfileEntity } from "../profile/profile.entity.js";
-import { CodingQuestionEntity } from "../coding/codingQuestion/codingQuestion.entity.js";
-import { TestCaseEntity } from "../coding/testCase/testCase.entity.js";
+import { CodingQuestionEntity } from "../coding/coding-question/codingQuestion.entity.js";
+import { TestCaseEntity } from "../coding/test-case/test-case.entity.js";
 import { McqOptionEntity } from "../mcq/mcq-option/mcq-option.entity.js";
 import { McqQuestionEntity } from "../mcq/mcqQuestion/mcqQuestion.entity.js";
+import { McqAnswerEntity } from "../mcq/mcq-answer/mcq-answer.entity.js";
+import { InterviewEntity } from "../interview/interview.entity.js";
+import { InterviewQuestionEntitySchema } from "../interview/interview-question/interview-question.entity.js";
+import { CodeSubmissionEntity } from "../coding/code-submission/code-submission.entity.js";
+import { TestCaseResultEntity } from "../coding/test-case-result/testCaseResult.entity.js";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -23,6 +28,11 @@ export const AppDataSource = new DataSource({
     TestCaseEntity,
     McqOptionEntity,
     McqQuestionEntity,
+    McqAnswerEntity,
+    InterviewEntity,
+    InterviewQuestionEntitySchema,
+    CodeSubmissionEntity,
+    TestCaseResultEntity,
   ],
   migrations: ["src/database/migrations/*.ts"],
   subscribers: ["src/database/subscribers/*.ts"],
