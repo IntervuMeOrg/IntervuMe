@@ -1,29 +1,29 @@
 import { AppDataSource } from "../../database/data-source";
-import { TestCaseResultEntitySchema } from "./testCaseResult.entity";
+import { TestCaseResultEntity } from "./testCaseResult.entity";
 import {
-  TestCaseResultSchema,
-  CreateTestCaseResultSchema,
-  UpdateTestCaseResultSchema,
+  TestCaseResult,
+  CreateTestCaseResultRequestbody,
+  UpdateTestCaseResultRequestbody,
 } from "./testCaseResult-types";
 import { apId } from "../../common/id-generator";
 
-const TestCaseResultRepository = () => {
-  return AppDataSource.getRepository(TestCaseResultEntitySchema);
+const testCaseResultRepository = () => {
+  return AppDataSource.getRepository(TestCaseResultEntity);
 };
 
 export const testCaseResultService = {
   async create(
-    request: CreateTestCaseResultSchema
-  ): Promise<TestCaseResultSchema> {
-    const testCaseResult = TestCaseResultRepository().create({
+    request: CreateTestCaseResultRequestbody
+  ): Promise<TestCaseResult> {
+    const testCaseResult = testCaseResultRepository().create({
       id: apId(),
       ...request,
     });
-    return await TestCaseResultRepository().save(testCaseResult);
+    return await testCaseResultRepository().save(testCaseResult);
   },
 
-  async getById(id: string): Promise<TestCaseResultSchema | null> {
-    const testCaseResult = await TestCaseResultRepository().findOne({
+  async getById(id: string): Promise<TestCaseResult | null> {
+    const testCaseResult = await testCaseResultRepository().findOne({
       where: { id },
     });
 
@@ -33,8 +33,8 @@ export const testCaseResultService = {
 
   async getByCodeSubmissionId(
     codeSubmissionId: string
-  ): Promise<TestCaseResultSchema[] | null> {
-    const testCaseResults = await TestCaseResultRepository().find({
+  ): Promise<TestCaseResult[] | null> {
+    const testCaseResults = await testCaseResultRepository().find({
       where: { codeSubmissionId },
       order: { created: "ASC" },
     });
@@ -43,10 +43,8 @@ export const testCaseResultService = {
     return testCaseResults;
   },
 
-  async getByTestCaseId(
-    testCaseId: string
-  ): Promise<TestCaseResultSchema[] | null> {
-    const testCaseResults = await TestCaseResultRepository().find({
+  async getByTestCaseId(testCaseId: string): Promise<TestCaseResult[] | null> {
+    const testCaseResults = await testCaseResultRepository().find({
       where: { testCaseId },
       order: { created: "DESC" },
     });
@@ -58,8 +56,8 @@ export const testCaseResultService = {
   async getBySubmissionAndTestCase(
     codeSubmissionId: string,
     testCaseId: string
-  ): Promise<TestCaseResultSchema | null> {
-    const testCaseResult = await TestCaseResultRepository().findOne({
+  ): Promise<TestCaseResult | null> {
+    const testCaseResult = await testCaseResultRepository().findOne({
       where: { codeSubmissionId, testCaseId },
     });
 
@@ -69,9 +67,9 @@ export const testCaseResultService = {
 
   async update(
     id: string,
-    request: UpdateTestCaseResultSchema
-  ): Promise<TestCaseResultSchema | null> {
-    const testCaseResult = await TestCaseResultRepository().findOne({
+    request: UpdateTestCaseResultRequestbody
+  ): Promise<TestCaseResult | null> {
+    const testCaseResult = await testCaseResultRepository().findOne({
       where: { id },
     });
 
@@ -83,11 +81,11 @@ export const testCaseResultService = {
       updated: new Date().toISOString(),
     });
 
-    return await TestCaseResultRepository().save(testCaseResult);
+    return await testCaseResultRepository().save(testCaseResult);
   },
 
   async delete(id: string): Promise<void> {
-    const testCaseResult = await TestCaseResultRepository().findOne({
+    const testCaseResult = await testCaseResultRepository().findOne({
       where: { id },
     });
 
@@ -95,11 +93,11 @@ export const testCaseResultService = {
       throw new Error("Test case result not found");
     }
 
-    await TestCaseResultRepository().delete(id);
+    await testCaseResultRepository().delete(id);
   },
 
   async deleteByCodeSubmissionId(codeSubmissionId: string): Promise<void> {
-    const testCaseResults = await TestCaseResultRepository().findOne({
+    const testCaseResults = await testCaseResultRepository().findOne({
       where: { codeSubmissionId },
     });
 
@@ -107,6 +105,6 @@ export const testCaseResultService = {
       throw new Error("Results not found");
     }
 
-    await TestCaseResultRepository().delete({ codeSubmissionId });
+    await testCaseResultRepository().delete({ codeSubmissionId });
   },
 };

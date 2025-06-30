@@ -1,41 +1,49 @@
 import { StatusCodes } from "http-status-codes";
 import { testCaseResultService } from "./testCaseResult.service";
 import {
-  TestCaseResultSchema,
-  CreateTestCaseResultSchema,
-  UpdateTestCaseResultSchema,
-  GetTestCaseResultSchema,
+  TestCaseResult,
+  CreateTestCaseResultRequestbody,
+  UpdateTestCaseResultRequestbody,
 } from "./testCaseResult-types";
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
+import { ApId } from "../../common/id-generator";
 
 export const testCaseResultController: FastifyPluginAsyncTypebox = async (
   app
 ) => {
   app.addHook("onRequest", app.authenticate);
 
-  app.post("/", CreateTestCaseResultRequest, async (request, reply) => {
-    const body = request.body as CreateTestCaseResultSchema;
-    const testCaseResult = await testCaseResultService.create(body);
-    return testCaseResult;
-  });
+  app.post(
+    "/",
+    CreateTestCaseResultRequestbodyRequest,
+    async (request, reply) => {
+      const body = request.body as CreateTestCaseResultRequestbody;
+      const testCaseResult = await testCaseResultService.create(body);
+      return testCaseResult;
+    }
+  );
 
   app.get("/:id", GetTestCaseResultRequest, async (request, reply) => {
-    const { id } = request.params as GetTestCaseResultSchema;
+    const { id } = request.params as { id: string };
     const testCaseResult = await testCaseResultService.getById(id);
     return testCaseResult;
   });
 
-  app.put("/:id", UpdateTestCaseResultRequest, async (request, reply) => {
-    const { id } = request.params as GetTestCaseResultSchema;
-    const body = request.body as UpdateTestCaseResultSchema;
-    const testCaseResult = await testCaseResultService.update(id, body);
-    return testCaseResult;
-  });
+  app.put(
+    "/:id",
+    UpdateTestCaseResultRequestbodyRequest,
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      const body = request.body as UpdateTestCaseResultRequestbody;
+      const testCaseResult = await testCaseResultService.update(id, body);
+      return testCaseResult;
+    }
+  );
 
   app.delete("/:id", DeleteTestCaseResultRequest, async (request, reply) => {
-    const { id } = request.params as GetTestCaseResultSchema;
-    const deleted = await testCaseResultService.delete(id);
+    const { id } = request.params as { id: string };
+    await testCaseResultService.delete(id);
   });
 
   // Get all results for a submission
@@ -98,37 +106,43 @@ export const testCaseResultController: FastifyPluginAsyncTypebox = async (
   );
 };
 
-const CreateTestCaseResultRequest = {
+const CreateTestCaseResultRequestbodyRequest = {
   schema: {
-    body: CreateTestCaseResultSchema,
+    body: CreateTestCaseResultRequestbody,
     response: {
-      [StatusCodes.OK]: TestCaseResultSchema,
+      [StatusCodes.OK]: TestCaseResult,
     },
   },
 };
 
 const GetTestCaseResultRequest = {
   schema: {
-    params: GetTestCaseResultSchema,
+    params: {
+      id: ApId,
+    },
     response: {
-      [StatusCodes.OK]: TestCaseResultSchema,
+      [StatusCodes.OK]: TestCaseResult,
     },
   },
 };
 
-const UpdateTestCaseResultRequest = {
+const UpdateTestCaseResultRequestbodyRequest = {
   schema: {
-    params: GetTestCaseResultSchema,
-    body: UpdateTestCaseResultSchema,
+    params: {
+      id: ApId,
+    },
+    body: UpdateTestCaseResultRequestbody,
     response: {
-      [StatusCodes.OK]: TestCaseResultSchema,
+      [StatusCodes.OK]: TestCaseResult,
     },
   },
 };
 
 const DeleteTestCaseResultRequest = {
   schema: {
-    params: GetTestCaseResultSchema,
+    params: {
+      id: ApId,
+    },
     response: {
       [StatusCodes.OK]: Type.Object({
         message: Type.String(),
@@ -143,7 +157,7 @@ const GetTestCaseResultsByCodeSubmissionRequest = {
       codeSubmissionId: Type.String(),
     }),
     response: {
-      [StatusCodes.OK]: Type.Array(TestCaseResultSchema),
+      [StatusCodes.OK]: Type.Array(TestCaseResult),
     },
   },
 };
@@ -151,10 +165,10 @@ const GetTestCaseResultsByCodeSubmissionRequest = {
 const GetTestCaseResultsByTestCaseRequest = {
   schema: {
     params: Type.Object({
-      testCaseId: Type.String(),
+      testCaseId: ApId,
     }),
     response: {
-      [StatusCodes.OK]: Type.Array(TestCaseResultSchema),
+      [StatusCodes.OK]: Type.Array(TestCaseResult),
     },
   },
 };
@@ -162,11 +176,11 @@ const GetTestCaseResultsByTestCaseRequest = {
 const GetTestCaseResultBySubmissionAndCaseRequest = {
   schema: {
     params: Type.Object({
-      codeSubmissionId: Type.String(),
-      testCaseId: Type.String(),
+      codeSubmissionId: ApId,
+      testCaseId: ApId,
     }),
     response: {
-      [StatusCodes.OK]: TestCaseResultSchema,
+      [StatusCodes.OK]: TestCaseResult,
     },
   },
 };
