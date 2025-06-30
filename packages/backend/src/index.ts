@@ -81,7 +81,9 @@ if (databaseConnected) {
   await fastify.register(testCaseModule);
   await fastify.register(mcqOptionModule);
   await fastify.register(mcqQuestionModule);
+  await fastify.register(mcqQuestionModule);
   await fastify.register(interviewQuestionModule);
+  await fastify.register(mcqAnswerModule);
   await fastify.register(mcqAnswerModule);
 } else {
   // Fallback routes when database is not available
