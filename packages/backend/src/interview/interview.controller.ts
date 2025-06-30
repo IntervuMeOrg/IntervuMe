@@ -4,25 +4,25 @@ import {
 } from "@fastify/type-provider-typebox";
 import {
   CreateInterviewRequestBody,
-  GetInterview,
   Interview,
-  Status,
+  InterviewStatus,
   UpdateInterviewRequestBody,
 } from "./interview-types";
 import { StatusCodes } from "http-status-codes";
 import { interviewService } from "./interview.service";
+import { ApId } from "../common/id-generator";
 
 export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);
-// TODO
-//   app.post("/", CreateInterviewRequestBodyRequest, async (request, reply) => {
-//     const body = request.body as CreateInterviewRequestBody;
-//     const interview = await interviewService.create(body);
-//     return interview;
-//   });
+  // TODO
+  //   app.post("/", CreateInterviewRequestBodyRequest, async (request, reply) => {
+  //     const body = request.body as CreateInterviewRequestBody;
+  //     const interview = await interviewService.create(body);
+  //     return interview;
+  //   });
 
   app.get("/:id", GetInterviewRequest, async (request, reply) => {
-    const { id } = request.params as GetInterview;
+    const { id } = request.params as { id: string };
     const interview = await interviewService.getById(id);
     return interview;
   });
@@ -31,14 +31,14 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
     "/:id/with-questions",
     GetInterviewWithQuestionsRequest,
     async (request, reply) => {
-      const { id } = request.params as GetInterview;
+      const { id } = request.params as { id: string };
       const interview = await interviewService.getByIdWithQuestions(id);
       return interview;
     }
   );
 
   app.put("/:id", UpdateInterviewRequestBodyRequest, async (request, reply) => {
-    const { id } = request.params as GetInterview;
+    const { id } = request.params as { id: string };
     const body = request.body as UpdateInterviewRequestBody;
     const interview = await interviewService.update(id, body);
     return interview;
@@ -46,7 +46,7 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
 
   // soft delete
   app.delete("/:id", DeleteInterviewRequest, async (request, reply) => {
-    const { id } = request.params as GetInterview;
+    const { id } = request.params as { id: string };
     await interviewService.delete(id);
   });
 
@@ -66,7 +66,7 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
     "/status/:status",
     GetInterviewsByStatusRequest,
     async (request, reply) => {
-      const { status } = request.params as { status: Status };
+      const { status } = request.params as { status: InterviewStatus };
       const interviews = await interviewService.getByStatus(status);
       return interviews;
     }
@@ -74,14 +74,14 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
 
   // Start interview
   app.post("/:id/start", StartInterviewRequest, async (request, reply) => {
-    const { id } = request.params as GetInterview;
+    const { id } = request.params as { id: string };
     const interview = await interviewService.startInterview(id);
     return interview;
   });
 
   // End interview
   app.post("/:id/end", EndInterviewRequest, async (request, reply) => {
-    const { id } = request.params as GetInterview;
+    const { id } = request.params as { id: string };
     const interview = await interviewService.endInterview(id);
     return interview;
   });
@@ -91,7 +91,7 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
     "/:id/calculate-score",
     CalculateScoreRequest,
     async (request, reply) => {
-      const { id } = request.params as GetInterview;
+      const { id } = request.params as { id: string };
       const interview = await interviewService.calculateScore(id);
       return interview;
     }
@@ -127,7 +127,9 @@ const CreateInterviewRequestBodyRequest = {
 
 const GetInterviewRequest = {
   schema: {
-    params: GetInterview,
+    params: {
+      id: ApId,
+    },
     response: {
       [StatusCodes.OK]: Interview,
     },
@@ -136,7 +138,9 @@ const GetInterviewRequest = {
 
 const UpdateInterviewRequestBodyRequest = {
   schema: {
-    params: GetInterview,
+    params: {
+      id: ApId,
+    },
     body: UpdateInterviewRequestBody,
     response: {
       [StatusCodes.OK]: Interview,
@@ -146,7 +150,9 @@ const UpdateInterviewRequestBodyRequest = {
 
 const DeleteInterviewRequest = {
   schema: {
-    params: GetInterview,
+    params: {
+      id: ApId,
+    },
     response: {
       [StatusCodes.OK]: Type.Object({
         message: Type.String(),
@@ -169,7 +175,7 @@ const GetInterviewsByUserRequest = {
 const GetInterviewsByStatusRequest = {
   schema: {
     params: Type.Object({
-      status: Type.Enum(Status),
+      status: Type.Enum(InterviewStatus),
     }),
     response: {
       [StatusCodes.OK]: Type.Array(Interview),
@@ -179,7 +185,9 @@ const GetInterviewsByStatusRequest = {
 
 const StartInterviewRequest = {
   schema: {
-    params: GetInterview,
+    params: {
+      id: ApId,
+    },
     response: {
       [StatusCodes.OK]: Interview,
     },
@@ -188,7 +196,9 @@ const StartInterviewRequest = {
 
 const EndInterviewRequest = {
   schema: {
-    params: GetInterview,
+    params: {
+      id: ApId,
+    },
     response: {
       [StatusCodes.OK]: Interview,
     },
@@ -197,7 +207,9 @@ const EndInterviewRequest = {
 
 const CalculateScoreRequest = {
   schema: {
-    params: GetInterview,
+    params: {
+      id: ApId,
+    },
     response: {
       [StatusCodes.OK]: Interview,
     },
@@ -206,7 +218,9 @@ const CalculateScoreRequest = {
 
 const GetInterviewWithQuestionsRequest = {
   schema: {
-    params: GetInterview,
+    params: {
+      id: ApId,
+    },
     response: {
       [StatusCodes.OK]: Type.Object({
         ...Interview.properties,

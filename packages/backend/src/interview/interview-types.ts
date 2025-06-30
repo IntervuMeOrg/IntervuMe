@@ -2,7 +2,7 @@ import { Static, Type } from "@fastify/type-provider-typebox";
 import { BaseModelSchema } from "../common/base-model";
 import { ApId } from "../common/id-generator";
 
-export enum Status {
+export enum InterviewStatus {
   SCHEDULED = "SCHEDULED",
   IN_PROGRESS = "IN_PROGRESS",
   COMPLETED = "COMPLETED",
@@ -16,7 +16,7 @@ export const Interview = Type.Object({
   startTime: Type.String({ format: "date-time" }),
   endTime: Type.Optional(Type.String({ format: "date-time" })),
   timeLimit: Type.Integer({ minimum: 5, maximum: 300 }), // in minutes
-  status: Type.Optional(Type.Enum(Status)),
+  status: Type.Optional(Type.Enum(InterviewStatus)),
   totalScore: Type.Optional(Type.Number({ minimum: 0 })),
   maxScore: Type.Optional(Type.Number({ minimum: 0 })),
   isPassed: Type.Optional(Type.Boolean()),
@@ -34,13 +34,15 @@ export const CreateInterviewRequestBody = Type.Object({
   notes: Type.Optional(Type.String({ maxLength: 1000 })),
 });
 
-export type CreateInterviewRequestBody = Static<typeof CreateInterviewRequestBody>;
+export type CreateInterviewRequestBody = Static<
+  typeof CreateInterviewRequestBody
+>;
 
 export const UpdateInterviewRequestBody = Type.Object({
   startTime: Type.Optional(Type.String({ format: "date-time" })),
   endTime: Type.Optional(Type.String({ format: "date-time" })),
   timeLimit: Type.Optional(Type.Integer({ minimum: 5, maximum: 300 })),
-  status: Type.Optional(Type.Enum(Status)),
+  status: Type.Optional(Type.Enum(InterviewStatus)),
   totalScore: Type.Optional(Type.Number({ minimum: 0 })),
   maxScore: Type.Optional(Type.Number({ minimum: 0 })),
   isPassed: Type.Optional(Type.Boolean()),
@@ -48,10 +50,6 @@ export const UpdateInterviewRequestBody = Type.Object({
   isActive: Type.Optional(Type.Boolean()),
 });
 
-export type UpdateInterviewRequestBody = Static<typeof UpdateInterviewRequestBody>;
-
-export const GetInterview = Type.Object({
-  id: ApId,
-});
-
-export type GetInterview = Static<typeof GetInterview>;
+export type UpdateInterviewRequestBody = Static<
+  typeof UpdateInterviewRequestBody
+>;

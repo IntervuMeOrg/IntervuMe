@@ -1,21 +1,17 @@
 import { EntitySchema } from "typeorm";
 import { BaseColumnSchemaPart } from "../common/base-model";
-import { InterviewQuestionSchema } from "./interviewQuestion/interviewQuestion-types";
-import { Interview, Status } from "./interview-types";
-import { CodeSubmissionEntity } from "../coding/codeSubmission/codeSubmission.entity";
-import { AnswerEntity } from "../answer/answer.entity";
+import { InterviewQuestion } from "./interview-question/interview-question-types";
 import { Interview, InterviewStatus } from "./interview-types";
-import { InterviewQuestion } from "./interview-types";
 import { CodeSubmissionSchema } from "../coding/codeSubmission/codeSubmission-types";
 import { McqAnswer } from "../mcq/mcq-answer/mcq-answer-types";
 
-export type InterviewEntity = Interview & {
+export type InterviewSchema = Interview & {
   interviewQuestions: InterviewQuestion[];
   answers: McqAnswer[];
   codeSubmissions: CodeSubmissionSchema[];
 };
 
-export const InterviewEntitySchema = new EntitySchema<InterviewEntity>({
+export const InterviewEntity = new EntitySchema<InterviewSchema>({
   name: "interview",
   columns: {
     ...BaseColumnSchemaPart,
@@ -71,32 +67,32 @@ export const InterviewEntitySchema = new EntitySchema<InterviewEntity>({
   relations: {
     interviewQuestions: {
       type: "one-to-many",
-      target: "InterviewQuestion",
+      target: "interview-question",
       inverseSide: "interview",
       cascade: true,
     },
     answers: {
       type: "one-to-many",
-      target: "Answer",
+      target: "mcq-answer",
       inverseSide: "interview",
     },
     codeSubmissions: {
       type: "one-to-many",
-      target: "CodeSubmission",
+      target: "code-submission",
       inverseSide: "interview",
     },
   },
   indices: [
     {
-      name: "IDX_INTERVIEW_USER_ID",
+      name: "idx_interview_user_id",
       columns: ["userId"],
     },
     {
-      name: "IDX_INTERVIEW_STATUS",
+      name: "idx_interview_status",
       columns: ["status"],
     },
     {
-      name: "IDX_INTERVIEW_START_TIME",
+      name: "idx_interview_start_time",
       columns: ["startTime"],
     },
   ],
