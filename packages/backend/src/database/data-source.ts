@@ -4,8 +4,8 @@ import { UserEntity } from "../user/user.entity.js";
 import { ProfileEntity } from "../profile/profile.entity.js";
 import { CodingQuestionEntity } from "../coding/codingQuestion/codingQuestion.entity.js";
 import { TestCaseEntity } from "../coding/testCase/testCase.entity.js";
-import { MCQOptionEntity } from "../mcq/mcqOption/mcqOption.entity.js";
-import { MCQQuestionEntity } from "../mcq/mcqQuestion/mcqQuestion.entity.js";
+import { McqOptionEntity } from "../mcq/mcq-option/mcq-option.entity.js";
+import { McqQuestionEntity } from "../mcq/mcqQuestion/mcqQuestion.entity.js";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -21,8 +21,8 @@ export const AppDataSource = new DataSource({
     ProfileEntity,
     CodingQuestionEntity,
     TestCaseEntity,
-    MCQOptionEntity,
-    MCQQuestionEntity,
+    McqOptionEntity,
+    McqQuestionEntity,
   ],
   migrations: ["src/database/migrations/*.ts"],
   subscribers: ["src/database/subscribers/*.ts"],
