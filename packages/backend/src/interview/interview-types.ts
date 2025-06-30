@@ -1,6 +1,9 @@
 import { Static, Type } from "@fastify/type-provider-typebox";
 import { BaseModelSchema } from "../common/base-model";
 import { ApId } from "../common/id-generator";
+import { CodeSubmissionWithResults } from "../coding/code-submission/code-submission-types";
+import { McqAnswer } from "../mcq/mcq-answer/mcq-answer-types";
+import { InterviewQuestion } from "./interview-question/interview-question-types";
 
 export enum InterviewStatus {
   SCHEDULED = "SCHEDULED",
@@ -25,6 +28,20 @@ export const Interview = Type.Object({
 });
 
 export type Interview = Static<typeof Interview>;
+
+
+export const InterviewSession  = Type.Composite([
+  Interview,
+  Type.Object({
+    interviewQuestions: Type.Array(InterviewQuestion),
+    answers: Type.Array(McqAnswer),
+    codeSubmissions: Type.Array(CodeSubmissionWithResults),
+  }),
+]);
+
+export type InterviewSession  = Static<
+  typeof InterviewSession 
+>;
 
 export const CreateInterviewRequestBody = Type.Object({
   userId: Type.String(),

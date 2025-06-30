@@ -2,13 +2,13 @@ import { EntitySchema } from "typeorm";
 import { BaseColumnSchemaPart } from "../common/base-model";
 import { InterviewQuestion } from "./interview-question/interview-question-types";
 import { Interview, InterviewStatus } from "./interview-types";
-import { CodeSubmissionSchema } from "../coding/codeSubmission/codeSubmission-types";
+import { CodeSubmissionWithResults } from "../coding/code-submission/code-submission-types";
 import { McqAnswer } from "../mcq/mcq-answer/mcq-answer-types";
 
 export type InterviewSchema = Interview & {
   interviewQuestions: InterviewQuestion[];
   answers: McqAnswer[];
-  codeSubmissions: CodeSubmissionSchema[];
+  codeSubmissions: CodeSubmissionWithResults[];
 };
 
 export const InterviewEntity = new EntitySchema<InterviewSchema>({
