@@ -83,14 +83,33 @@ export const codingQuestionService = {
     await codingQuestionRepository().remove(question);
   },
 
+  async deleteAll(): Promise<void> {
+    const testCaseRepo = AppDataSource.getRepository(TestCaseEntity);
+    const questionRepo = AppDataSource.getRepository(CodingQuestionEntity);
+
+    // 1) DELETE FROM test_case;
+    await testCaseRepo.createQueryBuilder().delete().execute();
+
+    // 2) DELETE FROM coding_question;
+    await questionRepo.createQueryBuilder().delete().execute();
+  },
+
   async list(): Promise<Partial<CodingQuestionSchema>[]> {
     return await codingQuestionRepository().find({
       select: [
         "id",
         "title",
-        "difficulty",
+        "category",
+        "tags",
         "points",
         "timeLimit",
+        "difficulty",
+        "problemStatement",
+        "examples",
+        "constraints",
+        "follow_up",
+        "starterCodes",
+        "testCases",
         "isActive",
         "created",
         "updated",

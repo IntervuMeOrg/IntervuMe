@@ -18,6 +18,12 @@ export const CodingQuestionEntity = new EntitySchema<CodingQuestionSchema>({
       nullable: false,
     },
 
+    category: {
+      type: String,
+      length: 100,
+      nullable: false,
+    },
+
     difficulty: {
       type: "enum",
       enum: DifficultyLevel, // Adjust based on your `DifficultyLevel` enum
@@ -40,10 +46,14 @@ export const CodingQuestionEntity = new EntitySchema<CodingQuestionSchema>({
       nullable: false,
     },
 
-    starterCode: {
-      type: String,
-      length: 10000,
-      nullable: true,
+    examples: {
+      type: "simple-json",
+      nullable: false,
+    },
+
+    starterCodes: {
+      type: "simple-json",
+      nullable: false,
     },
 
     solutionCode: {
@@ -58,6 +68,11 @@ export const CodingQuestionEntity = new EntitySchema<CodingQuestionSchema>({
     },
 
     constraints: {
+      type: "simple-array",
+      nullable: true,
+    },
+
+    follow_up: {
       type: "simple-array",
       nullable: true,
     },
