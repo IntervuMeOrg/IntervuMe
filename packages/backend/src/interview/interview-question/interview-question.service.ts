@@ -1,16 +1,16 @@
 import { AppDataSource } from "../../database/data-source";
 import { apId } from "../../common/id-generator";
-import { InterviewQuestionEntitySchema } from "./interviewQuestion.entity";
+import { InterviewQuestionEntitySchema } from "./interview-question.entity";
 import {
-  CreateInterviewQuestionSchema,
-  InterviewQuestionSchema,
-  UpdateInterviewQuestionSchema,
-  InterviewQuestionWithDetailsSchema,
-} from "./interviewQuestion-types";
-import { mcqQuestionService } from "../mcqQuestion/mcqQuestion.service";
+  CreateInterviewQuestionRequestBody,
+  InterviewQuestion,
+  UpdateInterviewQuestionRequestBody,
+  InterviewQuestionWithDetailsRequestBody,
+} from "./interview-question-types";
+import { McqQuestionService } from "../McqQuestion/McqQuestion.service";
 import { codingQuestionService } from "../codingQuestion/codingQuestion.service";
 import { CodingQuestionSchema } from "../codingQuestion/codingQuestion-types";
-import { MCQQuestionSchema } from "../mcqQuestion/mcqQuestion-types";
+import { McqQuestionSchema } from "../McqQuestion/McqQuestion-types";
 
 const InterviewQuestionRepository = () => {
   return AppDataSource.getRepository(InterviewQuestionEntitySchema);
@@ -51,13 +51,13 @@ export const interviewQuestionService = {
     }
 
     let questionDetails;
-    if (interviewQuestion.questionType === "mcq") {
-      questionDetails = await mcqQuestionService.getById(
+    if (interviewQuestion.questionType === "Mcq") {
+      questionDetails = await McqQuestionService.getById(
         interviewQuestion.questionId
       );
 
       if (!questionDetails) {
-        throw new Error("MCQ details not found");
+        throw new Error("Mcq details not found");
       }
     } else if (interviewQuestion.questionType === "coding") {
       questionDetails = await codingQuestionService.getById(
@@ -101,11 +101,11 @@ export const interviewQuestionService = {
       await Promise.all(
         interviewQuestions.map(async (iq) => {
           let questionDetails;
-          if (iq.questionType === "mcq") {
-            const details = await mcqQuestionService.getById(iq.questionId);
+          if (iq.questionType === "Mcq") {
+            const details = await McqQuestionService.getById(iq.questionId);
 
             if (!details)
-              throw new Error(`MCQ details not found for ${iq.questionId}`);
+              throw new Error(`Mcq details not found for ${iq.questionId}`);
 
             questionDetails = details;
           } else {

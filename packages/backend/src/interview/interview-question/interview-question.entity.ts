@@ -1,12 +1,10 @@
 import { EntitySchema } from "typeorm";
 import { BaseColumnSchemaPart } from "../../common/base-model";
-import {
-  InterviewQuestionSchema,
-  QuestionTypes,
-} from "./interviewQuestion-types";
+import { InterviewQuestion, QuestionType } from "./interview-question-types";
+import { Interview } from "../interview-types";
 
-type InterviewQuestionEntity = InterviewQuestionSchema & {
-  interview: InterviewQuestionSchema;
+type InterviewQuestionEntity = InterviewQuestion & {
+  interview: Interview;
 };
 
 export const InterviewQuestionEntitySchema =
@@ -14,19 +12,25 @@ export const InterviewQuestionEntitySchema =
     name: "interview_question",
     columns: {
       ...BaseColumnSchemaPart,
-      interviewId: { type: String, nullable: false },
-      questionType: {
-        type: "enum",
-        enum: QuestionTypes,
+      interviewId: {
+        type: String,
         nullable: false,
       },
-      questionId: { type: String, nullable: false },
-      questionOrder: { type: Number, nullable: true },
+      questionType: {
+        type: "enum",
+        enum: QuestionType,
+        nullable: false,
+      },
+      questionId: {
+        type: String,
+        nullable: false,
+      },
+      questionOrder: { type: "int", nullable: false },
     },
     relations: {
       interview: {
         type: "many-to-one",
-        target: "Interview",
+        target: "interview",
         joinColumn: { name: "interviewId" },
       },
     },

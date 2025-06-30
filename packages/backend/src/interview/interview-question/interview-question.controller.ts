@@ -1,14 +1,16 @@
-import { FastifyPluginAsyncTypebox, Type } from "@fastify/type-provider-typebox";
-import { interviewQuestionService } from "./interviewQuestion.service";
 import {
-  CreateInterviewQuestionSchema,
-  UpdateInterviewQuestionSchema,
-  InterviewQuestionSchema,
-  GetInterviewQuestion,
-  GetInterviewQuestionForInterview,
-  InterviewQuestionWithDetailsSchema,
-} from "./interviewQuestion-types";
+  FastifyPluginAsyncTypebox,
+  Type,
+} from "@fastify/type-provider-typebox";
+import { interviewQuestionService } from "./interview-question.service";
+import {
+  CreateInterviewQuestionRequestBody,
+  UpdateInterviewQuestionRequestBody,
+  InterviewQuestion,
+  InterviewQuestionWithDetailsRequestBody,
+} from "./interview-question-types";
 import { StatusCodes } from "http-status-codes";
+import { ApId } from "../../common/id-generator";
 
 export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
   app
@@ -22,14 +24,14 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
         .send({ message: "Forbidden: admins only" });
     }
 
-    const body = request.body as CreateInterviewQuestionSchema;
+    const body = request.body as CreateInterviewQuestionRequestBody;
     const interviewQuestion = await interviewQuestionService.create(body);
 
     return interviewQuestion;
   });
 
   app.get("/:id", GetInterviewQuestionRequest, async (request, reply) => {
-    const { id } = request.params as GetInterviewQuestion;
+    const { id } = request.params as { id: string };
     const interviewQuestion = await interviewQuestionService.getById(id);
 
     return interviewQuestion;
@@ -39,7 +41,7 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
     "/:id/details",
     GetInterviewQuestionWithDetailsRequest,
     async (request, reply) => {
-      const { id } = request.params as GetInterviewQuestion;
+      const { id } = request.params as { id: string };
 
       const interviewQuestion =
         await interviewQuestionService.getByIdWithDetails(id);
@@ -52,9 +54,9 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
     "/interview/:interviewId",
     GetInterviewQuestionsforInterviewRequest,
     async (request, reply) => {
-      const { id } = request.params as GetInterviewQuestionForInterview;
+      const { interviewId } = request.params as { interviewId: string };
       const interviewQuestions =
-        await interviewQuestionService.getByInterviewId(id);
+        await interviewQuestionService.getByInterviewId(interviewId);
 
       return interviewQuestions;
     }
@@ -64,9 +66,9 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
     "/interview/:interviewId/details",
     GetInterviewQuestionsforInterviewWithDetailsRequest,
     async (request, reply) => {
-      const { id } = request.params as GetInterviewQuestionForInterview;
+      const { interviewId } = request.params as { interviewId: string };
       const interviewQuestions =
-        await interviewQuestionService.getByInterviewIdWithDetails(id);
+        await interviewQuestionService.getByInterviewIdWithDetails(interviewId);
       return interviewQuestions;
     }
   );
@@ -78,8 +80,8 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
         .send({ message: "Forbidden: admins only" });
     }
 
-    const { id } = request.params as GetInterviewQuestion;
-    const body = request.body as UpdateInterviewQuestionSchema;
+    const { id } = request.params as { id: string };
+    const body = request.body as UpdateInterviewQuestionRequestBody;
     const interviewQuestion = await interviewQuestionService.update(id, body);
     return interviewQuestion;
   });
@@ -91,62 +93,72 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
         .send({ message: "Forbidden: admins only" });
     }
 
-    const { id } = request.params as GetInterviewQuestion;
+    const { id } = request.params as { id: string };
     await interviewQuestionService.delete(id);
   });
 };
 
 const CreateInterviewQuestionRequest = {
   schema: {
-    body: CreateInterviewQuestionSchema,
+    body: CreateInterviewQuestionRequestBody,
     response: {
-      [StatusCodes.OK]: InterviewQuestionSchema,
+      [StatusCodes.OK]: InterviewQuestion,
     },
   },
 };
 
 const GetInterviewQuestionRequest = {
   schema: {
-    params: GetInterviewQuestion,
+    params: {
+      id: ApId,
+    },
     response: {
-      [StatusCodes.OK]: InterviewQuestionSchema,
+      [StatusCodes.OK]: InterviewQuestion,
     },
   },
 };
 
 const GetInterviewQuestionWithDetailsRequest = {
   schema: {
-    params: GetInterviewQuestion,
+    params: {
+      id: ApId,
+    },
     response: {
-      [StatusCodes.OK]: InterviewQuestionWithDetailsSchema,
+      [StatusCodes.OK]: InterviewQuestionWithDetailsRequestBody,
     },
   },
 };
 
 const GetInterviewQuestionsforInterviewRequest = {
   schema: {
-    params: GetInterviewQuestionForInterview,
+    params: {
+      interviewId: ApId,
+    },
     response: {
-      [StatusCodes.OK]: Type.Array(InterviewQuestionSchema),
+      [StatusCodes.OK]: Type.Array(InterviewQuestion),
     },
   },
 };
 
 const GetInterviewQuestionsforInterviewWithDetailsRequest = {
   schema: {
-    params: GetInterviewQuestionForInterview,
+    params: {
+      interviewId: ApId,
+    },
     response: {
-      [StatusCodes.OK]: Type.Array(InterviewQuestionWithDetailsSchema),
+      [StatusCodes.OK]: Type.Array(InterviewQuestionWithDetailsRequestBody),
     },
   },
 };
 
 const UpdateInterviewQuestionRequest = {
   schema: {
-    params: GetInterviewQuestion,
-    body: UpdateInterviewQuestionSchema,
+    params: {
+      id: ApId,
+    },
+    body: UpdateInterviewQuestionRequestBody,
     response: {
-      [StatusCodes.OK]: InterviewQuestionSchema,
+      [StatusCodes.OK]: InterviewQuestion,
     },
   },
 };
