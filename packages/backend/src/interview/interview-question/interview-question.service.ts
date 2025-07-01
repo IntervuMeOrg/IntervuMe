@@ -39,6 +39,18 @@ export const interviewQuestionService = {
     return interviewQuestion;
   },
 
+    async getByInterviewIdandQuestionId(interviewId: string, questionId: string): Promise<InterviewQuestion | null> {
+    const interviewQuestion = await InterviewQuestionRepository().findOne({
+      where: { interviewId, questionId },
+    });
+
+    if (!interviewQuestion) {
+      throw new Error("Interview Question not found");
+    }
+
+    return interviewQuestion;
+  },
+
   async getByIdWithDetails(
     id: string
   ): Promise<InterviewQuestionWithDetailsRequestBody | null> {

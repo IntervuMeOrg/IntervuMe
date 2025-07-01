@@ -2,7 +2,7 @@ import { AppDataSource } from "../../database/data-source";
 import { CodeSubmissionEntity } from "./code-submission.entity";
 import {
   CodeSubmission,
-  CodeSubmissionRequestBody,
+  CreateCodeSubmissionRequestBody,
   UpdateCodeSubmissionRequestBody,
 } from "./code-submission-types";
 import { apId } from "../../common/id-generator";
@@ -12,7 +12,7 @@ const codeSubmissionRepository = () => {
 };
 
 export const codeSubmissionService = {
-  async create(request: CodeSubmissionRequestBody): Promise<CodeSubmission> {
+  async create(request: CreateCodeSubmissionRequestBody): Promise<CodeSubmission> {
     const codeSubmission = codeSubmissionRepository().create({
       id: apId(),
       ...request,

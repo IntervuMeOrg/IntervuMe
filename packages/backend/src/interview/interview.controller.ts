@@ -6,6 +6,8 @@ import {
   CreateInterviewRequestBody,
   Interview,
   InterviewStatus,
+  InterviewSubmissionResult,
+  SubmitInterviewRequestBody,
   UpdateInterviewRequestBody,
 } from "./interview-types";
 import { StatusCodes } from "http-status-codes";
@@ -79,11 +81,13 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
     return interview;
   });
 
-  // End interview
-  app.post("/:id/end", EndInterviewRequest, async (request, reply) => {
+  // Submit interview
+  app.post("/:id/submit", SubmitInterviewRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
-    const interview = await interviewService.endInterview(id);
-    return interview;
+    const submissionData = request.body as SubmitInterviewRequestBody;
+
+    const result = await interviewService.submitInterview(id, submissionData);
+    return result;
   });
 
   // Calculate interview score
@@ -244,6 +248,18 @@ const GetInterviewsWithResultsRequest = {
           codeSubmissions: Type.Optional(Type.Array(Type.Any())),
         })
       ),
+    },
+  },
+};
+
+const SubmitInterviewRequest = {
+  schema: {
+    params: {
+      id: ApId,
+    },
+    body: SubmitInterviewRequestBody,
+    response: {
+      [StatusCodes.OK]: InterviewSubmissionResult,
     },
   },
 };

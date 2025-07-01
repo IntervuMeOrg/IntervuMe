@@ -1,9 +1,9 @@
 import { Static, Type } from "@fastify/type-provider-typebox";
 import { BaseModelSchema } from "../common/base-model";
-import { ApId } from "../common/id-generator";
-import { CodeSubmissionWithResults } from "../coding/code-submission/code-submission-types";
-import { McqAnswer } from "../mcq/mcq-answer/mcq-answer-types";
+import { CodeSubmissionWithResults, CreateCodeSubmissionRequestBody } from "../coding/code-submission/code-submission-types";
+import { CreateMcqAnswerRequestBody, McqAnswer, McqAnswerSummary } from "../mcq/mcq-answer/mcq-answer-types";
 import { InterviewQuestion } from "./interview-question/interview-question-types";
+import { ApId } from "../common/id-generator";
 
 export enum InterviewStatus {
   SCHEDULED = "SCHEDULED",
@@ -70,3 +70,21 @@ export const UpdateInterviewRequestBody = Type.Object({
 export type UpdateInterviewRequestBody = Static<
   typeof UpdateInterviewRequestBody
 >;
+
+export const SubmitInterviewRequestBody = Type.Object({
+  mcqAnswers: Type.Array(CreateMcqAnswerRequestBody),
+  codeSubmissions: Type.Array(CreateCodeSubmissionRequestBody),
+});
+
+export type SubmitInterviewRequestBody = Static<typeof SubmitInterviewRequestBody>;
+
+export const InterviewSubmissionResult = Type.Object({
+  interviewId: ApId,
+  status: Type.String(),
+  mcqSummary: McqAnswerSummary,
+  codeSubmissions: Type.Array(CodeSubmissionWithResults),
+  totalScore: Type.Number(),
+  submittedAt: Type.String({ format: "date-time" }),
+});
+
+export type InterviewSubmissionResult = Static<typeof InterviewSubmissionResult>;

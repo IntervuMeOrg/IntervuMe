@@ -20,17 +20,18 @@ export const CodeSubmissionWithResults = Type.Composite([
   }),
 ]);
 
-export type CodeSubmissionWithResults = Static<typeof CodeSubmissionWithResults>;
+export type CodeSubmissionWithResults = Static<
+  typeof CodeSubmissionWithResults
+>;
 
-
-export const CodeSubmissionRequestBody = Type.Object({
+export const CreateCodeSubmissionRequestBody = Type.Object({
   interviewId: ApId,
   questionId: ApId,
   code: Type.String(),
 });
 
-export type CodeSubmissionRequestBody = Static<
-  typeof CodeSubmissionRequestBody
+export type CreateCodeSubmissionRequestBody = Static<
+  typeof CreateCodeSubmissionRequestBody
 >;
 
 export const UpdateCodeSubmissionRequestBody = Type.Object({
@@ -40,4 +41,3 @@ export const UpdateCodeSubmissionRequestBody = Type.Object({
 export type UpdateCodeSubmissionRequestBody = Static<
   typeof UpdateCodeSubmissionRequestBody
 >;
-

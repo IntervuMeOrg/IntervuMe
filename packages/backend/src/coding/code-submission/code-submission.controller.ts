@@ -2,7 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { codeSubmissionService } from "./codeSubmission.service";
 import {
   CodeSubmission,
-  CodeSubmissionRequestBody,
+  CreateCodeSubmissionRequestBody,
   UpdateCodeSubmissionRequestBody,
 } from "./code-submission-types";
 import { Type } from "@sinclair/typebox";
@@ -15,7 +15,7 @@ export const codeSubmissionController: FastifyPluginAsyncTypebox = async (
   app.addHook("onRequest", app.authenticate);
 
   app.post("/", CodeSubmissionRequestBodyRequest, async (request, reply) => {
-    const body = request.body as CodeSubmissionRequestBody;
+    const body = request.body as CreateCodeSubmissionRequestBody;
     const codeSubmission = await codeSubmissionService.create(body);
     return codeSubmission;
   });
@@ -88,7 +88,7 @@ export const codeSubmissionController: FastifyPluginAsyncTypebox = async (
 
 const CodeSubmissionRequestBodyRequest = {
   schema: {
-    body: CodeSubmissionRequestBody,
+    body: CreateCodeSubmissionRequestBody,
     response: {
       [StatusCodes.OK]: CodeSubmission,
     },
