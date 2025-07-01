@@ -26,7 +26,7 @@ export const CodeSubmissionEntity = new EntitySchema<CodeSubmissionSchema>({
       nullable: false,
     },
     submittedAt: {
-      type: "datetime",
+      type: "timestamp",
       nullable: false,
     },
   },
@@ -38,7 +38,7 @@ export const CodeSubmissionEntity = new EntitySchema<CodeSubmissionSchema>({
     },
     testCaseResults: {
       type: "one-to-many",
-      target: "test-case-result",
+      target: "test_case_result",
       inverseSide: "codeSubmission",
     },
   },

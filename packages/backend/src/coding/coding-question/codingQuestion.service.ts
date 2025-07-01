@@ -8,6 +8,7 @@ import {
 } from "./codingQuestion-types";
 import { apId } from "../../common/id-generator";
 import { TestCaseEntity } from "../test-case/test-case.entity";
+import { CreateTestCaseRequestBody } from "../test-case/test-case-types";
 
 const codingQuestionRepository = () => {
   return AppDataSource.getRepository(CodingQuestionEntity);
@@ -118,7 +119,7 @@ export const codingQuestionService = {
       await testCaseRepo.delete({ codingQuestionId: id });
 
       const normalizedTestCases = testCases.map(
-        ({ input, expectedOutput, isHidden = false }) => ({
+        ({ input, expectedOutput, isHidden = false }: CreateTestCaseRequestBody) => ({
           id: apId(),
           input,
           expectedOutput,
@@ -140,7 +141,10 @@ export const codingQuestionService = {
     return await codingQuestionRepository().save(question);
   },
 
-  async getRandomByDifficultyAndCount(difficulty: DifficultyLevel, count: number): Promise<CodingQuestion[]> {
+  async getRandomByDifficultyAndCount(
+    difficulty: DifficultyLevel,
+    count: number
+  ): Promise<CodingQuestion[]> {
     const questions = await codingQuestionRepository()
       .createQueryBuilder("coding")
       .where("coding.difficulty = :difficulty", { difficulty })

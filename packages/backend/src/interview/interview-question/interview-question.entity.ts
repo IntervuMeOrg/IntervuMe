@@ -3,12 +3,12 @@ import { BaseColumnSchemaPart } from "../../common/base-model";
 import { InterviewQuestion, QuestionType } from "./interview-question-types";
 import { Interview } from "../interview-types";
 
-type InterviewQuestionEntity = InterviewQuestion & {
+type InterviewQuestionSchema = InterviewQuestion & {
   interview: Interview;
 };
 
-export const InterviewQuestionEntitySchema =
-  new EntitySchema<InterviewQuestionEntity>({
+export const InterviewQuestionEntity =
+  new EntitySchema<InterviewQuestionSchema>({
     name: "interview_question",
     columns: {
       ...BaseColumnSchemaPart,

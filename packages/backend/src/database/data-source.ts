@@ -8,7 +8,7 @@ import { McqOptionEntity } from "../mcq/mcq-option/mcq-option.entity.js";
 import { McqQuestionEntity } from "../mcq/mcq-question/mcq-question.entity.js";
 import { McqAnswerEntity } from "../mcq/mcq-answer/mcq-answer.entity.js";
 import { InterviewEntity } from "../interview/interview.entity.js";
-import { InterviewQuestionEntitySchema } from "../interview/interview-question/interview-question.entity.js";
+import { InterviewQuestionEntity } from "../interview/interview-question/interview-question.entity.js";
 import { CodeSubmissionEntity } from "../coding/code-submission/code-submission.entity.js";
 import { TestCaseResultEntity } from "../coding/test-case-result/testCaseResult.entity.js";
 
@@ -30,7 +30,7 @@ export const AppDataSource = new DataSource({
     McqQuestionEntity,
     McqAnswerEntity,
     InterviewEntity,
-    InterviewQuestionEntitySchema,
+    InterviewQuestionEntity,
     CodeSubmissionEntity,
     TestCaseResultEntity,
   ],

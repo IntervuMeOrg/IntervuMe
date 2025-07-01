@@ -67,18 +67,18 @@ export const InterviewEntity = new EntitySchema<InterviewSchema>({
   relations: {
     interviewQuestions: {
       type: "one-to-many",
-      target: "interview-question",
+      target: "interview_question",
       inverseSide: "interview",
       cascade: true,
     },
     answers: {
       type: "one-to-many",
-      target: "mcq-answer",
+      target: "mcq_answer",
       inverseSide: "interview",
     },
     codeSubmissions: {
       type: "one-to-many",
-      target: "code-submission",
+      target: "code_submission",
       inverseSide: "interview",
     },
   },

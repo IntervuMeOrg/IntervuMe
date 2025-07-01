@@ -1,6 +1,6 @@
 import { AppDataSource } from "../../database/data-source";
 import { apId } from "../../common/id-generator";
-import { InterviewQuestionEntitySchema } from "./interview-question.entity";
+import { InterviewQuestionEntity } from "./interview-question.entity";
 import {
   CreateInterviewQuestionRequestBody,
   InterviewQuestion,
@@ -11,7 +11,7 @@ import { codingQuestionService } from "../../coding/coding-question/codingQuesti
 import { mcqQuestionService } from "../../mcq/mcq-question/mcq-question.service";
 
 const InterviewQuestionRepository = () => {
-  return AppDataSource.getRepository(InterviewQuestionEntitySchema);
+  return AppDataSource.getRepository(InterviewQuestionEntity);
 };
 
 export const interviewQuestionService = {
@@ -75,9 +75,7 @@ export const interviewQuestionService = {
     };
   },
 
-  async getByInterviewId(
-    interviewId: string
-  ): Promise<InterviewQuestion[]> {
+  async getByInterviewId(interviewId: string): Promise<InterviewQuestion[]> {
     const interviewQuestions = await InterviewQuestionRepository().find({
       where: { interviewId },
       order: { questionOrder: "ASC" },

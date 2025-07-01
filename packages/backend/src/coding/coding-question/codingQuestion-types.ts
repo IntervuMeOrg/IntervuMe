@@ -31,10 +31,11 @@ export const CodingQuestion = Type.Object({
 
 export type CodingQuestion = Static<typeof CodingQuestion>;
 
-export const CreateCodingQuestionRequestBody = Type.Omit(CodingQuestion, [
-  "id",
-  "created",
-  "updated",
+export const CreateCodingQuestionRequestBody = Type.Intersect([
+  Type.Omit(CodingQuestion, ["id", "created", "updated", "testCases"]),
+  Type.Object({
+    testCases: Type.Array(CreateTestCaseRequestBody),
+  }),
 ]);
 
 export type CreateCodingQuestionRequestBody = Static<

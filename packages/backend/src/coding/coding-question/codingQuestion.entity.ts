@@ -77,7 +77,7 @@ export const CodingQuestionEntity = new EntitySchema<CodingQuestion>({
     testCases: {
       type: "one-to-many",
       target: "test_case",
-      inverseSide: "coding_question",
+      inverseSide: "codingQuestion",
       cascade: true,
       eager: true,
     },
