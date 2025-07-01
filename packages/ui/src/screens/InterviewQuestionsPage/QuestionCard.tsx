@@ -77,13 +77,13 @@ export const QuestionCard = ({
             )}
           </div>
 
-          {/* Question Content */}
-          <div className={`
-            ${isProblemSolving 
-              ? "min-h-[calc(100vh-300px)] lg:min-h-[calc(100vh-350px)]" 
-              : "min-h-[300px] sm:min-h-[350px]"
-            }`}
-          >
+{/* Question Content */}
+<div className={`
+  ${isProblemSolving 
+    ? "min-h-[calc(100vh-200px)] sm:min-h-[calc(100vh-220px)] md:min-h-[calc(100vh-240px)] lg:min-h-[calc(100vh-260px)] xl:min-h-[calc(100vh-280px)]" 
+    : "min-h-[300px] sm:min-h-[350px]"
+  }`}
+>
             {currentQuestion.type === "mcq" ? (
               <QuestionContentMCQ
                 questions={questions.filter((q) => q.type === "mcq") as MCQQuestion[]}
