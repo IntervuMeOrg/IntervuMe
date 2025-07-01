@@ -77,11 +77,13 @@ export const DetailedQuestionsFeedback = ({
               <div className="mb-6">
                 <h3 className="font-['Nunito'] font-bold text-white text-lg mb-3">
                   {question.type === "problem_solving"
-                    ? question.name
+                    ? question.title
                     : "Question"}
                 </h3>
                 <p className="text-[#e8eef2] text-base leading-relaxed">
-                  {question.text}
+                  {question.type === "problem_solving"
+                  ? question.problemStatement
+                : question.text}
                 </p>
               </div>
 
