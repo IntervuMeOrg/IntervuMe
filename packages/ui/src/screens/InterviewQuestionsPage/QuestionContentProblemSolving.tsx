@@ -125,7 +125,10 @@ export const QuestionContentProblemSolving = ({
 	}, [isResizing, handleMouseMove, handleMouseUp]);
 
 	return (
-		<div className="font-['Nunito'] mt-[-65px] flex relative" ref={containerRef}>
+		<div
+			className="font-['Nunito'] -mt-16 sm:-mt-14 md:-mt-12 lg:-mt-10 xl:-mt-8 flex relative"
+			ref={containerRef}
+		>
 			{/* Left Panel with Tabs */}
 			<div
 				className="rounded-md overflow-y-auto min-h-[calc(100vh-150px)] max-h-[calc(100vh-150px)]"
