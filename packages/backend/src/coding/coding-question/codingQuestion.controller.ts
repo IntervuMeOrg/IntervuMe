@@ -96,6 +96,19 @@ export const codingQuestionController: FastifyPluginAsyncTypebox = async (
       return await codingQuestionService.update(id, updates);
     }
   );
+
+
+  // For testing purposes only
+  app.delete("/", async (request, reply) => {
+    if (request.user.role !== "admin") {
+      return reply
+        .status(StatusCodes.FORBIDDEN)
+        .send({ message: "Forbidden: admins only" });
+    }
+    await codingQuestionService.deleteAll();
+    return reply.status(StatusCodes.NO_CONTENT).send();
+  }
+);
 };
 
 const CreateCodingQuestionRequestBodyRequest = {

@@ -3,6 +3,7 @@ import { CodingQuestion, DifficultyLevel } from "./codingQuestion-types.js";
 import {
   ARRAY_COLUMN_TYPE,
   BaseColumnSchemaPart,
+  JSONB_COLUMN_TYPE,
 } from "../../common/base-model.js";
 
 export const CodingQuestionEntity = new EntitySchema<CodingQuestion>({
@@ -11,6 +12,11 @@ export const CodingQuestionEntity = new EntitySchema<CodingQuestion>({
     ...BaseColumnSchemaPart,
 
     title: {
+      type: String,
+      nullable: false,
+    },
+
+    category: {
       type: String,
       nullable: false,
     },
@@ -37,12 +43,17 @@ export const CodingQuestionEntity = new EntitySchema<CodingQuestion>({
     },
 
     starterCode: {
-      type: String,
+      type: JSONB_COLUMN_TYPE,
       nullable: true,
     },
 
     solutionCode: {
       type: String,
+      nullable: true,
+    },
+
+    examples: {
+      type: JSONB_COLUMN_TYPE,
       nullable: true,
     },
 
@@ -52,6 +63,11 @@ export const CodingQuestionEntity = new EntitySchema<CodingQuestion>({
     },
 
     constraints: {
+      type: ARRAY_COLUMN_TYPE,
+      nullable: true,
+    },
+
+    followUp: {
       type: ARRAY_COLUMN_TYPE,
       nullable: true,
     },

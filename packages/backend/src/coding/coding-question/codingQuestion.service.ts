@@ -23,7 +23,7 @@ const testCaseRepository = () => {
 };
 
 export const codingQuestionService = {
-  async create(request: CreateCodingQuestionRequestBody) {
+  async create(request: CreateCodingQuestionRequestBody): Promise<CodingQuestion> {
     const { testCases, isActive, ...questionFields } = request;
 
     const normalizedTestCases = testCases.map(
@@ -140,6 +140,11 @@ export const codingQuestionService = {
 
     Object.assign(question, restUpdates, { updated: new Date().toISOString() });
     return await codingQuestionRepository().save(question);
+  },
+
+  async deleteAll(): Promise<void> {
+    const questions = await codingQuestionRepository().find();
+    await codingQuestionRepository().remove(questions);
   },
 
   async getRandomByDifficultyAndCount(
