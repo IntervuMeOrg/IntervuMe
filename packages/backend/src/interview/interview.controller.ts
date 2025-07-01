@@ -5,6 +5,7 @@ import {
 import {
   CreateInterviewRequestBody,
   Interview,
+  InterviewSession,
   InterviewStatus,
   UpdateInterviewRequestBody,
 } from "./interview-types";
@@ -29,10 +30,10 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
 
   app.get(
     "/:id/with-questions",
-    GetInterviewWithQuestionsRequest,
+    GetInterviewWithSessionRequest,
     async (request, reply) => {
       const { id } = request.params as { id: string };
-      const interview = await interviewService.getByIdWithQuestions(id);
+      const interview = await interviewService.get(id);
       return interview;
     }
   );
@@ -99,8 +100,8 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
 
   // Get interviews with all related data (questions, answers, submissions)
   app.get("/", GetInterviewsWithResultsRequest, async (request, reply) => {
-    const { userId } = request.query as { userId?: string };
-    const interviews = await interviewService.getInterviewsWithResults(userId);
+    const { userId } = request.query as { userId: string };
+    const interviews = await interviewService.list(userId);
     return interviews;
   });
 
@@ -110,7 +111,7 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
     GetInterviewsByUserRequest,
     async (request, reply) => {
       const { userId } = request.params as { userId: string };
-      const interviews = await interviewService.getUpcomingInterviews(userId);
+      const interviews = await interviewService.listUpcoming(userId);
       return interviews;
     }
   );
@@ -164,7 +165,7 @@ const DeleteInterviewRequest = {
 const GetInterviewsByUserRequest = {
   schema: {
     params: Type.Object({
-      userId: Type.String(),
+      userId: ApId,
     }),
     response: {
       [StatusCodes.OK]: Type.Array(Interview),
@@ -216,16 +217,13 @@ const CalculateScoreRequest = {
   },
 };
 
-const GetInterviewWithQuestionsRequest = {
+const GetInterviewWithSessionRequest = {
   schema: {
     params: {
       id: ApId,
     },
     response: {
-      [StatusCodes.OK]: Type.Object({
-        ...Interview.properties,
-        interviewQuestions: Type.Optional(Type.Array(Type.Any())),
-      }),
+      [StatusCodes.OK]: InterviewSession,
     },
   },
 };
@@ -233,17 +231,10 @@ const GetInterviewWithQuestionsRequest = {
 const GetInterviewsWithResultsRequest = {
   schema: {
     querystring: Type.Object({
-      userId: Type.Optional(Type.String()),
+      userId: ApId,
     }),
     response: {
-      [StatusCodes.OK]: Type.Array(
-        Type.Object({
-          ...Interview.properties,
-          interviewQuestions: Type.Optional(Type.Array(Type.Any())),
-          answers: Type.Optional(Type.Array(Type.Any())),
-          codeSubmissions: Type.Optional(Type.Array(Type.Any())),
-        })
-      ),
+      [StatusCodes.OK]: Type.Array(InterviewSession),
     },
   },
 };
