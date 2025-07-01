@@ -22,7 +22,7 @@ export const codeSubmissionController: FastifyPluginAsyncTypebox = async (
 
   app.get("/:id", GetCodeSubmissionRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
-    const codeSubmission = await codeSubmissionService.getById(id);
+    const codeSubmission = await codeSubmissionService.get(id);
     return codeSubmission;
   });
 

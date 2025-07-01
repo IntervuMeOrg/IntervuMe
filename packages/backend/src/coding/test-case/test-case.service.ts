@@ -6,6 +6,7 @@ import {
 } from "./test-case-types";
 import { TestCaseEntity } from "./test-case.entity";
 import { apId } from "../../common/id-generator";
+import { isNil } from "../../common/utils";
 
 const testCaseRepositry = () => {
   return AppDataSource.getRepository(TestCaseEntity);
@@ -21,9 +22,9 @@ export const testCaseService = {
     return await testCaseRepositry().save(testcase);
   },
 
-  async getById(id: string): Promise<TestCase | null> {
+  async get(id: string): Promise<TestCase> {
     const testCase = await testCaseRepositry().findOne({ where: { id } });
-    if (!testCase) throw new Error("Test Case not found");
+    if (isNil(testCase)) throw new Error("Test Case not found");
 
     return testCase;
   },
@@ -33,7 +34,7 @@ export const testCaseService = {
     updates: UpdateTestCaseRequestBody
   ): Promise<TestCase> {
     const testCase = await testCaseRepositry().findOne({ where: { id } });
-    if (!testCase) throw new Error("Test Case not found");
+    if (isNil(testCase)) throw new Error("Test Case not found");
 
     Object.assign(testCase, updates, { updated: new Date().toISOString() });
     return await testCaseRepositry().save(testCase);

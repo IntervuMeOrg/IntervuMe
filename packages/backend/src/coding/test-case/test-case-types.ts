@@ -13,6 +13,7 @@ export const TestCase = Type.Object({
 export type TestCase = Static<typeof TestCase>;
 
 export const CreateTestCaseRequestBody = Type.Object({
+  codingQuestionId: ApId,
   input: Type.String(),
   expectedOutput: Type.String(),
   isHidden: Type.Boolean(),

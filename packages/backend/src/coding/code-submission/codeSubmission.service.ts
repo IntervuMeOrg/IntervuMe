@@ -6,6 +6,7 @@ import {
   UpdateCodeSubmissionRequestBody,
 } from "./code-submission-types";
 import { apId } from "../../common/id-generator";
+import { isNil } from "../../common/utils";
 
 const codeSubmissionRepository = () => {
   return AppDataSource.getRepository(CodeSubmissionEntity);
@@ -21,24 +22,24 @@ export const codeSubmissionService = {
     return await codeSubmissionRepository().save(codeSubmission);
   },
 
-  async getById(id: string): Promise<CodeSubmission | null> {
+  async get(id: string): Promise<CodeSubmission> {
     const codeSubmission = await codeSubmissionRepository().findOne({
       where: { id },
     });
 
-    if (!codeSubmission) throw new Error("Code submission not found");
+    if (isNil(codeSubmission)) throw new Error("Code submission not found");
     return codeSubmission;
   },
 
   async getByInterviewId(
     interviewId: string
-  ): Promise<CodeSubmission[] | null> {
+  ): Promise<CodeSubmission[]> {
     const codeSubmissions = await codeSubmissionRepository().find({
       where: { interviewId },
       order: { submittedAt: "DESC" },
     });
 
-    if (!codeSubmissions)
+    if (isNil(codeSubmissions))
       throw new Error("No code submissions for this interview");
 
     return codeSubmissions;
@@ -47,13 +48,13 @@ export const codeSubmissionService = {
   async getByInterviewAndQuestion(
     interviewId: string,
     questionId: string
-  ): Promise<CodeSubmission[] | null> {
+  ): Promise<CodeSubmission[]> {
     const codeSubmissions = await codeSubmissionRepository().find({
       where: { interviewId, questionId },
       order: { submittedAt: "DESC" },
     });
 
-    if (!codeSubmissions)
+    if (isNil(codeSubmissions))
       throw new Error("No code submissions for this interview or question");
 
     return codeSubmissions;
@@ -62,13 +63,13 @@ export const codeSubmissionService = {
   async update(
     id: string,
     request: UpdateCodeSubmissionRequestBody
-  ): Promise<CodeSubmission | null> {
+  ): Promise<CodeSubmission> {
     const codeSubmission = await codeSubmissionRepository().findOne({
       where: { id },
     });
 
-    if (!codeSubmission) {
-      return null;
+    if (isNil(codeSubmission)) {
+      throw new Error("Code submission not found");
     }
 
     const updatedSubmission = codeSubmissionRepository().merge(codeSubmission, {
@@ -84,18 +85,18 @@ export const codeSubmissionService = {
       where: { id },
     });
 
-    if (!codeSubmission) throw new Error("Code submission not found");
+    if (isNil(codeSubmission)) throw new Error("Code submission not found");
 
     await codeSubmissionRepository().delete(id);
   },
 
-  async findWithTestResults(id: string): Promise<CodeSubmission | null> {
+  async findWithTestResults(id: string): Promise<CodeSubmission> {
     const codeSubmission = await codeSubmissionRepository().findOne({
       where: { id },
       relations: ["testCaseResults"],
     });
 
-    if (!codeSubmission) throw new Error("Code Submission not found");
+    if (isNil(codeSubmission)) throw new Error("Code Submission not found");
 
     return codeSubmission;
   },
