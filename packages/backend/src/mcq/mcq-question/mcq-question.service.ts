@@ -42,9 +42,7 @@ export const mcqQuestionService = {
   },
 
   async list(): Promise<Partial<McqQuestion>[]> {
-    return await mcqQuestionRepository().find({
-      select: ["id", "text", "difficulty", "allowMultiple", "explanation"],
-    });
+    return await mcqQuestionRepository().find();
   },
 
   async update(
@@ -109,7 +107,7 @@ export const mcqQuestionService = {
     for (const [tag, count] of Object.entries(tagCounts)) {
       const questions = await mcqQuestionRepository()
         .createQueryBuilder("mcq")
-        .where("mcq.tags && :tags::text[]", { tags: [tag] })
+        .where("mcq.tags && :tags::varchar[]", { tags: [tag] })
         .orderBy("RANDOM()")
         .take(count)
         .getMany();

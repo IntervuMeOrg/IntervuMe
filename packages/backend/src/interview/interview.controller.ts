@@ -14,12 +14,12 @@ import { ApId } from "../common/id-generator";
 
 export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);
-  // TODO
-  //   app.post("/", CreateInterviewRequestBodyRequest, async (request, reply) => {
-  //     const body = request.body as CreateInterviewRequestBody;
-  //     const interview = await interviewService.create(body);
-  //     return interview;
-  //   });
+
+  app.post("/", CreateInterviewRequestBodyRequest, async (request, reply) => {
+    const body = request.body as CreateInterviewRequestBody;
+    const interview = await interviewService.create(body);
+    return interview;
+  });
 
   app.get("/:id", GetInterviewRequest, async (request, reply) => {
     const { id } = request.params as { id: string };

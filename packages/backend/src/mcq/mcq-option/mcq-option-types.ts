@@ -12,7 +12,6 @@ export const McqOption = Type.Object({
 export type McqOption = Static<typeof McqOption>;
 
 export const CreateMcqOptionRequestBody = Type.Object({
-  mcqQuestionId: ApId,
   optionText: Type.String({ minLength: 1, maxLength: 500 }),
   isCorrect: Type.Boolean(),
 });

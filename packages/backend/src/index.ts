@@ -13,6 +13,7 @@ import { mcqOptionModule } from "./mcq/mcq-option/mcq-option.module.js";
 import { mcqQuestionModule } from "./mcq/mcq-question/mcq-question.module.js";
 import { interviewQuestionModule } from "./interview/interview-question/interview-question.module.js";
 import { mcqAnswerModule } from "./mcq/mcq-answer/mcq-answer.module.js";
+import { interviewModule } from "./interview/interview.module.js";
 
 config();
 
@@ -83,6 +84,7 @@ if (databaseConnected) {
   await fastify.register(mcqQuestionModule);
   await fastify.register(interviewQuestionModule);
   await fastify.register(mcqAnswerModule);
+  await fastify.register(interviewModule);
 } else {
   // Fallback routes when database is not available
   fastify.get("/api/auth/*", async () => {

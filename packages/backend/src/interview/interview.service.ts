@@ -14,13 +14,14 @@ import {
   InterviewStatus,
   InterviewSession,
 } from "./interview-types";
+import { mcqQuestionService } from "../mcq/mcq-question/mcq-question.service";
+import { DifficultyLevel } from "../coding/coding-question/codingQuestion-types";
 
 const InterviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
 };
 
 export const interviewService = {
-
   async getByIdWithQuestions(id: string): Promise<Interview | null> {
     const interview = await InterviewRepository().findOne({
       where: { id },
@@ -46,9 +47,9 @@ export const interviewService = {
   },
 
   async get(id: string): Promise<InterviewSession | null> {
-    const interview = await InterviewRepository().findOne({ 
-      where: { id }, 
-      relations: ["interviewQuestions", "answers", "codeSubmissions"] 
+    const interview = await InterviewRepository().findOne({
+      where: { id },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
     if (!interview) {
@@ -154,10 +155,15 @@ export const interviewService = {
       }, 0) || 0;
 
     const codingScore =
-      interview.codeSubmissions?.reduce((total: number, submission: CodeSubmissionWithResults) => {
-        const passedTests = submission.testCaseResults?.filter(result => result.passed).length || 0;          
-        return total + passedTests;
-      }, 0) || 0;
+      interview.codeSubmissions?.reduce(
+        (total: number, submission: CodeSubmissionWithResults) => {
+          const passedTests =
+            submission.testCaseResults?.filter((result) => result.passed)
+              .length || 0;
+          return total + passedTests;
+        },
+        0
+      ) || 0;
 
     const totalScore = mcqScore + codingScore;
     const maxScore =
@@ -185,52 +191,59 @@ export const interviewService = {
     return true;
   },
 
-  // TODO: Implement create method
-  // async create(request: CreateInterviewRequestBody): Promise<Interview> {
-  //   const aiAnalysis = await aiService.analyzeJobDescription(
-  //     request.jobDescription
-  //   );
+async create(request: CreateInterviewRequestBody): Promise<Interview> {
+  // Placeholder AI analysis - replace with actual aiService.analyzeJobDescription later
+  const aiAnalysis = {
+    mcqRequirements: [
+      { tag: 'javascript', count: 1 },
+      { tag: 'react', count: 1 },
+      { tag: 'nodejs', count: 1 }
+    ],
+    codingRequirements: 'medium' as DifficultyLevel
+  };
 
-  //   const interview = InterviewRepository().create({
-  //     id: apId(),
-  //     ...request,
-  //     status: Status.SCHEDULED,
-  //     isActive: true,
-  //   });
+  const interview = InterviewRepository().create({
+    id: apId(),
+    ...request,
+    status: InterviewStatus.SCHEDULED,
+    isActive: true,
+  });
 
-  //   const savedInterview = InterviewRepository().save(interview);
+  await InterviewRepository().save(interview);
 
-  //   // Generate MCQ questions based on AI analysis
-  //   let questionOrder = 1;
-  //   for (const tagRequirement of aiAnalysis.mcqRequirements) {
-  //     const mcqQuestions = await mcqQuestionService.getRandomByTagAndCount(
-  //       tagRequirement.tag,
-  //       tagRequirement.count
-  //     );
+  // Generate MCQ questions based on AI analysis
+  let questionOrder = 1;
+  
+  // Convert array of tag requirements to the expected format
+  const tagCounts: { [tag: string]: number } = {};
+  for (const tagRequirement of aiAnalysis.mcqRequirements) {
+    tagCounts[tagRequirement.tag] = tagRequirement.count;
+  }
 
-  //     for (const mcqQuestion of mcqQuestions) {
-  //       await interviewQuestionService.create({
-  //         interviewId: interview.id,
-  //         questionType: QuestionTypes.MCQ,
-  //         questionId: mcqQuestion.id,
-  //         questionOrder: questionOrder++,
-  //       });
-  //     }
-  //   }
+  const mcqQuestions = await mcqQuestionService.getRandomByTagsAndCount(tagCounts);
 
-  //   const codingQuestions = await codingQuestionService.getRandomByDifficulties(
-  //     aiAnalysis.codingRequirements
-  //   );
+  for (const mcqQuestion of mcqQuestions) {
+    await interviewQuestionService.create({
+      interviewId: interview.id,
+      questionType: QuestionType.MCQ,
+      questionId: mcqQuestion.id,
+      questionOrder: questionOrder++,
+    });
+  }
 
-  //   for (const codingQuestion of codingQuestions) {
-  //     await interviewQuestionService.create({
-  //       interviewId: interview.id,
-  //       questionType: QuestionTypes.CODING,
-  //       questionId: codingQuestion.id,
-  //       questionOrder: questionOrder++,
-  //     });
-  //   }
+  const codingQuestions = await codingQuestionService.getRandomByDifficultyAndCount(
+    'medium' as DifficultyLevel, 2
+  );
 
-  //   return savedInterview;
-  // },
+  for (const codingQuestion of codingQuestions) {
+    await interviewQuestionService.create({
+      interviewId: interview.id,
+      questionType: QuestionType.CODING,
+      questionId: codingQuestion.id,
+      questionOrder: questionOrder++,
+    });
+  }
+
+  return interview;
+}
 };

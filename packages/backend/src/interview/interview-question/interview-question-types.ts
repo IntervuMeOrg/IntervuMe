@@ -20,6 +20,7 @@ export const InterviewQuestion = Type.Object({
 export type InterviewQuestion = Static<typeof InterviewQuestion>;
 
 export const CreateInterviewQuestionRequestBody = Type.Object({
+  interviewId: ApId,
   questionType: Type.Enum(QuestionType),
   questionId: ApId,
   questionOrder: Type.Integer({ minimum: 1 }),
@@ -42,7 +43,7 @@ export type UpdateInterviewQuestionRequestBody = Static<
 export const InterviewQuestionWithDetailsRequestBody = Type.Composite([
   InterviewQuestion,
   Type.Object({
-    questionDetails: Type.Union([McqQuestion, CodingQuestion]),
+    questionDetails: Type.Any(),
   }),
 ]);
 
