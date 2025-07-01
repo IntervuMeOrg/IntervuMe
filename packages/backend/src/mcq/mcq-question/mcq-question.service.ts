@@ -101,17 +101,31 @@ export const mcqQuestionService = {
     await mcqQuestionRepository().remove(question);
   },
 
-  async getRandomByTagsAndCount(
-    tags: string[],
-    count: number
-  ): Promise<McqQuestion[]> {
-    const questions = await mcqQuestionRepository()
-      .createQueryBuilder("mcq")
-      .where("mcq.tags && :tags::text[]", { tags })
-      .orderBy("RANDOM()")
-      .take(count)
-      .getMany();
+  async getRandomByTagsAndCount(tagCounts: {
+    [tag: string]: number;
+  }): Promise<McqQuestion[]> {
+    const allQuestions: McqQuestion[] = [];
 
-    return questions;
+    for (const [tag, count] of Object.entries(tagCounts)) {
+      const questions = await mcqQuestionRepository()
+        .createQueryBuilder("mcq")
+        .where("mcq.tags && :tags::text[]", { tags: [tag] })
+        .orderBy("RANDOM()")
+        .take(count)
+        .getMany();
+
+      allQuestions.push(...questions);
+    }
+
+    return mcqQuestionService.shuffleArray(allQuestions);
+  },
+  
+  shuffleArray<T>(array: T[]): T[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
   },
 };

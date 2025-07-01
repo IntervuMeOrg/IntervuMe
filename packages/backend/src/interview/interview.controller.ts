@@ -23,7 +23,7 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
 
   app.get("/:id", GetInterviewRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
-    const interview = await interviewService.getById(id);
+    const interview = await interviewService.get(id);
     return interview;
   });
 

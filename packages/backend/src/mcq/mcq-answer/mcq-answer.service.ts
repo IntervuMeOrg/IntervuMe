@@ -21,7 +21,7 @@ export const mcqAnswerService = {
       throw new Error("Mcq Question not found");
     }
 
-    const interview = await interviewService.getById(request.interviewId);
+    const interview = await interviewService.get(request.interviewId);
     if (!interview || interview.status === "COMPLETED") {
       throw new Error("Cannot submit answer - interview is completed");
     }
@@ -106,7 +106,7 @@ export const mcqAnswerService = {
       throw new Error("Answer not found");
     }
 
-    const interview = await interviewService.getById(answer.interviewId);
+    const interview = await interviewService.get(answer.interviewId);
     if (!interview || interview.status === "COMPLETED") {
       throw new Error("Cannot update answer - interview is completed");
     }
@@ -150,7 +150,7 @@ export const mcqAnswerService = {
       throw new Error("Answer not found");
     }
 
-    const interview = await interviewService.getById(answer.interviewId);
+    const interview = await interviewService.get(answer.interviewId);
     if (!interview || interview.status === "COMPLETED") {
       throw new Error("Cannot delete answer - interview is completed");
     }

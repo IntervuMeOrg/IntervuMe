@@ -7,10 +7,8 @@ import {
   UpdateInterviewQuestionRequestBody,
   InterviewQuestionWithDetailsRequestBody,
 } from "./interview-question-types";
-import { McqQuestionService } from "../McqQuestion/McqQuestion.service";
-import { codingQuestionService } from "../codingQuestion/codingQuestion.service";
-import { CodingQuestion } from "../codingQuestion/codingQuestion-types";
-import { McqQuestionSchema } from "../McqQuestion/McqQuestion-types";
+import { codingQuestionService } from "../../coding/coding-question/codingQuestion.service";
+import { mcqQuestionService } from "../../mcq/mcq-question/mcq-question.service";
 
 const InterviewQuestionRepository = () => {
   return AppDataSource.getRepository(InterviewQuestionEntitySchema);
@@ -18,8 +16,8 @@ const InterviewQuestionRepository = () => {
 
 export const interviewQuestionService = {
   async create(
-    request: CreateInterviewQuestionSchema
-  ): Promise<InterviewQuestionSchema> {
+    request: CreateInterviewQuestionRequestBody
+  ): Promise<InterviewQuestion> {
     const interviewQuestion = InterviewQuestionRepository().create({
       id: apId(),
       ...request,
@@ -28,7 +26,7 @@ export const interviewQuestionService = {
     return await InterviewQuestionRepository().save(interviewQuestion);
   },
 
-  async getById(id: string): Promise<InterviewQuestionSchema | null> {
+  async getById(id: string): Promise<InterviewQuestion | null> {
     const interviewQuestion = await InterviewQuestionRepository().findOne({
       where: { id },
       //relations: ['interview']
@@ -43,7 +41,7 @@ export const interviewQuestionService = {
 
   async getByIdWithDetails(
     id: string
-  ): Promise<InterviewQuestionWithDetailsSchema | null> {
+  ): Promise<InterviewQuestionWithDetailsRequestBody | null> {
     const interviewQuestion = await this.getById(id);
 
     if (!interviewQuestion) {
@@ -51,8 +49,8 @@ export const interviewQuestionService = {
     }
 
     let questionDetails;
-    if (interviewQuestion.questionType === "Mcq") {
-      questionDetails = await McqQuestionService.getById(
+    if (interviewQuestion.questionType === "mcq") {
+      questionDetails = await mcqQuestionService.getById(
         interviewQuestion.questionId
       );
 
@@ -79,7 +77,7 @@ export const interviewQuestionService = {
 
   async getByInterviewId(
     interviewId: string
-  ): Promise<InterviewQuestionSchema[]> {
+  ): Promise<InterviewQuestion[]> {
     const interviewQuestions = await InterviewQuestionRepository().find({
       where: { interviewId },
       order: { questionOrder: "ASC" },
@@ -94,15 +92,15 @@ export const interviewQuestionService = {
 
   async getByInterviewIdWithDetails(
     interviewId: string
-  ): Promise<InterviewQuestionWithDetailsSchema[]> {
+  ): Promise<InterviewQuestionWithDetailsRequestBody[]> {
     const interviewQuestions = await this.getByInterviewId(interviewId);
 
-    const questionsWithDetails: InterviewQuestionWithDetailsSchema[] =
+    const questionsWithDetails: InterviewQuestionWithDetailsRequestBody[] =
       await Promise.all(
         interviewQuestions.map(async (iq) => {
           let questionDetails;
-          if (iq.questionType === "Mcq") {
-            const details = await McqQuestionService.getById(iq.questionId);
+          if (iq.questionType === "mcq") {
+            const details = await mcqQuestionService.getById(iq.questionId);
 
             if (!details)
               throw new Error(`Mcq details not found for ${iq.questionId}`);
@@ -125,8 +123,8 @@ export const interviewQuestionService = {
 
   async update(
     id: string,
-    updates: UpdateInterviewQuestionSchema
-  ): Promise<InterviewQuestionSchema | null> {
+    updates: UpdateInterviewQuestionRequestBody
+  ): Promise<InterviewQuestion | null> {
     const interviewQuestion = await InterviewQuestionRepository().findOne({
       where: { id },
     });
