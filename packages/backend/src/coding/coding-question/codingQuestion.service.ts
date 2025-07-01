@@ -8,18 +8,26 @@ import {
 } from "./codingQuestion-types";
 import { apId } from "../../common/id-generator";
 import { TestCaseEntity } from "../test-case/test-case.entity";
-import { CreateTestCaseRequestBody } from "../test-case/test-case-types";
+import {
+  CreateTestCaseRequestBody,
+  UpdateTestCaseRequestBody,
+} from "../test-case/test-case-types";
+import { isNil } from "../../common/utils";
 
 const codingQuestionRepository = () => {
   return AppDataSource.getRepository(CodingQuestionEntity);
 };
 
+const testCaseRepository = () => {
+  return AppDataSource.getRepository(TestCaseEntity);
+};
+
 export const codingQuestionService = {
   async create(request: CreateCodingQuestionRequestBody) {
-    const { testCases, isActive = true, ...questionFields } = request;
+    const { testCases, isActive, ...questionFields } = request;
 
     const normalizedTestCases = testCases.map(
-      ({ input, expectedOutput, isHidden = false }) => ({
+      ({ input, expectedOutput, isHidden }: UpdateTestCaseRequestBody) => ({
         id: apId(),
         input,
         expectedOutput,
@@ -37,16 +45,23 @@ export const codingQuestionService = {
     return await codingQuestionRepository().save(codingQuestion);
   },
 
-  async getById(id: string): Promise<CodingQuestion | null> {
-    return await codingQuestionRepository().findOne({ where: { id } });
+  async get(id: string): Promise<CodingQuestion> {
+    const question = await codingQuestionRepository().findOne({
+      where: { id },
+    });
+    if (isNil(question)) {
+      throw new Error("Coding question not found");
+    }
+
+    return question;
   },
 
-  async deactivate(id: string): Promise<CodingQuestion | null> {
+  async deactivate(id: string): Promise<CodingQuestion> {
     const question = await codingQuestionRepository().findOne({
       where: { id },
     });
 
-    if (!question) {
+    if (isNil(question)) {
       throw new Error("Coding question not found");
     }
 
@@ -57,12 +72,12 @@ export const codingQuestionService = {
     return question;
   },
 
-  async activate(id: string): Promise<CodingQuestion | null> {
+  async activate(id: string): Promise<CodingQuestion> {
     const question = await codingQuestionRepository().findOne({
       where: { id },
     });
 
-    if (!question) {
+    if (isNil(question)) {
       throw new Error("Coding question not found");
     }
 
@@ -78,63 +93,49 @@ export const codingQuestionService = {
       where: { id },
     });
 
-    if (!question) {
+    if (isNil(question)) {
       throw new Error("Coding question not found");
     }
 
     await codingQuestionRepository().remove(question);
   },
 
-  async list(): Promise<Partial<CodingQuestion>[]> {
-    return await codingQuestionRepository().find({
-      select: [
-        "id",
-        "title",
-        "difficulty",
-        "points",
-        "timeLimit",
-        "isActive",
-        "created",
-        "updated",
-      ],
-    });
+  async list(): Promise<CodingQuestion[]> {
+    return await codingQuestionRepository().find();
   },
 
   async update(
     id: string,
     updates: UpdateCodingQuestionRequestBody
-  ): Promise<CodingQuestion | null> {
+  ): Promise<CodingQuestion> {
     const question = await codingQuestionRepository().findOne({
       where: { id },
     });
-    const testCaseRepo = AppDataSource.getRepository(TestCaseEntity);
 
-    if (!question) {
+    if (isNil(question)) {
       throw new Error("Coding question not found");
     }
 
     const { testCases, ...restUpdates } = updates;
 
     if (testCases) {
-      await testCaseRepo.delete({ codingQuestionId: id });
+      await testCaseRepository().delete({ codingQuestionId: id });
 
       const normalizedTestCases = testCases.map(
-        ({ input, expectedOutput, isHidden = false }: CreateTestCaseRequestBody) => ({
+        ({ input, expectedOutput, isHidden }: UpdateTestCaseRequestBody) => ({
           id: apId(),
           input,
           expectedOutput,
           isHidden,
+          codingQuestionId: id,
         })
       );
 
-      const updatedCodingQuestion = codingQuestionRepository().create({
-        ...question,
-        ...updates,
+      Object.assign(question, restUpdates, {
         testCases: normalizedTestCases,
         updated: new Date().toISOString(),
       });
-
-      return await codingQuestionRepository().save(updatedCodingQuestion);
+      return await codingQuestionRepository().save(question);
     }
 
     Object.assign(question, restUpdates, { updated: new Date().toISOString() });

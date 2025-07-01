@@ -1,7 +1,5 @@
 import { Static, Type } from "@fastify/type-provider-typebox";
 import { BaseModelSchema } from "../../common/base-model";
-import { CodingQuestion } from "../../coding/coding-question/codingQuestion-types";
-import { McqQuestion } from "../../mcq/mcq-question/mcq-question-types";
 import { ApId } from "../../common/id-generator";
 
 export enum QuestionType {
@@ -18,6 +16,17 @@ export const InterviewQuestion = Type.Object({
 });
 
 export type InterviewQuestion = Static<typeof InterviewQuestion>;
+
+export const InterviewQuestionWithDetails = Type.Composite([
+  InterviewQuestion,
+  Type.Object({
+    questionDetails: Type.Any(),
+  }),
+]);
+
+export type InterviewQuestionWithDetails = Static<
+  typeof InterviewQuestionWithDetails
+>;
 
 export const CreateInterviewQuestionRequestBody = Type.Object({
   interviewId: ApId,
@@ -38,15 +47,4 @@ export const UpdateInterviewQuestionRequestBody = Type.Object({
 
 export type UpdateInterviewQuestionRequestBody = Static<
   typeof UpdateInterviewQuestionRequestBody
->;
-
-export const InterviewQuestionWithDetailsRequestBody = Type.Composite([
-  InterviewQuestion,
-  Type.Object({
-    questionDetails: Type.Any(),
-  }),
-]);
-
-export type InterviewQuestionWithDetailsRequestBody = Static<
-  typeof InterviewQuestionWithDetailsRequestBody
 >;

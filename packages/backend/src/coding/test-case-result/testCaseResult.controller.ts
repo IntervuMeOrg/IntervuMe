@@ -26,7 +26,7 @@ export const testCaseResultController: FastifyPluginAsyncTypebox = async (
 
   app.get("/:id", GetTestCaseResultRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
-    const testCaseResult = await testCaseResultService.getById(id);
+    const testCaseResult = await testCaseResultService.get(id);
     return testCaseResult;
   });
 

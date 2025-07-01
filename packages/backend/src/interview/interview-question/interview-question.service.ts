@@ -5,10 +5,11 @@ import {
   CreateInterviewQuestionRequestBody,
   InterviewQuestion,
   UpdateInterviewQuestionRequestBody,
-  InterviewQuestionWithDetailsRequestBody,
+  InterviewQuestionWithDetails,
 } from "./interview-question-types";
 import { codingQuestionService } from "../../coding/coding-question/codingQuestion.service";
 import { mcqQuestionService } from "../../mcq/mcq-question/mcq-question.service";
+import { isNil } from "../../common/utils";
 
 const InterviewQuestionRepository = () => {
   return AppDataSource.getRepository(InterviewQuestionEntity);
@@ -26,13 +27,28 @@ export const interviewQuestionService = {
     return await InterviewQuestionRepository().save(interviewQuestion);
   },
 
-  async getById(id: string): Promise<InterviewQuestion | null> {
+  async get(id: string): Promise<InterviewQuestion> {
     const interviewQuestion = await InterviewQuestionRepository().findOne({
       where: { id },
       //relations: ['interview']
     });
 
-    if (!interviewQuestion) {
+    if (isNil(interviewQuestion)) {
+      throw new Error("Interview Question not found");
+    }
+
+    return interviewQuestion;
+  },
+
+  async getByInterviewIdandQuestionId(
+    interviewId: string,
+    questionId: string
+  ): Promise<InterviewQuestion | null> {
+    const interviewQuestion = await InterviewQuestionRepository().findOne({
+      where: { interviewId, questionId },
+    });
+
+    if (isNil(interviewQuestion)) {
       throw new Error("Interview Question not found");
     }
 
@@ -51,30 +67,28 @@ export const interviewQuestionService = {
     return interviewQuestion;
   },
 
-  async getByIdWithDetails(
-    id: string
-  ): Promise<InterviewQuestionWithDetailsRequestBody | null> {
-    const interviewQuestion = await this.getById(id);
+  async getWithDetails(id: string): Promise<InterviewQuestionWithDetails> {
+    const interviewQuestion = await this.get(id);
 
-    if (!interviewQuestion) {
-      return null;
+    if (isNil(interviewQuestion)) {
+      throw new Error("Interview Question not found");
     }
 
     let questionDetails;
     if (interviewQuestion.questionType === "mcq") {
-      questionDetails = await mcqQuestionService.getById(
+      questionDetails = await mcqQuestionService.get(
         interviewQuestion.questionId
       );
 
-      if (!questionDetails) {
+      if (isNil(questionDetails)) {
         throw new Error("Mcq details not found");
       }
     } else if (interviewQuestion.questionType === "coding") {
-      questionDetails = await codingQuestionService.getById(
+      questionDetails = await codingQuestionService.get(
         interviewQuestion.questionId
       );
 
-      if (!questionDetails) {
+      if (isNil(questionDetails)) {
         throw new Error("Coding question details not found");
       }
     } else {
@@ -93,7 +107,7 @@ export const interviewQuestionService = {
       order: { questionOrder: "ASC" },
     });
 
-    if (!interviewQuestions) {
+    if (isNil(interviewQuestions)) {
       throw new Error("Doesn't exist");
     }
 
@@ -102,24 +116,24 @@ export const interviewQuestionService = {
 
   async getByInterviewIdWithDetails(
     interviewId: string
-  ): Promise<InterviewQuestionWithDetailsRequestBody[]> {
+  ): Promise<InterviewQuestionWithDetails[]> {
     const interviewQuestions = await this.getByInterviewId(interviewId);
 
-    const questionsWithDetails: InterviewQuestionWithDetailsRequestBody[] =
+    const questionsWithDetails: InterviewQuestionWithDetails[] =
       await Promise.all(
         interviewQuestions.map(async (iq) => {
           let questionDetails;
           if (iq.questionType === "mcq") {
-            const details = await mcqQuestionService.getById(iq.questionId);
+            const details = await mcqQuestionService.get(iq.questionId);
 
-            if (!details)
+            if (isNil(details))
               throw new Error(`Mcq details not found for ${iq.questionId}`);
 
             questionDetails = details;
           } else {
-            const details = await codingQuestionService.getById(iq.questionId);
+            const details = await codingQuestionService.get(iq.questionId);
 
-            if (!details)
+            if (isNil(details))
               throw new Error(`Coding details not found for ${iq.questionId}`);
 
             questionDetails = details;
@@ -134,12 +148,12 @@ export const interviewQuestionService = {
   async update(
     id: string,
     updates: UpdateInterviewQuestionRequestBody
-  ): Promise<InterviewQuestion | null> {
+  ): Promise<InterviewQuestion> {
     const interviewQuestion = await InterviewQuestionRepository().findOne({
       where: { id },
     });
 
-    if (!interviewQuestion) {
+    if (isNil(interviewQuestion)) {
       throw new Error("Interview Question not found");
     }
 
@@ -154,7 +168,7 @@ export const interviewQuestionService = {
       where: { id },
     });
 
-    if (!interviewQuestion) {
+    if (isNil(interviewQuestion)) {
       throw new Error("Interview Question not found");
     }
 

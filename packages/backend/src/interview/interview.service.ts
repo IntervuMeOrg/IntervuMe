@@ -24,54 +24,45 @@ import { DifficultyLevel } from "../coding/coding-question/codingQuestion-types"
 import { codeSubmissionService } from "../coding/code-submission/codeSubmission.service";
 import { TestCaseResult, Verdict } from "../coding/test-case-result/testCaseResult-types";
 import { mcqAnswerService } from "../mcq/mcq-answer/mcq-answer.service";
+import { isNil } from '../common/utils';
 
 const InterviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
 };
 
 export const interviewService = {
-  async getByIdWithQuestions(id: string): Promise<Interview | null> {
-    const interview = await InterviewRepository().findOne({
-      where: { id },
-      relations: ["interviewQuestions"],
-    });
-
-    if (!interview) throw new Error("Interview not found");
-    return interview;
-  },
-
-  async getByUserId(userId: string): Promise<Interview[]> {
+  async getByUserId(userId: string): Promise<InterviewSession[]> {
     return await InterviewRepository().find({
       where: { userId, isActive: true },
       order: { startTime: "DESC" },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
   },
 
-  async getByStatus(status: InterviewStatus): Promise<Interview[]> {
+  async getByStatus(status: InterviewStatus): Promise<InterviewSession[]> {
     return await InterviewRepository().find({
       where: { status, isActive: true },
       order: { startTime: "ASC" },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
   },
 
-  async get(id: string): Promise<InterviewSession | null> {
+  async get(id: string): Promise<InterviewSession> {
     const interview = await InterviewRepository().findOne({
       where: { id },
       relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
-    if (!interview) {
+    if (isNil(interview)) {
       throw new Error("Interview not found");
     }
 
     return interview;
   },
 
-  async getInterviewsWithResults(userId?: string): Promise<InterviewSession[]> {
+  async list(userId: string): Promise<InterviewSession[]> {
     const whereCondition: any = { isActive: true };
-    if (userId) {
-      whereCondition.userId = userId;
-    }
+    whereCondition.userId = userId;
 
     return await InterviewRepository().find({
       where: whereCondition,
@@ -80,7 +71,7 @@ export const interviewService = {
     });
   },
 
-  async getUpcomingInterviews(userId: string): Promise<Interview[]> {
+  async listUpcoming(userId: string): Promise<InterviewSession[]> {
     return await InterviewRepository().find({
       where: {
         userId,
@@ -88,19 +79,18 @@ export const interviewService = {
         startTime: MoreThan(new Date().toISOString()),
         isActive: true,
       },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
       order: { startTime: "ASC" },
     });
   },
 
-  async update(
-    id: string,
-    request: UpdateInterviewRequestBody
-  ): Promise<Interview | null> {
+  async update(id: string, request: UpdateInterviewRequestBody): Promise<InterviewSession> {
     const interview = await InterviewRepository().findOne({
       where: { id },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
-    if (!interview) {
+    if (isNil(interview)) {
       throw new Error("Interview not found");
     }
 
@@ -108,12 +98,13 @@ export const interviewService = {
     return await InterviewRepository().save(updatedInterview);
   },
 
-  async startInterview(id: string): Promise<Interview | null> {
+  async startInterview(id: string): Promise<InterviewSession> {
     const interview = await InterviewRepository().findOne({
       where: { id },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
-    if (!interview) {
+    if (isNil(interview)) {
       throw new Error("Interview not found");
     }
 
@@ -127,13 +118,13 @@ export const interviewService = {
     return await InterviewRepository().save(interview);
   },
 
-  async calculateScore(id: string): Promise<Interview | null> {
+  async calculateScore(id: string): Promise<InterviewSession> {
     const interview = await InterviewRepository().findOne({
       where: { id },
-      relations: ["answers", "codeSubmissions", "interviewQuestions"],
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
-    if (!interview) {
+    if (isNil(interview)) {
       throw new Error("Interview not found");
     }
 
@@ -169,9 +160,10 @@ export const interviewService = {
   async delete(id: string): Promise<boolean> {
     const interview = await InterviewRepository().findOne({
       where: { id },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
-    if (!interview) {
+    if (isNil(interview)) {
       throw new Error("Interview not found");
     }
 

@@ -6,6 +6,7 @@ import {
   McqOption,
   UpdateMcqOptionRequestBody,
 } from "./mcq-option-types";
+import { isNil } from "../../common/utils";
 
 const McqOptionRepositoy = () => {
   return AppDataSource.getRepository(McqOptionEntity);
@@ -21,9 +22,9 @@ export const McqOptionService = {
     return await McqOptionRepositoy().save(McqOption);
   },
 
-  async getById(id: string): Promise<McqOption | null> {
+  async get(id: string): Promise<McqOption> {
     const McqOption = await McqOptionRepositoy().findOne({ where: { id } });
-    if (!McqOption) throw new Error("Mcq Option not found");
+    if (isNil(McqOption)) throw new Error("Mcq Option not found");
 
     return McqOption;
   },
@@ -31,9 +32,9 @@ export const McqOptionService = {
   async update(
     id: string,
     updates: UpdateMcqOptionRequestBody
-  ): Promise<McqOption | null> {
+  ): Promise<McqOption> {
     const McqOption = await McqOptionRepositoy().findOne({ where: { id } });
-    if (!McqOption) throw new Error("Mcq Option not found");
+    if (isNil(McqOption)) throw new Error("Mcq Option not found");
 
     Object.assign(McqOption, updates, { updated: new Date().toISOString() });
     return await McqOptionRepositoy().save(McqOption);
@@ -41,7 +42,7 @@ export const McqOptionService = {
 
   async delete(id: string): Promise<void> {
     const McqOption = await McqOptionRepositoy().findOne({ where: { id } });
-    if (!McqOption) throw new Error("Mcq Option not found");
+    if (isNil(McqOption)) throw new Error("Mcq Option not found");
 
     McqOptionRepositoy().remove(McqOption);
   },

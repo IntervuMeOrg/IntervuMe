@@ -9,6 +9,7 @@ import {
 import { mcqQuestionService } from "../mcq-question/mcq-question.service";
 import { interviewService } from "../../interview/interview.service";
 import { McqOption } from "../mcq-option/mcq-option-types";
+import { isNil } from "../../common/utils";
 
 const mcqAnswerRepository = () => {
   return AppDataSource.getRepository(McqAnswerEntity);
@@ -16,13 +17,13 @@ const mcqAnswerRepository = () => {
 
 export const mcqAnswerService = {
   async create(request: CreateMcqAnswerRequestBody): Promise<McqAnswer> {
-    const mcqQuestion = await mcqQuestionService.getById(request.questionId);
-    if (!mcqQuestion) {
+    const mcqQuestion = await mcqQuestionService.get(request.questionId);
+    if (isNil(mcqQuestion)) {
       throw new Error("Mcq Question not found");
     }
 
     const interview = await interviewService.get(request.interviewId);
-    if (!interview || interview.status === "COMPLETED") {
+    if (isNil(interview) || interview.status === "COMPLETED") {
       throw new Error("Cannot submit answer - interview is completed");
     }
 
@@ -67,10 +68,10 @@ export const mcqAnswerService = {
     return await mcqAnswerRepository().save(answer);
   },
 
-  async getById(id: string): Promise<McqAnswer | null> {
+  async get(id: string): Promise<McqAnswer> {
     const answer = await mcqAnswerRepository().findOne({ where: { id } });
 
-    if (!answer) {
+    if (isNil(answer)) {
       throw new Error("Answer not found");
     }
 
@@ -84,12 +85,12 @@ export const mcqAnswerService = {
   async getByInterviewAndQuestion(
     interviewId: string,
     questionId: string
-  ): Promise<McqAnswer | null> {
+  ): Promise<McqAnswer> {
     const answer = await mcqAnswerRepository().findOne({
       where: { interviewId, questionId },
     });
 
-    if (!answer) {
+    if (isNil(answer)) {
       throw new Error("Answer not found for this question");
     }
 
@@ -99,15 +100,15 @@ export const mcqAnswerService = {
   async update(
     id: string,
     updates: UpdateMcqAnswerRequestBody
-  ): Promise<McqAnswer | null> {
+  ): Promise<McqAnswer> {
     const answer = await mcqAnswerRepository().findOne({ where: { id } });
 
-    if (!answer) {
+    if (isNil(answer)) {
       throw new Error("Answer not found");
     }
 
     const interview = await interviewService.get(answer.interviewId);
-    if (!interview || interview.status === "COMPLETED") {
+    if (isNil(interview) || interview.status === "COMPLETED") {
       throw new Error("Cannot update answer - interview is completed");
     }
 
@@ -115,8 +116,8 @@ export const mcqAnswerService = {
       updates.selectedOptionId &&
       updates.selectedOptionId !== answer.selectedOptionId
     ) {
-      const mcqQuestion = await mcqQuestionService.getById(answer.questionId);
-      if (!mcqQuestion) throw new Error("Question not found");
+      const mcqQuestion = await mcqQuestionService.get(answer.questionId);
+      if (isNil(mcqQuestion)) throw new Error("Question not found");
 
       const newSelectedOption = mcqQuestion.options.find(
         (opt: McqOption) => opt.id === updates.selectedOptionId
@@ -146,12 +147,12 @@ export const mcqAnswerService = {
   async delete(id: string): Promise<void> {
     const answer = await mcqAnswerRepository().findOne({ where: { id } });
 
-    if (!answer) {
+    if (isNil(answer)) {
       throw new Error("Answer not found");
     }
 
     const interview = await interviewService.get(answer.interviewId);
-    if (!interview || interview.status === "COMPLETED") {
+    if (isNil(interview) || interview.status === "COMPLETED") {
       throw new Error("Cannot delete answer - interview is completed");
     }
 

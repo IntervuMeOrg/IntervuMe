@@ -7,7 +7,7 @@ import {
   CreateInterviewQuestionRequestBody,
   UpdateInterviewQuestionRequestBody,
   InterviewQuestion,
-  InterviewQuestionWithDetailsRequestBody,
+  InterviewQuestionWithDetails,
 } from "./interview-question-types";
 import { StatusCodes } from "http-status-codes";
 import { ApId } from "../../common/id-generator";
@@ -32,7 +32,7 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
 
   app.get("/:id", GetInterviewQuestionRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
-    const interviewQuestion = await interviewQuestionService.getById(id);
+    const interviewQuestion = await interviewQuestionService.get(id);
 
     return interviewQuestion;
   });
@@ -43,8 +43,9 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
     async (request, reply) => {
       const { id } = request.params as { id: string };
 
-      const interviewQuestion =
-        await interviewQuestionService.getByIdWithDetails(id);
+      const interviewQuestion = await interviewQuestionService.getWithDetails(
+        id
+      );
 
       return interviewQuestion;
     }
@@ -124,7 +125,7 @@ const GetInterviewQuestionWithDetailsRequest = {
       id: ApId,
     },
     response: {
-      [StatusCodes.OK]: InterviewQuestionWithDetailsRequestBody,
+      [StatusCodes.OK]: InterviewQuestionWithDetails,
     },
   },
 };
@@ -146,7 +147,7 @@ const GetInterviewQuestionsforInterviewWithDetailsRequest = {
       interviewId: ApId,
     },
     response: {
-      [StatusCodes.OK]: Type.Array(InterviewQuestionWithDetailsRequestBody),
+      [StatusCodes.OK]: Type.Array(InterviewQuestionWithDetails),
     },
   },
 };

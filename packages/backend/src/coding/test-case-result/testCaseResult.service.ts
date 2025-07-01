@@ -6,6 +6,7 @@ import {
   UpdateTestCaseResultRequestbody,
 } from "./testCaseResult-types";
 import { apId } from "../../common/id-generator";
+import { isNil } from "../../common/utils";
 
 const testCaseResultRepository = () => {
   return AppDataSource.getRepository(TestCaseResultEntity);
@@ -22,58 +23,58 @@ export const testCaseResultService = {
     return await testCaseResultRepository().save(testCaseResult);
   },
 
-  async getById(id: string): Promise<TestCaseResult | null> {
+  async get(id: string): Promise<TestCaseResult> {
     const testCaseResult = await testCaseResultRepository().findOne({
       where: { id },
     });
 
-    if (!testCaseResult) throw new Error("Test case result not found");
+    if (isNil(testCaseResult)) throw new Error("Test case result not found");
     return testCaseResult;
   },
 
   async getByCodeSubmissionId(
     codeSubmissionId: string
-  ): Promise<TestCaseResult[] | null> {
+  ): Promise<TestCaseResult[]> {
     const testCaseResults = await testCaseResultRepository().find({
       where: { codeSubmissionId },
       order: { created: "ASC" },
     });
 
-    if (!testCaseResults) throw new Error("Results not found");
+    if (isNil(testCaseResults)) throw new Error("Results not found");
     return testCaseResults;
   },
 
-  async getByTestCaseId(testCaseId: string): Promise<TestCaseResult[] | null> {
+  async getByTestCaseId(testCaseId: string): Promise<TestCaseResult[]> {
     const testCaseResults = await testCaseResultRepository().find({
       where: { testCaseId },
       order: { created: "DESC" },
     });
 
-    if (!testCaseResults) throw new Error("Results not found");
+    if (isNil(testCaseResults)) throw new Error("Results not found");
     return testCaseResults;
   },
 
   async getBySubmissionAndTestCase(
     codeSubmissionId: string,
     testCaseId: string
-  ): Promise<TestCaseResult | null> {
+  ): Promise<TestCaseResult> {
     const testCaseResult = await testCaseResultRepository().findOne({
       where: { codeSubmissionId, testCaseId },
     });
 
-    if (!testCaseResult) throw new Error("Test case result not found");
+    if (isNil(testCaseResult)) throw new Error("Test case result not found");
     return testCaseResult;
   },
 
   async update(
     id: string,
     request: UpdateTestCaseResultRequestbody
-  ): Promise<TestCaseResult | null> {
+  ): Promise<TestCaseResult> {
     const testCaseResult = await testCaseResultRepository().findOne({
       where: { id },
     });
 
-    if (!testCaseResult) {
+    if (isNil(testCaseResult)) {
       throw new Error("Test case result not found");
     }
 
