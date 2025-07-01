@@ -36,7 +36,7 @@ export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
 
   app.get("/:id", GetMcqQuestionRequest, async (request) => {
     const { id } = request.params as { id: string };
-    const question = await mcqQuestionService.getById(id);
+    const question = await mcqQuestionService.get(id);
     return question;
   });
 

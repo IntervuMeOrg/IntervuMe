@@ -28,7 +28,7 @@ export const mcqOptionController: FastifyPluginAsyncTypebox = async (app) => {
 
   app.get("/:id", GetMcqOptionRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
-    const McqOption = await McqOptionService.getById(id);
+    const McqOption = await McqOptionService.get(id);
     return McqOption;
   });
 

@@ -9,6 +9,7 @@ import {
 } from "./mcq-question-types";
 import { McqQuestionEntity } from "./mcq-question.entity";
 import { McqOptionEntity } from "../mcq-option/mcq-option.entity";
+import { isNil } from "../../common/utils";
 
 const mcqQuestionRepository = () => {
   return AppDataSource.getRepository(McqQuestionEntity);
@@ -34,14 +35,16 @@ export const mcqQuestionService = {
     return await mcqQuestionRepository().save(question);
   },
 
-  async getById(id: string): Promise<McqQuestion | null> {
+  async get(id: string): Promise<McqQuestion> {
     const question = await mcqQuestionRepository().findOne({ where: { id } });
-    if (!question) throw new Error("Question not found");
+    if (isNil(question)) {
+      throw new Error("Question not found");
+    }
 
     return question;
   },
 
-  async list(): Promise<Partial<McqQuestion>[]> {
+  async list(): Promise<McqQuestion[]> {
     return await mcqQuestionRepository().find();
   },
 
@@ -53,7 +56,7 @@ export const mcqQuestionService = {
     const optionRepo = AppDataSource.getRepository(McqOptionEntity);
 
     const question = await questionRepo.findOne({ where: { id } });
-    if (!question) {
+    if (isNil(question)) {
       throw new Error("Question not found");
     }
 
@@ -92,7 +95,7 @@ export const mcqQuestionService = {
       where: { id },
     });
 
-    if (!question) {
+    if (isNil(question)) {
       throw new Error("Question not found");
     }
 
@@ -117,7 +120,7 @@ export const mcqQuestionService = {
 
     return mcqQuestionService.shuffleArray(allQuestions);
   },
-  
+
   shuffleArray<T>(array: T[]): T[] {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
