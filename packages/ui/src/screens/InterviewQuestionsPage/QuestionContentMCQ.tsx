@@ -29,9 +29,9 @@ export const QuestionContentMCQ = ({
 	return (
 		<div className="space-y-4">
 			{/* Question Section with Distinct Styling */}
-			<div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-sm p-4 sm:p-5 border-l-4 border-[#0667D0]">
+			<div className="font-['Nunito'] bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-sm p-4 sm:p-5 border-l-4 border-[#0667D0]">
 				<div className="flex items-start gap-2 mb-2">
-					<span className="text-xs sm:text-sm font-semibold text-[#0667D0] uppercase tracking-wider">
+					<span className="font-['Nunito']text-xs sm:text-sm font-semibold text-[#0667D0] uppercase tracking-wider">
 						Question
 					</span>
 				</div>

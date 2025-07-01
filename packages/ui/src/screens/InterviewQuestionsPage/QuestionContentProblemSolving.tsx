@@ -125,7 +125,7 @@ export const QuestionContentProblemSolving = ({
 	}, [isResizing, handleMouseMove, handleMouseUp]);
 
 	return (
-		<div className="mt-[-65px] flex relative" ref={containerRef}>
+		<div className="font-['Nunito'] mt-[-65px] flex relative" ref={containerRef}>
 			{/* Left Panel with Tabs */}
 			<div
 				className="rounded-md overflow-y-auto min-h-[calc(100vh-150px)] max-h-[calc(100vh-150px)]"
@@ -135,7 +135,7 @@ export const QuestionContentProblemSolving = ({
 				<div className="flex border-b border-gray-200 mb-2">
 					<button
 						onClick={() => setActiveTab("question")}
-						className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+						className={`font-['Nunito'] px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
 							activeTab === "question"
 								? "border-blue-500 text-blue-600"
 								: "border-transparent text-gray-500 hover:text-gray-700"
