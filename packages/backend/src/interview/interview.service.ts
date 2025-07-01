@@ -248,7 +248,7 @@ export const interviewService = {
       let maxPoints = 0;
 
       for (const mcqAnswerData of submissionData.mcqAnswers) {
-        const mcqQuestion = await mcqQuestionService.getById(
+        const mcqQuestion = await mcqQuestionService.get(
           mcqAnswerData.questionId
         );
         if (!mcqQuestion) {
