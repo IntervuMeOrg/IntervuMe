@@ -14,6 +14,7 @@ import {
 import { Editor } from "@monaco-editor/react";
 import { motion } from "framer-motion";
 import { CheckCircleIcon, AlertCircleIcon, SendIcon } from "lucide-react";
+import { ProblemSolvingQuestion } from "../../types/questions";
 
 // Props type definition
 type EditorLayoutProps = {
@@ -54,7 +55,7 @@ type EditorLayoutProps = {
 export const EditorLayout = ({
 	// Default values for props
 	initialValue = "// Write your code here\n",
-	language = "javascript",
+	language = "cpp",
 	height = "100%",
 	onChange,
 	onRun,
@@ -66,8 +67,6 @@ export const EditorLayout = ({
 	currentQuestionIndex = 0,
 	showLanguageSelector = true,
 	availableLanguages = [
-		{ value: "javascript", label: "JavaScript" },
-		{ value: "typescript", label: "TypeScript" },
 		{ value: "python", label: "Python" },
 		{ value: "java", label: "Java" },
 		{ value: "cpp", label: "C++" },
@@ -108,6 +107,60 @@ export const EditorLayout = ({
 
 	// Get current question
 	const currentQuestion = questions[currentQuestionIndex];
+	const sampleTestCases =
+		currentQuestion?.testCases?.filter(
+			(testCase: any) => testCase.isHidden === false
+		) || [];
+
+		   // Function to get the complete starter code for a given language
+    const getStarterCodeForLanguage = (question: ProblemSolvingQuestion, lang: string): string => {
+        // Map language values to the keys used in starterCodes
+        const languageMap: { [key: string]: keyof typeof question.starterCodes.codeHeader } = {
+            'cpp': 'cpp',
+            'java': 'java',
+            'python': 'python',
+        };
+
+        const mappedLang = languageMap[lang];
+        
+        // If language is not supported in starter codes, return empty string or default
+        if (!mappedLang) {
+            return initialValue;
+        }
+        
+        const header = question.starterCodes.codeHeader[mappedLang] || '';
+        const starter = question.starterCodes.codeStarter[mappedLang] || '';
+        const footer = question.starterCodes.codeFooter[mappedLang] || '';
+
+        // Combine header, starter, and footer with appropriate spacing
+        const parts = [header, starter, footer].filter(part => part.trim() !== '');
+        return parts.join('\n\n');
+    };
+
+ // Effect to update editor value when question changes
+    useEffect(() => {
+        if (currentQuestion && currentQuestion.starterCodes) {
+            const starterCode = getStarterCodeForLanguage(currentQuestion, selectedLanguage);
+            if (starterCode && starterCode !== initialValue) {
+                setCode(starterCode);
+                // Don't call onChange here to avoid infinite loops
+            }
+        }
+    }, [currentQuestionIndex, currentQuestion]);
+
+    // Effect to update editor value when language changes
+    useEffect(() => {
+        if (currentQuestion && currentQuestion.starterCodes) {
+            const starterCode = getStarterCodeForLanguage(currentQuestion, selectedLanguage);
+            if (starterCode) {
+                setCode(starterCode);
+                // Call onChange to notify parent component
+                if (onChange) {
+                    onChange(starterCode);
+                }
+            }
+        }
+    }, [selectedLanguage]);
 
 	// Update console visibility when prop changes
 	useEffect(() => {
@@ -126,6 +179,17 @@ export const EditorLayout = ({
 			onChange(value);
 		}
 	};
+
+	    // Get the current editor value (use starter code if available, otherwise use code state)
+    const getEditorValue = (): string => {
+        if (currentQuestion && currentQuestion.starterCodes) {
+            // If we have a current question with starter codes and code hasn't been modified from initial
+            if (code === initialValue) {
+                return getStarterCodeForLanguage(currentQuestion, selectedLanguage);
+            }
+        }
+        return code;
+    };
 
 	// Test case management functions
 	const addCustomTestCase = () => {
@@ -166,7 +230,7 @@ export const EditorLayout = ({
 			const index = parseInt(selectedTestCase.split("-")[1]);
 			return customTestCases[index]?.input || "";
 		}
-		return currentQuestion?.examples?.[selectedTestCase as number]?.input || "";
+		return sampleTestCases[selectedTestCase as number]?.input || "";
 	};
 
 	const getCurrentTestCaseOutput = () => {
@@ -177,9 +241,7 @@ export const EditorLayout = ({
 			const index = parseInt(selectedTestCase.split("-")[1]);
 			return customTestCases[index]?.output || "";
 		}
-		return (
-			currentQuestion?.examples?.[selectedTestCase as number]?.output || ""
-		);
+		return sampleTestCases[selectedTestCase as number]?.expectedOutput || "";
 	};
 
 	// Replace runSingleTestCase with this function
@@ -190,7 +252,7 @@ export const EditorLayout = ({
 		setTestSummary(null);
 
 		try {
-			const examples = currentQuestion?.examples || [];
+			const testCasesToRun = sampleTestCases;
 			const results: Array<{
 				passed: boolean;
 				actualOutput: string;
@@ -199,10 +261,10 @@ export const EditorLayout = ({
 			}> = [];
 
 			// Simulate running each test case
-			for (let i = 0; i < examples.length; i++) {
-				const example = examples[i];
-				const input = example.input;
-				const expectedOutput = example.output.trim();
+			for (let i = 0; i < testCasesToRun.length; i++) {
+				const testCase = testCasesToRun[i];
+				const input = testCase.input;
+				const expectedOutput = testCase.expectedOutput.trim();
 
 				// Simulate code execution delay
 				await new Promise((resolve) => setTimeout(resolve, 500));
@@ -252,8 +314,7 @@ export const EditorLayout = ({
 						passed = actualOutput.trim() === expectedOutput;
 					} else {
 						// OLD===No output (make sure your function returns a value)
-						actualOutput =
-							"[0,1]";
+						actualOutput = "[0,1]";
 						passed = true;
 					}
 
@@ -533,8 +594,8 @@ export const EditorLayout = ({
 					defaultLanguage={selectedLanguage}
 					language={selectedLanguage}
 					theme={theme}
-					value={initialValue}
-					onChange={onChange}
+					value={getEditorValue()}
+					onChange={handleCodeChange}
 					options={{
 						fontSize: fontSize,
 						wordWrap: wordWrap,
@@ -711,8 +772,14 @@ export const EditorLayout = ({
 									<div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200">
 										{/* Test Case Tabs */}
 										<div className="flex gap-1">
-											{currentQuestion?.examples?.map(
-												(example: string, idx: number) => (
+											{sampleTestCases.map(
+												(
+													testCase: {
+														input: string;
+														expectedOutput: string;
+													},
+													idx: number
+												) => (
 													<button
 														key={idx}
 														className={`px-2 py-1 text-xs rounded ${
@@ -951,11 +1018,11 @@ export const EditorLayout = ({
 							{consoleTab === "testcases" && (
 								<div className="p-4 overflow-y-auto h-full pb-10">
 									<div className="space-y-4">
-										{currentQuestion?.examples?.map(
+										{sampleTestCases.map(
 											(
-												example: {
+												testCase: {
 													input: string;
-													output: string;
+													expectedOutput: string;
 												},
 												idx: number
 											) => (
@@ -974,7 +1041,7 @@ export const EditorLayout = ({
 																Input:
 															</p>
 															<pre className="bg-white p-2 rounded text-xs font-mono border overflow-x-auto">
-																{example.input}
+																{testCase.input}
 															</pre>
 														</div>
 														<div>
@@ -982,7 +1049,7 @@ export const EditorLayout = ({
 																Expected Output:
 															</p>
 															<pre className="bg-white p-2 rounded text-xs font-mono border overflow-x-auto">
-																{example.output}
+																{testCase.expectedOutput}
 															</pre>
 														</div>
 													</div>

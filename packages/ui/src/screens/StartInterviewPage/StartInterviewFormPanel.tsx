@@ -11,9 +11,11 @@ import {
 import { CustomJobDescription } from "./CustomJobDescription";
 import { TemplateSelection } from "./TemplateSelection";
 import { LoadingOverlay } from "./LoadingOverlay";
+import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
+import { mapBackendToProblemSolving } from "../../utils/questionMappers";
 
 type InputMethod = "custom" | "template";
-
+type Question = MCQQuestion | ProblemSolvingQuestion;
 interface StartInterviewFormPanelProps {
 	inputMethod: InputMethod;
 	setInputMethod: (method: InputMethod) => void;
@@ -28,6 +30,108 @@ export const StartInterviewFormPanel = ({
 	// State for form data
 	const [jobDescription, setJobDescription] = useState("");
 	const [selectedTemplate, setSelectedTemplate] = useState("");
+	const [questions, setQuestions] = useState<Question[]>([
+		{
+			id: 1,
+			type: "mcq",
+			text: "Which of the following is NOT a React Hook?",
+			options: [
+				{ id: "a", text: "useState" },
+				{ id: "b", text: "useEffect" },
+				{ id: "c", text: "useHistory" },
+				{ id: "d", text: "useReactState" },
+			],
+			points: 10,
+			correctOptionId: "c",
+			explanation: "useHistory is from react-router v5, not a core React hook",
+		},
+		{
+			id: 2,
+			type: "mcq",
+			text: "What is the correct way to pass a prop called 'name' to a component?",
+			options: [
+				{ id: "a", text: "<Component {name='John'} />" },
+				{ id: "b", text: "<Component name='John' />" },
+				{ id: "c", text: '<Component name="John" />' },
+				{ id: "d", text: "<Component props={name: 'John'} />" },
+			],
+			points: 10,
+			correctOptionId: "c",
+			explanation:
+				"Props should be passed as JSX attributes with double quotes for strings",
+		},
+		{
+			id: 3,
+			type: "problem_solving",
+			title: "Two Sum",
+			category: "Arrays & Hashing",
+			difficulty: "Easy",
+			points: 20,
+			timeLimit: 30,
+			problemStatement:
+				"You are given an array of integers nums and an integer target. Your task is to return the indices of any two distinct elements in the array whose sum is equal to the target. If no such pair exists, print -1. Note that there may be multiple correct answers — returning any one valid pair is acceptable.",
+			examples: [
+				{
+					input: "nums = [2,7,11,15], target = 9",
+					output: "[0,1]",
+					explanation: "nums[0] + nums[1] = 2 + 7 = 9",
+				},
+				{
+					input: "nums = [3,2,4], target = 6",
+					output: "[1,2]",
+					explanation: "nums[1] + nums[2] = 2 + 4 = 6",
+				},
+			],
+			starterCodes: {
+				codeHeader: {
+					cpp: "#include <vector>\n#include <unordered_map>\nusing namespace std;",
+					java: "import java.util.*;",
+					python: "from typing import List",
+				},
+				codeStarter: {
+					cpp: "vector<int> twoSum(vector<int>& nums, int target) {\n",
+					java: "public int[] twoSum(int[] nums, int target) {\n",
+					python: "def twoSum(nums: List[int], target: int) -> List[int]:\n",
+				},
+				codeFooter: {
+					cpp: "}",
+					java: "}",
+					python: "",
+				},
+			},
+			constraints: [
+				"2 <= nums.length <= 10^4",
+				"-10^3 <= nums[i] <= 10^3",
+				"-10^4 <= target <= 10^4",
+			],
+			followUp: [
+				"How would you optimize if the input array is sorted?",
+				"Can you solve it in O(n log n) time?",
+			],
+			tags: ["Arrays", "Hash Table", "Sorting"],
+			testCases: [
+				{
+					input: "[2,7,11,15]\n9",
+					expectedOutput: "[0,1]",
+					isHidden: false,
+				},
+				{
+					input: "[3,2,4]\n6",
+					expectedOutput: "[1,2]",
+					isHidden: false,
+				},
+				{
+					input: "[3,3]\n6",
+					expectedOutput: "[0,1]",
+					isHidden: true,
+				},
+			],
+			solution: "Use a hash map to store visited elements",
+			explanation:
+				"Store each element's index as you iterate. For each number, check if its complement exists in the map",
+		},
+	]);
+
 	const [isLoading, setIsLoading] = useState(false);
 
 	// Handle loading completion and navigation
@@ -45,15 +149,61 @@ export const StartInterviewFormPanel = ({
 
 	// Handle form submission
 	const handleStartInterview = async () => {
-		if (inputMethod === "custom" && !jobDescription.trim()) {
-			return; // Don't proceed if no job description
-		}
-		if (inputMethod === "template" && !selectedTemplate) {
-			return; // Don't proceed if no template selected
-		}
+		if (inputMethod === "custom" && !jobDescription.trim()) return;
+		if (inputMethod === "template" && !selectedTemplate) return;
 
 		setIsLoading(true);
-		// Loading overlay will handle the timing and call handleLoadingComplete when done
+
+		try {
+			// Toggle between mock data and real backend
+			const useMockData = true; // Set to false when backend is ready
+
+			let finalQuestions: Question[];
+
+			if (useMockData) {
+				// Use your existing mock data (already in correct format)
+				// Simulate API delay for testing
+				await new Promise((resolve) => setTimeout(resolve, 5000));
+				finalQuestions = questions;
+			} else {
+				// Real backend API call
+				const requestBody = {
+					method: inputMethod,
+					...(inputMethod === "custom"
+						? { jobDescription }
+						: { templateId: selectedTemplate }),
+				};
+
+				const response = await fetch("/api/questions", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(requestBody),
+				});
+
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+
+				const backendQuestions = await response.json();
+
+				// Separate MCQ and Problem Solving questions if backend returns mixed types
+				const problemSolvingQuestions = backendQuestions
+					.filter((q: any) => q.problemStatement) // Assuming this identifies problem solving
+					.map(mapBackendToProblemSolving);
+
+				const mcqQuestions = backendQuestions.filter((q: any) => q.options); // Assuming this identifies MCQ
+
+				finalQuestions = [...mcqQuestions, ...problemSolvingQuestions];
+			}
+
+			navigate("/interview-questions", { state: { questions: finalQuestions } });
+		} catch (error) {
+			console.error("Error fetching questions:", error);
+			// Handle error (e.g., show error toast/component)
+			// You might want to show an error message to the user here
+		} finally {
+			setIsLoading(false);
+		}
 	};
 	const [count, setCount] = useState(0);
 

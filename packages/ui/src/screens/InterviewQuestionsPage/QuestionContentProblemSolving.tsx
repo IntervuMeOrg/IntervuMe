@@ -187,7 +187,7 @@ export const QuestionContentProblemSolving = ({
 												questions[
 													currentQuestionIndex
 												] as ProblemSolvingQuestion
-											).name
+											).title
 										}
 									</span>
 									<span className="bg-[#0667D0] text-white px-3 py-1 rounded-full text-sm font-semibold ml-4">
@@ -204,7 +204,7 @@ export const QuestionContentProblemSolving = ({
 							<div className="text-gray-700 whitespace-pre-line">
 								{
 									(questions[currentQuestionIndex] as ProblemSolvingQuestion)
-										.text
+										.problemStatement
 								}
 							</div>
 
@@ -351,7 +351,7 @@ export const QuestionContentProblemSolving = ({
 						userAnswers[questions[currentQuestionIndex].id] ||
 						"// Write your solution here\n"
 					}
-					language="javascript"
+					language="cpp"
 					height="100%"
 					onChange={(value) =>
 						handleProblemSolvingAnswer(
@@ -419,7 +419,6 @@ export const QuestionContentProblemSolving = ({
 					}}
 					availableLanguages={[
 						{ value: "cpp", label: "C++" },
-						{ value: "javascript", label: "JavaScript" },
 						{ value: "python", label: "Python" },
 						{ value: "java", label: "Java" },
 					]}
