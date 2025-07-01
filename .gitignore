@@ -121,3 +121,6 @@ jest.config.js.map
 
 # Monaco Editor
 frontend/public/monaco-editor/ 
+
+
+.nx/
