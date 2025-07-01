@@ -18,6 +18,8 @@ export const CreateMcqAnswerRequestBody = Type.Object({
   interviewId: ApId,
   questionId: ApId,
   selectedOptionId: ApId,
+  correctOptionId: ApId,
+  isCorrect: Type.Boolean(),
   timeSpent: Type.Optional(Type.Integer({ minimum: 0 })),
 });
 

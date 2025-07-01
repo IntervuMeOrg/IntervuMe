@@ -14,6 +14,7 @@ import { mcqQuestionModule } from "./mcq/mcq-question/mcq-question.module.js";
 import { interviewQuestionModule } from "./interview/interview-question/interview-question.module.js";
 import { mcqAnswerModule } from "./mcq/mcq-answer/mcq-answer.module.js";
 import { interviewModule } from "./interview/interview.module.js";
+import { codeSubmissionModule } from "./coding/code-submission/codeSubmission.module.js";
 
 config();
 
@@ -79,6 +80,7 @@ if (databaseConnected) {
   await fastify.register(userModule);
   await fastify.register(profileModule);
   await fastify.register(codingQuestionModule);
+  await fastify.register(codeSubmissionModule);
   await fastify.register(testCaseModule);
   await fastify.register(mcqOptionModule);
   await fastify.register(mcqQuestionModule);

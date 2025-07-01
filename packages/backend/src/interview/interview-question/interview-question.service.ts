@@ -40,6 +40,21 @@ export const interviewQuestionService = {
     return interviewQuestion;
   },
 
+  async getByInterviewIdandQuestionId(
+    interviewId: string,
+    questionId: string
+  ): Promise<InterviewQuestion | null> {
+    const interviewQuestion = await InterviewQuestionRepository().findOne({
+      where: { interviewId, questionId },
+    });
+
+    if (isNil(interviewQuestion)) {
+      throw new Error("Interview Question not found");
+    }
+
+    return interviewQuestion;
+  },
+
   async getWithDetails(id: string): Promise<InterviewQuestionWithDetails> {
     const interviewQuestion = await this.get(id);
 
