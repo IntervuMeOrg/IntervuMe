@@ -12,16 +12,16 @@ export const RegistrationHeader = ({
 	handleBackToLogin,
 }: RegistrationHeaderProps) => {
 	return (
-		<div className="px-6 sm:px-8 lg:px-12 py-6 sm:py-8">
+		<div className="px-6 sm:px-8 lg:px-12 py-6 sm:py-8 3xl:py-10">
 			{/* Logo */}
 			<motion.div
 				initial={{ opacity: 0, scale: 0.95 }}
 				animate={{ opacity: 1, scale: 1 }}
 				transition={{ delay: 0.2, duration: 0.5 }}
 				onClick={() => navigate("/")}
-				className="cursor-pointer mb-6 sm:mb-4"
+				className="cursor-pointer mb-6 sm:mb-4 3xl:mb-6"
 			>
-				<h1 className="font-['Nunito'] font-extrabold text-white text-lg sm:text-xl lg:text-2xl tracking-wider drop-shadow-lg">
+				<h1 className="font-['Nunito'] font-extrabold text-white text-lg sm:text-xl lg:text-2xl 3xl:text-[2.1rem] tracking-wider drop-shadow-lg">
 					INTERVU ME
 				</h1>
 			</motion.div>
@@ -37,14 +37,14 @@ export const RegistrationHeader = ({
 					<Button
 						variant="link"
 						onClick={handleBackToLogin}
-								className="font-['Nunito'] font-bold text-[#c7d3dd] text-xs sm:text-sm p-0 h-auto flex items-center gap-1 hover:text-white"
+								className="font-['Nunito'] font-bold text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg p-0 h-auto flex items-center gap-1 hover:text-white"
 					>
 						<motion.img
 							src="/back.png"
 							alt="Back"
 							width={16}
 							height={16}
-							className="w-4 h-4"
+							className="w-4 h-4 3xl:w-5 3xl:h-5"
 							initial={{ x: -5 }}
 							animate={{ x: 0 }}
 							transition={{ duration: 0.2 }}
