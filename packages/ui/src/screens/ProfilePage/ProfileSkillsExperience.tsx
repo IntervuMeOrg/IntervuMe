@@ -191,7 +191,7 @@ export const ProfileSkillsExperience = ({
           </div>
 
           {/* Education List */}
-          <div className="space-y-3 sm:space-y-4 ">
+          <div className="space-y-3 sm:space-y-4 3xl:spacy-y-6">
             {userProfile.education.map((edu, index) => (
               <motion.div
                 key={index}
@@ -199,15 +199,15 @@ export const ProfileSkillsExperience = ({
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 * index }}
-                className="border-l-2 border-[#0667D0] pl-3 sm:pl-4"
+                className="border-l-2 border-[#0667D0] pl-3 sm:pl-4 3xl:pl-6"
               >
-                <h4 className="font-['Nunito'] font-semibold text-white text-sm sm:text-base">
+                <h4 className="font-['Nunito'] font-semibold text-white text-sm sm:text-base 3xl:text-xl">
                   {edu.degree}
                 </h4>
-                <p className="text-[#e8eef2] text-xs sm:text-sm">
+                <p className="text-[#e8eef2] text-xs sm:text-sm 3xl:text-lg">
                   {edu.institution}
                 </p>
-                <p className="text-[#e8eef2] text-xs opacity-70">
+                <p className="text-[#e8eef2] text-xs 3xl:text-sm opacity-70">
                   {edu.year}
                 </p>
               </motion.div>
