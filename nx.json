@@ -7,6 +7,10 @@
   "cli": {
     "defaultCollection": "@nx/workspace"
   },
+  "workspaceLayout": {
+    "appsDir": "packages",
+    "libsDir": "packages"
+  },
   "implicitDependencies": {
     "package.json": {
       "dependencies": "*",
@@ -25,6 +29,19 @@
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"]
+    },
+    "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
     }
-  }
-} 
+  },
+  "plugins": [
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    }
+  ]
+}

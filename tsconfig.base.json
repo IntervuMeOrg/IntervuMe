@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ES2022",
     "lib": ["ES2022", "DOM"],
     "allowJs": true,
@@ -12,7 +13,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "paths": {
+      "packages": ["packages/src/index.ts"],
+      "shared-types": ["shared-types/src/index.ts"]
+    }
   },
   "exclude": ["node_modules"]
-} 
+}
