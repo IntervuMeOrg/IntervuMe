@@ -1,0 +1,87 @@
+{/* OTP Input Fields */}
+					<div className="absolute w-[422px] top-[calc(30vh+100px)] left-[61px] flex justify-between gap-2">
+						{otp.map((digit, index) => (
+							<motion.div
+								key={index}
+								initial={{ opacity: 0, y: 10 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ delay: 0.1 * index, duration: 0.2 }}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+								className="mt-2 relative"
+							>
+								<div
+									className={`w-[60px] h-[60px] rounded-xl ${
+										digit
+											? "shadow-[0_0_15px_rgba(6,103,208,0.3)]"
+											: "shadow-[0px_4px_4px_#00000040]"
+									}`}
+								>
+									<Input
+										ref={(el) => (inputRefs.current[index] = el)}
+										type="text"
+										value={digit}
+										onChange={(e) => handleInputChange(index, e.target.value)}
+										onKeyDown={(e) => handleKeyDown(index, e)}
+										onPaste={index === 0 ? handlePaste : undefined}
+										maxLength={1}
+										className={`text-[#e8eef2] bg-[#23232a] rounded-xl text-center font-['Nunito',Helvetica]
+											text-2xl font-extrabold w-[60px] h-[60px] border-0
+											transition-all duration-200 focus:outline-none focus:ring-0
+											${digit ? "border-[#0667D0] border-2" : "border border-[#3a3a45]"}`}
+										inputMode="numeric"
+										autoComplete="one-time-code"
+									/>
+								</div>
+								{/* Animated underline indicator */}
+								<motion.div
+									className="absolute bottom-2 left-1/2 transform -translate-x-1/2 h-[4px] rounded-full bg-gradient-to-r from-[#0667D0] to-[#033464]"
+									initial={{ width: "0%" }}
+									animate={{ width: digit ? "70%" : "0%" }}
+									transition={{ duration: 0.2 }}
+								/>
+							</motion.div>
+						))}
+					</div>
+
+============================================/*GPT*/===========================================
+
+										{/* Modern OTP Input Fields */}
+					<div className="absolute w-[422px] top-[calc(30vh+100px)] left-[61px] flex justify-between gap-3">
+						{otp.map((digit, index) => (
+							<div
+								key={index}
+								className={`relative mt-2 flex items-center justify-center transition-all duration-200 ${
+									digit
+										? "shadow-lg border-[#0667D0] border-2"
+										: "shadow-md border border-[#e8eef2]"
+								} rounded-xl bg-[#23232a]`}
+								style={{ width: 56, height: 64 }}
+							>
+								<Input
+									ref={(el) => (inputRefs.current[index] = el)}
+									type="text"
+									value={digit}
+									onChange={(e) => handleInputChange(index, e.target.value)}
+									onKeyDown={(e) => handleKeyDown(index, e)}
+									onPaste={index === 0 ? handlePaste : undefined}
+									maxLength={1}
+									className={`text-[#e8eef2] bg-transparent border-none outline-none text-center font-['Nunito',Helvetica]
+										 		text-2xl font-extrabold w-full h-full
+												transition-all duration-200 focus:ring-0 focus:border-[#0667D0] ${
+										digit ? "scale-110" : ""
+									}`}
+									inputMode="numeric"
+									autoComplete="one-time-code"
+								/>
+								{/* Animated underline */}
+								<span
+									className={`absolute bottom-2 h-[3px] rounded-full transition-all duration-200 ${
+										digit
+											? "bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] w-[80%] opacity-100"
+											: "bg-[#e8eef2] w-[60%] opacity-40"
+									}`}
+								/>
+							</div>
+						))}
+					</div>

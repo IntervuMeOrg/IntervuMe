@@ -1,0 +1,21 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+Co‑locate a .scss file with each component.
+
+Leverage SCSS features:
+
+Variables ($primary-color, $spacing)
+
+Mixins (@mixin flexCenter)
+
+Parent selector & for pseudo‑classes (&:hover)
+
+Partials (_variables.scss, _mixins.scss) imported in styles/index.scss
+
+Name classes in camelCase or BEM (.card__header).
+
+Keep global styles minimal (e.g. reset, typography).

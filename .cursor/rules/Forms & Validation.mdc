@@ -1,0 +1,13 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+Use controlled inputs.
+
+For simple forms, write custom hooks; for complex ones, use react-hook-form with generics (e.g. <Controller>).
+
+Separate client‑side and server‑side validation.
+
+Optionally integrate a schema library (e.g. Joi) if needed.

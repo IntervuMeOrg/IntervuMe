@@ -1,0 +1,32 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+2‑space indentation
+
+Single quotes (except to avoid escaping)
+
+No semicolons (unless disambiguation requires)
+
+No unused variables
+
+Space after keywords (if (… ))
+
+Space before function’s (
+
+Always use === / !==
+
+Operators spaced (a + b)
+
+Commas followed by space
+
+else on same line as closing }
+
+Multi‑line if blocks always use { }
+
+Always handle error callback parameters
+
+camelCase for variables/functions; PascalCase for components and interfaces
+
