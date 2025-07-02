@@ -15,8 +15,8 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "packages": ["packages/src/index.ts"],
-      "shared-types": ["shared-types/src/index.ts"]
+      "@shared/*": ["packages/shared-types/src/*"],
+      "@shared": ["packages/shared-types/src/index.ts"]
     }
   },
   "exclude": ["node_modules"]

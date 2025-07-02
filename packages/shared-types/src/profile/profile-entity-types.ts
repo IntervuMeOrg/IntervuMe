@@ -1,0 +1,15 @@
+import { Static, Type } from "@fastify/type-provider-typebox";
+import { BaseModelSchema } from "@shared/common/base-model.js";
+import { ApId } from "@shared/common/id-generator";
+
+export const Profile = Type.Object({
+  ...BaseModelSchema,
+  userId: ApId,
+  firstName: Type.String(),
+  lastName: Type.String(),
+  gender: Type.String(),
+  dob: Type.String({ format: "date" }),
+  phone: Type.String(),
+});
+
+export type Profile = Static<typeof Profile>;

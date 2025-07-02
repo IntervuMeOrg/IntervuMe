@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@fastify/type-provider-typebox": "^5.1.0",
+    "@sinclair/typebox": "^0.34.37",
     "nodemailer": "^7.0.3",
     "zod": "^3.25.64"
   }
