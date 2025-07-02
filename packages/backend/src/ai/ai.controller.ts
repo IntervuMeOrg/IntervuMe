@@ -14,14 +14,18 @@ export const aiController: FastifyPluginAsyncTypebox = async (app) => {
     const jobDescription = (request.body as { jobDescription: string })
       .jobDescription;
     const modelName = (request.body as { modelName: string }).modelName;
-    const keywordOutput = JSON.parse(
-      await aiService.getKeywords(jobDescription, modelName)
-    );
 
+    const keywordOutput = await aiService.getKeywords(
+      jobDescription,
+      modelName
+    );
     const langs = keywordOutput.programming_languages;
 
-    const mcqAllocOutput = JSON.parse(
-      await aiService.getMcqAlloc(jobDescription, langs, 5, modelName)
+    const mcqAllocOutput = await aiService.getMcqAlloc(
+      jobDescription,
+      langs,
+      5,
+      modelName
     );
 
     const jobParsedSkills = ["Python", "SQL", "Machine Learning"];
@@ -59,8 +63,10 @@ export const aiController: FastifyPluginAsyncTypebox = async (app) => {
       "Problem-Solving",
       "Critical Thinking",
     ];
-    const similarityOutput = JSON.parse(
-      await aiService.getSimilarity(jobParsedSkills, categories, modelName)
+    const similarityOutput = await aiService.getSimilarity(
+      jobParsedSkills,
+      categories,
+      modelName
     );
 
     return {
@@ -79,7 +85,7 @@ export const aiController: FastifyPluginAsyncTypebox = async (app) => {
     const feedback = await aiService.getFeedback(assessmentResults, modelName);
     return feedback;
   });
-};  
+};
 
 const TestRequest = {
   schema: {

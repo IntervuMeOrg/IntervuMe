@@ -1,4 +1,4 @@
-import { AssessmentResults, SimplifiedAssessmentResults } from "./types";
+import { AssessmentResults } from "./types";
 
 export const keywordPrompt = (jobDescription: string): string => `
 Analyze the following job description and extract relevant keywords. The extracted keywords should match the following JSON structure exactly:
@@ -19,10 +19,22 @@ ${jobDescription}
 `;
 
 export const mcqPrompt = (topic: string, number: number): string => `
-I want you to generate only a multiple-choice question (MCQ) on the given topic. The MCQ should have four answer choices (A, B, C, D) with one correct answer. Provide the output strictly in JSON format as specified below:
+Generate ${number} multiple-choice question(s) on: ${topic}
 
-Topic: ${topic}
-Generate only ${number} MCQs in JSON.
+Format as JSON array:
+[
+  {
+    "question": "question text",
+    "options": {
+      "A": "option A",
+      "B": "option B", 
+      "C": "option C",
+      "D": "option D"
+    },
+    "correct_answer": "A|B|C|D",
+    "explanation": "brief explanation"
+  }
+]
 `;
 
 export const mcqAllocPrompt = (
@@ -38,8 +50,16 @@ Instructions:
 Job Description:
 ${jobDescription}
 
-Topics to consider (languages & technologies):
-${JSON.stringify(topics)}
+Topics: ${JSON.stringify(topics, null, 2)}
+
+Return JSON:
+{
+  "allocations": {
+    "topic_name": count,
+    "topic_name": count,
+    ...
+  }
+}
 `;
 
 export const similarityPrompt = (
@@ -49,90 +69,21 @@ export const similarityPrompt = (
 You are an expert in skill classification and semantic similarity matching. Your task is to map a given list of skills to the most relevant categories from a predefined database.
 
 Input:
-- Skills: ${JSON.stringify(skillsList)}
-- Categories: ${JSON.stringify(categoriesList)}
+- Skills: ${JSON.stringify(skillsList, null, 2)}
+- Categories: ${JSON.stringify(categoriesList, null, 2)}
 
-Return valid JSON:
+Return JSON:
 {
   "matched_skills": [
-    { "skill": "Skill Name", "matched_category": "Category Name" }
+    {"skill": "skill_name", "matched_category": "category_name"}
   ]
 }
 `;
 
 export const feedbackPrompt = (
-  assessmentResults: SimplifiedAssessmentResults
+  assessmentResults: AssessmentResults
 ): string => `
 You are an expert technical interviewer and career coach. Analyze the following assessment results and provide comprehensive, actionable feedback for the candidate.
-
-Assessment Data:
-${JSON.stringify(assessmentResults, null, 2)}
-
-Please provide feedback in the following JSON structure:
-
-{
-  "overall_performance": {
-    "score_percentage": number,
-    "performance_level": "Excellent" | "Good" | "Average" | "Below Average" | "Poor",
-    "summary": "Brief overall assessment summary"
-  },
-  "strengths": [
-    {
-      "area": "Technology/Skill area name",
-      "details": "Specific details about what they did well",
-      "evidence": "Reference to specific questions or patterns"
-    }
-  ],
-  "weaknesses": [
-    {
-      "area": "Technology/Skill area name",
-      "details": "Specific details about areas needing improvement",
-      "evidence": "Reference to specific questions or patterns",
-      "impact": "How this weakness affects their job readiness"
-    }
-  ],
-  "improvement_recommendations": [
-    {
-      "area": "Technology/Skill area name",
-      "priority": "High" | "Medium" | "Low",
-      "specific_actions": [
-        "Actionable step 1",
-        "Actionable step 2"
-      ],
-      "resources": [
-        "Recommended learning resource 1",
-        "Recommended learning resource 2"
-      ],
-      "estimated_time": "Time estimate to improve (e.g., '2-3 weeks')"
-    }
-  ],
-  "question_analysis": {
-    "mcq_performance": {
-      "correct_count": number,
-      "total_count": number,
-      "weak_topics": ["list of topics with poor performance"],
-      "strong_topics": ["list of topics with good performance"]
-    },
-    "problem_solving_performance": {
-      "correct_count": number,
-      "total_count": number,
-      "common_mistakes": ["list of common mistake patterns"],
-      "approach_feedback": "Feedback on problem-solving approach"
-    }
-  },
-  "job_readiness": {
-    "current_level": "Entry Level" | "Junior" | "Mid-Level" | "Senior" | "Expert",
-    "target_level": "Expected level for the job",
-    "readiness_percentage": number,
-    "key_gaps": ["List of critical gaps to address"],
-    "timeline_to_readiness": "Estimated time to reach job readiness"
-  },
-  "next_steps": [
-    "Immediate action item 1",
-    "Immediate action item 2",
-    "Long-term goal 1"
-  ]
-}
 
 Analysis Guidelines:
 1. Identify patterns in correct/incorrect answers by technology tags
@@ -143,29 +94,36 @@ Analysis Guidelines:
 6. Include specific learning resources and practice suggestions
 
 Return only valid JSON with the feedback analysis.
-`;
 
-// Utility function to convert full assessment results to simplified version
-export const simplifyAssessmentResults = (
-  fullResults: AssessmentResults
-): SimplifiedAssessmentResults => {
-  return {
-    job_title: fullResults.job_title,
-    total_questions: fullResults.total_questions,
-    overall_score: fullResults.overall_score,
-    mcq_score: fullResults.mcq_score,
-    problem_solving_score: fullResults.problem_solving_score,
-    mcq_questions: fullResults.mcq_questions.map((q) => ({
-      type: q.type,
-      tags: q.tags,
-      is_correct: q.is_correct,
-    })),
-    problem_solving_questions: fullResults.problem_solving_questions.map(
-      (q) => ({
-        type: q.type,
-        tags: q.tags,
-        is_correct: q.is_correct,
-      })
-    ),
-  };
-};
+Assessment Data:
+${JSON.stringify(assessmentResults, null, 2)}
+
+Return JSON:
+{
+  "overall_performance": {
+    "score_percentage": number,
+    "level": "Excellent|Good|Average|Below Average|Poor",
+    "summary": "Brief overall assessment summary"
+  },
+  "strengths": [
+    {"area": "skill/topic", "details": "what they did well"}
+  ],
+  "critical_gaps": [
+    {"area": "skill/topic", "details": "Specific details about areas needing improvement", "impact": "How this affects job readiness"}
+  ],
+  "recommendations": [
+    {
+      "area": "skill/topic",
+      "priority": "High|Medium|Low",
+      "actions": ["specific step 1", "specific step 2"],
+      "timeline": "time estimate"
+    }
+  ],
+  "job_readiness": {
+    "current_level": "Entry Level|Junior|Mid-Level|Senior|Expert", 
+    "readiness_percentage": number,
+
+  },
+  "next_steps": ["immediate action 1", "immediate action 2", "long-term goal 1"]
+}
+`;

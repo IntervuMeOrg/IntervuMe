@@ -4,11 +4,17 @@ import {
   keywordPrompt,
   mcqAllocPrompt,
   similarityPrompt,
-  simplifyAssessmentResults,
 } from "./prompts";
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
-import { AssessmentResults, FeedbackResponse } from "./types";
+import {
+  AssessmentResults,
+  FeedbackResponse,
+  AllocationResponse,
+  MCQQuestion,
+  KeywordExtractionResponse,
+  SimilarityResponse,
+} from "./types";
 
 // Model configuration
 const MODEL_CONFIGS = {
@@ -66,7 +72,7 @@ export const aiService = {
   async getKeywords(
     jobDescription: string,
     modelName: string
-  ): Promise<string> {
+  ): Promise<KeywordExtractionResponse> {
     const model = this.getModel(modelName);
     const generatedText = await generateText({
       model,
@@ -77,7 +83,7 @@ export const aiService = {
     if (!json) {
       throw new Error("No JSON found in the response");
     }
-    return json;
+    return JSON.parse(json) as KeywordExtractionResponse;
   },
 
   async getMcqAlloc(
@@ -85,7 +91,7 @@ export const aiService = {
     langs: string[],
     numQuestions: number,
     modelName: string
-  ): Promise<string> {
+  ): Promise<AllocationResponse> {
     const model = this.getModel(modelName);
     const generatedText = await generateText({
       model,
@@ -96,14 +102,14 @@ export const aiService = {
     if (!json) {
       throw new Error("No JSON found in the response");
     }
-    return json;
+    return JSON.parse(json) as AllocationResponse;
   },
 
   async getSimilarity(
     jobParsedSkills: string[],
     categories: string[],
     modelName: string
-  ): Promise<string> {
+  ): Promise<SimilarityResponse> {
     const model = this.getModel(modelName);
     const generatedText = await generateText({
       model,
@@ -114,7 +120,7 @@ export const aiService = {
     if (!json) {
       throw new Error("No JSON found in the response");
     }
-    return json;
+    return JSON.parse(json) as SimilarityResponse;
   },
 
   async getFeedback(
@@ -123,12 +129,9 @@ export const aiService = {
   ): Promise<FeedbackResponse> {
     const model = this.getModel(modelName);
 
-    // Simplify the assessment results to reduce context window
-    const simplifiedResults = simplifyAssessmentResults(assessmentResults);
-
     const generatedText = await generateText({
       model,
-      prompt: feedbackPrompt(simplifiedResults),
+      prompt: feedbackPrompt(assessmentResults),
     });
 
     // Parse the JSON response
