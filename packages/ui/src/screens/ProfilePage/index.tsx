@@ -207,7 +207,7 @@ export const ProfilePage = (): JSX.Element => {
                 }}
                 className="w-full"
               >
-                <h2 className="font-['Nunito'] font-bold text-[#1d1d20] text-lg sm:text-xl md:text-2xl lg:text-3xl 3xl:text-4xl mb-6 sm:mb-8 3xl:mb-10">
+                <h2 className="font-['Nunito'] font-bold text-[#1d1d20] text-lg sm:text-xl md:text-2xl lg:text-3xl 3xl:text-[2.7rem] mb-6 sm:mb-8 3xl:mb-10">
                   Interview Statistics
                 </h2>
 
