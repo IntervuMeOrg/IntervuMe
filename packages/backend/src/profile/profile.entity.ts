@@ -29,15 +29,15 @@ export const ProfileEntity = new EntitySchema<ProfileSchema>({
     },
     gender: {
       type: String,
-      nullable: false,
+      nullable: true,
     },
     dob: {
       type: TIMESTAMP_COLUMN_TYPE,
-      nullable: false,
+      nullable: true,
     },
     phone: {
       type: String,
-      nullable: false,
+      nullable: true,
     },
   },
 

@@ -18,7 +18,7 @@ export const UserEntity = new EntitySchema<UserSchema>({
         },
         password: {
             type: String,
-            nullable: false,
+            nullable: true,
         },
         role: {
             type: 'enum',
