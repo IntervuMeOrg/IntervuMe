@@ -1,0 +1,270 @@
+{
+  "averagePerformance": {
+    "job_title": "Full Stack Developer",
+    "total_questions": 12,
+    "overall_score": 7,
+    "mcq_score": 5,
+    "problem_solving_score": 2,
+    "mcq_questions": [
+      {
+        "type": "mcq",
+        "tags": ["React", "Frontend", "JavaScript", "Components"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["React", "Hooks", "State Management", "Frontend"],
+        "is_correct": false
+      },
+      {
+        "type": "mcq",
+        "tags": ["HTTP", "REST API", "Backend", "Web Development"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["SQL", "Database", "Backend"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["JavaScript", "Data Types", "Programming Fundamentals"],
+        "is_correct": false
+      },
+      {
+        "type": "mcq",
+        "tags": ["JavaScript", "Async Programming", "Promises", "ES6"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["CSS", "Frontend", "Styling"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["Node.js", "Backend", "JavaScript", "Server-side"],
+        "is_correct": false
+      }
+    ],
+    "problem_solving_questions": [
+      {
+        "type": "problem_solving",
+        "tags": [
+          "Algorithms",
+          "String Manipulation",
+          "Problem Solving",
+          "JavaScript"
+        ],
+        "is_correct": true
+      },
+      {
+        "type": "problem_solving",
+        "tags": ["Algorithms", "Mathematics", "Problem Solving", "Logic"],
+        "is_correct": false
+      },
+      {
+        "type": "problem_solving",
+        "tags": ["Arrays", "Data Structures", "Problem Solving", "JavaScript"],
+        "is_correct": true
+      },
+      {
+        "type": "problem_solving",
+        "tags": ["Database Queries", "SQL", "Problem Solving", "Backend"],
+        "is_correct": false
+      }
+    ]
+  },
+  "poorPerformance": {
+    "job_title": "Frontend Developer",
+    "total_questions": 10,
+    "overall_score": 2,
+    "mcq_score": 1,
+    "problem_solving_score": 1,
+    "mcq_questions": [
+      {
+        "type": "mcq",
+        "tags": ["HTML", "Frontend", "Web Development"],
+        "is_correct": false
+      },
+      {
+        "type": "mcq",
+        "tags": ["CSS", "Layout", "Frontend", "Flexbox"],
+        "is_correct": false
+      },
+      {
+        "type": "mcq",
+        "tags": ["JavaScript", "Variables", "Syntax"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["React", "Components", "Props", "Frontend"],
+        "is_correct": false
+      },
+      {
+        "type": "mcq",
+        "tags": ["CSS", "Responsive Design", "Media Queries"],
+        "is_correct": false
+      },
+      {
+        "type": "mcq",
+        "tags": ["JavaScript", "Functions", "ES6"],
+        "is_correct": false
+      },
+      {
+        "type": "mcq",
+        "tags": ["HTML", "Semantic Elements", "Accessibility"],
+        "is_correct": false
+      }
+    ],
+    "problem_solving_questions": [
+      {
+        "type": "problem_solving",
+        "tags": ["Basic Programming", "Functions", "JavaScript"],
+        "is_correct": true
+      },
+      {
+        "type": "problem_solving",
+        "tags": ["String Processing", "Algorithms", "JavaScript"],
+        "is_correct": false
+      },
+      {
+        "type": "problem_solving",
+        "tags": ["DOM Manipulation", "Frontend", "JavaScript"],
+        "is_correct": false
+      }
+    ]
+  },
+  "excellentPerformance": {
+    "job_title": "Senior Full Stack Developer",
+    "total_questions": 12,
+    "overall_score": 11,
+    "mcq_score": 7,
+    "problem_solving_score": 4,
+    "mcq_questions": [
+      {
+        "type": "mcq",
+        "tags": ["Algorithms", "Complexity Analysis", "Data Structures"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["Design Patterns", "State Management", "Architecture"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["API Design", "REST", "GraphQL", "Backend"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["React", "Advanced Hooks", "Performance", "Frontend"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["Node.js", "Express", "Middleware", "Backend"],
+        "is_correct": false
+      },
+      {
+        "type": "mcq",
+        "tags": ["Database", "SQL", "Optimization", "Indexing"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["DevOps", "CI/CD", "Docker", "Deployment"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["Security", "Authentication", "JWT", "Authorization"],
+        "is_correct": true
+      }
+    ],
+    "problem_solving_questions": [
+      {
+        "type": "problem_solving",
+        "tags": [
+          "Dynamic Programming",
+          "Algorithms",
+          "Advanced Problem Solving"
+        ],
+        "is_correct": true
+      },
+      {
+        "type": "problem_solving",
+        "tags": [
+          "System Design",
+          "Rate Limiting",
+          "Architecture",
+          "Scalability"
+        ],
+        "is_correct": true
+      },
+      {
+        "type": "problem_solving",
+        "tags": ["Database Design", "Normalization", "Relationships", "SQL"],
+        "is_correct": true
+      },
+      {
+        "type": "problem_solving",
+        "tags": ["API Architecture", "Microservices", "Backend", "Scalability"],
+        "is_correct": true
+      }
+    ]
+  },
+  "entryLevelPerformance": {
+    "job_title": "Junior Frontend Developer",
+    "total_questions": 8,
+    "overall_score": 4,
+    "mcq_score": 3,
+    "problem_solving_score": 1,
+    "mcq_questions": [
+      {
+        "type": "mcq",
+        "tags": ["HTML", "Basic Structure", "Web Development"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["CSS", "Basic Styling", "Selectors"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["JavaScript", "Variables", "Basic Syntax"],
+        "is_correct": true
+      },
+      {
+        "type": "mcq",
+        "tags": ["JavaScript", "Functions", "Scope"],
+        "is_correct": false
+      },
+      {
+        "type": "mcq",
+        "tags": ["React", "Components", "JSX"],
+        "is_correct": false
+      }
+    ],
+    "problem_solving_questions": [
+      {
+        "type": "problem_solving",
+        "tags": ["Basic Logic", "Conditionals", "JavaScript"],
+        "is_correct": true
+      },
+      {
+        "type": "problem_solving",
+        "tags": ["Arrays", "Loops", "JavaScript"],
+        "is_correct": false
+      },
+      {
+        "type": "problem_solving",
+        "tags": ["String Manipulation", "Basic Algorithms", "JavaScript"],
+        "is_correct": false
+      }
+    ]
+  }
+}
