@@ -25,7 +25,7 @@ export const ProfileHeader = ({
         mass: 0.5,
         delay: 0.1,
       }}
-      className="w-full mb-6 sm:mb-8 md:mb-10"
+      className="w-full mb-6 sm:mb-8 md:mb-10 3xl:mb-12"
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         {/* Page Title - Reduced sizes across all breakpoints */}
@@ -33,7 +33,7 @@ export const ProfileHeader = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="font-['Nunito'] font-black text-[#1d1d20] text-xl sm:text-2xl md:text-3xl lg:text-4xl leading-tight"
+          className="font-['Nunito'] font-black text-[#1d1d20] text-xl sm:text-2xl md:text-3xl lg:text-4xl 3xl:text-5xl leading-tight"
         >
           My Profile
         </motion.h1>
@@ -48,14 +48,14 @@ export const ProfileHeader = ({
         >
           <Button
             onClick={isEditing ? saveProfileChanges : toggleEditMode}
-            className="rounded-md h-9 sm:h-10 px-3 sm:px-5 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] hover:opacity-90 transition-opacity duration-200 flex items-center gap-2 border-0"
+            className="rounded-md h-9 sm:h-10 3xl:h-12 px-3 sm:px-5 3xl:px-7 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] hover:opacity-90 transition-opacity duration-200 flex items-center gap-2 border-0"
           >
             {isEditing ? (
-              <SaveIcon className="h-4 w-4" />
+              <SaveIcon className="h-4 w-4 3xl:w-6 3xl:h-6" />
             ) : (
-              <EditIcon className="h-4 w-4" />
+              <EditIcon className="h-4 w-4 3xl:w-6 3xl:h-6" />
             )}
-            <span className="font-['Nunito'] font-semibold text-white text-sm">
+            <span className="font-['Nunito'] font-semibold text-white text-sm 3xl:text-lg">
               {isEditing ? "Save Changes" : "Edit Profile"}
             </span>
           </Button>

@@ -104,10 +104,10 @@ export const FooterLayout = ({
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
 							{/* Company Info */}
 							<div>
-								<h3 className="font-['Nunito'] font-bold text-white text-base sm:text-lg mb-2">
+								<h3 className="font-['Nunito'] font-bold text-white text-base sm:text-lg 3xl:text-2xl mb-2">
 									INTERVU ME
 								</h3>
-								<p className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm mb-4 leading-relaxed">
+								<p className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg mb-4 leading-relaxed">
 									{companyDescription}
 								</p>
 								<div className="flex gap-3">
@@ -118,9 +118,9 @@ export const FooterLayout = ({
 												whileHover={{ scale: 1.1 }}
 												whileTap={{ scale: 0.95 }}
 												href="#"
-												className="w-8 h-8 bg-black/50 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
+												className="w-8 h-8 3xl:w-12 3xl:h-12 bg-black/50 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
 											>
-												<Icon className="w-3.5 h-3.5 text-white" />
+												<Icon className="w-3.5 h-3.5 3xl:w-5 3xl:h-5 text-white" />
 											</motion.a>
 										)
 									)}
@@ -129,14 +129,14 @@ export const FooterLayout = ({
 
 							{/* Quick Links */}
 							<div>
-								<h3 className="font-['Nunito'] font-bold text-white text-base sm:text-lg mb-2">
+								<h3 className="font-['Nunito'] font-bold text-white text-base sm:text-lg 3xl:text-2xl mb-2">
 									Quick Links
 								</h3>
 								<ul className="space-y-2">
 									{navItems.map((item) => (
 										<li key={item.name}>
 											<button
-												className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm hover:text-white transition-colors cursor-pointer text-left"
+												className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg hover:text-white transition-colors cursor-pointer text-left"
 												onClick={() => handleNavItemClick(item)}
 											>
 												{item.name}
@@ -146,7 +146,7 @@ export const FooterLayout = ({
 									<li>
 										<a
 											href="#"
-											className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm hover:text-white transition-colors"
+											className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg hover:text-white transition-colors"
 										>
 											Privacy Policy
 										</a>
@@ -154,7 +154,7 @@ export const FooterLayout = ({
 									<li>
 										<a
 											href="#"
-											className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm hover:text-white transition-colors"
+											className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg hover:text-white transition-colors"
 										>
 											Terms of Service
 										</a>
@@ -164,25 +164,25 @@ export const FooterLayout = ({
 
 							{/* Contact Info */}
 							<div>
-								<h3 className="font-['Nunito'] font-bold text-white text-base sm:text-lg mb-2">
+								<h3 className="font-['Nunito'] font-bold text-white text-base sm:text-lg 3xl:text-2xl mb-2">
 									Contact Us
 								</h3>
 								<div className="space-y-3.5">
 									<div className="flex items-center gap-3">
-										<PhoneIcon className="w-3.5 h-3.5 text-white flex-shrink-0" />
-										<span className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm">
+										<PhoneIcon className="w-3.5 h-3.5 3xl:w-5 3xl:h-5   text-white flex-shrink-0" />
+										<span className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg">
 											{contactInfo.phone}
 										</span>
 									</div>
 									<div className="flex items-center gap-3">
-										<MailIcon className="w-3.5 h-3.5 text-white flex-shrink-0" />
-										<span className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm break-all">
+										<MailIcon className="w-3.5 h-3.5 3xl:w-5 3xl:h-5 text-white flex-shrink-0" />
+										<span className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg break-all">
 											{contactInfo.email}
 										</span>
 									</div>
 									<div className="flex gap-3">
-										<MapPinIcon className="w-3.5 h-3.5 text-white flex-shrink-0 mt-0.5" />
-										<span className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm">
+										<MapPinIcon className="w-3.5 h-3.5 3xl:w-5 3xl:h-5 text-white flex-shrink-0 mt-0.5" />
+										<span className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg">
 											{contactInfo.address}
 										</span>
 									</div>
@@ -191,19 +191,19 @@ export const FooterLayout = ({
 
 							{/* Newsletter */}
 							<div>
-								<h3 className="font-['Nunito'] font-bold text-white text-base sm:text-lg mb-1">
+								<h3 className="font-['Nunito'] font-bold text-white text-base sm:text-lg 3xl:text-2xl mb-1">
 									Subscribe
 								</h3>
-								<p className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm mb-4">
+								<p className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg mb-4">
 									Subscribe to our newsletter for the latest updates and
 									features.
 								</p>
 								<div className="flex flex-col gap-3">
 									<Input
 										placeholder="Your email"
-										className="bg-black/50 border-0 text-white h-9 text-sm focus-visible:ring-1 focus-visible:ring-white/30 placeholder:text-gray-400"
+										className="bg-black/50 border-0 text-white h-9 3xl:h-11 text-sm 3xl:text-lg focus-visible:ring-1 focus-visible:ring-white/30 placeholder:text-gray-400"
 									/>
-									<Button className="h-9 px-4 text-xs sm:text-sm bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] hover:opacity-90 transition-opacity">
+									<Button className="h-9 3xl:h-11 px-4 text-xs sm:text-sm 3xl:text-lg bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] hover:opacity-90 transition-opacity">
 										Subscribe
 									</Button>
 								</div>
@@ -215,10 +215,10 @@ export const FooterLayout = ({
 
 						{/* Copyright */}
 						<div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
-							<p className="font-['Nunito'] text-[#c7d3dd] text-[10px] sm:text-xs">
+							<p className="font-['Nunito'] text-[#c7d3dd] text-[10px] sm:text-xs 3xl:text-[1rem]">
 								© {new Date().getFullYear()} INTERVU ME. All rights reserved.
 							</p>
-							<p className="font-['Nunito'] text-[#c7d3dd] text-[10px] sm:text-xs">
+							<p className="font-['Nunito'] text-[#c7d3dd] text-[10px] sm:text-xs 3xl:text-[1rem]">
 								Designed with ❤️ for tech interviews
 							</p>
 						</div>

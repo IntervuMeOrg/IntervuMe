@@ -19,7 +19,7 @@ export const OTPInputFields = ({
 	handlePaste,
 }: OTPInputFieldsProps) => {
 	return (
-		<div className="flex justify-between gap-2 mb-4">
+		<div className="flex justify-between gap-2 mb-4 3xl:mb-6">
 			{otp.map((digit, index) => (
 				<Input
 					key={index}
@@ -30,7 +30,7 @@ export const OTPInputFields = ({
 					onKeyDown={(e) => handleKeyDown(index, e)}
 					onPaste={index === 0 ? handlePaste : undefined}
 					maxLength={1}
-					className={`w-10 h-10 sm:w-12 sm:h-12 text-center font-['Nunito'] font-bold text-base sm:text-lg
+					className={`w-10 h-10 sm:w-12 sm:h-12 3xl:w-16 3xl:h-16 text-center font-['Nunito'] font-bold text-base sm:text-lg 3xl:text-xl
 						${digit 
 							? "bg-[#1D1D20] text-[#e8eef2] border-2 border-[#2B8EDE]" 
 							: "bg-[#e8eef2] text-black"

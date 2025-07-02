@@ -139,8 +139,8 @@ export const ProfilePage = (): JSX.Element => {
 
         {/* Main content with proper responsive container */}
         <div className="relative z-10 min-h-screen w-full">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-            <div className="py-8 sm:py-12 md:py-16 lg:py-20">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 3xl:px-10  3xl:max-w-screen-3xl max-w-7xl">
+            <div className="py-8 sm:py-12 md:py-16 lg:py-20 3xl:py-24">
               
               {/* Header Section */}
               <ProfileHeader
@@ -161,7 +161,7 @@ export const ProfilePage = (): JSX.Element => {
                   mass: 0.5,
                   delay: 0.1,
                 }}
-                className="w-full mb-8 sm:mb-10 md:mb-12"
+                className="w-full mb-8 sm:mb-10 md:mb-12 3xl:mb-14"
               >
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                   {/* Profile Card */}
@@ -207,7 +207,7 @@ export const ProfilePage = (): JSX.Element => {
                 }}
                 className="w-full"
               >
-                <h2 className="font-['Nunito'] font-bold text-[#1d1d20] text-lg sm:text-xl md:text-2xl lg:text-3xl mb-6 sm:mb-8">
+                <h2 className="font-['Nunito'] font-bold text-[#1d1d20] text-lg sm:text-xl md:text-2xl lg:text-3xl 3xl:text-4xl mb-6 sm:mb-8 3xl:mb-10">
                   Interview Statistics
                 </h2>
 

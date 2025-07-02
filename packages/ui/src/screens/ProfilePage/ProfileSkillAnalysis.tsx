@@ -28,7 +28,7 @@ export const ProfileSkillAnalysis = ({ interviewStats }: ProfileSkillAnalysisPro
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
       transition={{ delay: 0.3 }}
-      className="bg-[#1d1d20] rounded-lg p-4 sm:p-5 shadow-lg relative overflow-hidden group h-full flex flex-col"
+      className="bg-[#1d1d20] rounded-lg p-4 sm:p-5 3xl:p-6 shadow-lg relative overflow-hidden group h-full flex flex-col"
       whileHover={{ 
         scale: 1.02, 
         boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
@@ -40,15 +40,15 @@ export const ProfileSkillAnalysis = ({ interviewStats }: ProfileSkillAnalysisPro
       
       <div className="relative z-10 h-full flex flex-col">
         {/* Header */}
-        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-          <PieChartIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#e8eef2] flex-shrink-0" />
-          <h3 className="font-['Nunito'] font-bold text-[#e8eef2] text-base sm:text-lg md:text-xl">
+        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6 3xl:mb-8">
+          <PieChartIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-6 3xl:h-6 text-[#e8eef2] flex-shrink-0" />
+          <h3 className="font-['Nunito'] font-bold text-[#e8eef2] text-base sm:text-lg md:text-xl 3xl:text-2xl">
             Skill Analysis
           </h3>
         </div>
         
         {/* Skill Metrics - Takes up available space */}
-        <div className="space-y-3 sm:space-y-4 flex-grow">
+        <div className="space-y-3 sm:space-y-4 3xl:space-y-5 flex-grow">
           {skillMetrics.map((metric, index) => (
             <motion.div
               key={index}
@@ -58,17 +58,17 @@ export const ProfileSkillAnalysis = ({ interviewStats }: ProfileSkillAnalysisPro
               transition={{ delay: metric.delay }}
             >
               {/* Label and percentage */}
-              <div className="flex justify-between items-center mb-1 sm:mb-2">
-                <span className="text-xs sm:text-sm md:text-base font-medium text-[#e8eef2]">
+              <div className="flex justify-between items-center mb-1 sm:mb-2 3xl:mb-3">
+                <span className="text-xs sm:text-sm md:text-base 3xl:text-lg font-medium text-[#e8eef2]">
                   {metric.label}
                 </span>
-                <span className="text-xs sm:text-sm md:text-base font-bold text-[#e8eef2]">
+                <span className="text-xs sm:text-sm md:text-base 3xl:text-lg font-bold text-[#e8eef2]">
                   {metric.percentage}%
                 </span>
               </div>
               
               {/* Progress bar */}
-              <div className="w-full bg-white/20 rounded-full h-2 sm:h-2.5">
+              <div className="w-full bg-white/20 rounded-full h-2 sm:h-2.5 3xl:h-3">
                 <motion.div
                   initial={{ width: 0 }}
                   whileInView={{ width: `${metric.percentage}%` }}
@@ -86,16 +86,16 @@ export const ProfileSkillAnalysis = ({ interviewStats }: ProfileSkillAnalysisPro
         </div>
 
         {/* Key Insights - Fixed at bottom */}
-        <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-white/20">
-          <h4 className="font-['Nunito'] font-semibold text-[#e8eef2] text-sm sm:text-base mb-3">
+        <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 3xl:pt-8 border-t border-white/20">
+          <h4 className="font-['Nunito'] font-semibold text-[#e8eef2] text-sm sm:text-base 3xl:text-lg mb-3">
             Key Insights
           </h4>
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs sm:text-sm">
+            <div className="flex items-center justify-between text-xs sm:text-sm 3xl:text-lg">
               <span className="text-[#e8eef2]/80">Strongest Area:</span>
               <span className="text-green-400 font-medium">{interviewStats.topPerformingSkill}</span>
             </div>
-            <div className="flex items-center justify-between text-xs sm:text-sm">
+            <div className="flex items-center justify-between text-xs sm:text-sm 3xl:text-lg">
               <span className="text-[#e8eef2]/80">Focus Area:</span>
               <span className="text-orange-400 font-medium">{interviewStats.lowestPerformingSkill}</span>
             </div>

@@ -95,7 +95,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 						animate={{ opacity: 1, scale: 1 }}
 						exit={{ opacity: 0, scale: 0.95 }}
 						transition={{ duration: 0.2, ease: "easeOut" }}
-						className="bg-[#1d1d20] rounded-xl p-6 sm:p-8 max-w-lg w-full mx-4 text-center shadow-2xl relative overflow-hidden"
+						className="bg-[#1d1d20] rounded-xl p-6 sm:p-8 3xl:p-10 max-w-lg 3xl:max-w-[42rem] w-full mx-4 text-center shadow-2xl relative overflow-hidden"
 					>
 						{/* Gradient overlay */}
 						<div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none" />
@@ -105,30 +105,30 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 							<div className="relative">
 								{!isComplete ? (
 									<>
-										<Loader2 className="h-16 w-16 text-[#0667D0] animate-spin" />
+										<Loader2 className="h-16 w-16 3xl:h-20 3xl:w-20 text-[#0667D0] animate-spin" />
 										<div className="absolute inset-0 rounded-full border-2 border-[#0667D0] animate-ping" />
 									</>
 								) : (
 									<>
-										<CheckCircle className="h-16 w-16 text-green-400" />
+										<CheckCircle className="h-16 w-16 3xl:h-20 3xl:w-20 text-green-400" />
 										<div className="absolute inset-0 rounded-full bg-green-400/20 animate-ping" />
 									</>
 								)}
 							</div>
 
 							{/* Title */}
-							<h3 className="font-['Nunito'] font-bold text-white text-xl sm:text-2xl">
+							<h3 className="font-['Nunito'] font-bold text-white text-xl sm:text-2xl 3xl:text-3xl">
 								{isComplete ? "Interview Ready!" : "Preparing Your Interview"}
 							</h3>
 
 							{/* Current Step - Optimized transition */}
-							<div className="w-full min-h-[3rem] flex items-center justify-center">
+							<div className="w-full min-h-[3rem] 3xl:min-h-[4rem] flex items-center justify-center">
 								<motion.p
 									key={currentStep}
 									initial={{ opacity: 0 }}
 									animate={{ opacity: 1 }}
 									transition={{ duration: 0.2 }}
-									className="text-[#e8eef2] text-sm sm:text-base text-center"
+									className="text-[#e8eef2] text-sm sm:text-base 3xl:text-lg text-center"
 								>
 									{isComplete
 										? "Your personalized interview is ready to begin!"
@@ -137,8 +137,8 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 							</div>
 
 							{/* Progress Bar - Hardware accelerated */}
-							<div className="w-full space-y-3">
-								<div className="w-full bg-white/20 rounded-full h-3 overflow-hidden">
+							<div className="w-full space-y-3 3xl:space-y-4">
+								<div className="w-full bg-white/20 rounded-full h-3 3xl:h-4 overflow-hidden">
 									<div
 										style={{
 											width: `${progress}%`,
@@ -150,7 +150,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 								</div>
 
 								{/* Progress info */}
-								<div className="flex justify-between text-xs text-[#e8eef2] opacity-80">
+								<div className="flex justify-between text-xs 3xl:text-sm text-[#e8eef2] opacity-80">
 									<span>{Math.round(progress)}% Complete</span>
 									<span>
 										{isComplete
@@ -164,12 +164,12 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 							</div>
 
 							{/* Step Indicators - Optimized */}
-							<div className="flex justify-center space-x-2">
+							<div className="flex justify-center space-x-2 3xl:space-x-3">
 								{preparationSteps.map((_, index) => (
 									<div
 										key={index}
 										style={{ transform: "translateZ(0)" }}
-										className={`w-2 h-2 rounded-full transition-all duration-200 ${
+										className={`w-2 h-2 3xl:w-[0.7rem] 3xl:h-[0.7rem] rounded-full transition-all duration-200 ${
 											index <= currentStep
 												? "bg-[#0667D0] scale-125"
 												: "bg-white/30"
@@ -179,7 +179,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 							</div>
 
 							{/* Simple loading message */}
-							<p className="text-xs text-[#e8eef2] opacity-60 text-center">
+							<p className="text-xs 3xl:text-sm text-[#e8eef2] opacity-60 text-center">
 								Please wait while we create your personalized interview
 								experience
 							</p>

@@ -33,39 +33,39 @@ export const LoginPage = (): JSX.Element => {
 
 				{/* Scrollable content container */}
 				<div className="relative z-10 flex flex-col h-full">
-					<div className="flex-1 p-6 sm:p-8 lg:p-10 xl:p-8">
+					<div className="flex-1 p-6 sm:p-8 lg:p-10 xl:p-8 3xl:p-12">
 						{/* Logo */}
 						<motion.div
 							initial={{ opacity: 0, scale: 0.95 }}
 							animate={{ opacity: 1, scale: 1 }}
 							transition={{ delay: 0.2, duration: 0.5 }}
 							onClick={() => navigate("/")}
-							className="mb-6 sm:mb-8"
+							className="mb-6 sm:mb-8 3xl:mb-10"
 						>
-							<h1 className="font-['Nunito'] font-extrabold text-white text-lg sm:text-xl lg:text-2xl tracking-wider cursor-pointer drop-shadow-lg">
+							<h1 className="font-['Nunito'] font-extrabold text-white text-lg sm:text-xl lg:text-2xl 3xl:text-[2.1rem] tracking-wider cursor-pointer drop-shadow-lg">
 								INTERVU ME
 							</h1>
 						</motion.div>
 
 						{/* Login form container */}
 						<div className="flex flex-col justify-center min-h-[calc(100vh-8rem)] sm:min-h-[calc(100vh-15rem)]">
-							<div className="w-full max-w-sm mx-auto lg:mx-2">
+							<div className="w-full max-w-sm 3xl:max-w-lg mx-auto lg:mx-2 3xl:mx-3">
 								{/* Login header */}
 								<div className="mb-6 sm:mb-8">
-									<h2 className="font-['Nunito'] font-bold text-[#e8eef2] text-md sm:text-lg lg:text-xl tracking-wide">
+									<h2 className="font-['Nunito'] font-bold text-[#e8eef2] text-md sm:text-lg lg:text-xl 3xl:text-2xl tracking-wide">
 										Login
 									</h2>
-									<p className="font-['Nunito'] font-medium text-[#c7d3dd] text-xs sm:text-sm">
+									<p className="font-['Nunito'] font-medium text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg">
 										Login to access interviewing tech
 									</p>
 								</div>
 
 								{/* Form fields */}
-								<form className="space-y-4 sm:space-y-5">
+								<form className="space-y-4 sm:space-y-5 3xl:space-y-8">
 									{/* Email input */}
 									<div>
 										<Input
-											className="h-8 sm:h-10 lg:h-10 bg-[#e8eef2] rounded-md px-3 sm:px-4 text-black font-['Nunito'] shadow-md w-full text-sm sm:text-base"
+											className="h-8 sm:h-10 lg:h-10 3xl:h-14 bg-[#e8eef2] rounded-md px-3 sm:px-4 3xl:px-6 text-black font-['Nunito'] shadow-md w-full text-sm sm:text-base 3xl:text-lg"
 											placeholder="Email"
 											type="email"
 										/>
@@ -74,7 +74,7 @@ export const LoginPage = (): JSX.Element => {
 									{/* Password input */}
 									<div>
 										<Input
-											className="h-8 sm:h-10 lg:h-10 bg-[#e8eef2] rounded-md px-3 sm:px-4 text-black font-['Nunito'] shadow-md w-full text-sm sm:text-base"
+											className="h-8 sm:h-10 lg:h-10 3xl:h-14 bg-[#e8eef2] rounded-md px-3 sm:px-4 3xl:px-6 text-black font-['Nunito'] shadow-md w-full text-sm sm:text-base 3xl:text-lg"
 											placeholder="Password"
 											type="password"
 										/>
@@ -85,11 +85,11 @@ export const LoginPage = (): JSX.Element => {
 										<div className="flex items-center gap-2">
 											<Checkbox
 												id="remember-me"
-												className="bg-[#e8eef2] rounded h-4 w-4"
+												className="bg-[#e8eef2] rounded h-4 w-4 3xl:h-5 3xl:w-5"
 											/>
 											<label
 												htmlFor="remember-me"
-												className="font-['Nunito'] font-normal text-white text-xs sm:text-sm opacity-90"
+												className="font-['Nunito'] font-normal text-white text-xs sm:text-sm 3xl:text-lg opacity-90"
 											>
 												Remember Me
 											</label>
@@ -98,7 +98,7 @@ export const LoginPage = (): JSX.Element => {
 										<Button
 											variant="link"
 											onClick={handleForgetPassword}
-											className="font-['Nunito'] font-medium text-[#c7d3dd] text-xs sm:text-sm p-0 h-auto hover:text-white"
+											className="font-['Nunito'] font-medium text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg p-0 h-auto hover:text-white"
 										>
 											Forgot password?
 										</Button>
@@ -111,8 +111,8 @@ export const LoginPage = (): JSX.Element => {
 										transition={{ delay: 0.3, duration: 0.5 }}
 									>
 										<Button
-											className="w-full h-8 sm:h-10 lg:h-10 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
-                               hover:opacity-90 rounded-md font-['Nunito'] text-sm sm:text-base tracking-wide mt-5"
+											className="w-full h-8 sm:h-10 lg:h-10 3xl:h-14 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
+                               hover:opacity-90 rounded-md font-['Nunito'] text-sm sm:text-base 3xl:text-[1.3rem] tracking-wide mt-5"
 											onClick={handleLogin}
 										>
 											Login
@@ -123,30 +123,30 @@ export const LoginPage = (): JSX.Element => {
 									<div>
 										<Button
 											variant="outline"
-											className="w-full h-8 sm:h-10 lg:h-10 bg-[#e8eef2] hover:bg-[#d8dee2] rounded-md flex items-center justify-center gap-2 sm:gap-3 text-black
+											className="w-full h-8 sm:h-10 lg:h-10 3xl:h-14 bg-[#e8eef2] hover:bg-[#d8dee2] rounded-md flex items-center justify-center gap-2 sm:gap-3 3xl:gap-5 text-black
 											overflow-hidden"
 										>
 											<img
-												className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 object-cover"
+												className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 3xl:w-10 3xl:h-10 object-cover"
 												alt="Google"
 												src="/google-1.png"
 											/>
-											<span className="font-['Nunito'] font-normal text-sm sm:text-base">
+											<span className="font-['Nunito'] font-normal text-sm sm:text-base 3xl:text-[1.3rem]">
 												Continue With Google
 											</span>
 										</Button>
 									</div>
 
 									{/* Sign up link */}
-									<div className="text-center pt-2 sm:pt-4 mt-6 sm:mt-8">
-										<div className="inline-flex items-center gap-x-1 sm:gap-x-2">
-											<span className="font-['Nunito'] font-medium text-[#c7d3dd] text-xs sm:text-sm">
+									<div className="text-center pt-2 sm:pt-4 mt-6 sm:mt-8 3xl:mt-10">
+										<div className="inline-flex items-center gap-x-1 sm:gap-x-2 3xl:gap-x-4">
+											<span className="font-['Nunito'] font-medium text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg">
 												Don't have an account?
 											</span>
 											<Button
 												variant="link"
 												onClick={handleSignUpClick}
-												className="font-['Nunito'] font-bold text-white text-xs sm:text-xs underline p-0 h-auto hover:opacity-80 tracking-[1px]"
+												className="font-['Nunito'] font-bold text-white text-xs sm:text-xs 3xl:text-sm underline p-0 h-auto hover:opacity-80 tracking-[1px]"
 											>
 												Sign Up for free
 											</Button>

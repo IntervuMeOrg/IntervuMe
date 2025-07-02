@@ -57,24 +57,24 @@ export const NavigationBar = ({
 
 				<div className="relative">
 					<div className="max-w-7xl 2xl:max-w-full mx-auto px-2 sm:px-4 lg:px-6 xl:px-8">
-						<div className="flex items-center justify-between h-12">
+						<div className="flex items-center justify-between h-12 3xl:h-16">
 							{/* Logo */}
 							<div
 								onClick={scrollToTop}
 								className="flex-shrink-0 cursor-pointer"
 							>
-								<h1 className="font-['Nunito'] font-extrabold text-white text-sm sm:text-base lg:text-lg tracking-wider drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+								<h1 className="font-['Nunito'] font-extrabold text-white text-sm sm:text-base lg:text-lg 3xl:text-2xl tracking-wider drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
 									INTERVU ME
 								</h1>
 							</div>
 
 							{/* Desktop Navigation */}
-							<div className="hidden md:flex items-center space-x-8 lg:space-x-12 2xl:space-x-32">
+							<div className="hidden md:flex items-center space-x-8 lg:space-x-12 2xl:space-x-32 3xl:space-x-56">
 								{navItems.map((item) => (
 									<button
 										key={item.name}
 										onClick={() => handleNavClick(item.name)}
-										className={`font-['Nunito'] font-semibold text-xs lg:text-sm xl:text-base tracking-wide transition-all duration-200
+										className={`font-['Nunito'] font-semibold text-xs lg:text-sm xl:text-base 3xl:text-xl tracking-wide transition-all duration-200
                       ${
 												item.active
 													? "text-white underline underline-offset-4"
@@ -90,11 +90,11 @@ export const NavigationBar = ({
 							<div className="hidden md:block flex-shrink-0">
 								<Button
 									onClick={() => navigate("/login")}
-									className="px-3 lg:px-4 xl:px-5 py-1 h-8 rounded-md bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464]
+									className="px-3 lg:px-4 xl:px-5 3xl:px-7 py-1 h-8 3xl:h-10 rounded-md bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464]
 
                            hover:opacity-90 transition-opacity duration-200 border-0"
 								>
-									<span className="font-['Nunito'] font-semibold text-white text-sm lg:text-base tracking-wide whitespace-nowrap">
+									<span className="font-['Nunito'] font-semibold text-white text-sm lg:text-base 3xl:text-xl tracking-wide whitespace-nowrap">
 										Join us
 									</span>
 								</Button>

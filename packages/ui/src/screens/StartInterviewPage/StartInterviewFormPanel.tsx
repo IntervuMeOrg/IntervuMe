@@ -163,7 +163,7 @@ export const StartInterviewFormPanel = ({
 			if (useMockData) {
 				// Use your existing mock data (already in correct format)
 				// Simulate API delay for testing
-				await new Promise((resolve) => setTimeout(resolve, 5000));
+				await new Promise((resolve) => setTimeout(resolve, 6000));
 				finalQuestions = questions;
 			} else {
 				// Real backend API call
@@ -240,21 +240,21 @@ export const StartInterviewFormPanel = ({
 				{/* Gradient overlay */}
 				<div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent pointer-events-none" />
 
-				<div className="relative z-10 p-6 sm:p-8 md:p-10">
+				<div className="relative z-10 p-6 sm:p-8 md:p-10 3xl:p-12">
 					{/* Input Method Selection */}
-					<div className="mb-6 sm:mb-8">
-						<h2 className="font-['Nunito'] font-bold text-white text-lg sm:text-xl md:text-2xl mb-4 sm:mb-6">
+					<div className="mb-6 sm:mb-8 3xl:mb-10">
+						<h2 className="font-['Nunito'] font-bold text-white text-lg sm:text-xl md:text-2xl 3xl:text-3xl mb-4 sm:mb-6 3xl:mb-8">
 							Choose Your Approach
 						</h2>
 
-						<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 3xl:gap-6">
 							{/* Custom Job Description Option */}
 							<motion.button
 								whileHover={{ scale: 1.02 }}
 								whileTap={{ scale: 0.98 }}
 								onClick={() => setInputMethod("custom")}
 								disabled={isLoading}
-								className={`p-4 sm:p-5 md:p-6 rounded-lg border-2 transition-all duration-200 ${
+								className={`p-4 sm:p-5 md:p-6 3xl:p-7 rounded-lg border-2 transition-all duration-200 ${
 									inputMethod === "custom"
 										? "border-[#0667D0] bg-[#0667D0]/20"
 										: "border-white/20 bg-white/10 hover:border-white/40"
@@ -262,21 +262,21 @@ export const StartInterviewFormPanel = ({
 							>
 								<div className="flex flex-col items-center gap-2 sm:gap-3 text-center">
 									<div className="relative">
-										<FileTextIcon className="h-6 w-6 sm:h-8 sm:w-8 text-[#e8eef2]" />
+										<FileTextIcon className="h-6 w-6 sm:h-8 sm:w-8 3xl:h-10 3xl:w-10 text-[#e8eef2]" />
 										{inputMethod === "custom" && (
 											<motion.div
 												initial={{ scale: 0 }}
 												animate={{ scale: 1 }}
 												className="absolute -top-1 -right-1 bg-[#0667D0] rounded-full p-1"
 											>
-												<CheckIcon className="h-3 w-3 text-white" />
+												<CheckIcon className="h-3 w-3 3xl:h-4 3xl:w-4  text-white" />
 											</motion.div>
 										)}
 									</div>
-									<div className="text-white font-semibold text-sm sm:text-base">
+									<div className="text-white font-semibold text-sm sm:text-base 3xl:text-xl 3xl:mt-1">
 										Custom Job Description
 									</div>
-									<div className="text-[#e8eef2] text-xs sm:text-sm opacity-70">
+									<div className="text-[#e8eef2] text-xs sm:text-sm 3xl:text-lg opacity-70">
 										Paste your specific job posting
 									</div>
 								</div>
@@ -309,7 +309,7 @@ export const StartInterviewFormPanel = ({
 							>
 								<div className="flex flex-col items-center gap-2 sm:gap-3 text-center">
 									<div className="relative">
-										<TemplateIcon className="h-6 w-6 sm:h-8 sm:w-8 text-[#e8eef2]" />
+										<TemplateIcon className="h-6 w-6 sm:h-8 sm:w-8 3xl:h-10 3xl:w-10 text-[#e8eef2]" />
 										{inputMethod === "template" && (
 											<motion.div
 												initial={{ scale: 0 }}
@@ -320,10 +320,10 @@ export const StartInterviewFormPanel = ({
 											</motion.div>
 										)}
 									</div>
-									<div className="text-white font-semibold text-sm sm:text-base">
+									<div className="text-white font-semibold text-sm sm:text-base 3xl:text-xl 3xl:mt-1">
 										Use Template
 									</div>
-									<div className="text-[#e8eef2] text-xs sm:text-sm opacity-70">
+									<div className="text-[#e8eef2] text-xs sm:text-sm 3xl:text-lg opacity-70">
 										Choose from predefined roles
 									</div>
 								</div>
@@ -362,14 +362,14 @@ export const StartInterviewFormPanel = ({
 							<Button
 								onClick={handleStartInterview}
 								disabled={!isFormValid || isLoading}
-								className={`rounded-md h-12 sm:h-14 md:h-16 px-6 sm:px-8 md:px-10 transition-all duration-200 flex items-center gap-2 sm:gap-3 border-0 ${
+								className={`rounded-md h-12 sm:h-14 md:h-16 3xl:h-20 px-6 sm:px-8 md:px-10 3xl:px-14 transition-all duration-200 flex items-center gap-2 sm:gap-3 3xl:gap-4 border-0 ${
 									isFormValid && !isLoading
 										? "bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] hover:opacity-90 cursor-pointer"
 										: "bg-gray-500 opacity-50 cursor-not-allowed"
 								}`}
 							>
-								<PlayIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
-								<span className="font-['Nunito'] font-semibold text-white text-sm sm:text-base md:text-lg">
+								<PlayIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 3xl:h-8 3xl:w-8" />
+								<span className="font-['Nunito'] font-semibold text-white text-sm sm:text-base md:text-lg 3xl:text-2xl">
 									{isLoading ? "Preparing..." : "Start Interview"}
 								</span>
 							</Button>
@@ -381,7 +381,7 @@ export const StartInterviewFormPanel = ({
 						<motion.p
 							initial={{ opacity: 0, y: 10 }}
 							animate={{ opacity: 1, y: 0 }}
-							className="text-center text-[#e8eef2] text-xs sm:text-sm opacity-70 mt-3"
+							className="text-center text-[#e8eef2] text-xs sm:text-sm 3xl:text-lg opacity-70 mt-3"
 						>
 							{inputMethod === "custom"
 								? "Please enter a job description to continue"

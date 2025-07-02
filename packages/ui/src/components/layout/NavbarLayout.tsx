@@ -113,26 +113,26 @@ export const NavbarLayout = ({
 
 					<div className="relative">
 						<div className="max-w-7xl 2xl:max-w-full mx-auto px-2 sm:px-4 lg:px-6 xl:px-8">
-							<div className="flex items-center justify-between h-12">
+							<div className="flex items-center justify-between h-12 3xl:h-16">
 								{/* Logo - flex-1 for equal space */}
 								<div className="flex-1">
 									<div
 										onClick={handleLogoClick}
 										className="inline-block cursor-pointer"
 									>
-										<h1 className="font-['Nunito'] font-extrabold text-white text-sm sm:text-base lg:text-lg tracking-wider drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+										<h1 className="font-['Nunito'] font-extrabold text-white text-sm sm:text-base 3xl:text-2xl lg:text-lg tracking-wider drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
 											INTERVU ME
 										</h1>
 									</div>
 								</div>
 
 								{/* Desktop Navigation - centered */}
-								<div className="hidden md:flex items-center justify-center space-x-8 lg:space-x-12 2xl:space-x-32">
+								<div className="hidden md:flex items-center justify-center space-x-8 lg:space-x-12 2xl:space-x-32 3xl:space-x-48">
 									{updatedNavItems.map((item) => (
 										<button
 											key={item.name}
 											onClick={() => handleNavItemClick(item)}
-											className={`font-['Nunito'] font-semibold text-xs lg:text-sm xl:text-base tracking-wide transition-all duration-200
+											className={`font-['Nunito'] font-semibold text-xs lg:text-sm xl:text-base 3xl:text-xl tracking-wide transition-all duration-200
                         ${
 													item.active
 														? "text-white underline underline-offset-4"
@@ -149,12 +149,12 @@ export const NavbarLayout = ({
 									<DropdownMenu modal={false}>
 										<DropdownMenuTrigger asChild>
 											<Button
-												className="rounded-full h-10 w-10 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
+												className="rounded-full h-10 w-10 3xl:h-14 3xl:w-14 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
                                  hover:opacity-90 flex items-center justify-center relative overflow-hidden group
                                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
 												title={userName}
 											>
-												<span className="font-['Nunito'] font-black text-white text-sm z-10">
+												<span className="font-['Nunito'] font-black text-white text-sm 3xl:text-lg z-10">
 													{getUserInitials()}
 												</span>
 												<div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-white transition-opacity duration-300" />
@@ -162,32 +162,32 @@ export const NavbarLayout = ({
 										</DropdownMenuTrigger>
 										<DropdownMenuContent
 											align="end"
-											className="w-56 bg-[#1d1d20] shadow-md border-[#333] text-[#e8eef2] mt-2"
+											className="w-56 3xl:w-72 bg-[#1d1d20] shadow-md border-[#333] text-[#e8eef2] mt-2"
 										>
-											<div className="px-3 py-2 text-sm font-medium border-b border-[#333] mb-1">
+											<div className="px-3 py-2 text-sm 3xl:text-lg font-medium border-b border-[#333] mb-1 3xl:mb-2">
 												{userName}
 											</div>
 											<DropdownMenuItem
 												className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2] text-[#e8eef2]"
 												onClick={() => handleProfileAction("/profile")}
 											>
-												<UserIcon className="mr-2 h-4 w-4" />
-												<span>Profile</span>
+												<UserIcon className="mr-2 h-4 w-4 3xl:h-6 3xl:w-6" />
+												<span className="3xl:text-lg">Profile</span>
 											</DropdownMenuItem>
 											<DropdownMenuItem
 												className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2] text-[#e8eef2]"
 												onClick={() => handleProfileAction("/settings")}
 											>
-												<SettingsIcon className="mr-2 h-4 w-4" />
-												<span>Settings</span>
+												<SettingsIcon className="mr-2 h-4 w-4 3xl:h-6 3xl:w-6" />
+												<span className="3xl:text-lg">Settings</span>
 											</DropdownMenuItem>
 											<DropdownMenuSeparator className="bg-[#333]" />
 											<DropdownMenuItem
 												className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2] text-[#e8eef2]"
 												onClick={() => handleProfileAction("/")}
 											>
-												<LogOutIcon className="mr-2 h-4 w-4" />
-												<span>Logout</span>
+												<LogOutIcon className="mr-2 h-4 w-4 3xl:h-6 3xl:w-6" />
+												<span className="3xl:text-lg">Logout</span>
 											</DropdownMenuItem>
 										</DropdownMenuContent>
 									</DropdownMenu>

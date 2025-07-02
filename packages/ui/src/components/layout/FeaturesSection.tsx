@@ -59,8 +59,8 @@ export const FeaturesSection = ({
 			<div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-20 z-10" />
 
 			{/* Content */}
-			<div className="relative z-20 py-16 sm:py-20 md:py-24 lg:py-32">
-				<div className="container mx-auto px-4 sm:px-6 lg:px-8">
+			<div className="relative z-20 py-16 sm:py-20 md:py-24 lg:py-32 3xl:py-">
+				<div className="container mx-auto px-4 sm:px-6 lg:px-8 3xl:px-72">
 					{/* Section header */}
 					<div className="mb-8 sm:mb-12">
 						<motion.h2
@@ -68,11 +68,11 @@ export const FeaturesSection = ({
 							whileInView={{ opacity: 1, y: 0 }}
 							viewport={{ once: true }}
 							transition={{ delay: 0.2, duration: 0.5 }}
-							className="font-['Nunito'] font-bold text-black text-2xl sm:text-3xl md:text-4xl mb-3"
+							className="font-['Nunito'] font-bold text-black text-2xl sm:text-3xl md:text-4xl 3xl:text-5xl mb-3"
 						>
 							{headingTitle}
 						</motion.h2>
-						<p className="font-['Nunito'] text-black text-sm sm:text-base max-w-4xl">
+						<p className="font-['Nunito'] text-black text-sm sm:text-base 3xl:text-xl max-w-4xl 3xl:max-w-7xl">
 							{headingDescription}
 						</p>
 					</div>
@@ -110,14 +110,14 @@ export const FeaturesSection = ({
                     relative overflow-hidden bg-[#1d1d20] border-0 rounded-xl shadow-lg
                     transition-all duration-300 ease-in-out w-full flex flex-col
                     ${
-											expandedCard === card.id ? "h-80 sm:h-96" : "h-72 sm:h-96"
+											expandedCard === card.id ? "h-80 sm:h-96 3xl:h-[33rem]" : "h-72 sm:h-96 3xl:h-[33rem]"
 										}
                   `}
 								>
 									{/* Original gradient overlay */}
 									<div className="absolute inset-0 h-full rounded-[3px] [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18]" />
 
-									<CardContent className="relative p-4 sm:p-5 flex flex-col h-full">
+									<CardContent className="relative p-4 sm:p-5 3xl:p-6 flex flex-col h-full">
 										{expandedCard === card.id ? (
 											// Expanded state - no image, text at top
 											<>
@@ -125,7 +125,7 @@ export const FeaturesSection = ({
 													initial={{ y: 100 }}
 													animate={{ y: 0 }}
 													transition={{ duration: 0.3 }}
-													className="font-['Nunito'] font-bold text-[#e8eef2] text-lg sm:text-xl mb-3 flex-shrink-0"
+													className="font-['Nunito'] font-bold text-[#e8eef2] text-lg sm:text-xl 3xl:text-3xl mb-3 3xl:mb-6 flex-shrink-0"
 												>
 													{card.title}
 												</motion.h3>
@@ -133,14 +133,14 @@ export const FeaturesSection = ({
 													initial={{ opacity: 0 }}
 													animate={{ opacity: 1 }}
 													transition={{ delay: 0.2 }}
-													className="flex-grow overflow-hidden mb-3"
+													className="flex-grow overflow-hidden mb-3 3xl:mb-6"
 												>
 													<div
-														className="h-full max-h-40 sm:max-h-60 overflow-y-auto pr-2
+														className="h-full max-h-40 sm:max-h-60 3xl:max-h-96 overflow-y-auto pr-2
                                         scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600 
                                         hover:scrollbar-thumb-gray-500"
 													>
-														<p className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm leading-relaxed">
+														<p className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg leading-relaxed">
 															{card.longDescription}
 														</p>
 													</div>
@@ -148,7 +148,7 @@ export const FeaturesSection = ({
 												<button
 													onClick={() => handleCardToggle(card.id)}
 													className="self-start font-['Nunito'] font-medium text-[#e8eef2] 
-                                   text-xs sm:text-sm border-b border-[#e8eef2] pb-0.5
+                                   text-xs sm:text-sm 3xl:text-lg border-b border-[#e8eef2] pb-0.5
                                    hover:border-opacity-50 transition-colors flex-shrink-0"
 												>
 													Show less
@@ -161,7 +161,7 @@ export const FeaturesSection = ({
 													animate={{ opacity: 1, scale: 1 }}
 													initial={{ opacity: 0, scale: 0.8 }}
 													transition={{ duration: 0.3 }}
-													className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 mb-3 sm:mb-4 flex-shrink-0"
+													className="w-20 h-20 sm:w-24 3xl:w-40 sm:h-24 lg:w-28 lg:h-28 3xl:h-40 mb-3 sm:mb-4 3xl:mb-6 flex-shrink-0"
 												>
 													<img
 														className="w-full h-full object-cover rounded-lg"
@@ -170,18 +170,18 @@ export const FeaturesSection = ({
 													/>
 												</motion.div>
 
-												<h3 className="font-['Nunito'] font-bold text-[#e8eef2] text-lg sm:text-xl mb-2 sm:mb-3">
+												<h3 className="font-['Nunito'] font-bold text-[#e8eef2] text-lg sm:text-xl 3xl:text-3xl mb-2 sm:mb-3 3xl:mb-6">
 													{card.title}
 												</h3>
 
 												<div className="flex-grow flex flex-col justify-between">
-													<p className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm leading-relaxed">
+													<p className="font-['Nunito'] text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg leading-relaxed">
 														{card.shortDescription}
 													</p>
 													<button
 														onClick={() => handleCardToggle(card.id)}
 														className="self-start mt-2 sm:mt-3 font-['Nunito'] font-medium text-[#e8eef2] 
-                                     text-xs sm:text-sm border-b border-[#e8eef2] pb-0.5
+                                     text-xs sm:text-sm 3xl:text-lg border-b border-[#e8eef2] pb-0.5
                                      hover:border-opacity-50 transition-colors"
 													>
 														Read more

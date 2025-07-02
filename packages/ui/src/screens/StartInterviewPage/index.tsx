@@ -27,8 +27,8 @@ export const StartInterviewPage = (): JSX.Element => {
 
 				{/* Main content with proper responsive container */}
 				<div className="relative z-10 min-h-screen w-full">
-					<div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
-						<div className="py-8 sm:py-12 md:py-16 lg:py-20">
+					<div className="container mx-auto px-4 sm:px-6 lg:px-8 3xl:px-10 max-w-5xl 3xl:max-w-7xl">
+						<div className="py-8 sm:py-12 md:py-16 lg:py-20 3xl:py-22">
 							{/* Header Section */}
 							<motion.section
 								initial={{ opacity: 0, y: 20 }}
@@ -41,7 +41,7 @@ export const StartInterviewPage = (): JSX.Element => {
 									mass: 0.5,
 									delay: 0.1,
 								}}
-								className="w-full mb-8 sm:mb-10 md:mb-12"
+								className="w-full mb-8 sm:mb-10 md:mb-12 3xl:mb-14"
 							>
 								{/* Page Title and Description */}
 								<motion.div
@@ -50,10 +50,10 @@ export const StartInterviewPage = (): JSX.Element => {
 									transition={{ delay: 0.2 }}
 									className="text-center"
 								>
-									<h1 className="font-['Nunito'] font-black text-[#1d1d20] text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 sm:mb-6 leading-tight [text-shadow:0_4px_4px_rgba(0,0,0,0.2)]">
+									<h1 className="font-['Nunito'] font-black text-[#1d1d20] text-2xl sm:text-3xl md:text-4xl lg:text-5xl 3xl:text-[3.9rem] mb-4 sm:mb-6 leading-tight [text-shadow:0_4px_4px_rgba(0,0,0,0.2)]">
 										Start Your Interview
 									</h1>
-									<p className="font-['Nunito'] text-[#1d1d20] text-sm sm:text-base md:text-lg opacity-80 max-w-3xl mx-auto leading-relaxed">
+									<p className="font-['Nunito'] text-[#1d1d20] text-sm sm:text-base md:text-lg 3xl:text-2xl opacity-80 max-w-3xl 3xl:max-w-5xl mx-auto leading-relaxed">
 										Enter your job description or select from our templates to
 										get started with a personalized interview experience.
 									</p>

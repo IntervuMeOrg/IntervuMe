@@ -69,21 +69,21 @@ export const AppDashboardSection = ({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="relative py-16 sm:py-20 md:py-24 lg:py-30 bg-[#1d1d20] w-full"
+      className="relative py-16 sm:py-20 md:py-24 lg:py-30 3xl:py-24 bg-[#1d1d20] w-full"
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 3xl:px-1 max-w-5xl 3xl:max-w-7xl">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="font-['Nunito'] font-black text-2xl sm:text-3xl md:text-4xl text-[#e8eef2] mb-8 sm:mb-10 md:mb-12 text-center"
+          className="font-['Nunito'] font-black text-2xl sm:text-3xl md:text-4xl 3xl:text-5xl text-[#e8eef2] mb-8 sm:mb-10 md:mb-12 3xl:mb-14 text-center"
         >
           Your Dashboard
         </motion.h2>
 
         {/* Dashboard Components */}
-        <div className="space-y-8 sm:space-y-10 md:space-y-12">
+        <div className="space-y-8 sm:space-y-10 md:space-y-12 3xl:space-y-14">
           {/* Dashboard Stats */}
           <DashboardStats />
 

@@ -25,9 +25,9 @@ export const CustomJobDescription = ({
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.3 }}
 		>
-			<div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-				<FileTextIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#e8eef2] flex-shrink-0" />
-				<h3 className="font-['Nunito'] font-bold text-white text-base sm:text-lg md:text-xl">
+			<div className="flex items-center gap-2 sm:gap-3 3xl:gap-4 mb-4 sm:mb-6 3xl:mb-8">
+				<FileTextIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:h-6 3xl:w-6  text-[#e8eef2] flex-shrink-0" />
+				<h3 className="font-['Nunito'] font-bold text-white text-base sm:text-lg md:text-xl 3xl:text-2xl">
 					Job Description
 				</h3>
 			</div>
@@ -37,7 +37,7 @@ export const CustomJobDescription = ({
 					value={jobDescription}
 					onChange={(e) => setJobDescription(e.target.value)}
 					placeholder="Paste your job description here. Include role requirements, responsibilities, and any specific skills you'd like to be interviewed on..."
-					className="w-full h-32 sm:h-40 md:h-48 p-4 sm:p-5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 resize-none focus:outline-none focus:ring-2 focus:ring-[#0667D0] focus:border-transparent transition-all duration-200"
+					className="w-full h-32 sm:h-40 md:h-48 3xl:h-52 p-4 sm:p-5 3xl:p-6 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 resize-none focus:outline-none focus:ring-2 focus:ring-[#0667D0] focus:border-transparent transition-all duration-200"
 					style={{ fontSize: "clamp(0.875rem, 2.5vw, 1rem)" }}
 				/>
 
@@ -49,16 +49,16 @@ export const CustomJobDescription = ({
 					className="absolute top-3 right-3 p-2 bg-[#0667D0]/20 hover:bg-[#0667D0]/30 border border-[#0667D0]/40 rounded-md transition-all duration-200"
 					title="Paste from clipboard"
 				>
-					<PasteIcon className="h-4 w-4 text-[#0667D0]" />
+					<PasteIcon className="h-4 w-4 3xl:h-5 3xl:w-5 text-[#0667D0]" />
 				</motion.button>
 			</div>
 
 			{/* Character count */}
-			<div className="flex justify-between items-center mt-2 sm:mt-3">
-				<p className="text-[#e8eef2] text-xs sm:text-sm opacity-70">
+			<div className="flex justify-between items-center mt-2 sm:mt-3 3xl:mt-4">
+				<p className="text-[#e8eef2] text-xs sm:text-sm 3xl:text-lg opacity-70">
 					Provide as much detail as possible for better interview questions
 				</p>
-				<span className="text-[#e8eef2] text-xs opacity-60">
+				<span className="text-[#e8eef2] text-xs 3xl:text-sm opacity-60">
 					{jobDescription.length} characters
 				</span>
 			</div>
