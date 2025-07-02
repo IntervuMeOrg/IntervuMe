@@ -1,16 +1,10 @@
-import { MoreThan } from "typeorm";
-import { AppDataSource } from "../database/data-source";
-import { InterviewEntity } from "./interview.entity";
-import { apId } from "../common/id-generator";
-import { codingQuestionService } from "../coding/coding-question/codingQuestion.service";
-import { interviewQuestionService } from "../interview/interview-question/interview-question.service";
-import { QuestionType } from "../interview/interview-question/interview-question-types";
+import { MoreThan } from 'typeorm';
+import { AppDataSource } from '../database/data-source';
+import { InterviewEntity } from './interview.entity';
+import { codingQuestionService } from '../coding/coding-question/codingQuestion.service';
+import { interviewQuestionService } from '../interview/interview-question/interview-question.service';
 import {
-  McqAnswer,
-  McqAnswerSummary,
-} from "../mcq/mcq-answer/mcq-answer-types";
-import { CodeSubmissionWithResults } from "../coding/code-submission/code-submission-types";
-import {
+  apId,
   Interview,
   CreateInterviewRequestBody,
   UpdateInterviewRequestBody,
@@ -18,12 +12,17 @@ import {
   InterviewSession,
   SubmitInterviewRequestBody,
   InterviewSubmissionResult,
-} from "./interview-types";
-import { mcqQuestionService } from "../mcq/mcq-question/mcq-question.service";
-import { DifficultyLevel } from "../coding/coding-question/codingQuestion-types";
-import { codeSubmissionService } from "../coding/code-submission/codeSubmission.service";
-import { TestCaseResult, Verdict } from "../coding/test-case-result/testCaseResult-types";
-import { mcqAnswerService } from "../mcq/mcq-answer/mcq-answer.service";
+  DifficultyLevel,
+  TestCaseResult,
+  Verdict,
+  CodeSubmissionWithResults,
+  McqAnswer,
+  McqAnswerSummary,
+  QuestionType,
+} from '@shared';
+import { mcqQuestionService } from '../mcq/mcq-question/mcq-question.service';
+import { codeSubmissionService } from '../coding/code-submission/codeSubmission.service';
+import { mcqAnswerService } from '../mcq/mcq-answer/mcq-answer.service';
 import { isNil } from '../common/utils';
 
 const InterviewRepository = () => {
@@ -34,27 +33,27 @@ export const interviewService = {
   async getByUserId(userId: string): Promise<InterviewSession[]> {
     return await InterviewRepository().find({
       where: { userId, isActive: true },
-      order: { startTime: "DESC" },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
+      order: { startTime: 'DESC' },
+      relations: ['interviewQuestions', 'answers', 'codeSubmissions'],
     });
   },
 
   async getByStatus(status: InterviewStatus): Promise<InterviewSession[]> {
     return await InterviewRepository().find({
       where: { status, isActive: true },
-      order: { startTime: "ASC" },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
+      order: { startTime: 'ASC' },
+      relations: ['interviewQuestions', 'answers', 'codeSubmissions'],
     });
   },
 
   async get(id: string): Promise<InterviewSession> {
     const interview = await InterviewRepository().findOne({
       where: { id },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
+      relations: ['interviewQuestions', 'answers', 'codeSubmissions'],
     });
 
     if (isNil(interview)) {
-      throw new Error("Interview not found");
+      throw new Error('Interview not found');
     }
 
     return interview;
@@ -66,8 +65,8 @@ export const interviewService = {
 
     return await InterviewRepository().find({
       where: whereCondition,
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
-      order: { startTime: "DESC" },
+      relations: ['interviewQuestions', 'answers', 'codeSubmissions'],
+      order: { startTime: 'DESC' },
     });
   },
 
@@ -79,19 +78,22 @@ export const interviewService = {
         startTime: MoreThan(new Date().toISOString()),
         isActive: true,
       },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
-      order: { startTime: "ASC" },
+      relations: ['interviewQuestions', 'answers', 'codeSubmissions'],
+      order: { startTime: 'ASC' },
     });
   },
 
-  async update(id: string, request: UpdateInterviewRequestBody): Promise<InterviewSession> {
+  async update(
+    id: string,
+    request: UpdateInterviewRequestBody
+  ): Promise<InterviewSession> {
     const interview = await InterviewRepository().findOne({
       where: { id },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
+      relations: ['interviewQuestions', 'answers', 'codeSubmissions'],
     });
 
     if (isNil(interview)) {
-      throw new Error("Interview not found");
+      throw new Error('Interview not found');
     }
 
     const updatedInterview = InterviewRepository().merge(interview, request);
@@ -101,15 +103,15 @@ export const interviewService = {
   async startInterview(id: string): Promise<InterviewSession> {
     const interview = await InterviewRepository().findOne({
       where: { id },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
+      relations: ['interviewQuestions', 'answers', 'codeSubmissions'],
     });
 
     if (isNil(interview)) {
-      throw new Error("Interview not found");
+      throw new Error('Interview not found');
     }
 
     if (interview.status !== InterviewStatus.SCHEDULED) {
-      throw new Error("Interview cannot be started");
+      throw new Error('Interview cannot be started');
     }
 
     interview.status = InterviewStatus.IN_PROGRESS;
@@ -121,11 +123,11 @@ export const interviewService = {
   async calculateScore(id: string): Promise<InterviewSession> {
     const interview = await InterviewRepository().findOne({
       where: { id },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
+      relations: ['interviewQuestions', 'answers', 'codeSubmissions'],
     });
 
     if (isNil(interview)) {
-      throw new Error("Interview not found");
+      throw new Error('Interview not found');
     }
 
     // Calculate MCQ score
@@ -160,11 +162,11 @@ export const interviewService = {
   async delete(id: string): Promise<boolean> {
     const interview = await InterviewRepository().findOne({
       where: { id },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
+      relations: ['interviewQuestions', 'answers', 'codeSubmissions'],
     });
 
     if (isNil(interview)) {
-      throw new Error("Interview not found");
+      throw new Error('Interview not found');
     }
 
     interview.isActive = false;
@@ -176,11 +178,11 @@ export const interviewService = {
     // Placeholder AI analysis - replace with actual aiService.analyzeJobDescription later
     const aiAnalysis = {
       mcqRequirements: [
-        { tag: "javascript", count: 1 },
-        { tag: "react", count: 1 },
-        { tag: "nodejs", count: 1 },
+        { tag: 'javascript', count: 1 },
+        { tag: 'react', count: 1 },
+        { tag: 'nodejs', count: 1 },
       ],
-      codingRequirements: "medium" as DifficultyLevel,
+      codingRequirements: 'medium' as DifficultyLevel,
     };
 
     const interview = InterviewRepository().create({
@@ -216,7 +218,7 @@ export const interviewService = {
 
     const codingQuestions =
       await codingQuestionService.getRandomByDifficultyAndCount(
-        "medium" as DifficultyLevel,
+        'medium' as DifficultyLevel,
         2
       );
 
@@ -369,12 +371,12 @@ export const interviewService = {
     // TODO: Call code execution service
     return [
       {
-        id: "6E5uzx44lvJPPa5s2VUcW",
-        codeSubmissionId: "85pj4vlqD1visW5OPvhwg",
-        testCaseId: "6E5uzx44lvJPPa5s2VUcM",
+        id: '6E5uzx44lvJPPa5s2VUcW',
+        codeSubmissionId: '85pj4vlqD1visW5OPvhwg',
+        testCaseId: '6E5uzx44lvJPPa5s2VUcM',
         passed: true,
         verdict: Verdict.PASSED,
-        userOutput: "Mock output",
+        userOutput: 'Mock output',
         created: new Date().toISOString(),
         updated: new Date().toISOString(),
       },

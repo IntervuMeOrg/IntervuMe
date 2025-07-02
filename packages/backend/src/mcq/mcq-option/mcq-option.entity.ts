@@ -1,14 +1,12 @@
-import { EntitySchema } from "typeorm";
-import { McqOption } from "./mcq-option-types";
-import { BaseColumnSchemaPart } from "../../common/base-model";
-import { McqQuestion } from "../mcq-question/mcq-question-types";
+import { EntitySchema } from 'typeorm';
+import { McqOption, McqQuestion, BaseColumnSchemaPart } from '@shared';
 
 type McqOptionSchema = McqOption & {
   mcqQuestion: McqQuestion;
 };
 
 export const McqOptionEntity = new EntitySchema<McqOptionSchema>({
-  name: "mcq_option",
+  name: 'mcq_option',
   columns: {
     ...BaseColumnSchemaPart,
     mcqQuestionId: {
@@ -27,17 +25,17 @@ export const McqOptionEntity = new EntitySchema<McqOptionSchema>({
   },
   relations: {
     mcqQuestion: {
-      type: "many-to-one",
-      target: "mcq_question",
-      inverseSide: "options",
-      joinColumn: { name: "mcqQuestionId" },
-      onDelete: "CASCADE",
+      type: 'many-to-one',
+      target: 'mcq_question',
+      inverseSide: 'options',
+      joinColumn: { name: 'mcqQuestionId' },
+      onDelete: 'CASCADE',
     },
   },
   indices: [
     {
-      name: "idx_mcq_option_question_id",
-      columns: ["mcqQuestionId"],
+      name: 'idx_mcq_option_question_id',
+      columns: ['mcqQuestionId'],
     },
   ],
 });

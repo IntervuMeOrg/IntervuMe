@@ -1,15 +1,16 @@
-import { AppDataSource } from "../../database/data-source";
-import { apId } from "../../common/id-generator";
-import { McqAnswerEntity } from "./mcq-answer.entity";
+import { AppDataSource } from '../../database/data-source';
+import { McqAnswerEntity } from './mcq-answer.entity';
+import { mcqQuestionService } from '../mcq-question/mcq-question.service';
+import { interviewService } from '../../interview/interview.service';
 import {
+  apId,
   CreateMcqAnswerRequestBody,
   McqAnswer,
   UpdateMcqAnswerRequestBody,
-} from "./mcq-answer-types";
-import { mcqQuestionService } from "../mcq-question/mcq-question.service";
-import { interviewService } from "../../interview/interview.service";
-import { McqOption } from "../mcq-option/mcq-option-types";
-import { isNil } from "../../common/utils";
+  McqOption,
+} from '@shared';
+
+import { isNil } from '../../common/utils';
 
 const mcqAnswerRepository = () => {
   return AppDataSource.getRepository(McqAnswerEntity);
@@ -19,12 +20,12 @@ export const mcqAnswerService = {
   async create(request: CreateMcqAnswerRequestBody): Promise<McqAnswer> {
     const mcqQuestion = await mcqQuestionService.get(request.questionId);
     if (isNil(mcqQuestion)) {
-      throw new Error("Mcq Question not found");
+      throw new Error('Mcq Question not found');
     }
 
     const interview = await interviewService.get(request.interviewId);
-    if (isNil(interview) || interview.status === "COMPLETED") {
-      throw new Error("Cannot submit answer - interview is completed");
+    if (isNil(interview) || interview.status === 'COMPLETED') {
+      throw new Error('Cannot submit answer - interview is completed');
     }
 
     const existingAnswer = await mcqAnswerRepository().findOne({
@@ -35,7 +36,7 @@ export const mcqAnswerService = {
     });
 
     if (existingAnswer) {
-      throw new Error("Answer already exists for this question");
+      throw new Error('Answer already exists for this question');
     }
 
     const selectedOption = mcqQuestion.options.find(
@@ -46,11 +47,11 @@ export const mcqAnswerService = {
     );
 
     if (!selectedOption) {
-      throw new Error("Selected option not found");
+      throw new Error('Selected option not found');
     }
 
     if (!correctOption) {
-      throw new Error("No correct option found for this question");
+      throw new Error('No correct option found for this question');
     }
 
     const isCorrect = selectedOption.isCorrect;
@@ -72,7 +73,7 @@ export const mcqAnswerService = {
     const answer = await mcqAnswerRepository().findOne({ where: { id } });
 
     if (isNil(answer)) {
-      throw new Error("Answer not found");
+      throw new Error('Answer not found');
     }
 
     return answer;
@@ -91,7 +92,7 @@ export const mcqAnswerService = {
     });
 
     if (isNil(answer)) {
-      throw new Error("Answer not found for this question");
+      throw new Error('Answer not found for this question');
     }
 
     return answer;
@@ -104,12 +105,12 @@ export const mcqAnswerService = {
     const answer = await mcqAnswerRepository().findOne({ where: { id } });
 
     if (isNil(answer)) {
-      throw new Error("Answer not found");
+      throw new Error('Answer not found');
     }
 
     const interview = await interviewService.get(answer.interviewId);
-    if (isNil(interview) || interview.status === "COMPLETED") {
-      throw new Error("Cannot update answer - interview is completed");
+    if (isNil(interview) || interview.status === 'COMPLETED') {
+      throw new Error('Cannot update answer - interview is completed');
     }
 
     if (
@@ -117,14 +118,14 @@ export const mcqAnswerService = {
       updates.selectedOptionId !== answer.selectedOptionId
     ) {
       const mcqQuestion = await mcqQuestionService.get(answer.questionId);
-      if (isNil(mcqQuestion)) throw new Error("Question not found");
+      if (isNil(mcqQuestion)) throw new Error('Question not found');
 
       const newSelectedOption = mcqQuestion.options.find(
         (opt: McqOption) => opt.id === updates.selectedOptionId
       );
 
       if (!newSelectedOption) {
-        throw new Error("New selected option not found");
+        throw new Error('New selected option not found');
       }
 
       const isCorrect = newSelectedOption.isCorrect;
@@ -148,12 +149,12 @@ export const mcqAnswerService = {
     const answer = await mcqAnswerRepository().findOne({ where: { id } });
 
     if (isNil(answer)) {
-      throw new Error("Answer not found");
+      throw new Error('Answer not found');
     }
 
     const interview = await interviewService.get(answer.interviewId);
-    if (isNil(interview) || interview.status === "COMPLETED") {
-      throw new Error("Cannot delete answer - interview is completed");
+    if (isNil(interview) || interview.status === 'COMPLETED') {
+      throw new Error('Cannot delete answer - interview is completed');
     }
 
     await mcqAnswerRepository().remove(answer);

@@ -1,7 +1,7 @@
 import {
   FastifyPluginAsyncTypebox,
   Type,
-} from "@fastify/type-provider-typebox";
+} from '@fastify/type-provider-typebox';
 import {
   CreateInterviewRequestBody,
   Interview,
@@ -10,28 +10,28 @@ import {
   InterviewSubmissionResult,
   SubmitInterviewRequestBody,
   UpdateInterviewRequestBody,
-} from "./interview-types";
-import { StatusCodes } from "http-status-codes";
-import { interviewService } from "./interview.service";
-import { ApId } from "../common/id-generator";
+  ApId,
+} from '@shared';
+import { StatusCodes } from 'http-status-codes';
+import { interviewService } from './interview.service';
 
 export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
-  app.addHook("onRequest", app.authenticate);
+  app.addHook('onRequest', app.authenticate);
 
-  app.post("/", CreateInterviewRequestBodyRequest, async (request, reply) => {
+  app.post('/', CreateInterviewRequestBodyRequest, async (request, reply) => {
     const body = request.body as CreateInterviewRequestBody;
     const interview = await interviewService.create(body);
     return interview;
   });
 
-  app.get("/:id", GetInterviewRequest, async (request, reply) => {
+  app.get('/:id', GetInterviewRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
     const interview = await interviewService.get(id);
     return interview;
   });
 
   app.get(
-    "/:id/with-questions",
+    '/:id/with-questions',
     GetInterviewWithSessionRequest,
     async (request, reply) => {
       const { id } = request.params as { id: string };
@@ -40,7 +40,7 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
     }
   );
 
-  app.put("/:id", UpdateInterviewRequestBodyRequest, async (request, reply) => {
+  app.put('/:id', UpdateInterviewRequestBodyRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
     const body = request.body as UpdateInterviewRequestBody;
     const interview = await interviewService.update(id, body);
@@ -48,14 +48,14 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
   });
 
   // soft delete
-  app.delete("/:id", DeleteInterviewRequest, async (request, reply) => {
+  app.delete('/:id', DeleteInterviewRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
     await interviewService.delete(id);
   });
 
   // Get interviews by user ID
   app.get(
-    "/user/:userId",
+    '/user/:userId',
     GetInterviewsByUserRequest,
     async (request, reply) => {
       const { userId } = request.params as { userId: string };
@@ -66,7 +66,7 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
 
   // Get interviews by status
   app.get(
-    "/status/:status",
+    '/status/:status',
     GetInterviewsByStatusRequest,
     async (request, reply) => {
       const { status } = request.params as { status: InterviewStatus };
@@ -76,14 +76,14 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
   );
 
   // Start interview
-  app.post("/:id/start", StartInterviewRequest, async (request, reply) => {
+  app.post('/:id/start', StartInterviewRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
     const interview = await interviewService.startInterview(id);
     return interview;
   });
 
   // Submit interview
-  app.post("/:id/submit", SubmitInterviewRequest, async (request, reply) => {
+  app.post('/:id/submit', SubmitInterviewRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
     const submissionData = request.body as SubmitInterviewRequestBody;
 
@@ -93,7 +93,7 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
 
   // Calculate interview score
   app.post(
-    "/:id/calculate-score",
+    '/:id/calculate-score',
     CalculateScoreRequest,
     async (request, reply) => {
       const { id } = request.params as { id: string };
@@ -103,7 +103,7 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
   );
 
   // Get interviews with all related data (questions, answers, submissions)
-  app.get("/", GetInterviewsWithResultsRequest, async (request, reply) => {
+  app.get('/', GetInterviewsWithResultsRequest, async (request, reply) => {
     const { userId } = request.query as { userId: string };
     const interviews = await interviewService.list(userId);
     return interviews;
@@ -111,7 +111,7 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
 
   // Get upcoming interviews for a user
   app.get(
-    "/user/:userId/upcoming",
+    '/user/:userId/upcoming',
     GetInterviewsByUserRequest,
     async (request, reply) => {
       const { userId } = request.params as { userId: string };

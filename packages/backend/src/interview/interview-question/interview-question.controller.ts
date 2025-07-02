@@ -1,27 +1,27 @@
 import {
   FastifyPluginAsyncTypebox,
   Type,
-} from "@fastify/type-provider-typebox";
-import { interviewQuestionService } from "./interview-question.service";
+} from '@fastify/type-provider-typebox';
+import { StatusCodes } from 'http-status-codes';
+import { interviewQuestionService } from './interview-question.service';
 import {
   CreateInterviewQuestionRequestBody,
   UpdateInterviewQuestionRequestBody,
   InterviewQuestion,
   InterviewQuestionWithDetails,
-} from "./interview-question-types";
-import { StatusCodes } from "http-status-codes";
-import { ApId } from "../../common/id-generator";
+  ApId,
+} from '@shared';
 
 export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
   app
 ) => {
-  app.addHook("onRequest", app.authenticate);
+  app.addHook('onRequest', app.authenticate);
 
-  app.post("/", CreateInterviewQuestionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+  app.post('/', CreateInterviewQuestionRequest, async (request, reply) => {
+    if (request.user.role !== 'admin') {
       return reply
         .status(StatusCodes.FORBIDDEN)
-        .send({ message: "Forbidden: admins only" });
+        .send({ message: 'Forbidden: admins only' });
     }
 
     const body = request.body as CreateInterviewQuestionRequestBody;
@@ -30,7 +30,7 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
     return interviewQuestion;
   });
 
-  app.get("/:id", GetInterviewQuestionRequest, async (request, reply) => {
+  app.get('/:id', GetInterviewQuestionRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
     const interviewQuestion = await interviewQuestionService.get(id);
 
@@ -38,7 +38,7 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
   });
 
   app.get(
-    "/:id/details",
+    '/:id/details',
     GetInterviewQuestionWithDetailsRequest,
     async (request, reply) => {
       const { id } = request.params as { id: string };
@@ -52,7 +52,7 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
   );
 
   app.get(
-    "/interview/:interviewId",
+    '/interview/:interviewId',
     GetInterviewQuestionsforInterviewRequest,
     async (request, reply) => {
       const { interviewId } = request.params as { interviewId: string };
@@ -64,7 +64,7 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
   );
 
   app.get(
-    "/interview/:interviewId/details",
+    '/interview/:interviewId/details',
     GetInterviewQuestionsforInterviewWithDetailsRequest,
     async (request, reply) => {
       const { interviewId } = request.params as { interviewId: string };
@@ -74,11 +74,11 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
     }
   );
 
-  app.put("/:id", UpdateInterviewQuestionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+  app.put('/:id', UpdateInterviewQuestionRequest, async (request, reply) => {
+    if (request.user.role !== 'admin') {
       return reply
         .status(StatusCodes.FORBIDDEN)
-        .send({ message: "Forbidden: admins only" });
+        .send({ message: 'Forbidden: admins only' });
     }
 
     const { id } = request.params as { id: string };
@@ -87,11 +87,11 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
     return interviewQuestion;
   });
 
-  app.delete("/:id", GetInterviewQuestionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+  app.delete('/:id', GetInterviewQuestionRequest, async (request, reply) => {
+    if (request.user.role !== 'admin') {
       return reply
         .status(StatusCodes.FORBIDDEN)
-        .send({ message: "Forbidden: admins only" });
+        .send({ message: 'Forbidden: admins only' });
     }
 
     const { id } = request.params as { id: string };

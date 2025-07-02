@@ -7,9 +7,9 @@ import {
   CodingQuestion,
   CreateCodingQuestionRequestBody,
   UpdateCodingQuestionRequestBody,
-} from "./codingQuestion-types.js";
+} from "@shared";
 import { StatusCodes } from "http-status-codes";
-import { ApId } from "../../common/id-generator.js";
+import { ApId } from "@shared";
 
 export const codingQuestionController: FastifyPluginAsyncTypebox = async (
   app

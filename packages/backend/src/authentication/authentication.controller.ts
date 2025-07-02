@@ -1,23 +1,24 @@
 import {
   FastifyPluginAsyncTypebox,
   Type,
-} from "@fastify/type-provider-typebox";
-import { authService } from "./authentication.service.js";
+} from '@fastify/type-provider-typebox';
+import { authService } from './authentication.service.js';
 import {
   SignUpRequestBody,
   SignInRequestBody,
   ForgotPasswordRequestBody,
   ResetPasswordRequestBody,
-} from "./authentication-types.js";
-import { userService } from "../user/user.service.js";
-import { UserIdentityProvider } from "../user/user-types.js";
-import { StatusCodes } from "http-status-codes";
-import { AuthResponse } from "./authentication-types.js";
+} from '@shared';
+
+import { userService } from '../user/user.service.js';
+import { UserIdentityProvider } from '@shared';
+import { StatusCodes } from 'http-status-codes';
+import { AuthResponse } from '@shared';
 
 export const authenticationController: FastifyPluginAsyncTypebox = async (
   app
 ) => {
-  app.post("/sign-up", SignUpRequest, async (request) => {
+  app.post('/sign-up', SignUpRequest, async (request) => {
     const body = request.body as SignUpRequestBody;
     const signUpResponse = await authService.signUp(
       {
@@ -30,7 +31,7 @@ export const authenticationController: FastifyPluginAsyncTypebox = async (
     return signUpResponse;
   });
 
-  app.post("/sign-in", SignInRequest, async (request) => {
+  app.post('/sign-in', SignInRequest, async (request) => {
     const body = request.body as SignInRequestBody;
 
     const response = await authService.signInWithPassword(body, app.jwt.sign);
@@ -39,7 +40,7 @@ export const authenticationController: FastifyPluginAsyncTypebox = async (
   });
 
   app.post(
-    "/forgot-password",
+    '/forgot-password',
     ForgotPasswordRequest,
     async (request, reply) => {
       const email = (request.body as ForgotPasswordRequestBody).email;
@@ -47,7 +48,7 @@ export const authenticationController: FastifyPluginAsyncTypebox = async (
         await userService.initializePasswordReset(email);
         return reply
           .status(StatusCodes.OK)
-          .send({ message: "Reset code sent to your email" });
+          .send({ message: 'Reset code sent to your email' });
       } catch (err) {
         return reply
           .status(StatusCodes.BAD_REQUEST)
@@ -56,13 +57,13 @@ export const authenticationController: FastifyPluginAsyncTypebox = async (
     }
   );
 
-  app.post("/reset-password", ResetPasswordRequest, async (request, reply) => {
+  app.post('/reset-password', ResetPasswordRequest, async (request, reply) => {
     const data = request.body as ResetPasswordRequestBody;
     try {
       await userService.resetPassword(data);
       return reply
         .status(StatusCodes.OK)
-        .send({ message: "Password reset successfully" });
+        .send({ message: 'Password reset successfully' });
     } catch (err) {
       return reply
         .status(StatusCodes.BAD_REQUEST)

@@ -1,21 +1,21 @@
-import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
+import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import {
+  ApId,
   CreateMcqQuestionRequestBody,
   McqQuestion,
   UpdateMcqQuestionRequestBody,
-} from "./mcq-question-types";
-import { StatusCodes } from "http-status-codes";
-import { mcqQuestionService } from "./mcq-question.service";
-import { ApId } from "../../common/id-generator";
+} from '@shared';
+import { StatusCodes } from 'http-status-codes';
+import { mcqQuestionService } from './mcq-question.service';
 
 export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
-  app.addHook("onRequest", app.authenticate);
+  app.addHook('onRequest', app.authenticate);
 
-  app.post("/", createMcqQuestionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+  app.post('/', createMcqQuestionRequest, async (request, reply) => {
+    if (request.user.role !== 'admin') {
       return reply
         .status(StatusCodes.FORBIDDEN)
-        .send({ message: "Forbidden: admins only" });
+        .send({ message: 'Forbidden: admins only' });
     }
 
     const body = request.body as CreateMcqQuestionRequestBody;
@@ -24,23 +24,23 @@ export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
     return question;
   });
 
-  app.get("/", async (request, reply) => {
-    if (request.user.role !== "admin") {
+  app.get('/', async (request, reply) => {
+    if (request.user.role !== 'admin') {
       return reply
         .status(StatusCodes.FORBIDDEN)
-        .send({ message: "Forbidden: admins only" });
+        .send({ message: 'Forbidden: admins only' });
     }
 
     return await mcqQuestionService.list();
   });
 
-  app.get("/:id", GetMcqQuestionRequest, async (request) => {
+  app.get('/:id', GetMcqQuestionRequest, async (request) => {
     const { id } = request.params as { id: string };
     const question = await mcqQuestionService.get(id);
     return question;
   });
 
-  app.put("/:id", updateMcqQuestionRequest, async (request) => {
+  app.put('/:id', updateMcqQuestionRequest, async (request) => {
     const { id } = request.params as { id: string };
     const body = request.body as UpdateMcqQuestionRequestBody;
 
@@ -48,11 +48,11 @@ export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
     return question;
   });
 
-  app.delete("/:id", GetMcqQuestionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+  app.delete('/:id', GetMcqQuestionRequest, async (request, reply) => {
+    if (request.user.role !== 'admin') {
       return reply
         .status(StatusCodes.FORBIDDEN)
-        .send({ message: "Forbidden: admins only" });
+        .send({ message: 'Forbidden: admins only' });
     }
 
     const { id } = request.params as { id: string };

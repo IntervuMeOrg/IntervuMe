@@ -7,7 +7,7 @@ import {
   UpdateUserRequestBody,
   User,
   UserWithoutPassword,
-} from "./user-types.js";
+} from "@shared";
 import { StatusCodes } from "http-status-codes";
 
 export const userController: FastifyPluginAsyncTypebox = async (app) => {

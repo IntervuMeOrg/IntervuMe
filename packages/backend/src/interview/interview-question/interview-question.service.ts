@@ -1,15 +1,16 @@
-import { AppDataSource } from "../../database/data-source";
-import { apId } from "../../common/id-generator";
-import { InterviewQuestionEntity } from "./interview-question.entity";
+import { AppDataSource } from '../../database/data-source';
+import { codingQuestionService } from '../../coding/coding-question/codingQuestion.service';
+import { mcqQuestionService } from '../../mcq/mcq-question/mcq-question.service';
+import { InterviewQuestionEntity } from './interview-question.entity';
 import {
+  apId,
   CreateInterviewQuestionRequestBody,
   InterviewQuestion,
   UpdateInterviewQuestionRequestBody,
   InterviewQuestionWithDetails,
-} from "./interview-question-types";
-import { codingQuestionService } from "../../coding/coding-question/codingQuestion.service";
-import { mcqQuestionService } from "../../mcq/mcq-question/mcq-question.service";
-import { isNil } from "../../common/utils";
+} from '@shared';
+
+import { isNil } from '../../common/utils';
 
 const InterviewQuestionRepository = () => {
   return AppDataSource.getRepository(InterviewQuestionEntity);
@@ -34,7 +35,7 @@ export const interviewQuestionService = {
     });
 
     if (isNil(interviewQuestion)) {
-      throw new Error("Interview Question not found");
+      throw new Error('Interview Question not found');
     }
 
     return interviewQuestion;
@@ -49,7 +50,7 @@ export const interviewQuestionService = {
     });
 
     if (isNil(interviewQuestion)) {
-      throw new Error("Interview Question not found");
+      throw new Error('Interview Question not found');
     }
 
     return interviewQuestion;
@@ -59,28 +60,28 @@ export const interviewQuestionService = {
     const interviewQuestion = await this.get(id);
 
     if (isNil(interviewQuestion)) {
-      throw new Error("Interview Question not found");
+      throw new Error('Interview Question not found');
     }
 
     let questionDetails;
-    if (interviewQuestion.questionType === "mcq") {
+    if (interviewQuestion.questionType === 'mcq') {
       questionDetails = await mcqQuestionService.get(
         interviewQuestion.questionId
       );
 
       if (isNil(questionDetails)) {
-        throw new Error("Mcq details not found");
+        throw new Error('Mcq details not found');
       }
-    } else if (interviewQuestion.questionType === "coding") {
+    } else if (interviewQuestion.questionType === 'coding') {
       questionDetails = await codingQuestionService.get(
         interviewQuestion.questionId
       );
 
       if (isNil(questionDetails)) {
-        throw new Error("Coding question details not found");
+        throw new Error('Coding question details not found');
       }
     } else {
-      throw new Error("Unknown question type");
+      throw new Error('Unknown question type');
     }
 
     return {
@@ -92,7 +93,7 @@ export const interviewQuestionService = {
   async getByInterviewId(interviewId: string): Promise<InterviewQuestion[]> {
     const interviewQuestions = await InterviewQuestionRepository().find({
       where: { interviewId },
-      order: { questionOrder: "ASC" },
+      order: { questionOrder: 'ASC' },
     });
 
     if (isNil(interviewQuestions)) {
@@ -111,7 +112,7 @@ export const interviewQuestionService = {
       await Promise.all(
         interviewQuestions.map(async (iq) => {
           let questionDetails;
-          if (iq.questionType === "mcq") {
+          if (iq.questionType === 'mcq') {
             const details = await mcqQuestionService.get(iq.questionId);
 
             if (isNil(details))
@@ -142,7 +143,7 @@ export const interviewQuestionService = {
     });
 
     if (isNil(interviewQuestion)) {
-      throw new Error("Interview Question not found");
+      throw new Error('Interview Question not found');
     }
 
     Object.assign(interviewQuestion, updates, {
@@ -157,7 +158,7 @@ export const interviewQuestionService = {
     });
 
     if (isNil(interviewQuestion)) {
-      throw new Error("Interview Question not found");
+      throw new Error('Interview Question not found');
     }
 
     await InterviewQuestionRepository().remove(interviewQuestion);

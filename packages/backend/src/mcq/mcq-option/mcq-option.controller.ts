@@ -1,49 +1,48 @@
 import {
   FastifyPluginAsyncTypebox,
   Type,
-} from "@fastify/type-provider-typebox";
-
-import { StatusCodes } from "http-status-codes";
+} from '@fastify/type-provider-typebox';
+import { StatusCodes } from 'http-status-codes';
 import {
+  ApId,
   CreateMcqOptionRequestBody,
   McqOption,
   UpdateMcqOptionRequestBody,
-} from "./mcq-option-types";
-import { McqOptionService } from "./mcq-option.service";
-import { ApId } from "../../common/id-generator";
+} from '@shared';
+import { McqOptionService } from './mcq-option.service';
 
 export const mcqOptionController: FastifyPluginAsyncTypebox = async (app) => {
-  app.addHook("onRequest", app.authenticate);
+  app.addHook('onRequest', app.authenticate);
 
-  app.post("/", CreateMcqOptionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+  app.post('/', CreateMcqOptionRequest, async (request, reply) => {
+    if (request.user.role !== 'admin') {
       return reply
         .status(StatusCodes.FORBIDDEN)
-        .send({ message: "Forbidden: admins only" });
+        .send({ message: 'Forbidden: admins only' });
     }
 
     const body = request.body as CreateMcqOptionRequestBody;
     return await McqOptionService.create(body);
   });
 
-  app.get("/:id", GetMcqOptionRequest, async (request, reply) => {
+  app.get('/:id', GetMcqOptionRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
     const McqOption = await McqOptionService.get(id);
     return McqOption;
   });
 
-  app.put("/:id", UpdateMcqOptionRequest, async (request, reply) => {
+  app.put('/:id', UpdateMcqOptionRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
     const body = request.body as UpdateMcqOptionRequestBody;
     const McqOption = await McqOptionService.update(id, body);
     return McqOption;
   });
 
-  app.delete("/:id", DeleteMcqOptionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+  app.delete('/:id', DeleteMcqOptionRequest, async (request, reply) => {
+    if (request.user.role !== 'admin') {
       return reply
         .status(StatusCodes.FORBIDDEN)
-        .send({ message: "Forbidden: admins only" });
+        .send({ message: 'Forbidden: admins only' });
     }
 
     const { id } = request.params as { id: string };

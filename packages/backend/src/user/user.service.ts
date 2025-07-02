@@ -1,18 +1,18 @@
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 import {
+  apId,
   User,
   UserRole,
   UserIdentityProvider,
   CreateUserRequestBody,
   UpdateUserRequestBody,
-} from "./user-types.js";
-import { UserEntity } from "./user.entity.js";
-import { AppDataSource } from "../database/data-source.js";
-import bcrypt from "bcrypt";
-import { apId } from "../common/id-generator.js";
-import { addMinutes, isBefore } from "date-fns";
-import { ResetPasswordRequestBody } from "../authentication/authentication-types.js";
-import { EntityManager } from "typeorm";
+  ResetPasswordRequestBody,
+} from '@shared';
+import { UserEntity } from './user.entity.js';
+import { AppDataSource } from '../database/data-source.js';
+import bcrypt from 'bcrypt';
+import { addMinutes, isBefore } from 'date-fns';
+import { EntityManager } from 'typeorm';
 
 const userRepository = () => {
   return AppDataSource.getRepository(UserEntity);
@@ -47,7 +47,7 @@ export const userService = {
 
   async update(id: string, updates: UpdateUserRequestBody): Promise<User> {
     const user = await userRepository().findOne({ where: { id } });
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error('User not found');
 
     Object.assign(user, updates, { updated: new Date().toISOString() });
     return await userRepository().save(user);
@@ -55,16 +55,16 @@ export const userService = {
 
   async delete(id: string): Promise<void> {
     const user = await userRepository().findOne({ where: { id } });
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error('User not found');
 
     await userRepository().remove(user);
   },
 
   async logout(id: string): Promise<void> {
     const user = await userRepository().findOne({ where: { id } });
-    if (!user) throw new Error("User not found");
+    if (!user) throw new Error('User not found');
 
-    user.tokenVersion = user.tokenVersion ?? "0";
+    user.tokenVersion = user.tokenVersion ?? '0';
     user.tokenVersion = (user.tokenVersion + 1).toString();
     user.updated = new Date().toISOString();
     userRepository().save(user);
@@ -72,7 +72,7 @@ export const userService = {
 
   async initializePasswordReset(email: string): Promise<void> {
     const user = await userRepository().findOne({ where: { email } });
-    if (!user) throw new Error("Email not registered");
+    if (!user) throw new Error('Email not registered');
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const hashedOtp = await bcrypt.hash(otp, 10);
@@ -94,7 +94,7 @@ export const userService = {
 
     await transporter.sendMail({
       to: user.email,
-      subject: "Your password reset code",
+      subject: 'Your password reset code',
       text: `Your code is ${otp}. It expires in 15 minutes.`,
     });
   },
@@ -104,18 +104,18 @@ export const userService = {
     const user = await userRepository().findOne({ where: { email } });
 
     if (!user || !user.resetToken || !user.resetTokenExpiry)
-      throw new Error("Invalid or Expired reset code");
+      throw new Error('Invalid or Expired reset code');
 
     if (isBefore(user.resetTokenExpiry, new Date()))
-      throw new Error("Reset code has expired");
+      throw new Error('Reset code has expired');
 
     const isMatch = await bcrypt.compare(request.otp, user.resetToken);
-    if (!isMatch) throw new Error("Invalid reset code");
+    if (!isMatch) throw new Error('Invalid reset code');
 
     user.password = await bcrypt.hash(request.password, 10);
     user.resetToken = null;
     user.resetTokenExpiry = null;
-    user.tokenVersion = ((user.tokenVersion ?? "0") + 1).toString();
+    user.tokenVersion = ((user.tokenVersion ?? '0') + 1).toString();
     user.updated = new Date().toISOString();
 
     userRepository().save(user);
@@ -138,7 +138,7 @@ export const userService = {
 
   async list(): Promise<Partial<User>[]> {
     return await userRepository().find({
-      select: ["id", "email", "role", "created", "updated"],
+      select: ['id', 'email', 'role', 'created', 'updated'],
     });
   },
 };

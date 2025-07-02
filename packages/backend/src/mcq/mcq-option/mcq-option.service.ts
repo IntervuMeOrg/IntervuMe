@@ -1,11 +1,11 @@
 import { AppDataSource } from "../../database/data-source";
-import { apId } from "../../common/id-generator";
 import { McqOptionEntity } from "./mcq-option.entity";
 import {
+  apId,
   CreateMcqOptionRequestBody,
   McqOption,
   UpdateMcqOptionRequestBody,
-} from "./mcq-option-types";
+} from "@shared";
 import { isNil } from "../../common/utils";
 
 const McqOptionRepositoy = () => {

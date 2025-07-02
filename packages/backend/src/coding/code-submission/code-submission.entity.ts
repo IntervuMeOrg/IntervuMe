@@ -1,8 +1,8 @@
 import { EntitySchema } from "typeorm";
-import { BaseColumnSchemaPart } from "../../common/base-model";
-import { CodeSubmission } from "./code-submission-types";
-import { Interview } from "../../interview/interview-types";
-import { TestCaseResult } from "../test-case-result/testCaseResult-types";
+import { BaseColumnSchemaPart } from "@shared";
+import { CodeSubmission } from "@shared";
+import { Interview } from "@shared";
+import { TestCaseResult } from "@shared";
 
 export type CodeSubmissionSchema = CodeSubmission & {
   interview: Interview;

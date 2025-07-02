@@ -1,11 +1,10 @@
-import { Profile } from "./profile-entity-types";
+import { Profile, UpdateProfileBody } from "@shared";
 import {
   FastifyPluginAsyncTypebox,
   Type,
 } from "@fastify/type-provider-typebox";
 import { profileService } from "./profile.service";
 import { StatusCodes } from "http-status-codes";
-import { UpdateProfileBody } from "./profile-types";
 
 export const profileController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);

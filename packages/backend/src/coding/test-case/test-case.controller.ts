@@ -3,10 +3,10 @@ import {
   TestCase,
   CreateTestCaseRequestBody,
   UpdateTestCaseRequestBody,
-} from "./test-case-types";
+} from "@shared";
 import { StatusCodes } from "http-status-codes";
 import { testCaseService } from "./test-case.service";
-import { ApId } from "../../common/id-generator";
+import { ApId } from "@shared";
 
 export const testCaseController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);

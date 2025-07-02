@@ -1,6 +1,5 @@
 export * from './common/id-generator';
 export * from './common/base-model';
-export * from './common/utils';
 export * from './user/user-types';
 export * from './interview/interview-types';
 export * from './interview/interview-question-types';
@@ -14,3 +13,4 @@ export * from './mcq/mcq-option-types';
 export * from './mcq/mcq-question-types';
 export * from './profile/profile-entity-types';
 export * from './profile/profile-types';
+export * from './ai/types';

@@ -3,8 +3,8 @@ import {
   SignUpRequestBody,
   SignInRequestBody,
   AuthResponse,
-} from "./authentication-types.js";
-import { UserRole } from "../user/user-types.js";
+} from "@shared";
+import { UserRole } from "@shared";
 import { AppDataSource } from "../database/data-source.js";
 import { profileService } from "../profile/profile.service.js";
 

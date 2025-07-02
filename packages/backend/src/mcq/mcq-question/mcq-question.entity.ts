@@ -1,6 +1,5 @@
 import { EntitySchema } from "typeorm";
-import { DifficultyLevel, McqQuestion } from "./mcq-question-types";
-import { BaseColumnSchemaPart } from "../../common/base-model";
+import { DifficultyLevel, McqQuestion, BaseColumnSchemaPart} from "@shared";
 
 export const McqQuestionEntity = new EntitySchema<McqQuestion>({
   name: "mcq_question",

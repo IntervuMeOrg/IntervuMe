@@ -3,9 +3,9 @@ import {
   CreateTestCaseRequestBody,
   TestCase,
   UpdateTestCaseRequestBody,
-} from "./test-case-types";
+} from "@shared";
 import { TestCaseEntity } from "./test-case.entity";
-import { apId } from "../../common/id-generator";
+import { apId } from "@shared";
 import { isNil } from "../../common/utils";
 
 const testCaseRepositry = () => {

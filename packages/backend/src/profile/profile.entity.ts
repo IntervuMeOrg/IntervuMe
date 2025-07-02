@@ -1,17 +1,17 @@
-import { EntitySchema } from "typeorm";
-import { Profile } from "./profile-entity-types.js";
+import { EntitySchema } from 'typeorm';
 import {
+  Profile,
   BaseColumnSchemaPart,
   TIMESTAMP_COLUMN_TYPE,
-} from "../common/base-model.js";
-import { User } from "../user/user-types.js";
+  User,
+} from '@shared';
 
 type ProfileSchema = Profile & {
   user: User;
 };
 
 export const ProfileEntity = new EntitySchema<ProfileSchema>({
-  name: "profile",
+  name: 'profile',
   columns: {
     ...BaseColumnSchemaPart,
     userId: {
@@ -43,20 +43,20 @@ export const ProfileEntity = new EntitySchema<ProfileSchema>({
 
   relations: {
     user: {
-      type: "one-to-one",
-      target: "user",
+      type: 'one-to-one',
+      target: 'user',
       joinColumn: {
-        name: "userId",
+        name: 'userId',
       },
-      inverseSide: "profile",
-      onDelete: "CASCADE",
+      inverseSide: 'profile',
+      onDelete: 'CASCADE',
     },
   },
 
   indices: [
     {
-      name: "idx_profile_userId",
-      columns: ["userId"],
+      name: 'idx_profile_userId',
+      columns: ['userId'],
       unique: true,
     },
   ],

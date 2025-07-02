@@ -14,7 +14,7 @@ import {
   MCQQuestion,
   KeywordExtractionResponse,
   SimilarityResponse,
-} from "./types";
+} from "@shared";
 
 // Model configuration
 const MODEL_CONFIGS = {

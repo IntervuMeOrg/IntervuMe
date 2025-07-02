@@ -3,14 +3,14 @@ import {
   Type,
 } from "@fastify/type-provider-typebox";
 import {
+  ApId,
   McqAnswer,
   McqAnswerSummary,
   CreateMcqAnswerRequestBody,
   UpdateMcqAnswerRequestBody,
-} from "./mcq-answer-types";
+} from "@shared";
 import { mcqAnswerService } from "./mcq-answer.service";
 import { StatusCodes } from "http-status-codes";
-import { ApId } from "../../common/id-generator";
 
 export const mcqAnswerController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);

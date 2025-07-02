@@ -4,10 +4,10 @@ import {
   CodeSubmission,
   CreateCodeSubmissionRequestBody,
   UpdateCodeSubmissionRequestBody,
-} from "./code-submission-types";
+} from "@shared";
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
-import { ApId } from "../../common/id-generator";
+import { ApId } from "@shared";
 
 export const codeSubmissionController: FastifyPluginAsyncTypebox = async (
   app

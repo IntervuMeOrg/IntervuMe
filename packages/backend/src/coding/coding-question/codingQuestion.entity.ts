@@ -1,10 +1,10 @@
 import { EntitySchema } from "typeorm";
-import { CodingQuestion, DifficultyLevel } from "./codingQuestion-types.js";
+import { CodingQuestion, DifficultyLevel } from "@shared";
 import {
   ARRAY_COLUMN_TYPE,
   BaseColumnSchemaPart,
   JSONB_COLUMN_TYPE,
-} from "../../common/base-model.js";
+} from "@shared";
 
 export const CodingQuestionEntity = new EntitySchema<CodingQuestion>({
   name: "coding_question",

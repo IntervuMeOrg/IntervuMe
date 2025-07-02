@@ -4,8 +4,8 @@ import {
   TestCaseResult,
   CreateTestCaseResultRequestbody,
   UpdateTestCaseResultRequestbody,
-} from "./testCaseResult-types";
-import { apId } from "../../common/id-generator";
+} from "@shared";
+import { apId } from "@shared";
 import { isNil } from "../../common/utils";
 
 const testCaseResultRepository = () => {

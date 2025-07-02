@@ -1,4 +1,4 @@
-import { AssessmentResults } from "./types";
+import { AssessmentResults } from "@shared";
 
 export const keywordPrompt = (jobDescription: string): string => `
 Analyze the following job description and extract relevant keywords. The extracted keywords should match the following JSON structure exactly:

@@ -4,10 +4,10 @@ import {
   TestCaseResult,
   CreateTestCaseResultRequestbody,
   UpdateTestCaseResultRequestbody,
-} from "./testCaseResult-types";
+} from "@shared";
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
-import { ApId } from "../../common/id-generator";
+import { ApId } from "@shared";
 
 export const testCaseResultController: FastifyPluginAsyncTypebox = async (
   app

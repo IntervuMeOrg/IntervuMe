@@ -5,13 +5,13 @@ import {
   CreateCodingQuestionRequestBody,
   DifficultyLevel,
   UpdateCodingQuestionRequestBody,
-} from "./codingQuestion-types";
-import { apId } from "../../common/id-generator";
+} from "@shared";
+import { apId } from "@shared";
 import { TestCaseEntity } from "../test-case/test-case.entity";
 import {
   CreateTestCaseRequestBody,
   UpdateTestCaseRequestBody,
-} from "../test-case/test-case-types";
+} from "@shared";
 import { isNil } from "../../common/utils";
 
 const codingQuestionRepository = () => {

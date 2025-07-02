@@ -5,7 +5,7 @@ import {
 
 import { StatusCodes } from "http-status-codes";
 import { aiService } from "./ai.service";
-import { AssessmentResults } from "./types";
+import { AssessmentResults } from "@shared";
 
 export const aiController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);

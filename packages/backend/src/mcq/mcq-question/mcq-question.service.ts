@@ -1,15 +1,14 @@
-import { text } from "stream/consumers";
-import { apId } from "../../common/id-generator";
-import { AppDataSource } from "../../database/data-source";
+import { AppDataSource } from '../../database/data-source';
 import {
+  apId,
   CreateMcqQuestionRequestBody,
   DifficultyLevel,
   McqQuestion,
   UpdateMcqQuestionRequestBody,
-} from "./mcq-question-types";
-import { McqQuestionEntity } from "./mcq-question.entity";
-import { McqOptionEntity } from "../mcq-option/mcq-option.entity";
-import { isNil } from "../../common/utils";
+} from '@shared';
+import { McqQuestionEntity } from './mcq-question.entity';
+import { McqOptionEntity } from '../mcq-option/mcq-option.entity';
+import { isNil } from '../../common/utils';
 
 const mcqQuestionRepository = () => {
   return AppDataSource.getRepository(McqQuestionEntity);
@@ -38,7 +37,7 @@ export const mcqQuestionService = {
   async get(id: string): Promise<McqQuestion> {
     const question = await mcqQuestionRepository().findOne({ where: { id } });
     if (isNil(question)) {
-      throw new Error("Question not found");
+      throw new Error('Question not found');
     }
 
     return question;
@@ -57,7 +56,7 @@ export const mcqQuestionService = {
 
     const question = await questionRepo.findOne({ where: { id } });
     if (isNil(question)) {
-      throw new Error("Question not found");
+      throw new Error('Question not found');
     }
 
     const { options, ...questionFields } = updates;
@@ -96,7 +95,7 @@ export const mcqQuestionService = {
     });
 
     if (isNil(question)) {
-      throw new Error("Question not found");
+      throw new Error('Question not found');
     }
 
     await mcqQuestionRepository().remove(question);
@@ -109,9 +108,9 @@ export const mcqQuestionService = {
 
     for (const [tag, count] of Object.entries(tagCounts)) {
       const questions = await mcqQuestionRepository()
-        .createQueryBuilder("mcq")
-        .where("mcq.tags && :tags::varchar[]", { tags: [tag] })
-        .orderBy("RANDOM()")
+        .createQueryBuilder('mcq')
+        .where('mcq.tags && :tags::varchar[]', { tags: [tag] })
+        .orderBy('RANDOM()')
         .take(count)
         .getMany();
 

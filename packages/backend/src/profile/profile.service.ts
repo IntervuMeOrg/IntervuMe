@@ -1,11 +1,8 @@
-import { ProfileInput, UpdateProfileBody } from "./profile-types";
-import { Profile } from "./profile-entity-types";
-import { ProfileEntity } from "./profile.entity";
-import { EntityManager } from "typeorm";
-import { apId } from "../common/id-generator";
-import { AppDataSource } from "../database/data-source";
-import { User } from "../user/user-types";
-import { isNil } from "../common/utils.js";
+import { apId, ProfileInput, UpdateProfileBody, Profile, User } from '@shared';
+import { ProfileEntity } from './profile.entity';
+import { EntityManager } from 'typeorm';
+import { AppDataSource } from '../database/data-source';
+import { isNil } from '../common/utils.js';
 
 const profileRepository = () => {
   return AppDataSource.getRepository(ProfileEntity);
@@ -34,7 +31,7 @@ export const profileService = {
 
   async update(userId: string, updates: UpdateProfileBody): Promise<Profile> {
     const profile = await profileRepository().findOne({ where: { userId } });
-    if (isNil(profile)) throw new Error("Profile not found");
+    if (isNil(profile)) throw new Error('Profile not found');
 
     Object.assign(profile, updates, { updated: new Date().toISOString() });
     const updatedProfile = await profileRepository().save(profile);

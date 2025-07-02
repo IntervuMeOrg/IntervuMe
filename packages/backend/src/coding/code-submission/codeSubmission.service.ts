@@ -4,8 +4,8 @@ import {
   CodeSubmission,
   CreateCodeSubmissionRequestBody,
   UpdateCodeSubmissionRequestBody,
-} from "./code-submission-types";
-import { apId } from "../../common/id-generator";
+} from "@shared";
+import { apId } from "@shared";
 import { isNil } from "../../common/utils";
 
 const codeSubmissionRepository = () => {
