@@ -1,4 +1,3 @@
-import { Card, CardContent } from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 
 type OTPInputFieldsProps = {
@@ -20,31 +19,26 @@ export const OTPInputFields = ({
 	handlePaste,
 }: OTPInputFieldsProps) => {
 	return (
-		<div className="absolute w-[422px] top-[calc(30vh+100px)] left-[61px] flex justify-between gap-2">
+		<div className="flex justify-between gap-2 mb-4 3xl:mb-6">
 			{otp.map((digit, index) => (
-				<Card
+				<Input
 					key={index}
-					className="mt-2 w-[60px] h-[60px] shadow-[0px_4px_4px_#00000040] border-0"
-				>
-					<CardContent className="p-0 flex items-center justify-center">
-						<Input
-							ref={(el) => (inputRefs.current[index] = el)}
-							type="text"
-							value={digit}
-							onChange={(e) => handleInputChange(index, e.target.value)}
-							onKeyDown={(e) => handleKeyDown(index, e)}
-							onPaste={index === 0 ? handlePaste : undefined}
-							maxLength={1}
-							className={`text-[#e8eef2] rounded-[15px] text-center font-['Nunito',Helvetica]
-										 text-xl font-extrabold focus:ring-2 focus:ring-[#0667D0] focus:ring-opacity-50
-										  shadow-[0px_4px_4px_#00000040] w-[60px] h-[60px] ${
-												digit ? "border-4 border-[#2B8EDE] bg-[#1D1D20] " : ""
-											}`}
-							inputMode="numeric"
-							autoComplete="one-time-code"
-						/>
-					</CardContent>
-				</Card>
+					ref={(el) => (inputRefs.current[index] = el)}
+					type="text"
+					value={digit}
+					onChange={(e) => handleInputChange(index, e.target.value)}
+					onKeyDown={(e) => handleKeyDown(index, e)}
+					onPaste={index === 0 ? handlePaste : undefined}
+					maxLength={1}
+					className={`w-10 h-10 sm:w-12 sm:h-12 3xl:w-16 3xl:h-16 text-center font-['Nunito'] font-bold text-base sm:text-lg 3xl:text-xl
+						${digit 
+							? "bg-[#1D1D20] text-[#e8eef2] border-2 border-[#2B8EDE]" 
+							: "bg-[#e8eef2] text-black"
+						} 
+						rounded-md focus:ring-2 focus:ring-[#0667D0] focus:ring-opacity-50 shadow-md transition-all duration-200`}
+					inputMode="numeric"
+					autoComplete="one-time-code"
+				/>
 			))}
 		</div>
 	);

@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+Global state: Zustand
+
+Lift state up before introducing context.
+
+Use React Context for intermediate, tree‑wide sharing.

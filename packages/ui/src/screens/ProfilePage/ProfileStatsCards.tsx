@@ -1,70 +1,112 @@
-import { Card, CardContent } from "../../components/ui/card";
 import { motion } from "framer-motion";
-import { InterviewStats } from "../../types/interviewStats";
-import {
-	BarChart4Icon,
-	LineChartIcon,
-	ClockIcon,
-	TrendingUpIcon,
+import { 
+  CalendarIcon, 
+  BarChart4Icon, 
+  ClockIcon, 
+  TrendingUpIcon,
+  AwardIcon,
+  AlertTriangleIcon
 } from "lucide-react";
 
-type ProfileStatsCardsProps = {
-	interviewStats: InterviewStats;
+type InterviewStats = {
+  totalInterviews: number;
+  averageScore: number;
+  totalHours: number;
+  skillsImproved: number;
+  topPerformingSkill: string;
+  lowestPerformingSkill: string;
 };
 
-export const ProfileStatsCards = ({
-	interviewStats,
-}: ProfileStatsCardsProps) => {
-	return (
-		<div className="grid grid-cols-4 gap-6 mb-8">
-			{[0, 1, 2, 3].map((index) => (
-				<motion.div
-					key={index}
-					initial={{ opacity: 0, y: 20 }}
-					whileInView={{ opacity: 1, y: 0 }}
-					viewport={{ once: true }}
-					transition={{ delay: 0.3 + index * 0.1 }}
-					className="h-full"
-				>
-					<Card className="shadow-sm bg-[#1d1d20] relative overflow-hidden border-0">
-						<div className="absolute inset-0 [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18]" />
-						<CardContent className="p-4 relative z-10">
-							<div className="flex items-center justify-between mb-2">
-								<h3 className="font-['Nunito',Helvetica] font-bold text-white text-sm">
-									{index === 0 && "TOTAL INTERVIEWS"}
-									{index === 1 && "AVERAGE SCORE"}
-									{index === 2 && "TOTAL HOURS"}
-									{index === 3 && "SKILLS IMPROVED"}
-								</h3>
-								<div className="bg-[#0667D0] p-2 rounded-full ml-[15px]">
-									{index === 0 && (
-										<BarChart4Icon className="h-5 w-5 text-white" />
-									)}
-									{index === 1 && (
-										<LineChartIcon className="h-5 w-5 text-white" />
-									)}
-									{index === 2 && <ClockIcon className="h-5 w-5 text-white" />}
-									{index === 3 && (
-										<TrendingUpIcon className="h-5 w-5 text-white" />
-									)}
-								</div>
-							</div>
-							<p className="font-['Nunito',Helvetica] font-bold text-[32px] text-white">
-								{index === 0 && interviewStats.totalInterviews}
-								{index === 1 && `${interviewStats.averageScore}%`}
-								{index === 2 && interviewStats.totalHours}
-								{index === 3 && interviewStats.skillsImproved}
-							</p>
-							<p className="text-white text-opacity-70 text-sm">
-								{index === 0 && "+3 this month"}
-								{index === 1 && "+5% from last month"}
-								{index === 2 && "Practice time"}
-								{index === 3 && "Technical & Soft Skills"}
-							</p>
-						</CardContent>
-					</Card>
-				</motion.div>
-			))}
-		</div>
-	);
+type ProfileStatsCardsProps = {
+  interviewStats: InterviewStats;
+};
+
+export const ProfileStatsCards = ({ interviewStats }: ProfileStatsCardsProps) => {
+  const stats = [
+    {
+      icon: <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
+      title: "Total Interviews",
+      value: interviewStats.totalInterviews.toString(),
+      subtitle: "Completed sessions",
+      delay: 0.2,
+    },
+    {
+      icon: <BarChart4Icon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
+      title: "Average Score",
+      value: `${interviewStats.averageScore}%`,
+      subtitle: "Overall performance",
+      delay: 0.3,
+    },
+    {
+      icon: <ClockIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
+      title: "Practice Time",
+      value: `${interviewStats.totalHours} hrs`,
+      subtitle: "Total time invested",
+      delay: 0.4,
+    },
+    {
+      icon: <TrendingUpIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
+      title: "Skills Improved",
+      value: interviewStats.skillsImproved.toString(),
+      subtitle: "Areas of growth",
+      delay: 0.5,
+    },
+    {
+      icon: <AwardIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
+      title: "Top Skill",
+      value: interviewStats.topPerformingSkill,
+      subtitle: "Best performing area",
+      delay: 0.6,
+    },
+    {
+      icon: <AlertTriangleIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
+      title: "Focus Area",
+      value: interviewStats.lowestPerformingSkill,
+      subtitle: "Needs improvement",
+      delay: 0.7,
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 3xl:gap-6">
+      {stats.map((stat, index) => (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: stat.delay }}
+          className="bg-[#1d1d20] rounded-lg p-4 sm:p-5 3xl:p-6 shadow-lg relative overflow-hidden group h-full"
+          whileHover={{ 
+            y: -5, 
+            boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+            transition: { duration: 0.2 } 
+          }}
+        >
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent pointer-events-none" />
+          
+          <div className="relative z-10 h-full flex flex-col">
+            {/* Header with icon and title */}
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3 3xl:mb-4">
+              {stat.icon}
+              <h3 className="font-['Nunito'] font-bold text-[#e8eef2] text-sm sm:text-base 3xl:text-[1.35rem] leading-tight">
+                {stat.title}
+              </h3>
+            </div>
+            
+            {/* Value */}
+            <p className="font-['Nunito'] text-[#e8eef2] text-lg sm:text-xl md:text-2xl 3xl:text-3xl font-bold mb-2 flex-grow flex items-center">
+              {stat.value}
+            </p>
+            
+            {/* Subtitle */}
+            <p className="font-['Nunito'] text-[#e8eef2] text-xs sm:text-sm 3xl:text-lg opacity-70">
+              {stat.subtitle}
+            </p>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
 };

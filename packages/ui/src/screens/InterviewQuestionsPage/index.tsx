@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState,useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { QuestionCard } from "./QuestionCard";
 import { QuestionListSidebar } from "./SidebarQuestionList";
 import { QuestionFooter } from "./QuestionFooter";
@@ -8,218 +8,21 @@ import { ExitConfirmationModel } from "./ExitConfirmationModel";
 import { SubmitConfirmationModal } from "./SubmitConfirmationModal";
 import { CustomNotificationBlur } from "./CustomNotificationBlur";
 import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
-
 type Question = MCQQuestion | ProblemSolvingQuestion;
 
 export const InterviewQuestionsPage = (): JSX.Element => {
-	// Navigation hook for routing
+	const location = useLocation();
 	const navigate = useNavigate();
+	
+	// Get questions from navigation state (no more mock data here)
+	const [questions] = useState<Question[]>(location.state?.questions || []);
 
-	// Mock questions data
-	const [questions, setQuestions] = useState<Question[]>([
-		{
-			id: 1,
-			type: "mcq",
-			text: "Which of the following is NOT a React Hook?",
-			options: [
-				{ id: "a", text: "useState" },
-				{ id: "b", text: "useEffect" },
-				{ id: "c", text: "useHistory" },
-				{ id: "d", text: "useReactState" },
-			],
-			points: 10,
-		},
-		{
-			id: 2,
-			type: "mcq",
-			text: "What is the correct way to pass a prop called 'name' to a component?",
-			options: [
-				{ id: "a", text: "<Component {name='John'} />" },
-				{ id: "b", text: "<Component name='John' />" },
-				{ id: "c", text: '<Component name="John" />' },
-				{ id: "d", text: "<Component props={name: 'John'} />" },
-			],
-			points: 10,
-		},
-		{
-			id: 3,
-			type: "problem_solving",
-			name: "Two Sum",
-			difficulty: "Medium",
-			text: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-			examples: [
-				{
-					input: "nums = [2,7,11,15], target = 9",
-					output: "[0,1]",
-					explanation: "Because nums[0] + nums[1] == 9",
-				},
-				{
-					input: "nums = [2,7,11,15], target = 9",
-					output: "[0,1]",
-					explanation: "Because nums[0] + nums[1] == 9",
-				},
-			],
-			constraints: [
-				"2 <= nums.length <= 10^4",
-				"-10^9 <= nums[i] <= 10^9",
-				"-10^9 <= target <= 10^9",
-				"Only one valid answer exists.",
-			],
-			points: 20,
-		},
-		{
-			id: 4,
-			type: "mcq",
-			text: "Which lifecycle method is called after a component is rendered for the first time?",
-			options: [
-				{ id: "a", text: "componentDidMount" },
-				{ id: "b", text: "componentWillMount" },
-				{ id: "c", text: "componentDidUpdate" },
-				{ id: "d", text: "componentWillUpdate" },
-			],
-			points: 10,
-		},
-		{
-			id: 5,
-			type: "problem_solving",
-			name: "Valid Palindrome",
-			difficulty: "Easy",
-			text: "Implement a function to check if a string is a palindrome, ignoring case and non-alphanumeric characters.",
-			examples: [
-				{
-					input: "'A man, a plan, a canal: Panama'",
-					output: "true",
-					explanation: "'amanaplanacanalpanama' is a palindrome",
-				},
-			],
-			constraints: [
-				"The input string may contain printable ASCII characters",
-				"We define empty string as valid palindrome",
-			],
-			points: 15,
-		},
-		{
-			id: 6,
-			type: "problem_solving",
-			name: "Debounce Function",
-			difficulty: "Medium",
-			text: "Create a function that implements a basic debounce mechanism.",
-			examples: [
-				{
-					input: "debounce(searchFunction, 300)",
-					output: "Executes once after 300ms",
-					explanation: "Multiple calls within 300ms delay execution",
-				},
-			],
-			constraints: [
-				"The returned function should cancel pending executions",
-				"Should handle multiple rapid calls correctly",
-			],
-			points: 25,
-		},
-		{
-			id: 7,
-			type: "problem_solving",
-			name: "Flatten Nested Array",
-			difficulty: "Medium",
-			text: "Implement a function that flattens a nested array.",
-			examples: [
-				{
-					input: "[1, [2, [3, 4], 5], 6]",
-					output: "[1, 2, 3, 4, 5, 6]",
-				},
-			],
-			constraints: [
-				"Should handle arbitrarily nested arrays",
-				"Return new array without modifying original",
-			],
-			points: 20,
-		},
-		{
-			id: 8,
-			type: "mcq",
-			text: "What is the purpose of the 'key' prop when rendering a list of elements in React?",
-			options: [
-				{ id: "a", text: "It's required for CSS styling" },
-				{
-					id: "b",
-					text: "It helps React identify which items have changed, are added, or are removed",
-				},
-				{ id: "c", text: "It's used for encryption purposes" },
-				{ id: "d", text: "It determines the order of elements in the DOM" },
-			],
-			points: 10,
-		},
-		{
-			id: 9,
-			type: "problem_solving",
-			name: "Two Sum",
-			difficulty: "Medium",
-			text: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-			examples: [
-				{
-					input: "nums = [2,7,11,15], target = 9",
-					output: "[0,1]",
-					explanation: "Because nums[0] + nums[1] == 9",
-				},
-			],
-			constraints: [
-				"2 <= nums.length <= 10^4",
-				"-10^9 <= nums[i] <= 10^9",
-				"-10^9 <= target <= 10^9",
-				"Only one valid answer exists.",
-			],
-			points: 20,
-		},
-		{
-			id: 10,
-			type: "mcq",
-			text: "Which of the following is true about React's virtual DOM?",
-			options: [
-				{ id: "a", text: "It directly manipulates the browser's DOM" },
-				{
-					id: "b",
-					text: "It's slower than directly manipulating the browser's DOM",
-				},
-				{ id: "c", text: "It's a lightweight copy of the actual DOM" },
-				{ id: "d", text: "It requires special browser plugins to work" },
-			],
-			points: 10,
-		},
-		{
-			id: 11,
-			type: "problem_solving",
-			name: "Two Sum",
-			difficulty: "Medium",
-			text: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-			examples: [
-				{
-					input: "nums = [2,7,11,15], target = 9",
-					output: "[0,1]",
-					explanation: "Because nums[0] + nums[1] == 9",
-				},
-			],
-			constraints: [
-				"2 <= nums.length <= 10^4",
-				"-10^9 <= nums[i] <= 10^9",
-				"-10^9 <= target <= 10^9",
-				"Only one valid answer exists.",
-			],
-			points: 20,
-		},
-		{
-			id: 12,
-			type: "mcq",
-			text: "What is the correct way to conditionally render a component in React?",
-			options: [
-				{ id: "a", text: "if (condition) { return <Component />; }" },
-				{ id: "b", text: "condition && <Component />" },
-				{ id: "c", text: "<Component if={condition} />" },
-				{ id: "d", text: "<If condition={condition}><Component /></If>" },
-			],
-			points: 10,
-		},
-	]);
+	// If no questions were passed, redirect back
+	useEffect(() => {
+		if (questions.length === 0) {
+			navigate('/start-interview'); // or wherever your start page is
+		}
+	}, [questions, navigate]);
 
 	// State for current question index
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);

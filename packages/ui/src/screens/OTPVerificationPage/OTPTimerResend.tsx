@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "../../components/ui/button";
 
-type OTPTimerResentProps = {
+type OTPTimerResendProps = {
 	timeLeft: number;
 	canResend: boolean;
 	handleResendOTP: () => void;
@@ -11,14 +11,14 @@ export const OTPTimerResend = ({
 	timeLeft,
 	canResend,
 	handleResendOTP,
-}: OTPTimerResentProps) => {
+}: OTPTimerResendProps) => {
 	return (
-		<div className="absolute w-[422px] top-[calc(30vh+180px)] left-[61px] flex justify-between items-center">
+		<div className="flex justify-between items-center mb-6 3xl:mb-8">
 			<motion.div
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				transition={{ delay: 0.4 }}
-				className="font-['Nunito',Helvetica] font-bold text-[#c7d3dd] text-[12px] mt-2"
+				className="font-['Nunito'] font-medium text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg"
 			>
 				{!canResend ? `Resend code in ${timeLeft}s` : "Code expired"}
 			</motion.div>
@@ -31,11 +31,11 @@ export const OTPTimerResend = ({
 					variant="link"
 					onClick={handleResendOTP}
 					disabled={!canResend}
-					className={`font-['Nunito',Helvetica] font-bold text-[14px] tracking-[0.7px] p-0 h-auto ${
-						canResend
+					className={`font-['Nunito'] font-medium text-xs sm:text-sm 3xl:text-lg p-0 h-auto transition-colors
+						${canResend
 							? "text-[#0667D0] hover:text-[#054E9D]"
 							: "text-[#c7d3dd] opacity-50 cursor-not-allowed"
-					}`}
+						}`}
 				>
 					Resend Code
 				</Button>

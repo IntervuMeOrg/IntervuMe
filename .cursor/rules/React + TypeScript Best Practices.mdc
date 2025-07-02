@@ -1,0 +1,43 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+Define props with interfaces/types, not prop-types.
+
+Use the function keyword for components:
+
+```ts
+interface ButtonProps {
+  label: string
+  onClick?: () => void
+}
+
+export function Button({ label, onClick }: ButtonProps) {
+  return <button onClick={onClick}>{label}</button>
+}
+```
+
+Call hooks (useState, useEffect, etc.) only at the top level.
+
+Extract reusable logic into custom hooks (useAuth, useFormValidation).
+
+Memoize with React.memo, useCallback, useMemo where appropriate.
+
+Avoid inline functions in JSX—pull handlers out or wrap in useCallback.
+
+Favor composition (render props, children) over inheritance.
+
+Use React.lazy + Suspense for code splitting.
+
+Use refs only for direct DOM access.
+
+Prefer controlled components for forms.
+
+Implement an error boundary component.
+
+Clean up effects in useEffect to prevent leaks.
+
+Use guard clauses (early returns) for error handling.
+

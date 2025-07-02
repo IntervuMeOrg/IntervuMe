@@ -4,18 +4,11 @@ import { NavbarLayout } from "../../components/layout/NavbarLayout";
 import { DetailedFeedbackView } from "./DetailedFeedbackView";
 import { ResultSummaryCard } from "./ResultSummaryCard";
 import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
-
+import { DetailedFeedbackData } from "../../types/performance";
 type Question = MCQQuestion | ProblemSolvingQuestion;
 
-export const OverallFeedbackPage = (): JSX.Element => {
-	// State for logged in user (simulated)
-	const [userName, setUserName] = useState("Mohamed Essam");
-
-	// State for detailed feedback visibility
-	const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
-
-	// Mock questions data with correct answers and explanations
-	const [questions, setQuestions] = useState<Question[]>([
+const feedbackData: DetailedFeedbackData = {
+	questions: [
 		{
 			id: 1,
 			type: "mcq",
@@ -50,7 +43,6 @@ export const OverallFeedbackPage = (): JSX.Element => {
 			id: 3,
 			type: "problem_solving",
 			name: "Two Sum",
-			difficulty: "Medium",
 			text: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
 			examples: [
 				{
@@ -66,60 +58,135 @@ export const OverallFeedbackPage = (): JSX.Element => {
 				"Only one valid answer exists.",
 			],
 			points: 20,
-			solution: `function twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n  return [];\n}`,
+      			solution: `function twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n  return [];\n}`,
+
 			explanation:
 				"This solution uses a hash map to store each number and its index. For each number, we check if its complement (target - current number) exists in the map. If it does, we've found our pair. This approach has O(n) time complexity.",
 		},
-		{
-			id: 4,
-			type: "mcq",
-			text: "Which lifecycle method is called after a component is rendered for the first time?",
-			options: [
-				{ id: "a", text: "componentDidMount" },
-				{ id: "b", text: "componentWillMount" },
-				{ id: "c", text: "componentDidUpdate" },
-				{ id: "d", text: "componentWillUpdate" },
-			],
-			points: 10,
-			correctOptionId: "a",
-			explanation:
-				"componentDidMount is called after a component is mounted (inserted into the DOM tree). This is a good place to set up subscriptions or fetch data from an API.",
-		},
-		{
-			id: 5,
-			type: "problem_solving",
-			name: "Valid Palindrome",
-			difficulty: "Easy",
-			text: "Implement a function to check if a string is a palindrome, ignoring case and non-alphanumeric characters.",
-			examples: [
-				{
-					input: "'A man, a plan, a canal: Panama'",
-					output: "true",
-					explanation: "'amanaplanacanalpanama' is a palindrome",
-				},
-			],
-			constraints: [
-				"The input string may contain printable ASCII characters",
-				"We define empty string as valid palindrome",
-			],
-			points: 15,
-			solution: `function isPalindrome(s) {\n  // Remove non-alphanumeric characters and convert to lowercase\n  const cleanStr = s.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();\n  \n  // Check if the string reads the same forward and backward\n  let left = 0;\n  let right = cleanStr.length - 1;\n  \n  while (left < right) {\n    if (cleanStr[left] !== cleanStr[right]) {\n      return false;\n    }\n    left++;\n    right--;\n  }\n  \n  return true;\n}`,
-			explanation:
-				"This solution first cleans the string by removing non-alphanumeric characters and converting to lowercase. Then it uses two pointers (from start and end) to check if the string reads the same in both directions.",
-		},
-	]);
-
-	// Mock user answers
-	const [userAnswers, setUserAnswers] = useState<Record<number, string>>({
+	],
+	userAnswers: {
 		1: "d", // Correct
 		2: "b", // Incorrect (correct is c)
 		3: `function twoSum(nums, target) {\n  for (let i = 0; i < nums.length; i++) {\n    for (let j = i + 1; j < nums.length; j++) {\n      if (nums[i] + nums[j] === target) {\n        return [i, j];\n      }\n    }\n  }\n  return [];\n}`, // Correct but inefficient
-		4: "a", // Correct
-		5: `function isPalindrome(s) {\n  const alphanumeric = s.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();\n  return alphanumeric === alphanumeric.split('').reverse().join('');\n}`, // Correct
-	});
+	},
+	performanceMetrics: {
+		overallPercentage: 75, // Updated to match actual performance
+		mcqPercentage: 50, // 1 correct out of 2 MCQs = 50%
+		mcqCorrect: 1,
+		mcqTotal: 2, // Fixed: you have 2 MCQ questions
+		problemSolvingPercentage: 100, // 1 correct out of 1 = 100%
+		problemSolvingCorrect: 1,
+		problemSolvingTotal: 1,
+	},
+	skillAssessment: {
+		strengths: [
+			"Strong understanding of algorithmic complexity",
+			"Good problem-solving approach",
+			"Clean code structure",
+			"Effective use of data structures",
+		],
+		improvements: [
+			"Consider edge cases more thoroughly",
+			"Add input validation",
+			"Optimize space complexity where possible",
+			"Practice more dynamic programming problems",
+		],
+	},
+	studyRecommendations: {
+		studyResources: [
+			"LeetCode Algorithm Problems",
+			"Cracking the Coding Interview",
+			"Algorithm Design Manual",
+			"GeeksforGeeks Data Structures",
+		],
+		practiceAreas: [
+			"Hash Maps and Sets",
+			"Two Pointer Techniques",
+			"Dynamic Programming",
+			"Tree Traversal Algorithms",
+		],
+	},
+	questionPerformances: {
+		1: {
+			score: 100,
+			rating: "Excellent",
+			color: "text-green-400",
+			bgColor: "bg-green-400/10",
+			feedback:
+				"Perfect! You correctly identified that 'useReactState' is not a built-in React Hook. Great knowledge of React fundamentals.",
+		},
+		2: {
+			score: 40,
+			rating: "Needs Improvement",
+			color: "text-red-400",
+			bgColor: "bg-red-400/10",
+			feedback:
+				"Incorrect answer. The correct way to pass props in JSX is using double quotes. Review JSX syntax and prop passing conventions.",
+		},
+		3: {
+			score: 85,
+			rating: "Very Good",
+			color: "text-blue-400",
+			bgColor: "bg-blue-400/10",
+			feedback:
+				"Great solution! Your nested loop approach works correctly and handles all cases. Consider optimizing to O(n) time complexity using a hash map for better performance on larger inputs.",
+		},
+	},
+};
+export const OverallFeedbackPage = (): JSX.Element => {
+	// State for logged in user (simulated)
+	const [userName, setUserName] = useState("Mohamed Essam");
+
+	// State for detailed feedback visibility
+	const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
+
+	// Mock questions data with correct answers and explanations
+	const [questions, setQuestions] = useState<Question[]>(feedbackData.questions);
+
+	// Mock user answers
+	const [userAnswers, setUserAnswers] = useState<Record<number, string>>(feedbackData.userAnswers);
 
 	// State for active navigation item tracking
 	const activeNavItem = "";
+
+  	const totalPoints = feedbackData.questions.reduce((sum, q) => sum + q.points, 0);
+	const totalQuestions = questions.length;
+	const correctAnswers = feedbackData.questions.filter((q) => {
+			const userAnswer = feedbackData.userAnswers[q.id];
+			return q.type === "mcq"
+				? userAnswer === q.correctOptionId
+				: !!(userAnswer && userAnswer.trim().length > 0);
+	}).length;
+	const earnedPoints = feedbackData.questions.reduce((sum, q) => {
+		const userAnswer = feedbackData.userAnswers[q.id];
+		const isCorrect =
+			q.type === "mcq"
+				? userAnswer === q.correctOptionId
+				: !!(userAnswer && userAnswer.trim().length > 0);
+		return sum + (isCorrect ? q.points : 0);
+	}, 0);
+	let mcqCorrect = 0;
+	let mcqTotal = 0;
+	let problemSolvingCorrect = 0;
+	let problemSolvingTotal = 0;
+
+	questions.forEach((question) => {
+		const userAnswer = userAnswers[question.id];
+		if (question.type === "mcq") {
+			mcqTotal++;
+			if (userAnswer === question.correctOptionId) {
+				mcqCorrect++;
+			}
+		} else if (question.type === "problem_solving") {
+			problemSolvingTotal++;
+			if (userAnswer && userAnswer.trim().length > 0) {
+				problemSolvingCorrect++;
+			}
+		}
+	});
+
+	const overallPercentage = Math.round((earnedPoints / totalPoints) * 100);
+	const accuracy = Math.round((correctAnswers / totalQuestions) * 100);
 
 	return (
 		<NavbarLayout activeNavItem={activeNavItem} userName={userName}>
@@ -151,14 +218,19 @@ export const OverallFeedbackPage = (): JSX.Element => {
 							<ResultSummaryCard
 								questions={questions}
 								userAnswers={userAnswers}
+								overallPercentage={overallPercentage}
+								earnedPoints={earnedPoints}
+								totalPoints={totalPoints}
+								totalQuestions={totalQuestions}
+								correctAnswers={correctAnswers}
+								accuracy={accuracy}
 								setShowDetailedFeedback={setShowDetailedFeedback}
 							/>
 						</motion.div>
 					) : (
 						// Detailed Feedback View
 						<DetailedFeedbackView
-							questions={questions}
-							userAnswers={userAnswers}
+							data={feedbackData}
 							setShowDetailedFeedback={setShowDetailedFeedback}
 						/>
 					)}

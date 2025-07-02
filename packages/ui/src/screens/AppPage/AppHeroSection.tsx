@@ -1,138 +1,137 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
+type Step = {
+  id: number;
+  title: string;
+  image: string;
+  alt: string;
+};
+
 type AppHeroSectionProps = {
-	userName: string;
-	homeSectionRef: React.RefObject<HTMLElement>;
-	navigate: ReturnType<typeof useNavigate>;
-	steps: { id: number; title: string; image: string; alt: string }[];
+  userName: string;
+  homeSectionRef: React.RefObject<HTMLElement>;
+  navigate: ReturnType<typeof useNavigate>;
+  steps: Step[];
 };
 
 export const AppHeroSection = ({
-	userName,
-	homeSectionRef,
-	navigate,
-	steps,
+  userName,
+  homeSectionRef,
+  navigate,
+  steps,
 }: AppHeroSectionProps) => {
-	return (
-		<div className="bg-white w-full min-h-screen relative z-0">
-			{/* Background image */}
-			<img
-				className="h-[100vh] object-cover w-full absolute top-0 left-0"
-				alt="Rectangle"
-				src="/rectangle.png"
-			/>
+  const handleStepClick = (stepId: number) => {
+    window.scrollTo(0, 0);
+    
+    switch (stepId) {
+      case 1:
+        navigate("/start-interview");
+        break;
+      case 2:
+        navigate("/history");
+        break;
+      case 3:
+        navigate("/app");
+        setTimeout(() => {
+          document.getElementById("tipsAndTricks")?.scrollIntoView({
+            block: "start",
+            behavior: "smooth",
+          });
+        }, 0);
+        break;
+    }
+  };
 
-			{/* Main content */}
-			<motion.section
-				id="main-section"
-				ref={homeSectionRef}
-				initial={{ opacity: 0, y: 20 }}
-				whileInView={{ opacity: 1, y: 0 }}
-				viewport={{ once: true, margin: "-20% 0px" }}
-				transition={{
-					type: "spring",
-					stiffness: 90,
-					damping: 15,
-					mass: 0.5,
-					delay: 0.3,
-				}}
-				className="relative z-10 pt-[15vh] flex flex-col items-center pb-[2vh] h-[75vh]"
-			>
-				{/* Headline - SVG Title */}
-				<div className="text-center w-full flex flex-col items-center relative">
-					<img
-						src="/get-the-tech-career-you-deserve--faster.svg"
-						alt="Get the tech career you deserve, faster"
-						className="max-w-[80%] h-auto"
-					/>
-					{/* User greeting */}
-					<motion.div
-						initial={{ opacity: 0, y: 10 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.5, duration: 0.5 }}
-						className="mt-4"
-					>
-						<h2 className="font-['Nunito',Helvetica] font-bold text-[#1d1d20] text-[28px]">
-							Hello, {userName}
-						</h2>
-					</motion.div>
-				</div>
+  return (
+    <section 
+      ref={homeSectionRef}
+      className="relative min-h-screen w-full bg-white overflow-hidden flex items-center"
+    >
+      {/* Background image */}
+      <img
+        className="absolute inset-0 h-full w-full object-cover"
+        alt="Background"
+        src="/rectangle.png"
+      />
 
-				{/* Process steps cards */}
-				<div className="flex justify-center gap-[9vw]">
-					{steps.map((step) => (
-						<motion.div
-							key={step.id}
-							className="flex flex-col items-center relative h-[41vh] cursor-pointer"
-							whileHover={{
-								scale: 1.05,
-								transition: { duration: 0.3 },
-							}}
-							onClick={() => {
-								// Navigate based on step id
-								if (step.id === 1) {
-									// Start Mock Interview
-									window.scrollTo(0, 0); // Scroll to the top of the page
-									navigate("/start-interview");
-								} else if (step.id === 2) {
-									// View History
-									window.scrollTo(0, 0); // Scroll to the top of the page
-									navigate("/history");
-								} else if (step.id === 3) {
-									// Interview Tips
-									navigate("/app");
-									setTimeout(() => {
-										document.getElementById("tipsAndTricks")?.scrollIntoView({
-											block: "start",
-											behavior: "smooth",
-										});
-									}, 0);
-								}
-							}}
-						>
-							{/* Step image */}
-							<motion.img
-								className="w-full max-w-[90%] md:max-w-[55vw] h-[35vh] object-contain"
-								alt={step.alt}
-								src={step.image}
-								whileHover={{ y: -5 }}
-								transition={{ type: "spring", stiffness: 300 }}
-							/>
-							{/* Step title bar */}
-							<div className="flex items-center justify-center w-full mt-2">
-								<motion.div
-									className="absolute bottom-[14px] w-[70vw] max-w-[340px] min-w-[180px] h-[9vw] max-h-[48px] min-h-[36px] bg-[#1d1d20] rounded-[5px] shadow-lg shadow-black/50 flex items-center justify-center"
-									whileHover={{
-										boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.4)",
-										y: -2,
-									}}
-								>
-									<div className="absolute inset-0 [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18] z-[1]" />
-									<div className="relative flex items-center px-1 h-full w-full justify-center">
-										<div
-											className="
-														font-['Nunito',Helvetica]
-														font-semibold
-														text-[#e8eef2]
-														px-2
-														text-[3.5vw]
-														sm:text-[16px]
-														md:text-[18px]
-														lg:text-[20px]
-														whitespace-nowrap
-														text-center
-													"
-										>
-											{step.title}
-										</div>
-									</div>
-								</motion.div>
-							</div>
-						</motion.div>
-					))}
-				</div>
-			</motion.section>
-		</div>
-	);
+      {/* Main content */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative z-10 w-full py-16 sm:py-20"
+      >
+        {/* Container wrapper */}
+        <div className="container mx-auto px-4 sm:px-6 3xl:px-0 lg:px-8 max-w-6xl 3xl:max-w-7xl">
+          <div className="flex flex-col items-center">
+            {/* Headline and greeting */}
+            <div className="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12 3xl:mb-[4rem] -mt-1 sm:-mt-2 md:-mt-4 lg:-mt-8 3xl:-mt-8">
+              <img
+                src="/get-the-tech-career-you-deserve--faster.svg"
+                alt="Get the tech career you deserve, faster"
+                className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto 3xl:mx-96 3xl:ml-52 3xl:max-w-2xl"
+              />
+              <motion.h2
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="font-['Nunito'] font-bold text-[#1d1d20] text-base sm:text-lg md:text-xl 3xl:text-2xl mt-3 3xl:mt-6"
+              >
+                Hello, {userName}
+              </motion.h2>
+            </div>
+
+            {/* Process steps cards */}
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 3xl:gap-40 w-full">
+              {steps.map((step) => (
+                <motion.div
+                  key={step.id}
+                  className="relative flex flex-col items-center cursor-pointer w-full sm:w-auto max-w-[200px] sm:max-w-none 3xl:max-w-none"
+                  whileHover={{
+                    scale: 1.05,
+                    transition: { duration: 0.3 },
+                  }}
+                  onClick={() => handleStepClick(step.id)}
+                >
+                  {/* Step image - Progressive sizing */}
+                  <motion.img
+                    className="w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 3xl:w-72
+                              h-20 sm:h-28 md:h-32 lg:h-40 xl:h-48 3xl:h-64
+                              object-contain mb-6 sm:mb-8 md:mb-10 lg:mb-12 3xl:mb-12"
+                    alt={step.alt}
+                    src={step.image}
+                    whileHover={{ y: -5 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  />
+                  
+                  {/* Step title bar - Progressive sizing */}
+                  <motion.div
+                    className="absolute bottom-0
+                              w-32 sm:w-44 md:w-52 lg:w-60 xl:w-72 3xl:w-96 
+                              h-7 sm:h-8 md:h-9 lg:h-10 3xl:h-12
+                              bg-[#1d1d20] rounded-md shadow-lg shadow-black/50
+                              overflow-hidden"
+                    whileHover={{
+                      boxShadow: "0 2.5rem 3rem -1.5rem rgba(0, 0, 0, 0.4)",
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-md" />
+                    <div className="relative h-full flex items-center justify-center px-2">
+                      <h3 className="font-['Nunito'] font-semibold text-[#e8eef2] 
+                                     text-xs sm:text-xs md:text-sm lg:text-sm 3xl:text-xl
+                                     text-center leading-tight">
+                        {step.title}
+                      </h3>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </section>
+  );
 };

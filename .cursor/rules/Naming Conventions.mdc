@@ -1,0 +1,19 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+Directories: lowercase with dashes (e.g. components/auth-wizard)
+
+File extensions:
+
+Components → .tsx
+
+Hooks/Utils → .ts
+
+Style modules → .module.scss
+
+Prefer named exports for components
+
+Types/Interfaces in PascalCase (e.g. User, ButtonProps)
