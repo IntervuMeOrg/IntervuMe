@@ -82,7 +82,13 @@ export const LoginPage = (): JSX.Element => {
 			googleSignIn({
 				idToken: response.credential,
 				rememberMe: rememberMeRef.current,
-			});
+			},
+			{
+				onSuccess: () => {
+					navigate("/app", { replace: true });
+				},
+			}
+		);
 		} else {
 			console.error("No credential received from Google");
 			setErrorMessage("Failed to authenticate with Google");
@@ -206,7 +212,14 @@ export const LoginPage = (): JSX.Element => {
 			email: formData.email,
 			password: formData.password,
 			rememberMe: rememberMeRef.current,
+		}, {
+			onSuccess: () => {
+				navigate("/app", { replace: true });
+			},
 		});
+
+		
+
 	};
 
 	const isLoading = isPending || isGooglePending;

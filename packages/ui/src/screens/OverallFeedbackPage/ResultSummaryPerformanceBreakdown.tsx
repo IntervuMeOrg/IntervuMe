@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 import { CheckCircleIcon, XCircleIcon } from "lucide-react";
-import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
+import { MCQQuestion, CodingQuestion } from "../../types/questions";
 
 type ResultSummaryPerformanceBreakdownProps = {
-	questions: (MCQQuestion | ProblemSolvingQuestion)[];
+	questions: (MCQQuestion | CodingQuestion)[];
 	userAnswers: Record<number, string>;
 };
 
@@ -45,7 +45,7 @@ export const ResultSummaryPerformanceBreakdown = ({
 								)}
 								<span className="text-[#e8eef2] text-sm">
 									Question {index + 1} (
-									{question.type === "mcq" ? "MCQ" : "Problem Solving"})
+									{question.type === "mcq" ? "MCQ" : "Coding"})
 								</span>
 							</div>
 							<span className="text-white font-semibold text-sm">
