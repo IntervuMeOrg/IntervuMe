@@ -148,6 +148,7 @@ export const RegistrationForm = ({
 	genders,
 	months,
 }: RegistrationFormProps) => {
+	const navigate = useNavigate();
 	const signUpMutation = useSignUp();
 	// Toast notification state
 	const [toast, setToast] = useState<{
