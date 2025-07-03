@@ -1,15 +1,27 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { OTPFormPanel } from "./OTPFormPanel";
+import {
+	useVerifyOTP,
+	useForgotPassword,
+} from "../../lib/authentication/authentication-hooks";
 
 export const OTPVerificationPage = (): JSX.Element => {
 	const navigate = useNavigate();
+	const location = useLocation();
+	const { mutate: verifyOTP, isPending, error } = useVerifyOTP();
+	const { mutate: resendOTP } = useForgotPassword();
+
 	const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
 	const [timeLeft, setTimeLeft] = useState<number>(60);
 	const [canResend, setCanResend] = useState<boolean>(false);
-	const [isVerifying, setIsVerifying] = useState<boolean>(false);
+	const [errorMessage, setErrorMessage] = useState("");
+	const [showError, setShowError] = useState(false);
+	const [successMessage, setSuccessMessage] = useState("");
 	const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+	const email = location.state?.email || "";
 
 	// Timer effect
 	useEffect(() => {
@@ -23,6 +35,20 @@ export const OTPVerificationPage = (): JSX.Element => {
 		}
 	}, [timeLeft]);
 
+	// Error handling effect
+	useEffect(() => {
+		if (error) {
+			const msg =
+				error?.response?.data?.message ||
+				error?.message ||
+				"OTP verification failed";
+			setErrorMessage(msg);
+			setShowError(true);
+			const timeout = setTimeout(() => setShowError(false), 3000);
+			return () => clearTimeout(timeout);
+		}
+	}, [error]);
+
 	// Focus first input on mount
 	useEffect(() => {
 		if (inputRefs.current[0]) {
@@ -35,19 +61,35 @@ export const OTPVerificationPage = (): JSX.Element => {
 	};
 
 	const handleResendOTP = () => {
-		if (canResend) {
-			setTimeLeft(60);
-			setCanResend(false);
-			setOtp(["", "", "", "", "", ""]);
-			setTimeout(() => {
-				if (inputRefs.current[0]) {
-					inputRefs.current[0].focus();
+		if (canResend && email) {
+			resendOTP(
+				{ email },
+				{
+					onSuccess: () => {
+						setTimeLeft(60);
+						setCanResend(false);
+						setOtp(["", "", "", "", "", ""]);
+						setTimeout(() => {
+							if (inputRefs.current[0]) {
+								inputRefs.current[0].focus();
+							}
+						}, 100);
+						setSuccessMessage("New verification code sent successfully!");
+						setTimeout(() => setSuccessMessage(""), 3000); // Clear after 3 seconds
+					},
+					onError: (error) => {
+						const msg =
+							error?.response?.data?.message ||
+							error?.message ||
+							"Failed to resend OTP";
+						setErrorMessage(msg);
+						setShowError(true);
+						setTimeout(() => setShowError(false), 3000);
+					},
 				}
-			}, 100);
-			console.log("Resending OTP...");
+			);
 		}
 	};
-
 	const handleInputChange = (index: number, value: string) => {
 		if (value && !/^\d+$/.test(value)) return;
 
@@ -89,13 +131,15 @@ export const OTPVerificationPage = (): JSX.Element => {
 
 	const handleVerifyOTP = () => {
 		const otpValue = otp.join("");
-		if (otpValue.length !== 6) return;
-
-		setIsVerifying(true);
-		setTimeout(() => {
-			setIsVerifying(false);
-			navigate("/create-new-password");
-		}, 1500);
+		if (otpValue.length !== 6 || !email) return;
+		verifyOTP(
+			{ email, otp: otpValue },
+			{
+				onSuccess: () => {
+					navigate("/create-new-password", { state: { email: email } });
+				},
+			}
+		);
 	};
 
 	return (
@@ -111,8 +155,10 @@ export const OTPVerificationPage = (): JSX.Element => {
 				timeLeft={timeLeft}
 				canResend={canResend}
 				handleResendOTP={handleResendOTP}
-				isVerifying={isVerifying}
+				isVerifying={isPending}
 				handleVerifyOTP={handleVerifyOTP}
+				errorMessage={showError ? errorMessage : ""}
+				successMessage={successMessage}
 			/>
 
 			{/* Right panel with illustration */}

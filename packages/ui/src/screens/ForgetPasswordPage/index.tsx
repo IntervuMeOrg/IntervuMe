@@ -28,7 +28,6 @@ export const ForgetPasswordPage = (): JSX.Element => {
 	const handleSubmit = (data: { email: string }) => {
 		forgetPassword(data, {
 			onSuccess: () => {
-				showToast("Password reset email sent. Please check your inbox.","success");
 				navigate("/otp-verification", {state: { email: data.email} });
 			}
 		});
