@@ -16,7 +16,7 @@ export const OTPVerifyButton = ({
 		<motion.div
 			initial={{ opacity: 0, y: 10 }}
 			animate={{ opacity: 1, y: 0 }}
-				transition={{ delay: 0.3, duration: 0.5 }}
+			transition={{ delay: 0.3, duration: 0.5 }}
 		>
 			<Button
 				className="w-full h-8 sm:h-10 lg:h-10 3xl:h-14 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 

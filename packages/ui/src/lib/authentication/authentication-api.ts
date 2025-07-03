@@ -23,9 +23,13 @@ export interface ForgotPasswordRequest {
   email: string;
 }
 
-export interface ResetPasswordRequest {
+export interface VerifyOtpRequest{
   email: string;
   otp: string;
+}
+
+export interface ResetPasswordRequest {
+  email: string;
   password: string;
 }
 
@@ -65,6 +69,10 @@ export const authenticationApi = {
 
   forgotPassword(request: ForgotPasswordRequest) {
     return api.post<{ message: string }>('/api/auth/forgot-password', request);
+  },
+
+  verifyOTP(request: VerifyOtpRequest) {
+    return api.post<{ message: string }>('/api/auth/verify-otp', request);
   },
 
   resetPassword(request: ResetPasswordRequest) {

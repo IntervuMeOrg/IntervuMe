@@ -21,6 +21,9 @@ type OTPFormPanelProps = {
 	handleResendOTP: () => void;
 	isVerifying: boolean;
 	handleVerifyOTP: () => void;
+	errorMessage: string;
+	successMessage: string;
+	email?: string;
 };
 
 export const OTPFormPanel = ({
@@ -36,6 +39,9 @@ export const OTPFormPanel = ({
 	handleResendOTP,
 	isVerifying,
 	handleVerifyOTP,
+	errorMessage,
+	successMessage,
+	email,
 }: OTPFormPanelProps) => {
 	return (
 		<motion.div
@@ -93,10 +99,35 @@ export const OTPFormPanel = ({
 									Verify Your Email
 								</h2>
 								<p className="font-['Nunito'] font-medium text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg mt-2">
-									We've sent a 6-digit verification code to your email. Enter
-									the code below to continue.
+									We've sent a 6-digit verification code to{" "}
+									{email || "your email"}. Enter the code below to continue.
 								</p>
 							</div>
+							{/* Success message */}
+							{successMessage && (
+								<motion.div
+									initial={{ opacity: 0, y: -10 }}
+									animate={{ opacity: 1, y: 0 }}
+									className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-md"
+								>
+									<p className="text-green-400 text-sm font-['Nunito']">
+										{successMessage}
+									</p>
+								</motion.div>
+							)}
+
+							{/* Error message */}
+							{errorMessage && (
+								<motion.div
+									initial={{ opacity: 0, y: -10 }}
+									animate={{ opacity: 1, y: 0 }}
+									className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-md"
+								>
+									<p className="text-red-400 text-sm font-['Nunito']">
+										{errorMessage}
+									</p>
+								</motion.div>
+							)}
 
 							{/* OTP Input Fields */}
 							<OTPInputFields
