@@ -6,10 +6,17 @@ import { FeaturesSection } from "../../components/layout/FeaturesSection";
 import { OurViewSection } from "./LandingOurViewSection";
 import { NavigationBar } from "./LandingNavigationBar";
 import { HeroSection } from "./LandingHeroSection";
+import { authenticationSession } from "../../lib/authentication/authentication-hooks";
 
 export const LandingPage = (): JSX.Element => {
 	// Navigation hook for routing
 	const navigate = useNavigate();
+	useEffect(() => {
+		// If the user is already authenticated, redirect them
+		if (authenticationSession.isAuthenticated()) {
+			navigate("/app", { replace: true });
+		}
+	}, []);
 	// State for active navigation item tracking
 	const [activeNavItem, setActiveNavItem] = useState("Home");
 	// Reference to features section for scroll detection

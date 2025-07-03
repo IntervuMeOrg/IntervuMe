@@ -14,6 +14,7 @@ import { SettingsPage } from "./screens/SettingsPage";
 import { InterviewQuestionsPage } from "./screens/InterviewQuestionsPage";
 import { OverallFeedbackPage } from "./screens/OverallFeedbackPage";
 import { OTPVerificationPage } from "./screens/OTPVerificationPage";
+import { NotFoundPage } from "./screens/NotFoundPage"; // Add this import
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAuthentication } from "./lib/authentication/authentication-hooks";
 import { Navigate, Outlet } from "react-router-dom";
@@ -57,6 +58,9 @@ createRoot(document.getElementById("app") as HTMLElement).render(
 						/>
 						<Route path="/overall-feedback" element={<OverallFeedbackPage />} />
 					</Route>
+
+					{/* Catch-all route for 404 - must be last */}
+					<Route path="*" element={<NotFoundPage />} />
 				</Routes>
 			</BrowserRouter>
 		</QueryClientProvider>

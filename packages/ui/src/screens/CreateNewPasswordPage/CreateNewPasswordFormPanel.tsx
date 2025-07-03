@@ -2,18 +2,95 @@ import { motion } from "framer-motion";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { Check, X } from "lucide-react";
 
 type CreateNewPasswordFormPanelProps = {
-	handleSetPassword?: () => void;
+	handleSetPassword: (password: string, confirmPassword: string) => void;
 	handleBackToLogin?: () => void;
 	navigate: ReturnType<typeof useNavigate>;
+	isLoading?: boolean;
+	errorMessage?: string;
+	showError?: boolean;
+	successMessage?: string;
+};
+
+interface PasswordFormData {
+	password: string;
+	confirmPassword: string;
+}
+
+const passwordRequirements = [
+	{ id: 1, text: "At least 8 characters", regex: /.{8,}/ },
+	{ id: 2, text: "An uppercase letter", regex: /[A-Z]/ },
+	{ id: 3, text: "A lowercase letter", regex: /[a-z]/ },
+	{ id: 4, text: "A number", regex: /[0-9]/ },
+	{ id: 5, text: "A special character", regex: /[^A-Za-z0-9]/ },
+];
+
+const PasswordRequirements = ({ value }: { value: string }) => {
+	return (
+		<div className="mt-3 3xl:mt-6 space-y-1 3xl:space-y-3">
+			<p className="font-['Nunito'] font-normal text-[#c7d3dd] text-xs 3xl:text-[1.1rem]">
+				Password must:
+			</p>
+			<ul className="space-y-1 3xl:space-y-2 ml-2">
+				{passwordRequirements.map((req) => {
+					const isValid = req.regex.test(value);
+					return (
+						<li key={req.id} className="flex items-center gap-2">
+							{isValid ? (
+								<Check className="w-3 h-3 3xl:w-4 3xl:h-4 text-green-500" />
+							) : (
+								<X className="w-3 h-3 3xl:w-4 3xl:h-4 text-red-500" />
+							)}
+							<span className={`font-['Nunito'] font-normal text-xs 3xl:text-[1.1rem] ${
+								isValid ? 'text-green-500' : 'text-[#c7d3dd]'
+							}`}>
+								{req.text}
+							</span>
+						</li>
+					);
+				})}
+			</ul>
+		</div>
+	);
 };
 
 export const CreateNewPasswordFormPanel = ({
 	handleSetPassword,
 	handleBackToLogin,
 	navigate,
+	isLoading = false,
+	errorMessage = "",
+	showError = false,
+	successMessage = "",
 }: CreateNewPasswordFormPanelProps) => {
+	const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+	
+	const {
+		register,
+		handleSubmit,
+		watch,
+		trigger,
+		formState: { errors },
+	} = useForm<PasswordFormData>();
+
+	const passwordValue = watch("password") || "";
+
+	const validatePassword = (value: string) => {
+		const requirements = passwordRequirements.map(req => req.regex.test(value));
+		if (!requirements.every(Boolean)) {
+			return "Password must meet all requirements";
+		}
+		return true;
+	};
+
+	const onSubmit = (data: PasswordFormData) => {
+		handleSetPassword(data.password, data.confirmPassword);
+	};
+
 	return (
 		<>
 			{/* Left panel with form */}
@@ -34,7 +111,10 @@ export const CreateNewPasswordFormPanel = ({
 							initial={{ opacity: 0, scale: 0.95 }}
 							animate={{ opacity: 1, scale: 1 }}
 							transition={{ delay: 0.2, duration: 0.5 }}
-							onClick={() => navigate("/")}
+							onClick={() => {
+								sessionStorage.removeItem("resetFlowStep");
+								navigate("/")
+							}}
 							className="mb-6 sm:mb-8"
 						>
 							<h1 className="font-['Nunito'] font-extrabold text-white text-lg sm:text-xl lg:text-2xl 3xl:text-[2.1rem] tracking-wider cursor-pointer drop-shadow-lg">
@@ -42,7 +122,7 @@ export const CreateNewPasswordFormPanel = ({
 							</h1>
 						</motion.div>
 
-						{/* Back button - MOVED HERE */}
+						{/* Back button */}
 						<motion.div
 							initial={{ opacity: 0, x: -10 }}
 							animate={{ opacity: 1, x: 0 }}
@@ -77,42 +157,88 @@ export const CreateNewPasswordFormPanel = ({
 									</p>
 								</div>
 
+								{/* Error Message */}
+								{showError && errorMessage && (
+									<motion.div
+										initial={{ opacity: 0, y: -10 }}
+										animate={{ opacity: 1, y: 0 }}
+										exit={{ opacity: 0, y: -10 }}
+										className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-md"
+									>
+										<p className="font-['Nunito'] text-red-400 text-sm">
+											{errorMessage}
+										</p>
+									</motion.div>
+								)}
+
+								{/* Success Message */}
+								{successMessage && (
+									<motion.div
+										initial={{ opacity: 0, y: -10 }}
+										animate={{ opacity: 1, y: 0 }}
+										className="mb-4 p-3 bg-green-500/20 border border-green-500/50 rounded-md"
+									>
+										<p className="font-['Nunito'] text-green-400 text-sm">
+											{successMessage}
+										</p>
+									</motion.div>
+								)}
+
 								{/* Form fields */}
-								<form className="space-y-4 sm:space-y-5 3xl:space-y-6">
+								<form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-5 3xl:space-y-6">
 									{/* Password input */}
 									<div>
 										<Input
+											{...register("password", {
+												required: "Password is required",
+												validate: validatePassword,
+												onChange: () => trigger("confirmPassword"), // Trigger confirmPassword validation when password changes
+											})}
 											className="h-8 sm:h-10 lg:h-10 3xl:h-14 bg-[#e8eef2] rounded-md px-3 sm:px-4 3xl:px-6 text-black font-['Nunito'] shadow-md w-full text-sm sm:text-base 3xl:text-lg placeholder:text-black/60"
 											placeholder="Create Password"
 											type="password"
+											onFocus={() => setIsPasswordFocused(true)}
+											onBlur={() => setIsPasswordFocused(false)}
 										/>
+										{errors.password && !isPasswordFocused && (
+											<motion.div
+												initial={{ opacity: 0, y: -5 }}
+												animate={{ opacity: 1, y: 0 }}
+												className="mt-2 p-2 bg-red-500/20 border border-red-500/50 rounded-md"
+											>
+												<p className="font-['Nunito'] text-red-400 text-xs">
+													{errors.password.message}
+												</p>
+											</motion.div>
+										)}
+										{(isPasswordFocused || passwordValue) && (
+											<PasswordRequirements value={passwordValue} />
+										)}
 									</div>
 
 									{/* Confirm password input */}
 									<div>
 										<Input
+											{...register("confirmPassword", {
+												required: "Please confirm your password",
+												validate: (value) =>
+													value === passwordValue || "Passwords don't match",
+											})}
 											className="h-8 sm:h-10 lg:h-10 3xl:h-14 bg-[#e8eef2] rounded-md px-3 sm:px-4 3xl:px-6 text-black font-['Nunito'] shadow-md w-full text-sm sm:text-base 3xl:text-lg placeholder:text-black/60"
 											placeholder="Re-enter Password"
 											type="password"
 										/>
-									</div>
-
-									{/* Password requirements */}
-									<div className="mt-3 3xl:mt-6 space-y-1 3xl:space-y-3">
-										<p className="font-['Nunito'] font-normal text-[#c7d3dd] text-xs 3xl:text-[1.1rem]">
-											Password must:
-										</p>
-										<ul className="list-disc list-inside space-y-1 3xl:space-y-3 ml-2">
-											<li className="font-['Nunito'] font-normal text-[#c7d3dd] text-xs 3xl:text-[1.1rem]">
-												Be at least 8 characters long
-											</li>
-											<li className="font-['Nunito'] font-normal text-[#c7d3dd] text-xs 3xl:text-[1.1rem]">
-												Contain at least one uppercase letter
-											</li>
-											<li className="font-['Nunito'] font-normal text-[#c7d3dd] text-xs 3xl:text-[1.1rem]">
-												Contain at least one number
-											</li>
-										</ul>
+										{errors.confirmPassword && (
+											<motion.div
+												initial={{ opacity: 0, y: -5 }}
+												animate={{ opacity: 1, y: 0 }}
+												className="mt-2 p-2 bg-red-500/20 border border-red-500/50 rounded-md"
+											>
+												<p className="font-['Nunito'] text-red-400 text-xs">
+													{errors.confirmPassword.message}
+												</p>
+											</motion.div>
+										)}
 									</div>
 
 									{/* Set password button */}
@@ -122,11 +248,12 @@ export const CreateNewPasswordFormPanel = ({
 										transition={{ delay: 0.3, duration: 0.5 }}
 									>
 										<Button
+											type="submit"
+											disabled={isLoading}
 											className="w-full h-8 sm:h-10 lg:h-10 3xl:h-14 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
-                               hover:opacity-90 rounded-md font-['Nunito'] text-sm sm:text-base 3xl:text-[1.3rem] tracking-wide mt-5"
-											onClick={handleSetPassword}
+                               hover:opacity-90 disabled:opacity-50 rounded-md font-['Nunito'] text-sm sm:text-base 3xl:text-[1.3rem] tracking-wide mt-5"
 										>
-											Set Password
+											{isLoading ? "Setting Password..." : "Set Password"}
 										</Button>
 									</motion.div>
 								</form>

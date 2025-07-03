@@ -5,10 +5,17 @@ import { OTPFormPanel } from "./OTPFormPanel";
 import {
 	useVerifyOTP,
 	useForgotPassword,
+	authenticationSession,
 } from "../../lib/authentication/authentication-hooks";
 
 export const OTPVerificationPage = (): JSX.Element => {
 	const navigate = useNavigate();
+	useEffect(() => {
+		// If the user is already authenticated, redirect them
+		if (authenticationSession.isAuthenticated()) {
+			navigate("/app", { replace: true });
+		}
+	}, []);
 	const location = useLocation();
 	const { mutate: verifyOTP, isPending, error } = useVerifyOTP();
 	const { mutate: resendOTP } = useForgotPassword();
@@ -48,6 +55,14 @@ export const OTPVerificationPage = (): JSX.Element => {
 			return () => clearTimeout(timeout);
 		}
 	}, [error]);
+
+	useEffect(() => {
+		const step = sessionStorage.getItem("resetFlowStep");
+		// Only allow access if the flow came from forget password
+		if (step !== "forgot") {
+			navigate("/login", { replace: true });
+		}
+	}, []);
 
 	// Focus first input on mount
 	useEffect(() => {
@@ -136,7 +151,10 @@ export const OTPVerificationPage = (): JSX.Element => {
 			{ email, otp: otpValue },
 			{
 				onSuccess: () => {
-					navigate("/create-new-password", { state: { email: email } });
+					setSuccessMessage("OTP verified! Redirecting...");
+					sessionStorage.setItem("resetFlowStep", "otp");
+					setTimeout(() => navigate("/create-new-password", { state: { email: email } }), 2000);
+					
 				},
 			}
 		);

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
 	authenticationApi,
 	SignInRequest,
@@ -8,44 +8,101 @@ import {
 	ForgotPasswordRequest,
 	ResetPasswordRequest,
 	AuthResponse,
-	VerifyOtpRequest,
 } from "./authentication-api";
+
+// Extended SignInRequest to include rememberMe
+interface ExtendedSignInRequest extends SignInRequest {
+	rememberMe?: boolean;
+}
+
+interface ExtendedGoogleSignInRequestBody extends GoogleSignInRequestBody {
+	rememberMe?: boolean;
+}
 
 // Authentication session helper
 export const authenticationSession = {
-	getToken: () => localStorage.getItem("authToken"),
+	getToken: () => {
+		// Check localStorage first (persistent), then sessionStorage
+		return (
+			localStorage.getItem("authToken") || sessionStorage.getItem("authToken")
+		);
+	},
+
 	getUser: (): AuthResponse | null => {
-		const userData = localStorage.getItem("user");
+		// Check localStorage first (persistent), then sessionStorage
+		const userData =
+			localStorage.getItem("user") || sessionStorage.getItem("user");
 		return userData ? JSON.parse(userData) : null;
 	},
-	setSession: (user: AuthResponse) => {
-		localStorage.setItem("authToken", user.token);
-		localStorage.setItem("user", JSON.stringify(user));
+
+	setSession: (user: AuthResponse, rememberMe: boolean = false) => {
+		if (rememberMe) {
+			// Store in localStorage for persistent login
+			localStorage.setItem("authToken", user.token);
+			localStorage.setItem("user", JSON.stringify(user));
+			localStorage.setItem("rememberMe", "true");
+
+			// Clear sessionStorage to avoid conflicts
+			sessionStorage.removeItem("authToken");
+			sessionStorage.removeItem("user");
+		} else {
+			// Store in sessionStorage for session-only login
+			sessionStorage.setItem("authToken", user.token);
+			sessionStorage.setItem("user", JSON.stringify(user));
+
+			// Clear localStorage to avoid conflicts and ensure fresh session
+			localStorage.removeItem("authToken");
+			localStorage.removeItem("user");
+			localStorage.removeItem("rememberMe");
+		}
 	},
+
 	clearSession: () => {
+		// Clear both localStorage and sessionStorage
 		localStorage.removeItem("authToken");
 		localStorage.removeItem("user");
+		localStorage.removeItem("rememberMe");
+
+		sessionStorage.removeItem("authToken");
+		sessionStorage.removeItem("user");
 	},
+
 	isAuthenticated: () => {
-		return (
-			!!localStorage.getItem("authToken") && !!localStorage.getItem("user")
-		);
+		const token =
+			localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+		const user = localStorage.getItem("user") || sessionStorage.getItem("user");
+		return !!token && !!user;
+	},
+
+	// New method to check if user has persistent login
+	isPersistentLogin: () => {
+		return localStorage.getItem("rememberMe") === "true";
+	},
+
+	// New method to get storage type being used
+	getStorageType: () => {
+		if (localStorage.getItem("authToken")) return "localStorage";
+		if (sessionStorage.getItem("authToken")) return "sessionStorage";
+		return null;
 	},
 };
 
-// Sign in hook
+// Sign in hook - updated to handle rememberMe
 export const useSignIn = () => {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (request: SignInRequest) => {
-			const response = await authenticationApi.signIn(request);
-			return response.data;
+		mutationFn: async (request: ExtendedSignInRequest) => {
+			// Extract rememberMe from request before sending to API
+			const { rememberMe, ...signInData } = request;
+			const response = await authenticationApi.signIn(signInData);
+			return { ...response.data, rememberMe };
 		},
-		onSuccess: (data: AuthResponse) => {
-			authenticationSession.setSession(data);
-			queryClient.invalidateQueries({ queryKey: ["current-user"] }); // ← Force refetch
+		onSuccess: (data: AuthResponse & { rememberMe?: boolean }) => {
+			const { rememberMe = false, ...userData } = data;
+			authenticationSession.setSession(userData, rememberMe);
+			queryClient.invalidateQueries({ queryKey: ["current-user"] });
 			navigate("/app");
 		},
 		onError: (error: any) => {
@@ -57,18 +114,22 @@ export const useSignIn = () => {
 	});
 };
 
+// Google Sign In hook - for now treating as rememberMe = true, but you can modify
 export const useGoogleSignIn = () => {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (request: GoogleSignInRequestBody) => {
-			const response = await authenticationApi.googleSignIn(request);
-			return response.data;
+		mutationFn: async (request: ExtendedGoogleSignInRequestBody) => {
+			const { rememberMe, ...signInData } = request;
+			const response = await authenticationApi.googleSignIn(signInData);
+			return { ...response.data, rememberMe };
 		},
-		onSuccess: (data: AuthResponse) => {
-			authenticationSession.setSession(data);
-			queryClient.invalidateQueries({ queryKey: ["current-user"] }); // ← Force refetch
+		onSuccess: (data: AuthResponse & { rememberMe?: boolean }) => {
+			const { rememberMe = true, ...userData } = data; // Default to true for Google sign-in
+			console.log("Remember me value: ",rememberMe)
+			authenticationSession.setSession(userData, rememberMe);
+			queryClient.invalidateQueries({ queryKey: ["current-user"] });
 			navigate("/app");
 		},
 		onError: (error: any) => {
@@ -86,13 +147,15 @@ export const useSignUp = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (request: SignUpRequest) => {
-			const response = await authenticationApi.signUp(request);
-			return response.data;
+		mutationFn: async (request: SignUpRequest & { rememberMe?: boolean }) => {
+			const { rememberMe, ...signUpData } = request;
+			const response = await authenticationApi.signUp(signUpData);
+			return { ...response.data, rememberMe };
 		},
-		onSuccess: (data: AuthResponse) => {
-			authenticationSession.setSession(data);
-			queryClient.invalidateQueries({ queryKey: ["current-user"] }); // ← Force refetch
+		onSuccess: (data: AuthResponse & { rememberMe?: boolean }) => {
+			const { rememberMe = true, ...userData } = data; // Default to true for sign-up
+			authenticationSession.setSession(userData, rememberMe);
+			queryClient.invalidateQueries({ queryKey: ["current-user"] });
 			navigate("/app");
 		},
 		onError: (error: any) => {
@@ -122,7 +185,7 @@ export const useForgotPassword = () => {
 
 export const useVerifyOTP = () => {
 	return useMutation({
-		mutationFn: async (request: {email: string, otp: string}) =>{
+		mutationFn: async (request: { email: string; otp: string }) => {
 			const response = await authenticationApi.verifyOTP(request);
 			return response.data;
 		},
@@ -132,8 +195,8 @@ export const useVerifyOTP = () => {
 				error.response?.data?.message || error.message
 			);
 		},
-	})
-}
+	});
+};
 
 // Reset password hook
 export const useResetPassword = () => {
@@ -143,10 +206,6 @@ export const useResetPassword = () => {
 		mutationFn: async (request: ResetPasswordRequest) => {
 			const response = await authenticationApi.resetPassword(request);
 			return response.data;
-		},
-		onSuccess: () => {
-			// Redirect to login after successful reset
-			setTimeout(() => navigate("/login"), 2000);
 		},
 		onError: (error: any) => {
 			console.error(
@@ -174,6 +233,8 @@ export const useCurrentUser = () => {
 export const useAuthentication = () => {
 	const user = authenticationSession.getUser();
 	const isAuthenticated = authenticationSession.isAuthenticated();
+	const isPersistent = authenticationSession.isPersistentLogin();
+	const storageType = authenticationSession.getStorageType();
 	const navigate = useNavigate();
 
 	const logout = () => {
@@ -192,6 +253,8 @@ export const useAuthentication = () => {
 	return {
 		user,
 		isAuthenticated,
+		isPersistent,
+		storageType,
 		logout,
 		requireAuth,
 	};
@@ -214,5 +277,29 @@ export const useAuthorization = () => {
 		hasRole,
 		checkAccess,
 		userRole: user?.role,
+	};
+};
+
+export const useSessionManagement = () => {
+	const { isPersistent, storageType } = useAuthentication();
+
+	const extendSession = (rememberMe: boolean) => {
+		const user = authenticationSession.getUser();
+		if (user) {
+			authenticationSession.setSession(user, rememberMe);
+		}
+	};
+
+	const getSessionInfo = () => {
+		return {
+			isPersistent,
+			storageType,
+			hasRememberMe: localStorage.getItem("rememberMe") === "true",
+		};
+	};
+
+	return {
+		extendSession,
+		getSessionInfo,
 	};
 };
