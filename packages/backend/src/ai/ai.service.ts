@@ -1,5 +1,6 @@
 import { extractJson } from "./utils";
 import {
+  codingDifficultyPrompt,
   feedbackPrompt,
   keywordPrompt,
   mcqAllocPrompt,
@@ -14,6 +15,8 @@ import {
   MCQQuestion,
   KeywordExtractionResponse,
   SimilarityResponse,
+  CodingDifficultyResponse,
+  ComprehensiveAnalysisResponse,
 } from "./types";
 
 // Model configuration
@@ -78,7 +81,6 @@ export const aiService = {
       model,
       prompt: keywordPrompt(jobDescription),
     });
-
     const json = extractJson(generatedText.text);
     if (!json) {
       throw new Error("No JSON found in the response");
@@ -97,7 +99,6 @@ export const aiService = {
       model,
       prompt: mcqAllocPrompt(jobDescription, langs, numQuestions),
     });
-
     const json = extractJson(generatedText.text);
     if (!json) {
       throw new Error("No JSON found in the response");
@@ -115,12 +116,88 @@ export const aiService = {
       model,
       prompt: similarityPrompt(jobParsedSkills, categories),
     });
-
     const json = extractJson(generatedText.text);
     if (!json) {
       throw new Error("No JSON found in the response");
     }
     return JSON.parse(json) as SimilarityResponse;
+  },
+
+  async getCodingDifficulty(
+    jobDescription: string,
+    modelName: string
+  ): Promise<CodingDifficultyResponse> {
+    const model = this.getModel(modelName);
+    const generatedText = await generateText({
+      model,
+      prompt: codingDifficultyPrompt(jobDescription),
+    });
+    const json = extractJson(generatedText.text);
+    if (!json) {
+      throw new Error("No JSON found in the response");
+    }
+    return JSON.parse(json) as CodingDifficultyResponse;
+  },
+
+  async analyzeJobDescription(
+    jobDescription: string,
+    modelName: string,
+    numMcqQuestions: number = 5
+  ): Promise<ComprehensiveAnalysisResponse> {
+
+    const keywords = await this.getKeywords(jobDescription, modelName);
+    const langs = keywords.programming_languages;
+
+    const [mcqAllocation, similarity, codingDifficulty] = await Promise.all([
+      this.getMcqAlloc(jobDescription, langs, numMcqQuestions, modelName),
+      this.getSimilarity(
+        // make it dynamic based on keywords
+        ["Python", "SQL", "Machine Learning"], 
+        [
+          "AI & ML",
+          "Software Development",
+          "Data Science",
+          "Cloud Technologies",
+          "Cybersecurity",
+          "DevOps & CI/CD",
+          "Database Management",
+          "Web Development",
+          "Mobile App Development",
+          "Blockchain & Web3",
+          "Python",
+          "JavaScript",
+          "Java",
+          "C++",
+          "C#",
+          "Ruby",
+          "Go",
+          "Swift",
+          "PHP",
+          "Rust",
+          "Project Management",
+          "Agile & Scrum",
+          "Product Management",
+          "Business Analysis",
+          "IT Service Management (ITIL)",
+          "Networking Fundamentals",
+          "System Administration",
+          "Cloud Computing (AWS, Azure, GCP)",
+          "Communication Skills",
+          "Leadership & Team Management",
+          "Problem-Solving",
+          "Critical Thinking",
+        ],
+        modelName
+      ),
+      this.getCodingDifficulty(jobDescription, modelName)
+    ]);
+
+    return {
+      keywords,
+      mcqAllocation,
+      similarity,
+      codingDifficulty,
+    };
   },
 
   async getFeedback(

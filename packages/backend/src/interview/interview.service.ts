@@ -31,6 +31,7 @@ import {
 } from "../coding/test-case-result/testCaseResult-types";
 import { mcqAnswerService } from "../mcq/mcq-answer/mcq-answer.service";
 import { isNil } from "../common/utils";
+import { aiService } from "../ai/ai.service";
 
 const InterviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
@@ -182,15 +183,22 @@ export const interviewService = {
   },
 
   async create(request: CreateInterviewRequestBody): Promise<Interview> {
-    // Placeholder AI analysis - replace with actual aiService.analyzeJobDescription later
-    const aiAnalysis = {
-      mcqRequirements: [
-        { tag: "javascript", count: 1 },
-        { tag: "react", count: 1 },
-        { tag: "nodejs", count: 1 },
-      ],
-      codingRequirements: "easy" as DifficultyLevel,
-    };
+    const aiAnalysis = await aiService.analyzeJobDescription(
+      request.jobDescription,
+      "deepseek-r1",
+      5
+    );
+
+    const mcqRequirements = aiAnalysis.mcqAllocation.allocations
+      ? Object.entries(aiAnalysis.mcqAllocation.allocations).map(
+          ([skill, count]: [string, any]) => ({
+            tag: skill,
+            count: Number(count),
+          })
+        )
+      : [];
+
+    const codingDifficulties = aiAnalysis.codingDifficulty.difficulties;
 
     const interview = InterviewRepository().create({
       id: apId(),
@@ -206,8 +214,8 @@ export const interviewService = {
 
     // Convert array of tag requirements to the expected format
     const tagCounts: { [tag: string]: number } = {};
-    for (const tagRequirement of aiAnalysis.mcqRequirements) {
-      tagCounts[tagRequirement.tag] = tagRequirement.count;
+    for (const tagRequirement of mcqRequirements) {
+      tagCounts[tagRequirement.tag.toLowerCase()] = tagRequirement.count;
     }
 
     const mcqQuestions = await mcqQuestionService.getRandomByTagsAndCount(
@@ -223,19 +231,21 @@ export const interviewService = {
       });
     }
 
-    const codingQuestions =
-      await codingQuestionService.getRandomByDifficultyAndCount(
-        "easy" as DifficultyLevel,
-        2
-      );
+    for (const difficulty of codingDifficulties) {
+      const codingQuestions =
+        await codingQuestionService.getRandomByDifficultyAndCount(
+          difficulty as DifficultyLevel,
+          1
+        );
 
-    for (const codingQuestion of codingQuestions) {
-      await interviewQuestionService.create({
-        interviewId: interview.id,
-        questionType: QuestionType.CODING,
-        questionId: codingQuestion.id,
-        questionOrder: questionOrder++,
-      });
+      for (const codingQuestion of codingQuestions) {
+        await interviewQuestionService.create({
+          interviewId: interview.id,
+          questionType: QuestionType.CODING,
+          questionId: codingQuestion.id,
+          questionOrder: questionOrder++,
+        });
+      }
     }
 
     return interview;
@@ -245,7 +255,6 @@ export const interviewService = {
     interviewId: string,
     submissionData: SubmitInterviewRequestBody
   ): Promise<InterviewSubmissionResult> {
-
     const interview = await interviewService.get(interviewId);
     if (!interview) {
       throw new Error(`Interview not found: ${interviewId}`);
