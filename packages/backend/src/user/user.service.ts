@@ -103,8 +103,7 @@ export const userService = {
     });
   },
 
-  async resetPassword(request: ResetPasswordRequestBody): Promise<void> {
-    const email = request.email;
+  async verifyOTP(email: string, otp: string): Promise<void> {
     const user = await userRepository().findOne({ where: { email } });
 
     if (!user || !user.resetToken || !user.resetTokenExpiry)
@@ -113,8 +112,16 @@ export const userService = {
     if (isBefore(user.resetTokenExpiry, new Date()))
       throw new Error("Reset code has expired");
 
-    const isMatch = await bcrypt.compare(request.otp, user.resetToken);
+    const isMatch = await bcrypt.compare(otp, user.resetToken);
     if (!isMatch) throw new Error("Invalid reset code");
+  },
+
+  async resetPassword(request: ResetPasswordRequestBody): Promise<void> {
+    const email = request.email;
+    const user = await userRepository().findOne({ where: { email } });
+
+    if (!user)
+      throw new Error("User doesn't exist");
 
     user.password = await bcrypt.hash(request.password, 10);
     user.resetToken = null;
