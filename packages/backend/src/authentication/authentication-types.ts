@@ -46,3 +46,9 @@ export const AuthResponse = Type.Composite([
 ]);
 
 export type AuthResponse = Static<typeof AuthResponse>;
+
+export const GoogleSignInRequestBody = Type.Object({
+  idToken: Type.String(),
+});
+
+export type GoogleSignInRequestBody = Static<typeof GoogleSignInRequestBody>;

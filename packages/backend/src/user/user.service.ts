@@ -28,9 +28,13 @@ export const userService = {
       : userRepository();
 
     const { password, ...userData } = request;
-    // Hash password
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Hash password only if provided (for regular email/password users)
+    let hashedPassword;
+    if (password) {
+      const saltRounds = 10;
+      hashedPassword = await bcrypt.hash(password, saltRounds);
+    }
 
     const user = repo.save({
       id: apId(),

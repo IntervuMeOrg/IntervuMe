@@ -3,9 +3,9 @@ import { Static, Type } from "@fastify/type-provider-typebox";
 export const ProfileInput = Type.Object({
   firstName: Type.String(),
   lastName: Type.String(),
-  gender: Type.String(),
-  dob: Type.String({ format: "date" }),
-  phone: Type.String(),
+  gender: Type.Optional(Type.String()),
+  dob: Type.Optional(Type.String({ format: "date" })),
+  phone: Type.Optional(Type.String()),
 });
 
 export type ProfileInput = Static<typeof ProfileInput>;
