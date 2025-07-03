@@ -30,7 +30,7 @@ export const HistoryPerformanceBreakdown = () => {
 			whileInView={{ opacity: 1, x: 0 }}
 			viewport={{ once: true }}
 			transition={{ delay: 0.3 }}
-			className="bg-[#1d1d20] rounded-lg p-4 sm:p-5 md:p-6 shadow-lg relative overflow-hidden group"
+			className="bg-[#1d1d20] rounded-lg p-4 sm:p-5 md:p-6 shadow-lg relative overflow-hidden group font-['Nunito']"
 			whileHover={{
 				scale: 1.02,
 				boxShadow:
