@@ -9,7 +9,10 @@ import {
   McqAnswer,
   McqAnswerSummary,
 } from "../mcq/mcq-answer/mcq-answer-types";
-import { CodeSubmissionWithResults } from "../coding/code-submission/code-submission-types";
+import {
+  CodeSubmission,
+  CodeSubmissionWithResults,
+} from "../coding/code-submission/code-submission-types";
 import {
   Interview,
   CreateInterviewRequestBody,
@@ -22,9 +25,13 @@ import {
 import { mcqQuestionService } from "../mcq/mcq-question/mcq-question.service";
 import { DifficultyLevel } from "../coding/coding-question/codingQuestion-types";
 import { codeSubmissionService } from "../coding/code-submission/codeSubmission.service";
-import { TestCaseResult, Verdict } from "../coding/test-case-result/testCaseResult-types";
+import {
+  TestCaseResult,
+  Verdict,
+} from "../coding/test-case-result/testCaseResult-types";
 import { mcqAnswerService } from "../mcq/mcq-answer/mcq-answer.service";
-import { isNil } from '../common/utils';
+import { isNil } from "../common/utils";
+import { aiService } from "../ai/ai.service";
 
 const InterviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
@@ -84,7 +91,10 @@ export const interviewService = {
     });
   },
 
-  async update(id: string, request: UpdateInterviewRequestBody): Promise<InterviewSession> {
+  async update(
+    id: string,
+    request: UpdateInterviewRequestBody
+  ): Promise<InterviewSession> {
     const interview = await InterviewRepository().findOne({
       where: { id },
       relations: ["interviewQuestions", "answers", "codeSubmissions"],
@@ -173,15 +183,22 @@ export const interviewService = {
   },
 
   async create(request: CreateInterviewRequestBody): Promise<Interview> {
-    // Placeholder AI analysis - replace with actual aiService.analyzeJobDescription later
-    const aiAnalysis = {
-      mcqRequirements: [
-        { tag: "javascript", count: 1 },
-        { tag: "react", count: 1 },
-        { tag: "nodejs", count: 1 },
-      ],
-      codingRequirements: "medium" as DifficultyLevel,
-    };
+    const aiAnalysis = await aiService.analyzeJobDescription(
+      request.jobDescription,
+      "deepseek-r1",
+      5
+    );
+
+    const mcqRequirements = aiAnalysis.mcqAllocation.allocations
+      ? Object.entries(aiAnalysis.mcqAllocation.allocations).map(
+          ([skill, count]: [string, any]) => ({
+            tag: skill,
+            count: Number(count),
+          })
+        )
+      : [];
+
+    const codingDifficulties = aiAnalysis.codingDifficulty.difficulties;
 
     const interview = InterviewRepository().create({
       id: apId(),
@@ -197,8 +214,8 @@ export const interviewService = {
 
     // Convert array of tag requirements to the expected format
     const tagCounts: { [tag: string]: number } = {};
-    for (const tagRequirement of aiAnalysis.mcqRequirements) {
-      tagCounts[tagRequirement.tag] = tagRequirement.count;
+    for (const tagRequirement of mcqRequirements) {
+      tagCounts[tagRequirement.tag.toLowerCase()] = tagRequirement.count;
     }
 
     const mcqQuestions = await mcqQuestionService.getRandomByTagsAndCount(
@@ -214,19 +231,21 @@ export const interviewService = {
       });
     }
 
-    const codingQuestions =
-      await codingQuestionService.getRandomByDifficultyAndCount(
-        "medium" as DifficultyLevel,
-        2
-      );
+    for (const difficulty of codingDifficulties) {
+      const codingQuestions =
+        await codingQuestionService.getRandomByDifficultyAndCount(
+          difficulty as DifficultyLevel,
+          1
+        );
 
-    for (const codingQuestion of codingQuestions) {
-      await interviewQuestionService.create({
-        interviewId: interview.id,
-        questionType: QuestionType.CODING,
-        questionId: codingQuestion.id,
-        questionOrder: questionOrder++,
-      });
+      for (const codingQuestion of codingQuestions) {
+        await interviewQuestionService.create({
+          interviewId: interview.id,
+          questionType: QuestionType.CODING,
+          questionId: codingQuestion.id,
+          questionOrder: questionOrder++,
+        });
+      }
     }
 
     return interview;
@@ -236,6 +255,22 @@ export const interviewService = {
     interviewId: string,
     submissionData: SubmitInterviewRequestBody
   ): Promise<InterviewSubmissionResult> {
+    const interview = await interviewService.get(interviewId);
+    if (!interview) {
+      throw new Error(`Interview not found: ${interviewId}`);
+    }
+    const currentTime = new Date();
+    const interviewEndTime = new Date(interview.startTime);
+    interviewEndTime.setMinutes(
+      interviewEndTime.getMinutes() + interview.timeLimit
+    );
+
+    if (currentTime > interviewEndTime) {
+      throw new Error(
+        `Interview time has expired. Cannot submit after ${interviewEndTime.toISOString()}`
+      );
+    }
+
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -296,36 +331,13 @@ export const interviewService = {
         mcqAnswers.push(mcqAnswer);
       }
 
-      const codeSubmissionsWithResults: CodeSubmissionWithResults[] = [];
-
-      for (const codeSubmissionData of submissionData.codeSubmissions) {
-        const codeSubmission = await codeSubmissionService.create({
-          ...codeSubmissionData,
-        });
-
-        // Run test cases (you'll need to implement this)
-        const testCaseResults = await this.runTestCases(
-          codeSubmissionData.questionId,
-          codeSubmissionData.code
-        );
-
-        const submissionWithResults: CodeSubmissionWithResults = {
-          ...codeSubmission,
-          testCaseResults,
-        };
-
-        codeSubmissionsWithResults.push(submissionWithResults);
-      }
+      const codeSubmissionsWithResults: CodeSubmission[] =
+        await codeSubmissionService.getByInterviewId(interviewId);
 
       // Adjust scoring later
       const mcqPercentage = maxPoints > 0 ? (totalPoints / maxPoints) * 100 : 0;
       const codeScore = this.calculateCodeScore(codeSubmissionsWithResults);
       const totalScore = mcqPercentage + codeScore;
-
-      const interview = await interviewService.get(interviewId);
-      if (!interview) {
-        throw new Error(`Interview not found: ${interviewId}`);
-      }
 
       const updatedInterview = await InterviewRepository().save({
         ...interview,
@@ -362,27 +374,8 @@ export const interviewService = {
     }
   },
 
-  async runTestCases(
-    questionId: string,
-    code: string
-  ): Promise<TestCaseResult[]> {
-    // TODO: Call code execution service
-    return [
-      {
-        id: "6E5uzx44lvJPPa5s2VUcW",
-        codeSubmissionId: "85pj4vlqD1visW5OPvhwg",
-        testCaseId: "6E5uzx44lvJPPa5s2VUcM",
-        passed: true,
-        verdict: Verdict.PASSED,
-        userOutput: "Mock output",
-        created: new Date().toISOString(),
-        updated: new Date().toISOString(),
-      },
-    ];
-  },
-
   // Placeholder method
-  calculateCodeScore(submissions: CodeSubmissionWithResults[]): number {
+  calculateCodeScore(submissions: CodeSubmission[]): number {
     return 75.5;
   },
 };
