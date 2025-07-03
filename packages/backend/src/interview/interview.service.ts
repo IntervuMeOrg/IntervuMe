@@ -9,7 +9,10 @@ import {
   McqAnswer,
   McqAnswerSummary,
 } from "../mcq/mcq-answer/mcq-answer-types";
-import { CodeSubmission, CodeSubmissionWithResults } from "../coding/code-submission/code-submission-types";
+import {
+  CodeSubmission,
+  CodeSubmissionWithResults,
+} from "../coding/code-submission/code-submission-types";
 import {
   Interview,
   CreateInterviewRequestBody,
@@ -22,9 +25,12 @@ import {
 import { mcqQuestionService } from "../mcq/mcq-question/mcq-question.service";
 import { DifficultyLevel } from "../coding/coding-question/codingQuestion-types";
 import { codeSubmissionService } from "../coding/code-submission/codeSubmission.service";
-import { TestCaseResult, Verdict } from "../coding/test-case-result/testCaseResult-types";
+import {
+  TestCaseResult,
+  Verdict,
+} from "../coding/test-case-result/testCaseResult-types";
 import { mcqAnswerService } from "../mcq/mcq-answer/mcq-answer.service";
-import { isNil } from '../common/utils';
+import { isNil } from "../common/utils";
 
 const InterviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
@@ -84,7 +90,10 @@ export const interviewService = {
     });
   },
 
-  async update(id: string, request: UpdateInterviewRequestBody): Promise<InterviewSession> {
+  async update(
+    id: string,
+    request: UpdateInterviewRequestBody
+  ): Promise<InterviewSession> {
     const interview = await InterviewRepository().findOne({
       where: { id },
       relations: ["interviewQuestions", "answers", "codeSubmissions"],
@@ -236,6 +245,23 @@ export const interviewService = {
     interviewId: string,
     submissionData: SubmitInterviewRequestBody
   ): Promise<InterviewSubmissionResult> {
+
+    const interview = await interviewService.get(interviewId);
+    if (!interview) {
+      throw new Error(`Interview not found: ${interviewId}`);
+    }
+    const currentTime = new Date();
+    const interviewEndTime = new Date(interview.startTime);
+    interviewEndTime.setMinutes(
+      interviewEndTime.getMinutes() + interview.timeLimit
+    );
+
+    if (currentTime > interviewEndTime) {
+      throw new Error(
+        `Interview time has expired. Cannot submit after ${interviewEndTime.toISOString()}`
+      );
+    }
+
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -296,18 +322,13 @@ export const interviewService = {
         mcqAnswers.push(mcqAnswer);
       }
 
-    const codeSubmissionsWithResults: CodeSubmission[] = 
-      await codeSubmissionService.getByInterviewId(interviewId);
+      const codeSubmissionsWithResults: CodeSubmission[] =
+        await codeSubmissionService.getByInterviewId(interviewId);
 
       // Adjust scoring later
       const mcqPercentage = maxPoints > 0 ? (totalPoints / maxPoints) * 100 : 0;
       const codeScore = this.calculateCodeScore(codeSubmissionsWithResults);
       const totalScore = mcqPercentage + codeScore;
-
-      const interview = await interviewService.get(interviewId);
-      if (!interview) {
-        throw new Error(`Interview not found: ${interviewId}`);
-      }
 
       const updatedInterview = await InterviewRepository().save({
         ...interview,
