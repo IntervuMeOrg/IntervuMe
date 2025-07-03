@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
 	authenticationApi,
 	SignInRequest,
@@ -8,7 +8,6 @@ import {
 	ForgotPasswordRequest,
 	ResetPasswordRequest,
 	AuthResponse,
-	VerifyOtpRequest,
 } from "./authentication-api";
 
 // Extended SignInRequest to include rememberMe
