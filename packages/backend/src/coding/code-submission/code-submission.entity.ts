@@ -40,6 +40,7 @@ export const CodeSubmissionEntity = new EntitySchema<CodeSubmissionSchema>({
       type: "one-to-many",
       target: "test_case_result",
       inverseSide: "codeSubmission",
+      eager: true,
     },
   },
   indices: [

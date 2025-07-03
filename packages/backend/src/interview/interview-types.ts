@@ -1,6 +1,6 @@
 import { Static, Type } from "@fastify/type-provider-typebox";
 import { BaseModelSchema } from "../common/base-model";
-import { CodeSubmissionWithResults, CreateCodeSubmissionRequestBody } from "../coding/code-submission/code-submission-types";
+import { CodeSubmission, CodeSubmissionWithResults, CreateCodeSubmissionRequestBody } from "../coding/code-submission/code-submission-types";
 import { CreateMcqAnswerRequestBody, McqAnswer, McqAnswerSummary } from "../mcq/mcq-answer/mcq-answer-types";
 import { InterviewQuestion } from "./interview-question/interview-question-types";
 import { ApId } from "../common/id-generator";
@@ -73,7 +73,6 @@ export type UpdateInterviewRequestBody = Static<
 
 export const SubmitInterviewRequestBody = Type.Object({
   mcqAnswers: Type.Array(CreateMcqAnswerRequestBody),
-  codeSubmissions: Type.Array(CreateCodeSubmissionRequestBody),
 });
 
 export type SubmitInterviewRequestBody = Static<typeof SubmitInterviewRequestBody>;
@@ -82,7 +81,7 @@ export const InterviewSubmissionResult = Type.Object({
   interviewId: ApId,
   status: Type.String(),
   mcqSummary: McqAnswerSummary,
-  codeSubmissions: Type.Array(CodeSubmissionWithResults),
+  codeSubmissions: Type.Array(CodeSubmission),
   totalScore: Type.Number(),
   submittedAt: Type.String({ format: "date-time" }),
 });

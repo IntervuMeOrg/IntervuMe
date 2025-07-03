@@ -80,3 +80,15 @@ export interface FeedbackResponse {
   };
   next_steps: string[];
 }
+
+export interface CodingDifficultyResponse {
+  difficulties: ("easy" | "medium" | "hard")[];
+  reasoning: string;
+}
+
+export interface ComprehensiveAnalysisResponse {
+  keywords: KeywordExtractionResponse;
+  mcqAllocation: AllocationResponse;
+  similarity: SimilarityResponse;
+  codingDifficulty: CodingDifficultyResponse;
+}

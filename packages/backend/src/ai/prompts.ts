@@ -127,3 +127,29 @@ Return JSON:
   "next_steps": ["immediate action 1", "immediate action 2", "long-term goal 1"]
 }
 `;
+
+export const codingDifficultyPrompt = (jobDescription: string): string =>
+  `Analyze the following job description and determine the appropriate difficulty levels for 2 coding questions that would be suitable for this role.
+
+Job Description:
+${jobDescription}
+
+Based on the role's seniority level, required skills, and experience expectations, select exactly 2 difficulty levels from: easy, medium, hard.
+
+Consider:
+- Junior/Entry-level roles: easy or medium
+- Mid-level roles: medium or hard  
+- Senior/Lead roles: medium or hard
+- The same difficulty can be selected twice if appropriate
+
+Return your response in the following JSON format:
+{
+  "difficulties": ["difficulty1", "difficulty2"],
+  "reasoning": "Brief explanation of why these difficulty levels are appropriate for this role"
+}
+
+Example response:
+{
+  "difficulties": ["medium", "hard"],
+  "reasoning": "This is a senior software engineer role requiring 5+ years of experience with complex system design, so medium and hard questions are appropriate to assess advanced problem-solving skills."
+}`;

@@ -15,65 +15,18 @@ export const aiController: FastifyPluginAsyncTypebox = async (app) => {
       .jobDescription;
     const modelName = (request.body as { modelName: string }).modelName;
 
-    const keywordOutput = await aiService.getKeywords(
+    const comprehensiveAnalysis = await aiService.analyzeJobDescription(
       jobDescription,
-      modelName
-    );
-    const langs = keywordOutput.programming_languages;
-
-    const mcqAllocOutput = await aiService.getMcqAlloc(
-      jobDescription,
-      langs,
-      5,
-      modelName
-    );
-
-    const jobParsedSkills = ["Python", "SQL", "Machine Learning"];
-    const categories = [
-      "AI & ML",
-      "Software Development",
-      "Data Science",
-      "Cloud Technologies",
-      "Cybersecurity",
-      "DevOps & CI/CD",
-      "Database Management",
-      "Web Development",
-      "Mobile App Development",
-      "Blockchain & Web3",
-      "Python",
-      "JavaScript",
-      "Java",
-      "C++",
-      "C#",
-      "Ruby",
-      "Go",
-      "Swift",
-      "PHP",
-      "Rust",
-      "Project Management",
-      "Agile & Scrum",
-      "Product Management",
-      "Business Analysis",
-      "IT Service Management (ITIL)",
-      "Networking Fundamentals",
-      "System Administration",
-      "Cloud Computing (AWS, Azure, GCP)",
-      "Communication Skills",
-      "Leadership & Team Management",
-      "Problem-Solving",
-      "Critical Thinking",
-    ];
-    const similarityOutput = await aiService.getSimilarity(
-      jobParsedSkills,
-      categories,
-      modelName
+      modelName,
+      5 // number of MCQ questions
     );
 
     return {
-      keywordOutput,
-      langs,
-      mcqAllocOutput,
-      similarityOutput,
+      keywordOutput: comprehensiveAnalysis.keywords,
+      langs: comprehensiveAnalysis.keywords.programming_languages,
+      mcqAllocOutput: comprehensiveAnalysis.mcqAllocation,
+      similarityOutput: comprehensiveAnalysis.similarity,
+      codingDifficultyOutput: comprehensiveAnalysis.codingDifficulty, // New field
     };
   });
 
@@ -99,6 +52,7 @@ const TestRequest = {
         langs: Type.Array(Type.String()),
         mcqAllocOutput: Type.Any(),
         similarityOutput: Type.Any(),
+        codingDifficultyOutput: Type.Any()
       }),
     },
   },

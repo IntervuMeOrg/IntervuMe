@@ -3,10 +3,15 @@ import { BaseModelSchema } from "../../common/base-model";
 import { ApId } from "../../common/id-generator";
 
 export enum Verdict {
-  PASSED = "passed",
-  WRONGANSWER = "wrong answer",
-  TLE = "time limit",
-  MLE = "memory limit",
+  ACCEPTED = "ACCEPTED",
+  WRONG_ANSWER = "WRONG_ANSWER",
+  TIME_LIMIT_EXCEEDED = "TIME_LIMIT_EXCEEDED",
+  MEMORY_LIMIT_EXCEEDED = "MEMORY_LIMIT_EXCEEDED",
+  COMPILATION_ERROR = "COMPILATION_ERROR",
+  RUNTIME_ERROR = "RUNTIME_ERROR",
+  PRESENTATION_ERROR = "PRESENTATION_ERROR",
+  INTERNAL_ERROR = "INTERNAL_ERROR",
+  PENDING = "PENDING",
 }
 
 export const TestCaseResult = Type.Object({
