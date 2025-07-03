@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Toast } from "../../components/ui/Toast";
 import { SkillInputDialog } from "../../components/ui/SkillInputDialog";
 import { NavbarLayout } from "../../components/layout/NavbarLayout";
@@ -8,15 +8,21 @@ import { ProfileCard } from "./ProfileCard";
 import { ProfileSkillsExperience } from "./ProfileSkillsExperience";
 import { ProfileSkillAnalysis } from "./ProfileSkillAnalysis";
 import { ProfileStatsCards } from "./ProfileStatsCards";
+import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
 
 export const ProfilePage = (): JSX.Element => {
+  const user = useCurrentUser();
   // State for active navigation item tracking
   const activeNavItem = "";
   // State for logged in user (simulated)
-  const [userName, setUserName] = useState("Mohamed Essam");
+  const [userName, setUserName] = useState("");
 
   // State for edit mode
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(()=>{
+    setUserName(`${user.data?.firstName} ${user.data?.lastName}`);
+  },[user.data?.firstName, user.data?.lastName])
 
   // Toast notification state
   const [toast, setToast] = useState<{
@@ -56,10 +62,10 @@ export const ProfilePage = (): JSX.Element => {
 
   // User profile data
   const [userProfile, setUserProfile] = useState({
-    firstName: "Mohamed",
-    lastName: "Essam",
-    email: "me21@example.com",
-    phone: "+1012 3456 789",
+    firstName: user.data?.firstName,
+    lastName: user.data?.lastName,
+    email: user.data?.email,
+    phone: user.data?.phone, 
     location: "Cairo, Egypt",
     bio: "Frontend Developer with 3 years of experience specializing in React and TypeScript. Passionate about creating intuitive user interfaces and optimizing web performance.",
     skills: [
