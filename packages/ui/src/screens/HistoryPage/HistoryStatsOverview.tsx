@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { CalendarIcon, ClockIcon, BarChart4Icon } from "lucide-react";
 
 type interviewHistory = {
-  id: number;
+  id: string;
   title: string;
   date: string;
   time: string;

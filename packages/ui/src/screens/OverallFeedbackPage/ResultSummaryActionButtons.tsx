@@ -33,7 +33,7 @@ export const ResultSummaryActionButtons = ({
 			<Button
 				onClick={() => {
 					window.scrollTo(0, 0);
-					navigate("/start-interview");
+					navigate("/interview");
 				}}
 				className="bg-white/20 hover:bg-white/30 text-white border border-white/30 px-6 py-3 rounded-md transition-all"
 			>

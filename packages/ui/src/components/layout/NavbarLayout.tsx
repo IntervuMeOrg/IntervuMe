@@ -104,6 +104,7 @@ export const NavbarLayout = ({
 		window.scrollTo({ top: 0 });
 		if (action === "logout") {
 			auth.logout();
+			navigate("/login");
 		} else {
 			navigate(action);
 		}

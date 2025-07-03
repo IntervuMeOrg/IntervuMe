@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { NavbarLayout } from "../../components/layout/NavbarLayout";
 import { DetailedFeedbackView } from "./DetailedFeedbackView";
 import { ResultSummaryCard } from "./ResultSummaryCard";
-import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
+import { MCQQuestion, CodingQuestion } from "../../types/questions";
 import { DetailedFeedbackData } from "../../types/performance";
 import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
 
-type Question = MCQQuestion | ProblemSolvingQuestion;
+type Question = MCQQuestion | CodingQuestion;
 
 const feedbackData: DetailedFeedbackData = {
 	questions: [
@@ -43,7 +43,7 @@ const feedbackData: DetailedFeedbackData = {
 		},
 		{
 			id: 3,
-			type: "problem_solving",
+			type: "coding",
 			name: "Two Sum",
 			text: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
 			examples: [
@@ -188,7 +188,7 @@ export const OverallFeedbackPage = (): JSX.Element => {
 			if (userAnswer === question.correctOptionId) {
 				mcqCorrect++;
 			}
-		} else if (question.type === "problem_solving") {
+		} else if (question.type === "coding") {
 			problemSolvingTotal++;
 			if (userAnswer && userAnswer.trim().length > 0) {
 				problemSolvingCorrect++;

@@ -1,9 +1,9 @@
-import { ProblemSolvingQuestion } from "../types/questions";
+import { CodingQuestion } from "../types/questions";
 
-export function mapBackendToProblemSolving(backendData: any): ProblemSolvingQuestion {
+export function mapBackendToCoding(backendData: any): CodingQuestion {
   return {
     id: parseInt(backendData.id),
-    type: "problem_solving",
+    type: "coding",
     title: backendData.title,
     category: backendData.category,
     difficulty: backendData.difficulty,

@@ -17,10 +17,10 @@ export const HistoryPage = (): JSX.Element => {
 	// Navigation hook for routing
 	const navigate = useNavigate();
 
-	// Mock interview history data
+	// Mock interview history data (in real app, this would come from useUserInterviews hook)
 	const interviewHistory = [
 		{
-			id: 1,
+			id: "1",
 			title: "Frontend Developer Interview",
 			date: "June 28, 2025",
 			time: "14:30",
@@ -30,7 +30,7 @@ export const HistoryPage = (): JSX.Element => {
 			skills: ["React", "JavaScript", "CSS", "Problem Solving"],
 		},
 		{
-			id: 2,
+			id: "2",
 			title: "React Technical Assessment",
 			date: "May 10, 2025",
 			time: "10:15",
@@ -40,7 +40,7 @@ export const HistoryPage = (): JSX.Element => {
 			skills: ["React Hooks", "State Management", "API Integration"],
 		},
 		{
-			id: 3,
+			id: "3",
 			title: "Backend Interview Practice",
 			date: "May 3, 2025",
 			time: "16:45",
@@ -50,7 +50,7 @@ export const HistoryPage = (): JSX.Element => {
 			skills: ["Technical Skills", "Problem Solving", "Code Quality"],
 		},
 		{
-			id: 4,
+			id: "4",
 			title: "Full Stack Developer Interview",
 			date: "April 25, 2025",
 			time: "11:00",
@@ -60,7 +60,7 @@ export const HistoryPage = (): JSX.Element => {
 			skills: ["Node.js", "React", "MongoDB", "System Design"],
 		},
 		{
-			id: 5,
+			id: "5",
 			title: "JavaScript Fundamentals",
 			date: "April 18, 2025",
 			time: "09:30",
@@ -137,7 +137,7 @@ export const HistoryPage = (): JSX.Element => {
 											className="bg-[#1d1d20] rounded-lg p-4 sm:p-5 md:p-6 shadow-md hover:shadow-lg transition-all cursor-pointer relative overflow-hidden"
 											onClick={() => {
 												window.scrollTo(0, 0);
-												navigate("/overall-feedback");
+												navigate(`/interview/${interview.id}/results`);
 											}}
 										>
 											{/* Gradient overlay */}
@@ -205,7 +205,7 @@ export const HistoryPage = (): JSX.Element => {
 														onClick={(e) => {
 															e.stopPropagation();
 															window.scrollTo(0, 0);
-															navigate("/overall-feedback");
+															navigate(`/interview/${interview.id}/results`);
 														}}
 													>
 														<span className="font-['Nunito'] font-semibold text-white text-xs sm:text-sm md:text-base">
@@ -241,7 +241,7 @@ export const HistoryPage = (): JSX.Element => {
 										className="rounded-md h-12 sm:h-14 md:h-16 px-6 sm:px-8 md:px-10 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] hover:opacity-90 transition-opacity duration-200 flex items-center gap-2 sm:gap-3 border-0"
 										onClick={() => {
 											window.scrollTo(0, 0);
-											navigate("/start-interview");
+											navigate("/interview");
 										}}
 									>
 										<PlusIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
