@@ -7,6 +7,7 @@ import { useState, FormEvent, useEffect, useRef } from "react";
 import {
 	useSignIn,
 	useGoogleSignIn,
+	authenticationSession,
 } from "../../lib/authentication/authentication-hooks";
 
 const GOOGLE_CLIENT_ID =
@@ -49,6 +50,15 @@ declare global {
 
 export const LoginPage = (): JSX.Element => {
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		// If the user is already authenticated, redirect them
+		if (authenticationSession.isAuthenticated()) {
+			navigate("/app", { replace: true });
+		}
+	}, []);
+
+	const rememberMeRef = useRef(false);
 	const { mutate: signInMutation, isPending, error } = useSignIn();
 	const [errorMessage, setErrorMessage] = useState("");
 	const [showError, setShowError] = useState(false);
@@ -68,7 +78,11 @@ export const LoginPage = (): JSX.Element => {
 
 	const handleGoogleCallback = (response: { credential: string }) => {
 		if (response.credential) {
-			googleSignIn({ idToken: response.credential });
+			console.log("remember me value in google login", formData.rememberMe);
+			googleSignIn({
+				idToken: response.credential,
+				rememberMe: rememberMeRef.current,
+			});
 		} else {
 			console.error("No credential received from Google");
 			setErrorMessage("Failed to authenticate with Google");
@@ -186,9 +200,12 @@ export const LoginPage = (): JSX.Element => {
 	const handleLogin = async (e: FormEvent) => {
 		e.preventDefault();
 		if (!formData.email || !formData.password) return;
+		console.log("remember me value in simple login", formData.rememberMe);
+
 		signInMutation({
 			email: formData.email,
 			password: formData.password,
+			rememberMe: rememberMeRef.current,
 		});
 	};
 
@@ -203,10 +220,19 @@ export const LoginPage = (): JSX.Element => {
 	};
 
 	const handleInputChange = (field: string, value: string | boolean) => {
-		setFormData((prev) => ({
-			...prev,
-			[field]: value,
-		}));
+		setFormData((prev) => {
+			const updated = {
+				...prev,
+				[field]: value,
+			};
+
+			// Keep rememberMeRef in sync
+			if (field === "rememberMe") {
+				rememberMeRef.current = value as boolean;
+			}
+
+			return updated;
+		});
 	};
 
 	return (
