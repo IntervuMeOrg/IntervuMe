@@ -40,9 +40,7 @@ export const authenticationController: FastifyPluginAsyncTypebox = async (
 
   app.post("/sign-in", SignInRequest, async (request) => {
     const body = request.body as SignInRequestBody;
-
     const response = await authService.signInWithPassword(body, app.jwt.sign);
-
     return response;
   });
 
