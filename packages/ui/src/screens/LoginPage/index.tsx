@@ -3,39 +3,196 @@ import { Button } from "../../components/ui/button";
 import { Checkbox } from "../../components/ui/checkbox";
 import { Input } from "../../components/ui/input";
 import { motion } from "framer-motion";
-import { useState, FormEvent, useEffect } from "react";
-import { useSignIn, useGoogleSignIn } from "../../lib/authentication/authentication-hooks"; // Adjust path as needed
+import { useState, FormEvent, useEffect, useRef } from "react";
+import {
+	useSignIn,
+	useGoogleSignIn,
+} from "../../lib/authentication/authentication-hooks";
 
-// Google Sign-In types
+const GOOGLE_CLIENT_ID =
+	"196919409734-on1gg6kuvodl7iociab8j2cdn4comobt.apps.googleusercontent.com";
+
 declare global {
-  interface Window {
-    google?: {
-      accounts: {
-        id: {
-          initialize: (config: any) => void;
-          prompt: () => void;
-          renderButton: (element: HTMLElement, config: any) => void;
-        };
-      };
-    };
-  }
+	interface Window {
+		google?: {
+			accounts: {
+				id: {
+					initialize: (config: {
+						client_id: string;
+						callback: (response: { credential: string }) => void;
+						auto_select?: boolean;
+						cancel_on_tap_outside?: boolean;
+					}) => void;
+					renderButton: (
+						element: HTMLElement,
+						config: {
+							type?: "standard" | "icon";
+							theme?: "outline" | "filled_blue" | "filled_black";
+							size?: "large" | "medium" | "small";
+							text?: "signin_with" | "signup_with" | "continue_with";
+							shape?: "rectangular" | "pill" | "circle" | "square";
+							logo_alignment?: "left" | "center";
+							width?: string | number;
+						}
+					) => void;
+					prompt: (
+						notificationCallback?: (notification: {
+							isNotDisplayed: () => boolean;
+							isSkippedMoment: () => boolean;
+						}) => void
+					) => void;
+				};
+			};
+		};
+	}
 }
-
 
 export const LoginPage = (): JSX.Element => {
 	const navigate = useNavigate();
-	const {mutate:signInMutation, isPending, error} = useSignIn();
-	const [errorMessage, setErrorMessage] = useState('');
+	const { mutate: signInMutation, isPending, error } = useSignIn();
+	const [errorMessage, setErrorMessage] = useState("");
 	const [showError, setShowError] = useState(false);
-  	const { mutate: googleSignIn, isPending: isGooglePending, error: googleError } = useGoogleSignIn();
+	const {
+		mutate: googleSignIn,
+		isPending: isGooglePending,
+		error: googleError,
+	} = useGoogleSignIn();
+	const googleInitialized = useRef(false);
+	const hiddenButtonRef = useRef<HTMLDivElement>(null);
 
-	
-	// Form state
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",
 		rememberMe: false,
 	});
+
+	const handleGoogleCallback = (response: { credential: string }) => {
+		if (response.credential) {
+			googleSignIn({ idToken: response.credential });
+		} else {
+			console.error("No credential received from Google");
+			setErrorMessage("Failed to authenticate with Google");
+			setShowError(true);
+			setTimeout(() => setShowError(false), 3000);
+		}
+	};
+
+	// Initialize Google Sign-In
+	useEffect(() => {
+		const initializeGoogleAuth = () => {
+			if (!window.google || googleInitialized.current) return;
+
+			try {
+				window.google.accounts.id.initialize({
+					client_id: GOOGLE_CLIENT_ID,
+					callback: handleGoogleCallback,
+					auto_select: false,
+					cancel_on_tap_outside: true,
+				});
+
+				// Create a hidden Google button that we'll trigger programmatically
+				if (hiddenButtonRef.current) {
+					window.google.accounts.id.renderButton(hiddenButtonRef.current, {
+						type: "standard",
+						theme: "outline",
+						size: "large",
+						text: "continue_with",
+						width: "100%",
+					});
+				}
+
+				googleInitialized.current = true;
+				console.log("Google auth initialized");
+			} catch (error) {
+				console.error("Google initialization error:", error);
+				setErrorMessage("Failed to initialize Google authentication");
+				setShowError(true);
+			}
+		};
+
+		const loadGoogleScript = () => {
+			if (
+				document.querySelector(
+					'script[src="https://accounts.google.com/gsi/client"]'
+				)
+			) {
+				if (window.google) {
+					initializeGoogleAuth();
+				} else {
+					const checkGoogleLoaded = setInterval(() => {
+						if (window.google) {
+							initializeGoogleAuth();
+							clearInterval(checkGoogleLoaded);
+						}
+					}, 100);
+					setTimeout(() => clearInterval(checkGoogleLoaded), 10000);
+				}
+				return;
+			}
+
+			const script = document.createElement("script");
+			script.src = "https://accounts.google.com/gsi/client";
+			script.async = true;
+			script.defer = true;
+			script.onload = () => {
+				console.log("Google script loaded");
+				initializeGoogleAuth();
+			};
+			script.onerror = () => {
+				console.error("Failed to load Google script");
+				setErrorMessage("Failed to load Google authentication");
+				setShowError(true);
+			};
+			document.head.appendChild(script);
+		};
+
+		loadGoogleScript();
+
+		return () => {
+			// Cleanup if needed
+		};
+	}, []);
+
+	const handleCustomGoogleLogin = () => {
+		// Trigger the hidden Google button
+		if (hiddenButtonRef.current) {
+			const googleButton = hiddenButtonRef.current.querySelector(
+				'div[role="button"]'
+			) as HTMLElement;
+			if (googleButton) {
+				googleButton.click();
+			} else {
+				console.error("Google button not found");
+				setErrorMessage("Google Sign-In not ready. Please refresh the page.");
+				setShowError(true);
+				setTimeout(() => setShowError(false), 3000);
+			}
+		}
+	};
+
+	// Error handling
+	useEffect(() => {
+		const currentError = error || googleError;
+		if (currentError) {
+			const msg =
+				currentError?.response?.data?.message || currentError?.message;
+			setErrorMessage(msg);
+			setShowError(true);
+			const timeout = setTimeout(() => setShowError(false), 3000);
+			return () => clearTimeout(timeout);
+		}
+	}, [error, googleError]);
+
+	const handleLogin = async (e: FormEvent) => {
+		e.preventDefault();
+		if (!formData.email || !formData.password) return;
+		signInMutation({
+			email: formData.email,
+			password: formData.password,
+		});
+	};
+
+	const isLoading = isPending || isGooglePending;
 
 	const handleSignUpClick = () => {
 		navigate("/register", { state: { fromLogin: true } });
@@ -46,94 +203,11 @@ export const LoginPage = (): JSX.Element => {
 	};
 
 	const handleInputChange = (field: string, value: string | boolean) => {
-		setFormData(prev => ({
+		setFormData((prev) => ({
 			...prev,
-			[field]: value
+			[field]: value,
 		}));
 	};
-	const handleGoogleCallback = (response: any) => {
-    if (response.credential) {
-      googleSignIn({
-        idToken: response.credential
-      });
-    }
-  };
-// Initialize Google Sign-In
-  useEffect(() => {
-    const initializeGoogleSignIn = () => {
-      if (window.google) {
-        window.google.accounts.id.initialize({
-          client_id: "eyJhbGciOiJSUzI1NiIsImtpZCI6Ijg4MjUwM2E1ZmQ1NmU5ZjczNGRmYmE1YzUwZDdiZjQ4ZGIyODRhZTkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiIxOTY5MTk0MDk3MzQtb24xZ2c2a3V2b2RsN2lvY2lhYjhqMmNkbjRjb21vYnQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIxOTY5MTk0MDk3MzQtb24xZ2c2a3V2b2RsN2lvY2lhYjhqMmNkbjRjb21vYnQuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTM3NDYxODY5Njk4NzE2OTMwNTkiLCJlbWFpbCI6ImthcmltaGFzc2liNTM4QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoiLXRoREc4X1BqcGdLeGo1OUZZWVF4USIsIm5hbWUiOiJrYXJpbSBoYXNzaWIiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTGhvSVIwTXpYUjBMR2o5bnBZREwtd1YxQmVDbDNVcndPMW9rQVVENk1jNlRIYVNnPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6ImthcmltIiwiZmFtaWx5X25hbWUiOiJoYXNzaWIiLCJpYXQiOjE3NTEzMTgyOTgsImV4cCI6MTc1MTMyMTg5OH0.Y0pBe12leVDc9i-RecfD88uyh2MC6PGoOeOkqhoedZP8Umud3Mkad7jd89-qVHbWQcmBfovx3T8yaSKRfE6AK5jlhGl0892AfmurTii4_oFXUD24Z71Pk7JEUd4A3kpb9si0ncO3VJb2wNvSCUFzJRfJWbpcRSkqYf0Gz1Iwaj65Z_5R2WH-9jfV9dz-Q0f0INe6aOBQzS1egD3zBeVQo16LBOnRDCUnnRJpIugQ8qELBgMLvlFToOd3W6Yd4C-SmLshcd9S_lHP_I_s_8E0FDCMqEuhPXiz3NZZeEPJeHHY2YBO64_DXWnYb0meolswNh4J-nz6G3sCX6GxIfPebw.apps.googleusercontent.com",
-          callback: handleGoogleCallback,
-          auto_select: false,
-          cancel_on_tap_outside: true,
-        });
-      }
-    };
-
-    // Check if Google script is loaded
-    if (window.google) {
-      initializeGoogleSignIn();
-    } else {
-      // Wait for Google script to load
-      const checkGoogleLoaded = setInterval(() => {
-        if (window.google) {
-          initializeGoogleSignIn();
-          clearInterval(checkGoogleLoaded);
-        }
-      }, 100);
-
-      // Cleanup interval after 10 seconds
-      setTimeout(() => clearInterval(checkGoogleLoaded), 10000);
-    }
-  }, []);
-
-	// Show and hide error messages
-  useEffect(() => {
-    const currentError = error || googleError;
-    if (currentError) {
-      const msg = currentError?.response?.data?.message || currentError?.message;
-      setErrorMessage(msg);
-      setShowError(true);
-
-      const timeout = setTimeout(() => setShowError(false), 3000);
-      return () => clearTimeout(timeout);
-    }
-  }, [error, googleError]);
-
-	const handleLogin = async (e: FormEvent) => {
-		e.preventDefault();
-		
-		if (!formData.email || !formData.password) {
-			return;
-		}
-
-		signInMutation({
-			email: formData.email,
-			password: formData.password,
-		});
-	};
-	
-	const handleGoogleLogin = async () => {
-    try {
-      if (window.google) {
-        window.google.accounts.id.prompt();
-      } else {
-        console.error('Google Sign-In not loaded');
-        setErrorMessage('Google Sign-In is not available. Please try again.');
-        setShowError(true);
-        setTimeout(() => setShowError(false), 3000);
-      }
-    } catch (error) {
-      console.error('Google Sign-In error:', error);
-      setErrorMessage('Failed to initialize Google Sign-In');
-      setShowError(true);
-      setTimeout(() => setShowError(false), 3000);
-    }
-  };
-
-    const isLoading = isPending || isGooglePending;
-
 
 	return (
 		<div className="min-h-screen bg-white flex">
@@ -146,6 +220,12 @@ export const LoginPage = (): JSX.Element => {
 			>
 				{/* Gradient overlay */}
 				<div className="absolute inset-0 [background:linear-gradient(90deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0)_100%)] opacity-[0.18] rounded-[3px]" />
+
+				{/* Hidden Google button - this is what actually handles the authentication */}
+				<div
+					ref={hiddenButtonRef}
+					className="absolute -top-[1000px] -left-[1000px] opacity-0 pointer-events-none"
+				/>
 
 				{/* Scrollable content container */}
 				<div className="relative z-10 flex flex-col h-full">
@@ -190,7 +270,10 @@ export const LoginPage = (): JSX.Element => {
 								)}
 
 								{/* Form fields */}
-								<form onSubmit={handleLogin} className="space-y-4 sm:space-y-5 3xl:space-y-8">
+								<form
+									onSubmit={handleLogin}
+									className="space-y-4 sm:space-y-5 3xl:space-y-8"
+								>
 									{/* Email input */}
 									<div>
 										<Input
@@ -198,7 +281,9 @@ export const LoginPage = (): JSX.Element => {
 											placeholder="Email"
 											type="email"
 											value={formData.email}
-											onChange={(e) => handleInputChange("email", e.target.value)}
+											onChange={(e) =>
+												handleInputChange("email", e.target.value)
+											}
 											required
 											disabled={isPending}
 										/>
@@ -211,7 +296,9 @@ export const LoginPage = (): JSX.Element => {
 											placeholder="Password"
 											type="password"
 											value={formData.password}
-											onChange={(e) => handleInputChange("password", e.target.value)}
+											onChange={(e) =>
+												handleInputChange("password", e.target.value)
+											}
 											required
 											disabled={isPending}
 										/>
@@ -224,7 +311,9 @@ export const LoginPage = (): JSX.Element => {
 												id="remember-me"
 												className="bg-[#e8eef2] rounded h-4 w-4 3xl:h-5 3xl:w-5"
 												checked={formData.rememberMe}
-												onCheckedChange={(checked) => handleInputChange("rememberMe", checked as boolean)}
+												onCheckedChange={(checked) =>
+													handleInputChange("rememberMe", checked as boolean)
+												}
 												disabled={isPending}
 											/>
 											<label
@@ -246,42 +335,45 @@ export const LoginPage = (): JSX.Element => {
 										</Button>
 									</div>
 
-			{/* Login button */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3, duration: 0.5 }}
-                  >
-                    <Button
-                      type="submit"
-                      className="w-full h-8 sm:h-10 lg:h-10 3xl:h-14 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
+									{/* Login button */}
+									<motion.div
+										initial={{ opacity: 0, y: 10 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ delay: 0.3, duration: 0.5 }}
+									>
+										<Button
+											type="submit"
+											className="w-full h-8 sm:h-10 lg:h-10 3xl:h-14 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
                          hover:opacity-90 rounded-md font-['Nunito'] text-sm sm:text-base 3xl:text-[1.3rem] tracking-wide mt-5 disabled:opacity-50"
-                      disabled={isLoading || !formData.email || !formData.password}
-                    >
-                      {isPending ? "Logging in..." : "Login"}
-                    </Button>
-                  </motion.div>
+											disabled={
+												isLoading || !formData.email || !formData.password
+											}
+										>
+											{isPending ? "Logging in..." : "Login"}
+										</Button>
+									</motion.div>
 
-									{/* Google login button */}
-                  <div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={handleGoogleLogin}
-                      className="w-full h-8 sm:h-10 lg:h-10 3xl:h-14 bg-[#e8eef2] hover:bg-[#d8dee2] rounded-md flex items-center justify-center gap-2 sm:gap-3 3xl:gap-5 text-black
-                      overflow-hidden disabled:opacity-50"
-                      disabled={isLoading}
-                    >
-                      <img
-                        className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 3xl:w-10 3xl:h-10 object-cover"
-                        alt="Google"
-                        src="/google-1.png"
-                      />
-                      <span className="font-['Nunito'] font-normal text-sm sm:text-base 3xl:text-[1.3rem]">
-                        {isGooglePending ? "Signing in..." : "Continue With Google"}
-                      </span>
-                    </Button>
-                  </div>
+									{/* Custom Google login button */}
+									<div className="space-y-4 mt-6">
+										<Button
+											type="button"
+											variant="outline"
+											onClick={handleCustomGoogleLogin}
+											className="w-full h-8 sm:h-10 lg:h-10 3xl:h-14 bg-[#e8eef2] hover:bg-[#d8dee2] rounded-md flex items-center justify-center gap-2 sm:gap-3 3xl:gap-5 text-black overflow-hidden disabled:opacity-50"
+											disabled={isPending || isGooglePending}
+										>
+											<img
+												className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 3xl:w-10 3xl:h-10 object-cover"
+												alt="Google"
+												src="/google-1.png"
+											/>
+											<span className="font-['Nunito'] font-normal text-sm sm:text-base 3xl:text-[1.3rem]">
+												{isGooglePending
+													? "Signing in..."
+													: "Continue With Google"}
+											</span>
+										</Button>
+									</div>
 
 									{/* Sign up link */}
 									<div className="text-center pt-2 sm:pt-4 mt-6 sm:mt-8 3xl:mt-10">

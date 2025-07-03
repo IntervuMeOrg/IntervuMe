@@ -9,8 +9,9 @@ export const SettingsPage = (): JSX.Element => {
   const user = useCurrentUser();
   // State for active navigation item tracking
   const activeNavItem = "";
-  // State for logged in user (simulated)
-  const [userName, setUserName] = useState(`${user.data?.firstName} ${user.data?.lastName}`);
+	const userName = user.data 
+		? `${user.data.firstName} ${user.data.lastName}`
+		: '';
 
   // State for notification settings
   const [emailNotifications, setEmailNotifications] = useState(true);
