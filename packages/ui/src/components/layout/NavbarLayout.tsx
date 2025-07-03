@@ -10,6 +10,7 @@ import {
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { LogOutIcon, SettingsIcon, UserIcon, Menu, X } from "lucide-react";
+import { useAuthentication } from "../../lib/authentication/authentication-hooks";
 
 type NavItem = {
 	name: string;
@@ -38,6 +39,7 @@ export const NavbarLayout = ({
 	],
 	onNavItemClick,
 }: NavbarLayoutProps): JSX.Element => {
+	const logout = useAuthentication();
 	const navigate = useNavigate();
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -100,7 +102,11 @@ export const NavbarLayout = ({
 
 	const handleProfileAction = (action: string) => {
 		window.scrollTo({ top: 0 });
-		navigate(action);
+		if (action === "logout") {
+			logout.logout();
+		} else {
+			navigate(action);
+		}
 	};
 
 	return (
@@ -184,7 +190,7 @@ export const NavbarLayout = ({
 											<DropdownMenuSeparator className="bg-[#333]" />
 											<DropdownMenuItem
 												className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2] text-[#e8eef2]"
-												onClick={() => handleProfileAction("/")}
+												onClick={() => handleProfileAction("logout")}
 											>
 												<LogOutIcon className="mr-2 h-4 w-4 3xl:h-6 3xl:w-6" />
 												<span className="3xl:text-lg">Logout</span>
@@ -232,7 +238,7 @@ export const NavbarLayout = ({
 											<DropdownMenuSeparator className="bg-[#333]" />
 											<DropdownMenuItem
 												className="cursor-pointer hover:bg-[#333] focus:bg-[#e8eef2] text-[#e8eef2] text-sm"
-												onClick={() => handleProfileAction("/")}
+												onClick={() => handleProfileAction("logout")}
 											>
 												<LogOutIcon className="mr-2 h-3 w-3" />
 												<span>Logout</span>
