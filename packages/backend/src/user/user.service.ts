@@ -78,6 +78,10 @@ export const userService = {
     const user = await userRepository().findOne({ where: { email } });
     if (!user) throw new Error("Email not registered");
 
+    if (user.provider === UserIdentityProvider.GOOGLE) {
+      return;
+    }
+
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const hashedOtp = await bcrypt.hash(otp, 10);
     user.resetToken = hashedOtp;
