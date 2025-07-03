@@ -131,6 +131,7 @@ export const RegistrationForm = ({
 		};
 
 		try {
+			window.scrollTo(0,0);
 			await signUpMutation.mutateAsync(signUpRequest);
 		} catch (error: any) {
 			const errorMessage =
