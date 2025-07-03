@@ -233,6 +233,7 @@ export const RegistrationForm = ({
 			console.error("Registration failed:", error);
 		}
 	};
+
 	return (
 		<div className="flex-1 p-6 sm:p-8 lg:p-8 2xl:p-8 2xl:pt-0">
 			{/* Toast notification */}
