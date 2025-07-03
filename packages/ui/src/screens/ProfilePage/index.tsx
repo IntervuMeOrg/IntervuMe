@@ -21,10 +21,6 @@ export const ProfilePage = (): JSX.Element => {
   // State for edit mode
   const [isEditing, setIsEditing] = useState(false);
 
-  useEffect(()=>{
-    setUserName(`${user.data?.firstName} ${user.data?.lastName}`);
-  },[user.data?.firstName, user.data?.lastName])
-
   // Toast notification state
   const [toast, setToast] = useState<{
     visible: boolean;
