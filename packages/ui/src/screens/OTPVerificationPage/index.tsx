@@ -56,6 +56,14 @@ export const OTPVerificationPage = (): JSX.Element => {
 		}
 	}, [error]);
 
+	useEffect(() => {
+		const step = sessionStorage.getItem("resetFlowStep");
+		// Only allow access if the flow came from forget password
+		if (step !== "forgot") {
+			navigate("/login", { replace: true });
+		}
+	}, []);
+
 	// Focus first input on mount
 	useEffect(() => {
 		if (inputRefs.current[0]) {
@@ -143,7 +151,10 @@ export const OTPVerificationPage = (): JSX.Element => {
 			{ email, otp: otpValue },
 			{
 				onSuccess: () => {
-					navigate("/create-new-password", { state: { email: email } });
+					setSuccessMessage("OTP verified! Redirecting...");
+					sessionStorage.setItem("resetFlowStep", "otp");
+					setTimeout(() => navigate("/create-new-password", { state: { email: email } }), 2000);
+					
 				},
 			}
 		);

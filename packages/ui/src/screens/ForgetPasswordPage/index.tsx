@@ -34,6 +34,7 @@ export const ForgetPasswordPage = (): JSX.Element => {
 	const handleSubmit = (data: { email: string }) => {
 		forgetPassword(data, {
 			onSuccess: () => {
+				sessionStorage.setItem("resetFlowStep", "forgot");
 				navigate("/otp-verification", {state: { email: data.email} });
 			}
 		});
