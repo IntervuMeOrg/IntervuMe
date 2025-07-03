@@ -79,6 +79,10 @@ export const authService = {
       throw new Error("Invalid email or password");
     }
 
+    if (user.provider === UserIdentityProvider.GOOGLE) {
+      throw new Error("Google users cannot sign in with email and password");
+    } 
+
     // Validate password
     if (user.provider === UserIdentityProvider.EMAIL) {
       if (!user.password) {
