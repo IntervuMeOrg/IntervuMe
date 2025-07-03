@@ -29,7 +29,6 @@ export type ForgotPasswordRequestBody = Static<
 
 export const ResetPasswordRequestBody = Type.Object({
   email: Type.String({ format: "email" }),
-  otp: Type.String(),
   password: Type.String({ minLength: 6 }),
 });
 
@@ -52,3 +51,10 @@ export const GoogleSignInRequestBody = Type.Object({
 });
 
 export type GoogleSignInRequestBody = Static<typeof GoogleSignInRequestBody>;
+
+export const VerifyOTPRequestBody = Type.Object({
+  email: Type.String({ format: "email" }),
+  otp: Type.String({ minLength: 6, maxLength: 6 }),
+});
+
+export type VerifyOTPRequestBody = Static<typeof VerifyOTPRequestBody>;
