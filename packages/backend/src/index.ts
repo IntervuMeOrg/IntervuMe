@@ -17,6 +17,7 @@ import { interviewModule } from "./interview/interview.module.js";
 import { codeSubmissionModule } from "./coding/code-submission/codeSubmission.module.js";
 import { aiModule } from "./ai/ai.module.js";
 import { codeExecutionModule } from "./coding/code-execution/code-execution.module.js";
+import { testCaseResultModule } from "./coding/test-case-result/testCaseResult.module.js";
 
 config();
 
@@ -91,6 +92,7 @@ if (databaseConnected) {
   await fastify.register(interviewModule);
   await fastify.register(aiModule);
   await fastify.register(codeExecutionModule);
+  await fastify.register(testCaseResultModule);
 } else {
   // Fallback routes when database is not available
   fastify.get("/api/auth/*", async () => {

@@ -2,6 +2,7 @@ import { Static, Type } from "@sinclair/typebox";
 import { BaseModelSchema } from "../../common/base-model";
 import { ApId } from "../../common/id-generator";
 import { TestCaseResult } from "../test-case-result/testCaseResult-types";
+import { Programming_language } from "../code-execution/code-execution-types";
 
 export const CodeSubmission = Type.Object({
   ...BaseModelSchema,
@@ -27,6 +28,8 @@ export type CodeSubmissionWithResults = Static<
 export const CreateCodeSubmissionRequestBody = Type.Object({
   interviewId: ApId,
   questionId: ApId,
+  languageId: Type.Number(),
+  language: Type.Enum(Programming_language),
   code: Type.String(),
 });
 

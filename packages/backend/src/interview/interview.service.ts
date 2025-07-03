@@ -9,7 +9,7 @@ import {
   McqAnswer,
   McqAnswerSummary,
 } from "../mcq/mcq-answer/mcq-answer-types";
-import { CodeSubmissionWithResults } from "../coding/code-submission/code-submission-types";
+import { CodeSubmission, CodeSubmissionWithResults } from "../coding/code-submission/code-submission-types";
 import {
   Interview,
   CreateInterviewRequestBody,
@@ -180,7 +180,7 @@ export const interviewService = {
         { tag: "react", count: 1 },
         { tag: "nodejs", count: 1 },
       ],
-      codingRequirements: "medium" as DifficultyLevel,
+      codingRequirements: "easy" as DifficultyLevel,
     };
 
     const interview = InterviewRepository().create({
@@ -216,7 +216,7 @@ export const interviewService = {
 
     const codingQuestions =
       await codingQuestionService.getRandomByDifficultyAndCount(
-        "medium" as DifficultyLevel,
+        "easy" as DifficultyLevel,
         2
       );
 
@@ -296,26 +296,8 @@ export const interviewService = {
         mcqAnswers.push(mcqAnswer);
       }
 
-      const codeSubmissionsWithResults: CodeSubmissionWithResults[] = [];
-
-      for (const codeSubmissionData of submissionData.codeSubmissions) {
-        const codeSubmission = await codeSubmissionService.create({
-          ...codeSubmissionData,
-        });
-
-        // Run test cases (you'll need to implement this)
-        const testCaseResults = await this.runTestCases(
-          codeSubmissionData.questionId,
-          codeSubmissionData.code
-        );
-
-        const submissionWithResults: CodeSubmissionWithResults = {
-          ...codeSubmission,
-          testCaseResults,
-        };
-
-        codeSubmissionsWithResults.push(submissionWithResults);
-      }
+    const codeSubmissionsWithResults: CodeSubmission[] = 
+      await codeSubmissionService.getByInterviewId(interviewId);
 
       // Adjust scoring later
       const mcqPercentage = maxPoints > 0 ? (totalPoints / maxPoints) * 100 : 0;
@@ -362,27 +344,8 @@ export const interviewService = {
     }
   },
 
-  async runTestCases(
-    questionId: string,
-    code: string
-  ): Promise<TestCaseResult[]> {
-    // TODO: Call code execution service
-    return [
-      {
-        id: "6E5uzx44lvJPPa5s2VUcW",
-        codeSubmissionId: "85pj4vlqD1visW5OPvhwg",
-        testCaseId: "6E5uzx44lvJPPa5s2VUcM",
-        passed: true,
-        verdict: Verdict.PASSED,
-        userOutput: "Mock output",
-        created: new Date().toISOString(),
-        updated: new Date().toISOString(),
-      },
-    ];
-  },
-
   // Placeholder method
-  calculateCodeScore(submissions: CodeSubmissionWithResults[]): number {
+  calculateCodeScore(submissions: CodeSubmission[]): number {
     return 75.5;
   },
 };

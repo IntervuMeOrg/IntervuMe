@@ -22,7 +22,6 @@ export const codeExecutionService = {
 
     const sourceCode = await codeExecutionService.buildFullSource(question, request);
 
-    console.log(sourceCode);
     // send to Judge0
     const resp = await axios.post<Judge0Response>(
       `${process.env.JUDGE0_URL}/submissions?base64_encoded=true&wait=true`,
