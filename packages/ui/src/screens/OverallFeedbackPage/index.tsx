@@ -138,9 +138,9 @@ const feedbackData: DetailedFeedbackData = {
 export const OverallFeedbackPage = (): JSX.Element => {
 	const user = useCurrentUser();
 
-	// State for logged in user (simulated)
-	const [userName, setUserName] = useState(`${user.data?.firstName} ${user.data?.lastName}`);
-
+	const userName = user.data 
+		? `${user.data.firstName} ${user.data.lastName}`
+		: '';
 	// State for detailed feedback visibility
 	const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
 

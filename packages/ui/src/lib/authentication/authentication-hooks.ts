@@ -149,7 +149,8 @@ export const useCurrentUser = () => {
 			return authenticationSession.getUser();
 		},
 		enabled: authenticationSession.isAuthenticated(),
-		staleTime: Infinity, // User data doesn't change often
+		staleTime: 1000 * 60 * 5, // 5 minutes
+		initialData: () => authenticationSession.getUser(),
 	});
 };
 
