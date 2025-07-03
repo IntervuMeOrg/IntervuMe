@@ -60,7 +60,7 @@ export const FeaturesSection = ({
 
 			{/* Content */}
 			<div className="relative z-20 py-16 sm:py-20 md:py-24 lg:py-32 3xl:py-">
-				<div className="max-w-screen-lg container mx-auto px-4 sm:px-6 lg:px-8 3xl:px-72">
+				<div className="container mx-auto px-4 sm:px-6 lg:px-8 3xl:px-72">
 					{/* Section header */}
 					<div className="mb-8 sm:mb-12">
 						<motion.h2

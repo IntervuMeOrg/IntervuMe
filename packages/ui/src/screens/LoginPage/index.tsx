@@ -3,9 +3,22 @@ import { Button } from "../../components/ui/button";
 import { Checkbox } from "../../components/ui/checkbox";
 import { Input } from "../../components/ui/input";
 import { motion } from "framer-motion";
+import { useState, FormEvent, useEffect } from "react";
+import { useSignIn } from "../../lib/authentication/authentication-hooks"; // Adjust path as needed
 
 export const LoginPage = (): JSX.Element => {
 	const navigate = useNavigate();
+	const {mutate:signInMutation, isPending, error} = useSignIn();
+	const [errorMessage, setErrorMessage] = useState('');
+	const [showError, setShowError] = useState(false);
+
+	
+	// Form state
+	const [formData, setFormData] = useState({
+		email: "",
+		password: "",
+		rememberMe: false,
+	});
 
 	const handleSignUpClick = () => {
 		navigate("/register", { state: { fromLogin: true } });
@@ -15,9 +28,43 @@ export const LoginPage = (): JSX.Element => {
 		navigate("/forget-password");
 	};
 
-	const handleLogin = () => {
-		navigate("/app");
+	const handleInputChange = (field: string, value: string | boolean) => {
+		setFormData(prev => ({
+			...prev,
+			[field]: value
+		}));
 	};
+	// Show and hide msg
+	useEffect(()=>{
+		if(error){
+			const msg = error?.response?.data?.message || error?.message;
+			setErrorMessage(msg);
+			setShowError(true);
+
+			const timeout = setTimeout(()=>setShowError(false),3000);
+			return () => clearTimeout(timeout);
+
+		}
+	}, [error]);
+
+	const handleLogin = async (e: FormEvent) => {
+		e.preventDefault();
+		
+		if (!formData.email || !formData.password) {
+			return;
+		}
+
+		signInMutation({
+			email: formData.email,
+			password: formData.password,
+		});
+	};
+
+	const handleGoogleLogin = () => {
+		// TODO: Implement Google OAuth login
+		console.log("Google login not implemented yet");
+	};
+
 
 	return (
 		<div className="min-h-screen bg-white flex">
@@ -60,14 +107,31 @@ export const LoginPage = (): JSX.Element => {
 									</p>
 								</div>
 
+								{/* Error message */}
+								{showError && (
+									<motion.div
+										initial={{ opacity: 0, y: -10 }}
+										animate={{ opacity: 1, y: 0 }}
+										className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-md"
+									>
+										<p className="text-red-400 text-sm font-['Nunito']">
+											{errorMessage}
+										</p>
+									</motion.div>
+								)}
+
 								{/* Form fields */}
-								<form className="space-y-4 sm:space-y-5 3xl:space-y-8">
+								<form onSubmit={handleLogin} className="space-y-4 sm:space-y-5 3xl:space-y-8">
 									{/* Email input */}
 									<div>
 										<Input
 											className="h-8 sm:h-10 lg:h-10 3xl:h-14 bg-[#e8eef2] rounded-md px-3 sm:px-4 3xl:px-6 text-black font-['Nunito'] shadow-md w-full text-sm sm:text-base 3xl:text-lg"
 											placeholder="Email"
 											type="email"
+											value={formData.email}
+											onChange={(e) => handleInputChange("email", e.target.value)}
+											required
+											disabled={isPending}
 										/>
 									</div>
 
@@ -77,6 +141,10 @@ export const LoginPage = (): JSX.Element => {
 											className="h-8 sm:h-10 lg:h-10 3xl:h-14 bg-[#e8eef2] rounded-md px-3 sm:px-4 3xl:px-6 text-black font-['Nunito'] shadow-md w-full text-sm sm:text-base 3xl:text-lg"
 											placeholder="Password"
 											type="password"
+											value={formData.password}
+											onChange={(e) => handleInputChange("password", e.target.value)}
+											required
+											disabled={isPending}
 										/>
 									</div>
 
@@ -86,6 +154,9 @@ export const LoginPage = (): JSX.Element => {
 											<Checkbox
 												id="remember-me"
 												className="bg-[#e8eef2] rounded h-4 w-4 3xl:h-5 3xl:w-5"
+												checked={formData.rememberMe}
+												onCheckedChange={(checked) => handleInputChange("rememberMe", checked as boolean)}
+												disabled={isPending}
 											/>
 											<label
 												htmlFor="remember-me"
@@ -96,9 +167,11 @@ export const LoginPage = (): JSX.Element => {
 										</div>
 
 										<Button
+											type="button"
 											variant="link"
 											onClick={handleForgetPassword}
 											className="font-['Nunito'] font-medium text-[#c7d3dd] text-xs sm:text-sm 3xl:text-lg p-0 h-auto hover:text-white"
+											disabled={isPending}
 										>
 											Forgot password?
 										</Button>
@@ -111,20 +184,24 @@ export const LoginPage = (): JSX.Element => {
 										transition={{ delay: 0.3, duration: 0.5 }}
 									>
 										<Button
+											type="submit"
 											className="w-full h-8 sm:h-10 lg:h-10 3xl:h-14 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
-                               hover:opacity-90 rounded-md font-['Nunito'] text-sm sm:text-base 3xl:text-[1.3rem] tracking-wide mt-5"
-											onClick={handleLogin}
+                               hover:opacity-90 rounded-md font-['Nunito'] text-sm sm:text-base 3xl:text-[1.3rem] tracking-wide mt-5 disabled:opacity-50"
+											disabled={isPending || !formData.email || !formData.password}
 										>
-											Login
+											{isPending ? "Logging in..." : "Login"}
 										</Button>
 									</motion.div>
 
 									{/* Google login button */}
 									<div>
 										<Button
+											type="button"
 											variant="outline"
+											onClick={handleGoogleLogin}
 											className="w-full h-8 sm:h-10 lg:h-10 3xl:h-14 bg-[#e8eef2] hover:bg-[#d8dee2] rounded-md flex items-center justify-center gap-2 sm:gap-3 3xl:gap-5 text-black
-											overflow-hidden"
+											overflow-hidden disabled:opacity-50"
+											disabled={isPending}
 										>
 											<img
 												className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 3xl:w-10 3xl:h-10 object-cover"
@@ -144,9 +221,11 @@ export const LoginPage = (): JSX.Element => {
 												Don't have an account?
 											</span>
 											<Button
+												type="button"
 												variant="link"
 												onClick={handleSignUpClick}
-												className="font-['Nunito'] font-bold text-white text-xs sm:text-xs 3xl:text-sm underline p-0 h-auto hover:opacity-80 tracking-[1px]"
+												className="font-['Nunito'] font-bold text-white text-xs sm:text-xs 3xl:text-sm underline p-0 h-auto hover:opacity-80 tracking-[1px] disabled:opacity-50"
+												disabled={isPending}
 											>
 												Sign Up for free
 											</Button>
