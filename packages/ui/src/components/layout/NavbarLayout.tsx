@@ -39,7 +39,7 @@ export const NavbarLayout = ({
 	],
 	onNavItemClick,
 }: NavbarLayoutProps): JSX.Element => {
-	const logout = useAuthentication();
+	const auth = useAuthentication();
 	const navigate = useNavigate();
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -103,7 +103,7 @@ export const NavbarLayout = ({
 	const handleProfileAction = (action: string) => {
 		window.scrollTo({ top: 0 });
 		if (action === "logout") {
-			logout.logout();
+			auth.logout();
 		} else {
 			navigate(action);
 		}
