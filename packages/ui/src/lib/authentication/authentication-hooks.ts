@@ -207,10 +207,6 @@ export const useResetPassword = () => {
 			const response = await authenticationApi.resetPassword(request);
 			return response.data;
 		},
-		onSuccess: () => {
-			// Redirect to login after successful reset
-			setTimeout(() => navigate("/login"), 2000);
-		},
 		onError: (error: any) => {
 			console.error(
 				"Reset password failed:",
