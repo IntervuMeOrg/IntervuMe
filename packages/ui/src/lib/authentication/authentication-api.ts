@@ -67,6 +67,10 @@ export interface ResetPasswordRequest {
   password: string;
 }
 
+export interface GoogleSignInRequestBody{
+  idToken: string
+}
+
 export interface AuthResponse {
   id: string;
   email: string;
@@ -89,6 +93,10 @@ export const authenticationApi = {
     return api.post<AuthResponse>('/api/auth/sign-in', request);
   },
 
+  googleSignIn(request: GoogleSignInRequestBody) {
+    return api.post<AuthResponse>('/api/auth/google-sign-in',request);
+  },
+
   signUp(request: SignUpRequest) {
     return api.post<AuthResponse>('/api/auth/sign-up', request);
   },
@@ -100,6 +108,7 @@ export const authenticationApi = {
   resetPassword(request: ResetPasswordRequest) {
     return api.post<{ message: string }>('/api/auth/reset-password', request);
   },
+
 };
 
 export default api;
