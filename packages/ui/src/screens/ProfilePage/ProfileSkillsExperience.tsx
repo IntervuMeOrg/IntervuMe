@@ -3,10 +3,10 @@ import { PlusIcon, XIcon, GraduationCapIcon, BriefcaseIcon, CodeIcon } from "luc
 import { Button } from "../../components/ui/button";
 
 type UserProfile = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
+  firstName: any;
+  lastName: any;
+  email: any;
+  phone: any;
   location: string;
   bio: string;
   skills: string[];
