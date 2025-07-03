@@ -199,8 +199,6 @@ export const useVerifyOTP = () => {
 
 // Reset password hook
 export const useResetPassword = () => {
-	const navigate = useNavigate();
-
 	return useMutation({
 		mutationFn: async (request: ResetPasswordRequest) => {
 			const response = await authenticationApi.resetPassword(request);
