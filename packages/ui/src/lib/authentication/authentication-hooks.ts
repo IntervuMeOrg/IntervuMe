@@ -124,7 +124,6 @@ export const useGoogleSignIn = () => {
 		},
 		onSuccess: (data: AuthResponse & { rememberMe?: boolean }) => {
 			const { rememberMe = true, ...userData } = data; // Default to true for Google sign-in
-			console.log("Remember me value: ",rememberMe)
 			authenticationSession.setSession(userData, rememberMe);
 			queryClient.invalidateQueries({ queryKey: ["current-user"] });
 		},
