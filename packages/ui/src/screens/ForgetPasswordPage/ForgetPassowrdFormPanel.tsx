@@ -2,18 +2,34 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
+import { useForm } from "react-hook-form";
+import { ForgotPasswordRequest } from "../../lib/authentication/authentication-api";
+import { CircleAlert } from "lucide-react";
 
 type ForgetPassowrdFormPanelProps = {
 	navigate: ReturnType<typeof useNavigate>;
 	handleBackToLogin: () => void;
-	handleSubmit?: () => void;
+	handleSubmit: (data: ForgotPasswordRequest) => void;
+	isLoading?: boolean;
+	errorMessage?: string;
 };
 
 export const ForgetPassowrdFormPanel = ({
 	navigate,
 	handleBackToLogin,
 	handleSubmit,
+	isLoading = false,
+	errorMessage,
 }: ForgetPassowrdFormPanelProps) => {
+	const {
+		register,
+		handleSubmit: handleFormSubmit,
+		formState: { errors },
+	} = useForm<ForgotPasswordRequest>({
+		mode: "onBlur" ,
+		reValidateMode: "onChange",
+	});
+
 	return (
 		<>
 			{/* Left panel with form */}
@@ -54,16 +70,49 @@ export const ForgetPassowrdFormPanel = ({
 										Enter your email to reset password
 									</p>
 								</div>
+								{/* Error message */}
+								{errorMessage && (
+									<motion.div
+										initial={{ opacity: 0, y: -10 }}
+										animate={{ opacity: 1, y: 0 }}
+										className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-md"
+									>
+										<p className="text-red-400 text-sm font-['Nunito']">
+											{errorMessage}
+										</p>
+									</motion.div>
+								)}
 
 								{/* Form fields */}
-								<form className="space-y-4 sm:space-y-3 3xl:space-y-5">
+								<form
+									className="space-y-4 sm:space-y-3 3xl:space-y-5"
+									onSubmit={handleFormSubmit(handleSubmit)}
+								>
 									{/* Email input */}
 									<div>
 										<Input
+											{...register("email", {
+												required: "Email is required",
+												pattern: {
+													value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+													message: "Invalid email address",
+												},
+											})}
 											className="h-8 sm:h-10 lg:h-10 3xl:h-14 bg-[#e8eef2] rounded-md px-3 sm:px-4 3xl:px-6 text-black font-['Nunito'] shadow-md w-full text-sm sm:text-base 3xl:text-lg"
 											placeholder="Email"
 											type="email"
 										/>
+										{errors.email && (
+											<motion.p
+												initial={{ opacity: 0, y: -2 }}
+												animate={{ opacity: 1, y: 0 }}
+												exit={{ opacity: 0, y: -2 }}
+												className="text-red-500 text-xs mt-1 flex items-center gap-1"
+											>
+												<CircleAlert className="w-4 h-4 shrink-0" />
+												{errors.email.message}
+											</motion.p>
+										)}
 									</div>
 
 									{/* Submit button */}
@@ -75,9 +124,10 @@ export const ForgetPassowrdFormPanel = ({
 										<Button
 											className="w-full h-8 sm:h-10 lg:h-10 3xl:h-14 bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] 
                                hover:opacity-90 rounded-md font-['Nunito'] text-sm sm:text-base 3xl:text-[1.3rem] tracking-wide mt-2"
-											onClick={handleSubmit}
+											type="submit"
+											disabled={isLoading}
 										>
-											Submit
+											{isLoading ? "Sending..." : "Submit"}
 										</Button>
 									</motion.div>
 
