@@ -65,7 +65,6 @@ export const RegistrationForm = ({
 	genders,
 	months,
 }: RegistrationFormProps) => {
-	const navigate = useNavigate();
 	const signUpMutation = useSignUp();
 	// Toast notification state
 	const [toast, setToast] = useState<{
@@ -84,7 +83,7 @@ export const RegistrationForm = ({
 		type: "success" | "error" | "info" = "success"
 	) => {
 		setToast({ visible: true, message, type });
-		setTimeout(() => setToast({ ...toast, visible: false }), 3000);
+		setTimeout(() => setToast({ ...toast, visible: false }), 4000);
 	};
 
 	const {
@@ -133,8 +132,12 @@ export const RegistrationForm = ({
 
 		try {
 			await signUpMutation.mutateAsync(signUpRequest);
-		} catch (error) {
-			showToast("Registration failed, error", "error");
+		} catch (error: any) {
+			const errorMessage =
+				error?.response?.data?.message ||
+				error.message ||
+				"Unknown error occurred";
+			showToast(`${errorMessage}`, "error");
 			console.error("Registration failed:", error);
 		}
 	};
