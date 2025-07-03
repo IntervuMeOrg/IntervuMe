@@ -21,15 +21,9 @@ export const AppPage = (): JSX.Element => {
 	// Reference to Home section for scroll detection
 	const homeSectionRef = useRef<HTMLElement>(null);
 	// State for logged in user (simulated)
-	const [userName, setUserName] = useState("");
+	const [userName, setUserName] = useState(`${user.data?.firstName} ${user.data?.lastName}`);
 	// Navigation hook for routing
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		if(user.data?.firstName && user.data?.lastName){
-			setUserName(`${user.data?.firstName} ${user.data?.lastName}`);
-		}
-	}, [user.data?.firstName, user.data?.lastName])
 	
 	// Set up intersection observer to update active nav item based on scroll position
 	useEffect(() => {

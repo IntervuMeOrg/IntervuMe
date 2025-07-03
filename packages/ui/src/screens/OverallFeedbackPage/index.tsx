@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { NavbarLayout } from "../../components/layout/NavbarLayout";
 import { DetailedFeedbackView } from "./DetailedFeedbackView";
 import { ResultSummaryCard } from "./ResultSummaryCard";
 import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
 import { DetailedFeedbackData } from "../../types/performance";
+import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
+
 type Question = MCQQuestion | ProblemSolvingQuestion;
 
 const feedbackData: DetailedFeedbackData = {
@@ -58,7 +60,7 @@ const feedbackData: DetailedFeedbackData = {
 				"Only one valid answer exists.",
 			],
 			points: 20,
-      			solution: `function twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n  return [];\n}`,
+			solution: `function twoSum(nums, target) {\n  const map = new Map();\n  for (let i = 0; i < nums.length; i++) {\n    const complement = target - nums[i];\n    if (map.has(complement)) {\n      return [map.get(complement), i];\n    }\n    map.set(nums[i], i);\n  }\n  return [];\n}`,
 
 			explanation:
 				"This solution uses a hash map to store each number and its index. For each number, we check if its complement (target - current number) exists in the map. If it does, we've found our pair. This approach has O(n) time complexity.",
@@ -134,28 +136,37 @@ const feedbackData: DetailedFeedbackData = {
 	},
 };
 export const OverallFeedbackPage = (): JSX.Element => {
+	const user = useCurrentUser();
+
 	// State for logged in user (simulated)
-	const [userName, setUserName] = useState("Mohamed Essam");
+	const [userName, setUserName] = useState(`${user.data?.firstName} ${user.data?.lastName}`);
 
 	// State for detailed feedback visibility
 	const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
 
 	// Mock questions data with correct answers and explanations
-	const [questions, setQuestions] = useState<Question[]>(feedbackData.questions);
+	const [questions, setQuestions] = useState<Question[]>(
+		feedbackData.questions
+	);
 
 	// Mock user answers
-	const [userAnswers, setUserAnswers] = useState<Record<number, string>>(feedbackData.userAnswers);
+	const [userAnswers, setUserAnswers] = useState<Record<number, string>>(
+		feedbackData.userAnswers
+	);
 
 	// State for active navigation item tracking
 	const activeNavItem = "";
 
-  	const totalPoints = feedbackData.questions.reduce((sum, q) => sum + q.points, 0);
+	const totalPoints = feedbackData.questions.reduce(
+		(sum, q) => sum + q.points,
+		0
+	);
 	const totalQuestions = questions.length;
 	const correctAnswers = feedbackData.questions.filter((q) => {
-			const userAnswer = feedbackData.userAnswers[q.id];
-			return q.type === "mcq"
-				? userAnswer === q.correctOptionId
-				: !!(userAnswer && userAnswer.trim().length > 0);
+		const userAnswer = feedbackData.userAnswers[q.id];
+		return q.type === "mcq"
+			? userAnswer === q.correctOptionId
+			: !!(userAnswer && userAnswer.trim().length > 0);
 	}).length;
 	const earnedPoints = feedbackData.questions.reduce((sum, q) => {
 		const userAnswer = feedbackData.userAnswers[q.id];

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { NavbarLayout } from "../../components/layout/NavbarLayout";
 import { motion } from "framer-motion";
@@ -7,10 +7,12 @@ import { Button } from "../../components/ui/button";
 import { HistoyHeader } from "./HistoryHeader";
 import { HistoryStatsOverview } from "./HistoryStatsOverview";
 import { HistoryPerformanceStatistics } from "./HistoryPerformanceStatistics";
+import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
 
 export const HistoryPage = (): JSX.Element => {
+	const user = useCurrentUser();
 	// State for logged in user (simulated)
-	const [userName, setUserName] = useState("Mohamed Essam");
+	const [userName, setUserName] = useState(`${user.data?.firstName} ${user.data?.lastName}`);
 	// Navigation hook for routing
 	const navigate = useNavigate();
 
