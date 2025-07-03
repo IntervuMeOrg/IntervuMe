@@ -3,10 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ForgetPassowrdFormPanel } from "./ForgetPassowrdFormPanel";
 import { Toast } from "../../components/ui/Toast";
-import { useForgotPassword } from "../../lib/authentication/authentication-hooks";
+import { authenticationSession, useForgotPassword } from "../../lib/authentication/authentication-hooks";
 
 export const ForgetPasswordPage = (): JSX.Element => {
 	const navigate = useNavigate();
+	useEffect(() => {
+		// If the user is already authenticated, redirect them
+		if (authenticationSession.isAuthenticated()) {
+			navigate("/app", { replace: true });
+		}
+	}, []);
 	const { mutate: forgetPassword, isPending, error } = useForgotPassword();
 	const [errorMessage, setErrorMessage] = useState("");
 	const [showError, setShowError] = useState(false);

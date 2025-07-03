@@ -1,8 +1,16 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { CreateNewPasswordFormPanel } from "./CreateNewPasswordFormPanel";
+import { authenticationSession } from "../../lib/authentication/authentication-hooks";
+import { useEffect } from "react";
 export const CreateNewPasswordPage = (): JSX.Element => {
 	const navigate = useNavigate();
+	useEffect(() => {
+		// If the user is already authenticated, redirect them
+		if (authenticationSession.isAuthenticated()) {
+			navigate("/app", { replace: true });
+		}
+	}, []);
 
 	const handleBackToLogin = () => {
 		navigate("/login");

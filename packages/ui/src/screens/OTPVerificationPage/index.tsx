@@ -5,10 +5,17 @@ import { OTPFormPanel } from "./OTPFormPanel";
 import {
 	useVerifyOTP,
 	useForgotPassword,
+	authenticationSession,
 } from "../../lib/authentication/authentication-hooks";
 
 export const OTPVerificationPage = (): JSX.Element => {
 	const navigate = useNavigate();
+	useEffect(() => {
+		// If the user is already authenticated, redirect them
+		if (authenticationSession.isAuthenticated()) {
+			navigate("/app", { replace: true });
+		}
+	}, []);
 	const location = useLocation();
 	const { mutate: verifyOTP, isPending, error } = useVerifyOTP();
 	const { mutate: resendOTP } = useForgotPassword();
