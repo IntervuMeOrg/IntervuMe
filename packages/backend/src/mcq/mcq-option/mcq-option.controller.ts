@@ -11,12 +11,13 @@ import {
 } from "./mcq-option-types";
 import { McqOptionService } from "./mcq-option.service";
 import { ApId } from "../../common/id-generator";
+import { UserRole } from "../../user/user-types";
 
 export const mcqOptionController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);
 
   app.post("/", CreateMcqOptionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
@@ -40,7 +41,7 @@ export const mcqOptionController: FastifyPluginAsyncTypebox = async (app) => {
   });
 
   app.delete("/:id", DeleteMcqOptionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });

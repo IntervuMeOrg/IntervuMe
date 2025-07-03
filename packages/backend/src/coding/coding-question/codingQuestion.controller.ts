@@ -10,6 +10,7 @@ import {
 } from "./codingQuestion-types.js";
 import { StatusCodes } from "http-status-codes";
 import { ApId } from "../../common/id-generator.js";
+import { UserRole } from "../../user/user-types.js";
 
 export const codingQuestionController: FastifyPluginAsyncTypebox = async (
   app
@@ -20,7 +21,7 @@ export const codingQuestionController: FastifyPluginAsyncTypebox = async (
     "/",
     CreateCodingQuestionRequestBodyRequest,
     async (request, reply) => {
-      if (request.user.role !== "admin") {
+      if (request.user.role !== UserRole.ADMIN) {
         return reply
           .status(StatusCodes.FORBIDDEN)
           .send({ message: "Forbidden: admins only" });
@@ -43,7 +44,7 @@ export const codingQuestionController: FastifyPluginAsyncTypebox = async (
     "/:id/deactivate",
     getCodingQuestionRequest,
     async (request, reply) => {
-      if (request.user.role !== "admin") {
+      if (request.user.role !== UserRole.ADMIN) {
         return reply
           .status(StatusCodes.FORBIDDEN)
           .send({ message: "Forbidden: admins only" });
@@ -55,7 +56,7 @@ export const codingQuestionController: FastifyPluginAsyncTypebox = async (
   );
 
   app.put("/:id/activate", getCodingQuestionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
@@ -66,7 +67,7 @@ export const codingQuestionController: FastifyPluginAsyncTypebox = async (
   });
 
   app.delete("/:id", getCodingQuestionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
@@ -77,7 +78,7 @@ export const codingQuestionController: FastifyPluginAsyncTypebox = async (
   });
 
   app.get("/admin", async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
@@ -100,7 +101,7 @@ export const codingQuestionController: FastifyPluginAsyncTypebox = async (
 
   // For testing purposes only
   app.delete("/", async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
