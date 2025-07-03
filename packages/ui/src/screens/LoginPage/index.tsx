@@ -248,6 +248,7 @@ export const LoginPage = (): JSX.Element => {
 		});
 	};
 
+
 	return (
 		<div className="min-h-screen bg-white flex">
 			{/* Left panel with login form */}
