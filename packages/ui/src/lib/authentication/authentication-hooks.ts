@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import {
 	authenticationApi,
 	SignInRequest,
@@ -8,6 +8,7 @@ import {
 	ForgotPasswordRequest,
 	ResetPasswordRequest,
 	AuthResponse,
+	VerifyOtpRequest,
 } from "./authentication-api";
 
 // Authentication session helper
@@ -118,6 +119,21 @@ export const useForgotPassword = () => {
 		},
 	});
 };
+
+export const useVerifyOTP = () => {
+	return useMutation({
+		mutationFn: async (request: {email: string, otp: string}) =>{
+			const response = await authenticationApi.verifyOTP(request);
+			return response.data;
+		},
+		onError: (error: any) => {
+			console.error(
+				"OTP verification failed:",
+				error.response?.data?.message || error.message
+			);
+		},
+	})
+}
 
 // Reset password hook
 export const useResetPassword = () => {
