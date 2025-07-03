@@ -15,14 +15,10 @@ export const ProfilePage = (): JSX.Element => {
   // State for active navigation item tracking
   const activeNavItem = "";
   // State for logged in user (simulated)
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState(`${user.data?.firstName} ${user.data?.lastName}`);
 
   // State for edit mode
   const [isEditing, setIsEditing] = useState(false);
-
-  useEffect(()=>{
-    setUserName(`${user.data?.firstName} ${user.data?.lastName}`);
-  },[user.data?.firstName, user.data?.lastName])
 
   // Toast notification state
   const [toast, setToast] = useState<{
