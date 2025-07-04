@@ -25,7 +25,6 @@ export interface SubmitMCQAnswerRequest {
 export interface SubmitCodeRequest {
   interviewId: string;
   questionId: string;
-  languageId: number;
   language: string;
   code: string;
 }

@@ -14,7 +14,7 @@ export const McqAnswer = Type.Object({
 
 export type McqAnswer = Static<typeof McqAnswer>;
 
-export const CreateMcqAnswerRequestBody = Type.Object({
+export const UpsertMcqAnswerRequestBody = Type.Object({
   interviewId: ApId,
   questionId: ApId,
   selectedOptionId: ApId,
@@ -23,8 +23,8 @@ export const CreateMcqAnswerRequestBody = Type.Object({
   timeSpent: Type.Optional(Type.Integer({ minimum: 0 })),
 });
 
-export type CreateMcqAnswerRequestBody = Static<
-  typeof CreateMcqAnswerRequestBody
+export type UpsertMcqAnswerRequestBody = Static<
+  typeof UpsertMcqAnswerRequestBody
 >;
 
 export const UpdateMcqAnswerRequestBody = Type.Object({
