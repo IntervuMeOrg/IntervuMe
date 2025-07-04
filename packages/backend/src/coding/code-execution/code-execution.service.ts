@@ -11,7 +11,6 @@ export const codeExecutionService = {
     const {
       questionId,
       language,
-      userCode,
       stdin,
       expected,
       timeLimit,
@@ -20,7 +19,7 @@ export const codeExecutionService = {
     const question = await codingQuestionService.get(questionId);
 
     const sourceCode = await codeExecutionService.buildFullSource(question, request);
-    
+
     const normalized = language.toLowerCase().trim();
     const languageId = LANGUAGE_MAP[normalized as keyof typeof LANGUAGE_MAP];
     // send to Judge0
@@ -33,6 +32,7 @@ export const codeExecutionService = {
       },
       { headers: { "X-Auth-Token": process.env.JUDGE0_KEY! } }
     );
+
 
     const data = resp.data;
     let status = data.status.description;
@@ -78,10 +78,10 @@ export const codeExecutionService = {
         .map((line) => indent + line)
         .join("\n");
 
-      body = [headerWithTyping, starter, indented, footer].join("\n");
+      body = [headerWithTyping, indented, footer].join("\n");
     } else {
       // C++/Java: no extra indentation required
-      body = [header, starter, userCode, footer].join("\n");
+      body = [header, userCode, footer].join("\n");
     }
 
     return body;
