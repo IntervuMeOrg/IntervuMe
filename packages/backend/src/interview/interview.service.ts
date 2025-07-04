@@ -18,7 +18,7 @@ import {
   CreateInterviewRequestBody,
   UpdateInterviewRequestBody,
   InterviewStatus,
-  InterviewSession,
+  InterviewWithQuestions,
   SubmitInterviewRequestBody,
   InterviewSubmissionResult,
 } from "./interview-types";
@@ -34,31 +34,28 @@ import { isNil } from "../common/utils";
 import { aiService } from "../ai/ai.service";
 import { testCaseResultService } from "../coding/test-case-result/testCaseResult.service";
 
-const InterviewRepository = () => {
+const interviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
 };
 
 export const interviewService = {
-  async getByUserId(userId: string): Promise<InterviewSession[]> {
-    return await InterviewRepository().find({
+  async getByUserId(userId: string): Promise<Interview[]> {
+    return await interviewRepository().find({
       where: { userId, isActive: true },
       order: { startTime: "DESC" },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
   },
 
-  async getByStatus(status: InterviewStatus): Promise<InterviewSession[]> {
-    return await InterviewRepository().find({
+  async getByStatus(status: InterviewStatus): Promise<Interview[]> {
+    return await interviewRepository().find({
       where: { status, isActive: true },
       order: { startTime: "ASC" },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
   },
 
-  async get(id: string): Promise<InterviewSession> {
-    const interview = await InterviewRepository().findOne({
+  async get(id: string): Promise<Interview> {
+    const interview = await interviewRepository().findOne({
       where: { id },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
     if (isNil(interview)) {
@@ -68,26 +65,43 @@ export const interviewService = {
     return interview;
   },
 
-  async list(userId: string): Promise<InterviewSession[]> {
+  async getWithQuestions(id: string): Promise<InterviewWithQuestions> {
+    const interview = await interviewRepository().findOne({
+      where: { id },
+      relations: ["answers", "codeSubmissions"],
+    });
+
+    if (isNil(interview)) {
+      throw new Error("Interview not found");
+    }
+
+    // Get interview questions with full details
+    const questionsWithDetails = await interviewQuestionService.getByInterviewIdWithDetails(id);
+
+    return {
+      ...interview,
+      interviewQuestions: questionsWithDetails,
+    };
+  },
+
+  async list(userId: string): Promise<Interview[]> {
     const whereCondition: any = { isActive: true };
     whereCondition.userId = userId;
 
-    return await InterviewRepository().find({
+    return await interviewRepository().find({
       where: whereCondition,
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
       order: { startTime: "DESC" },
     });
   },
 
-  async listUpcoming(userId: string): Promise<InterviewSession[]> {
-    return await InterviewRepository().find({
+  async listUpcoming(userId: string): Promise<Interview[]> {
+    return await interviewRepository().find({
       where: {
         userId,
         status: InterviewStatus.SCHEDULED,
         startTime: MoreThan(new Date().toISOString()),
         isActive: true,
       },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
       order: { startTime: "ASC" },
     });
   },
@@ -95,24 +109,22 @@ export const interviewService = {
   async update(
     id: string,
     request: UpdateInterviewRequestBody
-  ): Promise<InterviewSession> {
-    const interview = await InterviewRepository().findOne({
+  ): Promise<Interview> {
+    const interview = await interviewRepository().findOne({
       where: { id },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
     if (isNil(interview)) {
       throw new Error("Interview not found");
     }
 
-    const updatedInterview = InterviewRepository().merge(interview, request);
-    return await InterviewRepository().save(updatedInterview);
+    const updatedInterview = interviewRepository().merge(interview, request);
+    return await interviewRepository().save(updatedInterview);
   },
 
-  async startInterview(id: string): Promise<InterviewSession> {
-    const interview = await InterviewRepository().findOne({
+  async startInterview(id: string): Promise<InterviewWithQuestions> {
+    const interview = await interviewRepository().findOne({
       where: { id },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
     if (isNil(interview)) {
@@ -123,16 +135,18 @@ export const interviewService = {
       throw new Error("Interview cannot be started");
     }
 
-    interview.status = InterviewStatus.IN_PROGRESS;
-    interview.startTime = new Date().toISOString();
+    await interviewRepository().save({
+      ...interview,
+      status: InterviewStatus.IN_PROGRESS,
+      startTime: new Date().toISOString(),
+    });
 
-    return await InterviewRepository().save(interview);
+    return this.getWithQuestions(id);
   },
 
-  async calculateScore(id: string): Promise<InterviewSession> {
-    const interview = await InterviewRepository().findOne({
+  async calculateScore(id: string): Promise<Interview> {
+    const interview = await interviewRepository().findOne({
       where: { id },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
     if (isNil(interview)) {
@@ -165,13 +179,12 @@ export const interviewService = {
     interview.maxScore = maxScore;
     interview.isPassed = totalScore >= maxScore * 0.6; // 60% pass rate
 
-    return await InterviewRepository().save(interview);
+    return await interviewRepository().save(interview);
   },
 
   async delete(id: string): Promise<boolean> {
-    const interview = await InterviewRepository().findOne({
+    const interview = await interviewRepository().findOne({
       where: { id },
-      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
     if (isNil(interview)) {
@@ -179,7 +192,7 @@ export const interviewService = {
     }
 
     interview.isActive = false;
-    await InterviewRepository().save(interview);
+    await interviewRepository().save(interview);
     return true;
   },
 
@@ -203,14 +216,14 @@ export const interviewService = {
 
     const codingDifficulties = aiAnalysis.codingDifficulty.difficulties;
 
-    const interview = InterviewRepository().create({
+    const interview = interviewRepository().create({
       id: apId(),
       ...request,
       status: InterviewStatus.SCHEDULED,
       isActive: true,
     });
 
-    await InterviewRepository().save(interview);
+    await interviewRepository().save(interview);
 
     // Generate MCQ questions based on AI analysis
     let questionOrder = 1;
@@ -324,7 +337,7 @@ export const interviewService = {
         }
         totalMcqTimeSpent += timeSpent;
 
-        const mcqAnswer = await mcqAnswerService.create({
+        const mcqAnswer = await mcqAnswerService.upsert({
           ...mcqAnswerData,
           correctOptionId: correctOption.id,
           isCorrect,
@@ -344,7 +357,7 @@ export const interviewService = {
       const mcqPercentage = maxPoints > 0 ? (totalPoints / maxPoints) * 100 : 0;
       const totalScore = mcqPercentage + codeScore;
 
-      const updatedInterview = await InterviewRepository().save({
+      const updatedInterview = await interviewRepository().save({
         ...interview,
         status: InterviewStatus.COMPLETED,
         submittedAt: new Date().toISOString(),
