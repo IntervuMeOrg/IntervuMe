@@ -120,7 +120,6 @@ export const DayPracticeStats = Type.Object({
   averagePercentage: Type.Number(),
   totalScore: Type.Number(),
   maxPossibleScore: Type.Number(),
-  interviews: Type.Array(Interview),
 });
 
 export type DayPracticeStats = Static<typeof DayPracticeStats>;

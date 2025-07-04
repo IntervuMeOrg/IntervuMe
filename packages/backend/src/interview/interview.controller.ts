@@ -156,7 +156,7 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
       if (days) {
         const startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
-        const endDate = new Date(); // Today
+        const endDate = new Date();
         
         analytics = await interviewStatsService.getUserPracticeAnalytics(
           userId,

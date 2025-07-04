@@ -121,13 +121,14 @@ export const interviewStatsService = {
         interview.maxScore !== undefined &&
         interview.maxScore > 0
     );
-    
+
     if (startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
 
       completedInterviews = completedInterviews.filter((interview) => {
         const interviewDate = new Date(interview.startTime);
+        end.setDate(end.getDate() + 1);
         return interviewDate >= start && interviewDate <= end;
       });
     }
@@ -139,11 +140,11 @@ export const interviewStatsService = {
     const dailyStats: DayPracticeStats[] = Object.entries(dailyGroups).map(
       ([date, dayInterviews]) => {
         const totalScore = dayInterviews.reduce(
-          (sum, interview) => sum + (interview.totalScore || 0),
+          (sum, interview) => sum + (Number(interview.totalScore) || 0),
           0
         );
         const maxPossibleScore = dayInterviews.reduce(
-          (sum, interview) => sum + (interview.maxScore || 0),
+          (sum, interview) => sum + (Number(interview.maxScore) || 0),
           0
         );
         const averagePercentage =
@@ -156,7 +157,6 @@ export const interviewStatsService = {
           averagePercentage: Math.round(averagePercentage * 100) / 100,
           totalScore,
           maxPossibleScore,
-          interviews: dayInterviews,
         };
       }
     );
@@ -166,11 +166,11 @@ export const interviewStatsService = {
     );
 
     const totalScore = completedInterviews.reduce(
-      (sum, interview) => sum + (interview.totalScore || 0),
+      (sum, interview) => sum + (Number(interview.totalScore) || 0),
       0
     );
     const totalMaxScore = completedInterviews.reduce(
-      (sum, interview) => sum + (interview.maxScore || 0),
+      (sum, interview) => sum + (Number(interview.maxScore) || 0),
       0
     );
     const overallAveragePercentage =
