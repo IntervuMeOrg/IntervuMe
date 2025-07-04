@@ -9,7 +9,10 @@ import {
   McqAnswer,
   McqAnswerSummary,
 } from "../mcq/mcq-answer/mcq-answer-types";
-import { CodeSubmission, CodeSubmissionWithResults } from "../coding/code-submission/code-submission-types";
+import {
+  CodeSubmission,
+  CodeSubmissionWithResults,
+} from "../coding/code-submission/code-submission-types";
 import {
   Interview,
   CreateInterviewRequestBody,
@@ -17,15 +20,19 @@ import {
   InterviewStatus,
   InterviewWithQuestions,
   SubmitInterviewRequestBody,
-  InterviewSubmissionResult,  
+  InterviewSubmissionResult,
 } from "./interview-types";
 import { mcqQuestionService } from "../mcq/mcq-question/mcq-question.service";
 import { DifficultyLevel } from "../coding/coding-question/codingQuestion-types";
 import { codeSubmissionService } from "../coding/code-submission/codeSubmission.service";
-import { TestCaseResult, Verdict } from "../coding/test-case-result/testCaseResult-types";
+import {
+  TestCaseResult,
+  Verdict,
+} from "../coding/test-case-result/testCaseResult-types";
 import { mcqAnswerService } from "../mcq/mcq-answer/mcq-answer.service";
-import { isNil } from '../common/utils';
+import { isNil } from "../common/utils";
 import { testCaseResultService } from "../coding/test-case-result/testCaseResult.service";
+import { aiService } from "../ai/ai.service";
 
 const interviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
@@ -69,7 +76,8 @@ export const interviewService = {
     }
 
     // Get interview questions with full details
-    const questionsWithDetails = await interviewQuestionService.getByInterviewIdWithDetails(id);
+    const questionsWithDetails =
+      await interviewQuestionService.getByInterviewIdWithDetails(id);
 
     return {
       ...interview,
@@ -99,7 +107,10 @@ export const interviewService = {
     });
   },
 
-  async update(id: string, request: UpdateInterviewRequestBody): Promise<Interview> {
+  async update(
+    id: string,
+    request: UpdateInterviewRequestBody
+  ): Promise<Interview> {
     const interview = await interviewRepository().findOne({
       where: { id },
     });
@@ -126,13 +137,11 @@ export const interviewService = {
       throw new Error("Interview cannot be started");
     }
 
-    const updatedInterview = await interviewRepository().save(
-      {
-        ...interview,
-        status: InterviewStatus.IN_PROGRESS,
-        startTime: new Date().toISOString(),
-      }
-    );
+    const updatedInterview = await interviewRepository().save({
+      ...interview,
+      status: InterviewStatus.IN_PROGRESS,
+      startTime: new Date().toISOString(),
+    });
 
     return this.getWithQuestions(updatedInterview.id);
   },
@@ -221,9 +230,8 @@ export const interviewService = {
     // Generate MCQ questions based on AI analysis
     let questionOrder = 1;
 
-    // Convert array of tag requirements to the expected format
     const tagCounts: { [tag: string]: number } = {};
-    for (const tagRequirement of aiAnalysis.mcqRequirements) {
+    for (const tagRequirement of mcqRequirements) {
       tagCounts[tagRequirement.tag] = tagRequirement.count;
     }
 
@@ -371,25 +379,6 @@ export const interviewService = {
     } finally {
       await queryRunner.release();
     }
-  },
-
-  async runTestCases(
-    questionId: string,
-    code: string
-  ): Promise<TestCaseResult[]> {
-    // TODO: Call code execution service
-    return [
-      {
-        id: "6E5uzx44lvJPPa5s2VUcW",
-        codeSubmissionId: "85pj4vlqD1visW5OPvhwg",
-        testCaseId: "6E5uzx44lvJPPa5s2VUcM",
-        passed: true,
-        verdict: Verdict.ACCEPTED,
-        userOutput: "Mock output",
-        created: new Date().toISOString(),
-        updated: new Date().toISOString(),
-      },
-    ];
   },
 
   async calculateCodeScore(submissions: CodeSubmission[]): Promise<number> {
