@@ -33,6 +33,7 @@ import { mcqAnswerService } from "../mcq/mcq-answer/mcq-answer.service";
 import { isNil } from "../common/utils";
 import { aiService } from "../ai/ai.service";
 import { testCaseResultService } from "../coding/test-case-result/testCaseResult.service";
+import { AssessmentResults } from "../ai/types";
 
 const interviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
@@ -76,7 +77,8 @@ export const interviewService = {
     }
 
     // Get interview questions with full details
-    const questionsWithDetails = await interviewQuestionService.getByInterviewIdWithDetails(id);
+    const questionsWithDetails =
+      await interviewQuestionService.getByInterviewIdWithDetails(id);
 
     return {
       ...interview,
@@ -120,6 +122,11 @@ export const interviewService = {
 
     const updatedInterview = interviewRepository().merge(interview, request);
     return await interviewRepository().save(updatedInterview);
+  },
+
+  async getHistory(userId: string) {
+    const interviews = await interviewRepository().find({ where: { userId } });
+    if (!interviews) throw new Error("User has no previous interviews");
   },
 
   async startInterview(id: string): Promise<InterviewWithQuestions> {
@@ -221,6 +228,7 @@ export const interviewService = {
       ...request,
       status: InterviewStatus.SCHEDULED,
       isActive: true,
+      jobTitle: aiAnalysis.jobTitle,
     });
 
     await interviewRepository().save(interview);
@@ -268,13 +276,13 @@ export const interviewService = {
   },
 
   async submitInterview(
-    interviewId: string,
-    submissionData: SubmitInterviewRequestBody
+    interviewId: string
   ): Promise<InterviewSubmissionResult> {
     const interview = await interviewService.get(interviewId);
     if (!interview) {
       throw new Error(`Interview not found: ${interviewId}`);
     }
+
     const currentTime = new Date();
     const interviewEndTime = new Date(interview.startTime);
     interviewEndTime.setMinutes(
@@ -292,59 +300,28 @@ export const interviewService = {
     await queryRunner.startTransaction();
 
     try {
-      const mcqAnswers: McqAnswer[] = [];
+      const mcqAnswers = await mcqAnswerService.getByInterviewId(interviewId);
+
       let totalCorrect = 0;
       let totalMcqTimeSpent = 0;
       let totalPoints = 0;
       let maxPoints = 0;
 
-      for (const mcqAnswerData of submissionData.mcqAnswers) {
-        const mcqQuestion = await mcqQuestionService.get(
-          mcqAnswerData.questionId
-        );
+      for (const mcqAnswer of mcqAnswers) {
+        const mcqQuestion = await mcqQuestionService.get(mcqAnswer.questionId);
         if (!mcqQuestion) {
-          throw new Error(
-            `MCQ Question not found: ${mcqAnswerData.questionId}`
-          );
+          throw new Error(`MCQ Question not found: ${mcqAnswer.questionId}`);
         }
-
-        const interviewQuestion =
-          await interviewQuestionService.getByInterviewIdandQuestionId(
-            interviewId,
-            mcqAnswerData.questionId
-          );
-        if (!interviewQuestion) {
-          throw new Error(
-            `MCQ Question not found: ${mcqAnswerData.questionId} in interview: ${interviewId}`
-          );
-        }
-
-        const correctOption = mcqQuestion.options.find((opt) => opt.isCorrect);
-        if (!correctOption) {
-          throw new Error(
-            `No correct option found for question: ${mcqAnswerData.questionId}`
-          );
-        }
-
-        const isCorrect = mcqAnswerData.selectedOptionId === correctOption.id;
-        const timeSpent = mcqAnswerData.timeSpent || 0;
 
         const questionPoints = mcqQuestion.points || 1;
         maxPoints += questionPoints;
-        if (isCorrect) {
+
+        if (mcqAnswer.isCorrect) {
           totalCorrect++;
           totalPoints += questionPoints;
         }
-        totalMcqTimeSpent += timeSpent;
 
-        const mcqAnswer = await mcqAnswerService.upsert({
-          ...mcqAnswerData,
-          correctOptionId: correctOption.id,
-          isCorrect,
-          timeSpent,
-        });
-
-        mcqAnswers.push(mcqAnswer);
+        totalMcqTimeSpent += mcqAnswer.timeSpent || 0;
       }
 
       const codeSubmissionsWithResults: CodeSubmission[] =
@@ -374,6 +351,57 @@ export const interviewService = {
         answers: mcqAnswers,
       };
 
+      const interviewWithQuestions = await interviewService.getWithQuestions(
+        interviewId
+      );
+
+      const totalUniqueQuestions =
+        await interviewQuestionService.countByInterviewId(interviewId);
+
+      const assessmentData: AssessmentResults = {
+        job_title: interview.jobTitle || "Full Stack Developer",
+        total_questions: totalUniqueQuestions,
+        overall_score: totalScore,
+        mcq_score: mcqPercentage,
+        problem_solving_score: codeScore,
+        mcq_questions: mcqAnswers.map((answer) => {
+          const questionDetails =
+            interviewWithQuestions?.interviewQuestions.find(
+              (q) => q.questionId === answer.questionId
+            )?.questionDetails;
+
+          return {
+            type: "mcq" as const,
+            tags: questionDetails?.tags || [],
+            is_correct: answer.isCorrect,
+          };
+        }),
+        problem_solving_questions: codeSubmissionsWithResults.map(
+          (submission) => {
+            const questionDetails =
+              interviewWithQuestions?.interviewQuestions.find(
+                (q) => q.questionId === submission.questionId
+              )?.questionDetails;
+
+            return {
+              type: "problem_solving" as const,
+              tags: questionDetails?.tags || [],
+              is_correct: submission.score === submission.totalTests,
+            };
+          }
+        ),
+      };
+
+      let feedback = null;
+      try {
+        feedback = await aiService.getFeedback(assessmentData, "deepseek-r1");
+      } catch (error) {
+        console.error("Failed to get AI feedback:", error);
+      }
+
+      Object.assign(updatedInterview, feedback);
+      await interviewRepository().save(updatedInterview);
+
       const result: InterviewSubmissionResult = {
         interviewId,
         status: InterviewStatus.COMPLETED,
@@ -381,6 +409,7 @@ export const interviewService = {
         codeSubmissions: codeSubmissionsWithResults,
         totalScore,
         submittedAt: new Date().toISOString(),
+        feedback,
       };
 
       await queryRunner.commitTransaction();

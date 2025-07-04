@@ -146,6 +146,7 @@ export const aiService = {
   ): Promise<ComprehensiveAnalysisResponse> {
 
     const keywords = await this.getKeywords(jobDescription, modelName);
+    const jobTitle = keywords.job_title;
     const langs = keywords.programming_languages;
 
     const [mcqAllocation, similarity, codingDifficulty] = await Promise.all([
@@ -193,6 +194,7 @@ export const aiService = {
     ]);
 
     return {
+      jobTitle,
       keywords,
       mcqAllocation,
       similarity,

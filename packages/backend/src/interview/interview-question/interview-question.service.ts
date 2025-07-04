@@ -162,4 +162,10 @@ export const interviewQuestionService = {
 
     await InterviewQuestionRepository().remove(interviewQuestion);
   },
+
+  async countByInterviewId(interviewId: string): Promise<number> {
+    return await InterviewQuestionRepository().count({
+      where: { interviewId },
+    });
+  },
 };

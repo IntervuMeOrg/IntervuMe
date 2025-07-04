@@ -86,9 +86,8 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
   // Submit interview
   app.post("/:id/submit", SubmitInterviewRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
-    const submissionData = request.body as SubmitInterviewRequestBody;
 
-    const result = await interviewService.submitInterview(id, submissionData);
+    const result = await interviewService.submitInterview(id);
     return result;
   });
 
@@ -117,6 +116,17 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
     async (request, reply) => {
       const { userId } = request.params as { userId: string };
       const interviews = await interviewService.listUpcoming(userId);
+      return interviews;
+    }
+  );
+
+  // Get interview stats
+    app.get(
+    "/user/:userId/history",
+    GetInterviewsHistoryByUserRequest,
+    async (request, reply) => {
+      const { userId } = request.params as { userId: string };
+      const interviews = await interviewService.getHistory(userId);
       return interviews;
     }
   );
@@ -168,6 +178,17 @@ const DeleteInterviewRequest = {
 };
 
 const GetInterviewsByUserRequest = {
+  schema: {
+    params: Type.Object({
+      userId: ApId,
+    }),
+    response: {
+      [StatusCodes.OK]: Type.Array(Interview),
+    },
+  },
+};
+
+const GetInterviewsHistoryByUserRequest = {
   schema: {
     params: Type.Object({
       userId: ApId,
@@ -249,7 +270,6 @@ const SubmitInterviewRequest = {
     params: {
       id: ApId,
     },
-    body: SubmitInterviewRequestBody,
     response: {
       [StatusCodes.OK]: InterviewSubmissionResult,
     },

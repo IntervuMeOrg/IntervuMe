@@ -87,6 +87,7 @@ export interface CodingDifficultyResponse {
 }
 
 export interface ComprehensiveAnalysisResponse {
+  jobTitle: string,
   keywords: KeywordExtractionResponse;
   mcqAllocation: AllocationResponse;
   similarity: SimilarityResponse;

@@ -4,6 +4,7 @@ import { InterviewQuestion } from "./interview-question/interview-question-types
 import { Interview, InterviewStatus } from "./interview-types";
 import { CodeSubmissionWithResults } from "../coding/code-submission/code-submission-types";
 import { McqAnswer } from "../mcq/mcq-answer/mcq-answer-types";
+import { string } from "zod";
 
 export type InterviewSchema = Interview & {
   interviewQuestions: InterviewQuestion[];
@@ -62,6 +63,14 @@ export const InterviewEntity = new EntitySchema<InterviewSchema>({
     isActive: {
       type: Boolean,
       default: true,
+    },
+    jobTitle: {
+      type: String,
+      nullable: true,
+    },
+    feedback: {
+      type: "json",
+      nullable: true,
     },
   },
   relations: {

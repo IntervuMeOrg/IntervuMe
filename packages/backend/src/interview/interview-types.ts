@@ -1,7 +1,15 @@
 import { Static, Type } from "@fastify/type-provider-typebox";
 import { BaseModelSchema } from "../common/base-model";
-import { CodeSubmission, CodeSubmissionWithResults, CreateCodeSubmissionRequestBody } from "../coding/code-submission/code-submission-types";
-import { UpsertMcqAnswerRequestBody, McqAnswer, McqAnswerSummary } from "../mcq/mcq-answer/mcq-answer-types";
+import {
+  CodeSubmission,
+  CodeSubmissionWithResults,
+  CreateCodeSubmissionRequestBody,
+} from "../coding/code-submission/code-submission-types";
+import {
+  UpsertMcqAnswerRequestBody,
+  McqAnswer,
+  McqAnswerSummary,
+} from "../mcq/mcq-answer/mcq-answer-types";
 import { InterviewQuestionWithDetails } from "./interview-question/interview-question-types";
 import { ApId } from "../common/id-generator";
 
@@ -25,12 +33,13 @@ export const Interview = Type.Object({
   isPassed: Type.Optional(Type.Boolean()),
   notes: Type.Optional(Type.String({ maxLength: 1000 })),
   isActive: Type.Optional(Type.Boolean({ default: true })),
+  jobTitle: Type.Optional(Type.String()),
+  feedback: Type.Optional(Type.Any()),
 });
 
 export type Interview = Static<typeof Interview>;
 
-
-export const InterviewWithQuestions  = Type.Composite([
+export const InterviewWithQuestions = Type.Composite([
   Interview,
   Type.Object({
     interviewQuestions: Type.Array(InterviewQuestionWithDetails),
@@ -39,9 +48,7 @@ export const InterviewWithQuestions  = Type.Composite([
   }),
 ]);
 
-export type InterviewWithQuestions  = Static<
-  typeof InterviewWithQuestions 
->;
+export type InterviewWithQuestions = Static<typeof InterviewWithQuestions>;
 
 export const CreateInterviewRequestBody = Type.Object({
   userId: Type.String(),
@@ -76,7 +83,9 @@ export const SubmitInterviewRequestBody = Type.Object({
   codeSubmissions: Type.Array(CreateCodeSubmissionRequestBody),
 });
 
-export type SubmitInterviewRequestBody = Static<typeof SubmitInterviewRequestBody>;
+export type SubmitInterviewRequestBody = Static<
+  typeof SubmitInterviewRequestBody
+>;
 
 export const InterviewSubmissionResult = Type.Object({
   interviewId: ApId,
@@ -85,6 +94,9 @@ export const InterviewSubmissionResult = Type.Object({
   codeSubmissions: Type.Array(CodeSubmission),
   totalScore: Type.Number(),
   submittedAt: Type.String({ format: "date-time" }),
+  feedback: Type.Optional(Type.Any()),
 });
 
-export type InterviewSubmissionResult = Static<typeof InterviewSubmissionResult>;
+export type InterviewSubmissionResult = Static<
+  typeof InterviewSubmissionResult
+>;
