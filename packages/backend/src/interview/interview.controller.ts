@@ -52,7 +52,6 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
     return interview;
   });
 
-  // soft delete
   app.delete("/:id", DeleteInterviewRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
     await interviewService.delete(id);
