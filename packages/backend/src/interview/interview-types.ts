@@ -133,3 +133,13 @@ export const UserPracticeAnalytics = Type.Object({
 });
 
 export type UserPracticeAnalytics = Static<typeof UserPracticeAnalytics>;
+
+export const InterviewWithStats = Type.Composite([
+  Interview,
+  Type.Object({
+    questionCount: Type.Number({ minimum: 0 }),
+    uniqueTags: Type.Array(Type.String()),
+  }),
+]);
+
+export type InterviewWithStats = Static<typeof InterviewWithStats>;
