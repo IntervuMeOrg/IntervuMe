@@ -4,42 +4,36 @@ import { CodingQuestion } from "../../types/questions";
 import { EditorLayout } from "../../components/layout/EditorLayout";
 import { CodingExampleSection } from "./CodingExampleSection";
 import { CodingConstraintsSection } from "./CodingConstraintsSection";
+import { CodeSubmissionWithResults } from "../../lib/interview/interview-api";
 
 type QuestionContentCodingProps = {
-	questions: CodingQuestion[];
+	question: CodingQuestion;
 	userAnswers: Record<string, string>;
+	selectedLanguage: string;
 	setUserAnswers: (questionId: string, code: string) => void;
-	currentQuestionIndex: number;
+	onLanguageChange: (language: string) => void;
+	onSubmitCode: (questionId: string, code: string, language: string) => Promise<any>;
+	getSubmissionHistory: (questionId: string) => any[];
+	getSubmissionCount: (questionId: string) => number;
+	hasAcceptedSubmission: (questionId: string) => boolean;
 };
 
 export const QuestionContentCoding = ({
-	questions,
+	question,
 	userAnswers,
+	selectedLanguage,
 	setUserAnswers,
-	currentQuestionIndex,
+	onLanguageChange,
+	onSubmitCode,
+	getSubmissionHistory,
+	getSubmissionCount,
+	hasAcceptedSubmission,
 }: QuestionContentCodingProps) => {
 	// State for console visibility and active tab
 	const [consoleVisible, setConsoleVisible] = useState(false);
 
 	// State for left panel tabs
 	const [activeTab, setActiveTab] = useState("question"); // 'question', 'solution', 'submissions', 'notes'
-
-	// State for submission history - stores all submission attempts
-	const [submissionHistory, setSubmissionHistory] = useState<
-		Array<{
-			status: "success" | "error";
-			message: string;
-			testCasesPassed: number;
-			totalTestCases: number;
-			timestamp: string;
-			language: string;
-			lastFailedTest?: {
-				input: string;
-				output: string;
-				expected: string;
-			} | null;
-		}>
-	>([]);
 
 	// State for console tabs (right panel)
 	const [consoleTab, setConsoleTab] = useState<
@@ -63,11 +57,6 @@ export const QuestionContentCoding = ({
 			expected: string;
 		};
 	}>({ status: "none", message: "" });
-
-	// Handle problem solving answer (code changes)
-	const handleCodingAnswer = (questionId: string, answer: string) => {
-		setUserAnswers(questionId, answer);
-	};
 
 	// State for panel resizing
 	const [leftPanelWidth, setLeftPanelWidth] = useState(50); // percentage
@@ -122,8 +111,47 @@ export const QuestionContentCoding = ({
 		};
 	}, [isResizing, handleMouseMove, handleMouseUp]);
 
-	const currentQuestion = questions[currentQuestionIndex];
-	const currentCode = userAnswers[currentQuestion.id] || "";
+	const currentCode = userAnswers[question.id] || "";
+
+	// Get available languages from the question's starter code
+	const getAvailableLanguages = () => {
+		const availableLanguages = [];
+		if (question.starterCode?.codeStarter) {
+			if (question.starterCode.codeStarter.cpp) {
+				availableLanguages.push({ value: "cpp", label: "C++" });
+			}
+			if (question.starterCode.codeStarter.java) {
+				availableLanguages.push({ value: "java", label: "Java" });
+			}
+			if (question.starterCode.codeStarter.python) {
+				availableLanguages.push({ value: "python", label: "Python" });
+			}
+		}
+		
+		// Default languages if no starter code available
+		if (availableLanguages.length === 0) {
+			return [
+				{ value: "cpp", label: "C++" },
+				{ value: "java", label: "Java" },
+				{ value: "python", label: "Python" },
+			];
+		}
+		
+		return availableLanguages;
+	};
+
+	// Set initial language based on available languages
+	useEffect(() => {
+		const availableLanguages = getAvailableLanguages();
+		if (availableLanguages.length > 0 && !availableLanguages.find(lang => lang.value === selectedLanguage)) {
+			onLanguageChange(availableLanguages[0].value);
+		}
+	}, [question]);
+
+	// Handle problem solving answer (code changes)
+	const handleCodingAnswer = (questionId: string, answer: string) => {
+		setUserAnswers(questionId, answer);
+	};
 
 	return (
 		<div className="font-['Nunito'] mt-4 sm:mt-2 md:mt-0 lg:-mt-2 xl:-mt-4 flex relative" ref={containerRef}>
@@ -183,30 +211,28 @@ export const QuestionContentCoding = ({
 							<div className="mb-3">
 								<h3 className="font-bold text-2xl mb-1 flex justify-between items-start">
 									<span className="flex-1">
-										{currentQuestion.title}
+										{question.title}
 									</span>
 									<span className="bg-[#0667D0] text-white px-3 py-1 rounded-full text-sm font-semibold ml-4">
-										{currentQuestion.points} points
+										{question.points} points
 									</span>
 								</h3>
 								<span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm font-medium">
-									{currentQuestion.difficulty}
+									{question.difficulty}
 								</span>
 							</div>
 							<div className="text-gray-700 whitespace-pre-line">
-								{currentQuestion.problemStatement}
+								{question.problemStatement}
 							</div>
 
 							{/* Examples Section */}
 							<CodingExampleSection
-								questions={questions}
-								currentQuestionIndex={currentQuestionIndex}
+								question={question}
 							/>
 
 							{/* Constraints Section */}
 							<CodingConstraintsSection
-								questions={questions}
-								currentQuestionIndex={currentQuestionIndex}
+								question={question}
 							/>
 						</CardContent>
 					</Card>
@@ -227,13 +253,13 @@ export const QuestionContentCoding = ({
 					<Card className="shadow-md border border-gray-200 overflow-visible h-auto">
 						<CardContent className="p-6">
 							<h3 className="font-bold text-xl mb-4">Submissions</h3>
-							{submissionHistory.length === 0 ? (
+							{getSubmissionHistory(question.id).length === 0 ? (
 								<p className="text-gray-500 text-center py-8">
 									No submissions yet
 								</p>
 							) : (
 								<div className="space-y-4">
-									{submissionHistory.map((submission, index) => (
+									{getSubmissionHistory(question.id).map((submission: CodeSubmissionWithResults, index: number) => (
 										<div
 											key={index}
 											className="border border-gray-400 rounded-lg p-4 hover:bg-gray-50 transition-colors"
@@ -242,12 +268,12 @@ export const QuestionContentCoding = ({
 												<div className="flex items-center gap-3">
 													<span
 														className={`px-2 py-1 rounded text-sm font-medium ${
-															submission.status === "success"
+															submission.testCaseResults?.every((result: any) => result.passed === true)
 																? "bg-green-100 text-green-700"
 																: "bg-red-100 text-red-700"
 														}`}
 													>
-														{submission.status === "success"
+														{submission.testCaseResults?.every((result: any) => result.passed === true)
 															? "Accepted"
 															: "Wrong Answer"}
 													</span>
@@ -256,46 +282,41 @@ export const QuestionContentCoding = ({
 													</span>
 												</div>
 												<span className="text-gray-500 text-sm">
-													{submission.timestamp}
+													{new Date(submission.submittedAt).toLocaleString()}
 												</span>
 											</div>
 											<div className="text-sm text-gray-600 mb-2">
-												{submission.message}
+												{submission.testCaseResults?.every((result: any) => result.passed === true)
+													? "Your solution passed all test cases. Great job!"
+													: "Your solution failed on some test cases. Check the error details and try again."}
 											</div>
 											<div className="text-sm">
 												<span className="font-medium">Test Cases: </span>
 												<span
 													className={`${
-														submission.testCasesPassed ===
-														submission.totalTestCases
+														submission.testCaseResults?.every((result: any) => result.passed === true)
 															? "text-green-600"
 															: "text-red-600"
 													}`}
 												>
-													{submission.testCasesPassed}/
-													{submission.totalTestCases} passed
+													{submission.testCaseResults?.filter((result: any) => result.passed === true).length || 0}/
+													{submission.testCaseResults?.length || 0} passed
 												</span>
 											</div>
-											{submission.status === "error" &&
-												submission.lastFailedTest && (
-													<div className="mt-3 p-3 bg-gray-100 rounded text-sm">
-														<div className="font-medium text-gray-700 mb-1">
-															Last executed test case:
-														</div>
-														<div className="text-gray-600">
-															<strong>Input:</strong>{" "}
-															{submission.lastFailedTest.input}
-														</div>
-														<div className="text-gray-600">
-															<strong>Your Output:</strong>{" "}
-															{submission.lastFailedTest.output}
-														</div>
-														<div className="text-gray-600">
-															<strong>Expected:</strong>{" "}
-															{submission.lastFailedTest.expected}
-														</div>
+											{submission.testCaseResults && !submission.testCaseResults.every((result: any) => result.passed === true) && (
+												<div className="mt-3 p-3 bg-gray-100 rounded text-sm">
+													<div className="font-medium text-gray-700 mb-1">
+														First failed test case:
 													</div>
-												)}
+													{submission.testCaseResults.find((result: any) => !result.passed) && (
+														<div className="text-gray-600">
+															<div><strong>Input:</strong> {submission.testCaseResults.find((result: any) => !result.passed)?.input || "N/A"}</div>
+															<div><strong>Your Output:</strong> {submission.testCaseResults.find((result: any) => !result.passed)?.actualOutput || "N/A"}</div>
+															<div><strong>Expected:</strong> {submission.testCaseResults.find((result: any) => !result.passed)?.expectedOutput || "N/A"}</div>
+														</div>
+													)}
+												</div>
+											)}
 										</div>
 									))}
 								</div>
@@ -338,21 +359,21 @@ export const QuestionContentCoding = ({
 				<EditorLayout
 					initialValue={
 						currentCode ||
-						currentQuestion.starterCodes?.codeStarter?.cpp ||
+						question.starterCode?.codeStarter?.[selectedLanguage as keyof typeof question.starterCode.codeStarter] ||
 						"// Write your solution here\n"
 					}
-					language="cpp"
+					language={selectedLanguage}
 					height="100%"
 					onChange={(value) =>
 						handleCodingAnswer(
-							currentQuestion.id,
+							question.id,
 							value || ""
 						)
 					}
+					onLanguageChange={(language) => onLanguageChange(language)}
 					showConsole={consoleVisible}
 					consoleOutput={codeOutput}
-					questions={questions}
-					currentQuestionIndex={currentQuestionIndex}
+					question={question}
 					submissionStatus={submissionStatus}
 					onRun={() => {
 						// Simulate code execution
@@ -363,51 +384,18 @@ export const QuestionContentCoding = ({
 						setConsoleTab("output");
 					}}
 					onSubmissionsTabClick={() => setActiveTab("submissions")}
-					onSubmit={() => {
-						// Simulate submission with random results
-						const submissionCount = submissionHistory.length;
-						const isSuccess = submissionCount % 2 === 1;
-						const testCasesPassed = isSuccess ? 5 : 0;
-
-						const newSubmission = {
-							status: isSuccess ? ("success" as const) : ("error" as const),
-							message: isSuccess
-								? "Your solution passed all test cases. Great job!"
-								: "Your solution failed on test cases. Check the error details and try again.",
-							testCasesPassed: testCasesPassed,
-							totalTestCases: 5,
-							timestamp: new Date().toLocaleString(),
-							language: "C++",
-							...(isSuccess
-								? {}
-								: {
-										lastFailedTest: {
-											input: "nums=[1,2,3,4], target=9",
-											output: "true",
-											expected: "-1",
-										},
-								  }),
-						};
-
-						// Add to submission history
-						setSubmissionHistory((prev) => [newSubmission, ...prev]);
-						setSubmissionStatus(newSubmission);
-
-						// Update the code in parent state
-						handleCodingAnswer(
-							currentQuestion.id,
-							currentCode
-						);
-
-						setConsoleVisible(true);
-						setConsoleTab("submissions");
-						setActiveTab("submissions");
+					onSubmit={async () => {
+						try {
+							// Call the actual submission function from parent with selected language
+							await onSubmitCode(question.id, currentCode, selectedLanguage);
+							
+							// Switch to submissions tab to show results
+							setActiveTab("submissions");
+						} catch (error) {
+							console.error("Submission failed:", error);
+						}
 					}}
-					availableLanguages={[
-						{ value: "cpp", label: "C++" },
-						{ value: "python", label: "Python" },
-						{ value: "java", label: "Java" },
-					]}
+					availableLanguages={getAvailableLanguages()}
 				/>
 			</div>
 		</div>

@@ -3,28 +3,32 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "../../components/ui/card";
 import { QuestionContentMCQ } from "./QuestionContentMCQ";
 import { QuestionContentCoding } from "./QuestionContentCoding";
-import { MCQQuestion, CodingQuestion } from "../../types/questions";
+import { McqQuestion, CodingQuestion } from "../../types/questions";
 
 type QuestionCardProps = {
 	currentQuestionIndex: number;
-	questions: (MCQQuestion | CodingQuestion)[];
+	questions: (McqQuestion | CodingQuestion)[];
 	userAnswers: Record<string, string>;
-	codeSubmissions?: Record<string, string>;
-	setUserAnswers: (questionId: string, selectedOptionId: string) => void;
-	setCodeSubmissions?: (questionId: string, code: string) => void;
-	onSubmitCode?: (questionId: string, code: string, language: string) => Promise<any>;
-	getSubmissionHistory?: (questionId: string) => any[];
-	getSubmissionCount?: (questionId: string) => number;
-	hasAcceptedSubmission?: (questionId: string) => boolean;
+	codeSubmissions: Record<string, string>;
+	selectedLanguages: Record<string, string>;
+	setUserAnswer: (questionId: string, selectedOptionId: string) => void;
+	setCodeSubmissions: (questionId: string, code: string) => void;
+	onLanguageChange: (questionId: string, language: string) => void;
+	onSubmitCode: (questionId: string, code: string, language: string) => Promise<any>;
+	getSubmissionHistory: (questionId: string) => any[];
+	getSubmissionCount: (questionId: string) => number;
+	hasAcceptedSubmission: (questionId: string) => boolean;
 };
 
 export const QuestionCard = ({
 	currentQuestionIndex,
 	questions,
 	userAnswers,
-	codeSubmissions = {},
-	setUserAnswers,
+	codeSubmissions,
+	selectedLanguages,
+	setUserAnswer,
 	setCodeSubmissions,
+	onLanguageChange,
 	onSubmitCode,
 	getSubmissionHistory,
 	getSubmissionCount,
@@ -106,16 +110,21 @@ export const QuestionCard = ({
 					>
 						{isMCQ ? (
 							<QuestionContentMCQ
-								question={currentQuestion as MCQQuestion}
+								question={currentQuestion as McqQuestion}
 								userAnswers={userAnswers}
-								setUserAnswer={setUserAnswers}
+								setUserAnswer={setUserAnswer}
 							/>
 						) : (
 							<QuestionContentCoding
-								questions={questions as CodingQuestion[]}
+								question={currentQuestion as CodingQuestion}
 								userAnswers={codeSubmissions}
-								setUserAnswers={setCodeSubmissions || (() => {})}
-								currentQuestionIndex={currentQuestionIndex}
+								selectedLanguage={selectedLanguages[currentQuestion.id] || "cpp"}
+								setUserAnswers={setCodeSubmissions}
+								onLanguageChange={(language) => onLanguageChange(currentQuestion.id, language)}
+								onSubmitCode={onSubmitCode}
+								getSubmissionHistory={getSubmissionHistory}
+								getSubmissionCount={getSubmissionCount}
+								hasAcceptedSubmission={hasAcceptedSubmission}
 							/>
 						)}
 					</div>
