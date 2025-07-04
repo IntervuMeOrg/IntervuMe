@@ -10,7 +10,7 @@ type QuestionListSidebarProps = {
 	setCurrentQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
 	sidebarVisible: boolean;
 	setSidebarVisible: React.Dispatch<React.SetStateAction<boolean>>;
-	isQuestionAnswered: (questionId: number) => boolean;
+	isQuestionAnswered: (questionId: string) => boolean;
 };
 
 export const QuestionListSidebar = ({

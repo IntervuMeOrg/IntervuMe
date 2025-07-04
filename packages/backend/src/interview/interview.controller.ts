@@ -20,6 +20,7 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
 
   app.post("/", CreateInterviewRequestBodyRequest, async (request, reply) => {
     const body = request.body as CreateInterviewRequestBody;
+    console.log("Creating interview:", body);
     const interview = await interviewService.create(body);
     return interview;
   });
