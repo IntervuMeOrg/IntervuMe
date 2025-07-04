@@ -1,64 +1,77 @@
 import { motion } from "framer-motion";
 import { CalendarIcon, ClockIcon, BarChart4Icon } from "lucide-react";
-
-type interviewHistory = {
-  id: string;
-  title: string;
-  date: string;
-  time: string;
-  duration: string;
-  score: number;
-  questions: number;
-  skills: string[];
-};
+import type { InterviewHistoryResponse } from "../../lib/History/interview-history-api";
 
 type HistoryStatsOverviewProps = {
-  interviewHistory: interviewHistory[];
+  interviewHistory: InterviewHistoryResponse;
 };
 
 export const HistoryStatsOverview = ({
   interviewHistory,
 }: HistoryStatsOverviewProps) => {
-  // Calculate total practice time from duration strings
-  const calculateTotalTime = () => {
-    const totalMinutes = interviewHistory.reduce((acc, interview) => {
-      const minutes = parseInt(interview.duration.split(' ')[0]);
-      return acc + minutes;
-    }, 0);
-    
-    const hours = Math.floor(totalMinutes / 60);
-    const remainingMinutes = totalMinutes % 60;
-    
-    if (hours > 0) {
-      return `${hours}.${Math.round((remainingMinutes / 60) * 10)} hrs`;
+  if (!interviewHistory) {
+    return (
+      <div className="w-full mb-8 sm:mb-10 md:mb-12 text-center text-gray-400">
+        No interview history found.
+      </div>
+    );
+  }
+
+  // Helper function to check if a value is valid
+  const isValidValue = (value: any): boolean => {
+    return value !== null && value !== undefined && !isNaN(value) && value !== '';
+  };
+
+  // Helper function to format practice time
+  const formatPracticeTime = (totalMinutes: number): string => {
+    if (!isValidValue(totalMinutes) || totalMinutes === 0) {
+      return "No data";
     }
-    return `${totalMinutes} min`;
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${hours}h ${minutes}m`;
+  };
+
+  // Helper function to format average score
+  const formatAverageScore = (score: number): string => {
+    if (!isValidValue(score)) {
+      return "No data";
+    }
+    return `${Math.round(score)}%`;
+  };
+
+  // Helper function to format total interviews
+  const formatTotalInterviews = (total: number): string => {
+    if (!isValidValue(total)) {
+      return "No data";
+    }
+    return total.toString();
   };
 
   const stats = [
     {
       icon: <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#e8eef2] flex-shrink-0" />,
       title: "Total Interviews",
-      value: interviewHistory.length.toString(),
-      subtitle: "Last 30 days",
+      value: formatTotalInterviews(interviewHistory.totalInterviews),
+      subtitle: "All time",
       delay: 0.2,
+      hasData: isValidValue(interviewHistory.totalInterviews),
     },
     {
       icon: <BarChart4Icon className="h-4 w-4 sm:h-5 sm:w-5 text-[#e8eef2] flex-shrink-0" />,
       title: "Average Score",
-      value: `${Math.round(
-        interviewHistory.reduce((acc, interview) => acc + interview.score, 0) /
-          interviewHistory.length
-      )}%`,
+      value: formatAverageScore(interviewHistory.averageScore),
       subtitle: "Across all interviews",
       delay: 0.3,
+      hasData: isValidValue(interviewHistory.averageScore),
     },
     {
       icon: <ClockIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#e8eef2] flex-shrink-0" />,
       title: "Total Practice Time",
-      value: calculateTotalTime(),
+      value: formatPracticeTime(interviewHistory.totalPracticeTime),
       subtitle: "Across all sessions",
       delay: 0.4,
+      hasData: isValidValue(interviewHistory.totalPracticeTime),
     },
   ];
 
@@ -104,13 +117,15 @@ export const HistoryStatsOverview = ({
               </div>
               
               {/* Value */}
-              <p className="font-['Nunito'] text-[#e8eef2] text-xl sm:text-2xl md:text-3xl font-bold mb-2">
+              <p className={`font-['Nunito'] text-xl sm:text-2xl md:text-3xl font-bold mb-2 ${
+                stat.hasData ? 'text-[#e8eef2]' : 'text-gray-400'
+              }`}>
                 {stat.value}
               </p>
               
               {/* Subtitle */}
               <p className="font-['Nunito'] text-[#e8eef2] text-xs sm:text-sm opacity-70">
-                {stat.subtitle}
+                {stat.hasData ? stat.subtitle : "Data not available"}
               </p>
             </div>
           </motion.div>
