@@ -10,8 +10,14 @@ Analyze the following job description and extract relevant keywords. The extract
   "tools_technologies": ["list of tools, platforms, cloud services, and frameworks"],
   "experience": "experience level or years",
   "qualifications": ["list of qualifications"],
-  "company_name": "company name or N/A"
+  "company_name": "the company name"
 }
+
+IMPORTANT: Only extract information that is explicitly mentioned in the job description. If any field cannot be found or is not clearly stated, leave it empty:
+- Use empty string "" for text fields that are not found
+- Use empty array [] for array fields that are not found
+- Do not assume, guess, or infer values that are not explicitly stated
+- Do not use placeholder values like "N/A", "Not specified", or similar
 
 Return only the JSON output.
 Job Description:
