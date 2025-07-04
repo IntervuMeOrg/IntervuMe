@@ -30,6 +30,22 @@ export interface SubmitCodeRequest {
   code: string;
 }
 
+// Code execution types
+export interface RunCodeRequest {
+  questionId: string;
+  language: 'python' | 'cpp' | 'java';
+  userCode: string;
+  stdin: string;
+  expected: string;
+  timeLimit: number;
+}
+
+export interface RunCodeResult {
+  stdout: string;
+  status: string;
+  time: number;
+}
+
 export interface SubmitInterviewRequest {
   mcqAnswers: SubmitMCQAnswerRequest[];
   codeSubmissions: SubmitCodeRequest[];
@@ -168,12 +184,12 @@ export const interviewApi = {
 
   // Submit code
   submitCode(submission: SubmitCodeRequest) {
-    return api.post<CodeSubmissionResponse>('/api/code-submission', submission);
+    return api.post<CodeSubmissionWithResults>('/api/code-submission', submission);
   },
 
   // Submit complete interview
-  submitInterview(interviewId: string, submission: SubmitInterviewRequest) {
-    return api.post<InterviewSubmissionResult>(`/api/interview/${interviewId}/submit`, submission);
+  submitInterview(id: string) {
+    return api.post<InterviewSubmissionResult>(`/api/interview/${id}/submit`);
   },
 
   // Get user's interviews
@@ -189,6 +205,11 @@ export const interviewApi = {
   // Calculate interview score
   calculateScore(interviewId: string) {
     return api.post<InterviewResponse>(`/api/interview/${interviewId}/calculate-score`);
+  },
+
+  // Run code with test cases
+  runCode(request: RunCodeRequest) {
+    return api.post<RunCodeResult>('/api/code-execution/run', request);
   },
 };
 

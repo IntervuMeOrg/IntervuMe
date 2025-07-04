@@ -1,15 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import {
   interviewApi,
   CreateInterviewRequest,
   SubmitMCQAnswerRequest,
   SubmitCodeRequest,
-  SubmitInterviewRequest,
   InterviewResponse,
   InterviewSessionResponse,
-  CodeSubmissionResponse,
   InterviewSubmissionResult,
+  RunCodeRequest,
+  CodeSubmissionWithResults,
 } from "./interview-api";
 
 // Create interview hook
@@ -117,7 +116,7 @@ export const useSubmitCode = () => {
       const response = await interviewApi.submitCode(submission);
       return response.data;
     },
-    onSuccess: (data: CodeSubmissionResponse) => {
+    onSuccess: (data: CodeSubmissionWithResults) => {
       // Invalidate interview session to update submissions
       queryClient.invalidateQueries({ 
         queryKey: ["interview-session", data.interviewId] 
@@ -132,16 +131,29 @@ export const useSubmitCode = () => {
   });
 };
 
+// Run code hook (for testing individual test cases)
+export const useRunCode = () => {
+  return useMutation({
+    mutationFn: async (request: RunCodeRequest) => {
+      const response = await interviewApi.runCode(request);
+      return response.data;
+    },
+    onError: (error: any) => {
+      console.error(
+        "Run code failed:",
+        error.response?.data?.message || error.message
+      );
+    },
+  });
+};
+
 // Submit complete interview hook
 export const useSubmitInterview = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ interviewId, submission }: { 
-      interviewId: string; 
-      submission: SubmitInterviewRequest 
-    }) => {
-      const response = await interviewApi.submitInterview(interviewId, submission);
+    mutationFn: async (interviewId: string) => {
+      const response = await interviewApi.submitInterview(interviewId);
       return response.data;
     },
     onSuccess: (data: InterviewSubmissionResult) => {
