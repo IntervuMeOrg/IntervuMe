@@ -307,18 +307,6 @@ export const interviewService = {
       throw new Error(`Interview not found: ${interviewId}`);
     }
 
-    const currentTime = new Date();
-    const interviewEndTime = new Date(interview.startTime);
-    interviewEndTime.setMinutes(
-      interviewEndTime.getMinutes() + interview.timeLimit
-    );
-
-    if (currentTime > interviewEndTime) {
-      throw new Error(
-        `Interview time has expired. Cannot submit after ${interviewEndTime.toISOString()}`
-      );
-    }
-
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -486,7 +474,6 @@ export const interviewService = {
 
   async checkAndSubmitExpiredInterviews(): Promise<void> {
     const now = new Date();
-
     const activeInterviews = await interviewRepository().find({
       where: {
         status: InterviewStatus.IN_PROGRESS,
@@ -496,7 +483,7 @@ export const interviewService = {
 
     for (const interview of activeInterviews) {
       const startTime = new Date(interview.startTime);
-      const expiryTime = new Date(startTime.getTime() + interview.timeLimit);
+      const expiryTime = new Date(startTime.getTime() + (interview.timeLimit * 60 * 1000));
 
       if (now > expiryTime) {
         await this.submitInterview(interview.id);
