@@ -26,7 +26,7 @@ export const Interview = Type.Object({
   userId: Type.String(),
   startTime: Type.String({ format: "date-time" }),
   endTime: Type.Optional(Type.String({ format: "date-time" })),
-  timeLimit: Type.Integer({ minimum: 5, maximum: 300 }), // in minutes
+  timeLimit: Type.Integer({ minimum: 1, maximum: 300 }), // in minutes
   status: Type.Optional(Type.Enum(InterviewStatus)),
   totalScore: Type.Optional(Type.Number({ minimum: 0 })),
   maxScore: Type.Optional(Type.Number({ minimum: 0 })),
@@ -54,7 +54,7 @@ export const CreateInterviewRequestBody = Type.Object({
   userId: Type.String(),
   jobDescription: Type.String({ minLength: 10, maxLength: 5000 }), // Added missing field
   startTime: Type.String({ format: "date-time" }),
-  timeLimit: Type.Integer({ minimum: 5, maximum: 300 }),
+  timeLimit: Type.Integer({ minimum: 1, maximum: 300 }),
   notes: Type.Optional(Type.String({ maxLength: 1000 })),
 });
 
@@ -65,7 +65,7 @@ export type CreateInterviewRequestBody = Static<
 export const UpdateInterviewRequestBody = Type.Object({
   startTime: Type.Optional(Type.String({ format: "date-time" })),
   endTime: Type.Optional(Type.String({ format: "date-time" })),
-  timeLimit: Type.Optional(Type.Integer({ minimum: 5, maximum: 300 })),
+  timeLimit: Type.Optional(Type.Integer({ minimum: 1, maximum: 300 })),
   status: Type.Optional(Type.Enum(InterviewStatus)),
   totalScore: Type.Optional(Type.Number({ minimum: 0 })),
   maxScore: Type.Optional(Type.Number({ minimum: 0 })),

@@ -4,7 +4,6 @@ import { InterviewQuestion } from "./interview-question/interview-question-types
 import { Interview, InterviewStatus } from "./interview-types";
 import { CodeSubmissionWithResults } from "../coding/code-submission/code-submission-types";
 import { McqAnswer } from "../mcq/mcq-answer/mcq-answer-types";
-import { string } from "zod";
 
 export type InterviewSchema = Interview & {
   interviewQuestions: InterviewQuestion[];
