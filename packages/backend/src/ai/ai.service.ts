@@ -19,6 +19,7 @@ import {
   ComprehensiveAnalysisResponse,
 } from "./types";
 import { mcqQuestionService } from "../mcq/mcq-question/mcq-question.service";
+import { set } from "date-fns";
 
 // Model configuration
 const MODEL_CONFIGS = {
@@ -148,13 +149,16 @@ export const aiService = {
     const keywords = await this.getKeywords(jobDescription, modelName);
     const jobTitle = keywords.job_title;
     const langs = keywords.programming_languages;
+    const techs = keywords.tools_technologies;
+
+    const topics = [...new Set([...langs, ...techs])];
 
     const mcqTags = await mcqQuestionService.getAllUniqueTags();
 
     const [mcqAllocation, similarity, codingDifficulty] = await Promise.all([
       this.getMcqAlloc(jobDescription, langs, numMcqQuestions, modelName),
       this.getSimilarity(
-        langs,
+        topics,
         mcqTags, 
         modelName
       ),
