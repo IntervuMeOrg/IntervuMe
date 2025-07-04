@@ -37,7 +37,7 @@ const interviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
 };
 
-const MODEL_NAME = "gemini-2.5-flash";
+const MODEL_NAME = "deepseek-r1";
 
 export const interviewService = {
   async getByUserId(userId: string): Promise<Interview[]> {
