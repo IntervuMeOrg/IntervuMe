@@ -7,58 +7,41 @@ import { InterviewQuestionsPageHeader } from "./InterviewQuestionPageHeader";
 import { ExitConfirmationModel } from "./ExitConfirmationModel";
 import { SubmitConfirmationModal } from "./SubmitConfirmationModal";
 import { CustomNotificationBlur } from "./CustomNotificationBlur";
-import { MCQQuestion, CodingQuestion } from "../../types/questions";
-	import { 
-		useInterviewWithQuestions, 
-		useStartInterview, 
-		useSubmitInterview, 
-		useSubmitCode,
-		useInterviewSession 
-	} from "../../lib/interview/interview-hooks";
+import { McqQuestion, CodingQuestion, McqOption } from "../../types/questions";
+import { 
+	useInterviewWithQuestions, 
+	useStartInterview, 
+	useSubmitInterview, 
+	useSubmitCode,
+	useInterviewSession 
+} from "../../lib/interview/interview-hooks";
+import { 
+	McqAnswer,
+	CodeSubmissionWithResults,
+	InterviewQuestionWithDetails,
+} from "../../lib/interview/interview-api";
 import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
-import { isNil } from "../../lib/utils";
 
-type Question = MCQQuestion | CodingQuestion;	
+type Question = McqQuestion | CodingQuestion;
 
 export const InterviewQuestionsPage = (): JSX.Element => {
 	const navigate = useNavigate();
 	const params = useParams<{ id: string }>();
 	const user = useCurrentUser();
 	
-	// Backend integration hooks
-	const interviewId = params.id;
-	const { data: interviewWithQuestions, isLoading: isLoadingInterview, error: interviewError } = useInterviewWithQuestions(interviewId || "");
+	const interviewId = params.id || "";
+	const { data: interviewWithQuestions, isLoading, error } = useInterviewWithQuestions(interviewId);
 	const startInterview = useStartInterview();
 	const submitInterview = useSubmitInterview();
 	const submitCode = useSubmitCode();
-	const { 
-		saveAnswerLocally, 
-		autoSaveMCQAnswer, 
-		saveCodeToLocalStorage, 
-		getCodeFromLocalStorage,
-		clearCodeFromLocalStorage
-	} = useInterviewSession();
+	const { autoSaveMCQAnswer, saveCodeToLocalStorage, getCodeFromLocalStorage } = useInterviewSession();
 
-	// State for questions - now loaded from backend
-	const [questions, setQuestions] = useState<Question[]>([]);
-	
-	// State for current question index
+	// Simple state management
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-	// State for user answers - now includes both MCQ and code answers
-	const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
-	const [codeSubmissions, setCodeSubmissions] = useState<Record<string, string>>({});
-	const [allSubmissionsByQuestion, setAllSubmissionsByQuestion] = useState<Record<string, any[]>>({});
-
-	// State for question list sidebar visibility
 	const [sidebarVisible, setSidebarVisible] = useState(false);
-	// State for footer visibility
 	const [footerVisible, setFooterVisible] = useState(true);
-
-	// States for confirmation modals
-	const [exitConfirmation, setExitConfirmation] = useState<boolean>(false);
-	const [submitConfirmation, setSubmitConfirmation] = useState<boolean>(false);
-
-	// Add this state for the custom notification
+	const [exitConfirmation, setExitConfirmation] = useState(false);
+	const [submitConfirmation, setSubmitConfirmation] = useState(false);
 	const [notification, setNotification] = useState<{
 		visible: boolean;
 		message: string;
@@ -69,112 +52,257 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 		type: "success",
 	});
 
-	// Load interview data and questions
+	// Initialize all state variables with empty values first
+	const [mcqAnswers, setMcqAnswers] = useState<Record<string, string>>({});
+	const [currentCodes, setCurrentCodes] = useState<Record<string, string>>({});
+	const [selectedLanguages, setSelectedLanguages] = useState<Record<string, string>>({});
+	const [allSubmissionsByQuestion, setAllSubmissionsByQuestion] = useState<Record<string, CodeSubmissionWithResults[]>>({});
+
+	// Initialize MCQ answers after data loads
 	useEffect(() => {
-		if (interviewWithQuestions && interviewId) {
-			// Transform backend questions to frontend format
-			const transformedQuestions = interviewWithQuestions.interviewQuestions.map((q: any) => {
-				if (q.questionType === "mcq") {
-					return {
-						id: q.questionId,
-						type: "mcq",
-						text: q.questionDetails.text,
-						options: q.questionDetails.options.map((option: any) => ({
-							id: option.id,
-							text: option.optionText,
-							isCorrect: option.isCorrect,
-						})),
-						points: 10,
-						tags: q.questionDetails.tags,
-						explanation: q.questionDetails.explanation,
-
-					} as MCQQuestion;
-				} else if (q.questionType === "coding") {
-					return {
-						id: q.questionId,
-						type: "coding",
-						title: q.questionDetails.title,
-						category: q.questionDetails.category,
-						difficulty: q.questionDetails.difficulty,
-						points: q.questionDetails.points,
-						timeLimit: q.questionDetails.timeLimit,
-						problemStatement: q.questionDetails.problemStatement,
-						starterCodes: q.questionDetails.starterCode,
-						solution: q.questionDetails.solutionCode,
-						examples: q.questionDetails.examples || [],
-						constraints: q.questionDetails.constraints || [],
-						followUp: q.questionDetails.followUp || [],
-						tags: q.questionDetails.tags,
-						testCases: q.questionDetails.testCases || [],
-						explanation: q.questionDetails.explanation,
-						memoryLimit: q.questionDetails.memoryLimit,
-						hints: q.questionDetails.hints || [],
-					} as CodingQuestion;
-				}
-				return q;
-			});
-
-			console.log("Transformed questions:", transformedQuestions);
-			setQuestions(transformedQuestions);
-
-			// Load existing answers from backend
+		if (interviewWithQuestions?.answers && Object.keys(mcqAnswers).length === 0) {
 			const existingAnswers: Record<string, string> = {};
-			interviewWithQuestions.answers.forEach((answer: any) => {
-				existingAnswers[answer.questionId.toString()] = answer.selectedOptionId;
+			interviewWithQuestions.answers.forEach((answer: McqAnswer) => {
+				existingAnswers[answer.questionId] = answer.selectedOptionId;
 			});
-			console.log("Existing answers:", existingAnswers);
-			setUserAnswers(existingAnswers);
+			setMcqAnswers(existingAnswers);
+		}
+	}, [interviewWithQuestions?.answers]);
 
-			// Load existing code submissions from backend (group by question, keep most recent)
-			const existingCodeSubmissions: Record<string, string> = {};
-			const allSubmissionsByQuestion: Record<string, any[]> = {};
-			
-			// Group submissions by question and sort by submission time (newest first)
-			interviewWithQuestions.codeSubmissions.forEach((submission: any) => {
-				const questionId = submission.questionId;
-				if (!allSubmissionsByQuestion[questionId]) {
-					allSubmissionsByQuestion[questionId] = [];
+	// Initialize selected languages after questions load
+	useEffect(() => {
+		if (interviewWithQuestions?.interviewQuestions && Object.keys(selectedLanguages).length === 0) {
+			const initialLanguages: Record<string, string> = {};
+			interviewWithQuestions.interviewQuestions.forEach((q: InterviewQuestionWithDetails) => {
+				if (q.questionType === "coding") {
+					initialLanguages[q.questionId] = "cpp"; // Default to cpp
 				}
-				allSubmissionsByQuestion[questionId].push(submission);
 			});
+			setSelectedLanguages(initialLanguages);
+		}
+	}, [interviewWithQuestions?.interviewQuestions]);
 
-			// Sort each question's submissions by submittedAt (newest first) and get the most recent
-			Object.entries(allSubmissionsByQuestion).forEach(([questionId, submissions]) => {
-				const sortedSubmissions = submissions.sort((a, b) => 
-					new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
-				);
-				// Use the most recent submission as the current code
-				existingCodeSubmissions[questionId] = sortedSubmissions[0].code;
+	// Initialize submission history after data loads
+	useEffect(() => {
+		if (interviewWithQuestions?.codeSubmissions && Object.keys(allSubmissionsByQuestion).length === 0) {
+			const submissions: Record<string, CodeSubmissionWithResults[]> = {};
+			interviewWithQuestions.codeSubmissions.forEach((submission: CodeSubmissionWithResults) => {
+				const questionId = submission.questionId;
+				if (!submissions[questionId]) {
+					submissions[questionId] = [];
+				}
+				submissions[questionId].push(submission);
 			});
+			setAllSubmissionsByQuestion(submissions);
+		}
+	}, [interviewWithQuestions?.codeSubmissions]);
 
-			// Store all submissions in state for history viewing
-			setAllSubmissionsByQuestion(allSubmissionsByQuestion);
+	// Transform questions once (only when data is available)
+	const questions: Question[] = interviewWithQuestions?.interviewQuestions?.map((q: InterviewQuestionWithDetails) => {
+		if (q.questionType === "mcq") {
+			const mcqDetails = q.questionDetails as McqQuestion;
+			const correctOption = mcqDetails.options.find((opt: McqOption) => opt.isCorrect);
+			return {
+				...mcqDetails,
+				id: q.questionId,
+				type: "mcq",
+				correctOptionId: correctOption ? correctOption.id : "",
+			} as McqQuestion;
+		} else {
+			const codingDetails = q.questionDetails as CodingQuestion;
+			return {
+				...codingDetails,
+				id: q.questionId,
+				type: "coding",
+			} as CodingQuestion;
+		}
+	}) || [];
 
-			// Load code from localStorage (this takes precedence over backend)
-			const localCodeSubmissions: Record<string, string> = {};
-			transformedQuestions.forEach((question) => {
+	// Initialize code submissions (localStorage + most recent submissions)
+	useEffect(() => {
+		if (questions.length > 0 && Object.keys(currentCodes).length === 0) {
+			const initialCodes: Record<string, string> = {};
+			
+			questions.forEach((question) => {
 				if (question.type === "coding") {
-					const localCode = getCodeFromLocalStorage(interviewId, question.id.toString());
+					// Try localStorage first
+					const localCode = getCodeFromLocalStorage(interviewId, question.id);
 					if (localCode) {
-						localCodeSubmissions[question.id.toString()] = localCode;
-					} else if (existingCodeSubmissions[question.id.toString()]) {
-						// Fall back to most recent backend submission if no local code exists
-						localCodeSubmissions[question.id.toString()] = existingCodeSubmissions[question.id.toString()];
+						initialCodes[question.id] = localCode;
+					} else {
+						// Fall back to most recent submission
+						const submissions = allSubmissionsByQuestion[question.id] || [];
+						if (submissions.length > 0) {
+							const mostRecent = submissions.sort((a, b) => 
+								new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
+							)[0];
+							initialCodes[question.id] = mostRecent.code || "";
+						}
 					}
 				}
 			});
-
-			setCodeSubmissions(localCodeSubmissions);
-
-			// Start the interview if it's not already started
-			if (interviewWithQuestions.status === "SCHEDULED") {
-				startInterview.mutate(interviewId || "");
+			
+			if (Object.keys(initialCodes).length > 0) {
+				setCurrentCodes(initialCodes);
 			}
 		}
-	}, [interviewWithQuestions, interviewId, startInterview]);
+	}, [questions, allSubmissionsByQuestion, interviewId, getCodeFromLocalStorage]);
 
-	// Handle loading and error states
-	if (isLoadingInterview) {
+	// Start interview if needed
+	useEffect(() => {
+		if (interviewWithQuestions?.status === "SCHEDULED") {
+			startInterview.mutate(interviewId);
+		}
+	}, [interviewWithQuestions?.status, startInterview, interviewId]);
+
+	// Handle MCQ answer selection
+	const handleMCQAnswerChange = (questionId: string, selectedOptionId: string) => {
+		console.log("MCQ Answer Selected:", { questionId, selectedOptionId });
+		
+		// Update local state
+		setMcqAnswers({
+			...mcqAnswers,
+			[questionId]: selectedOptionId,
+		});
+		
+		// Auto-save to backend
+		const question = questions.find(q => q.id === questionId);
+		if (question && question.type === "mcq") {
+			autoSaveMCQAnswer.mutate({
+				interviewId,
+				questionId,
+				selectedOptionId,
+				correctOptionId: question.correctOptionId || "",
+				isCorrect: selectedOptionId === question.correctOptionId,
+			});
+		}
+	};
+
+	// Handle code changes
+	const handleCodeChange = (questionId: string, code: string) => {
+		setCurrentCodes({
+			...currentCodes,
+			[questionId]: code,
+		});
+		saveCodeToLocalStorage(interviewId, questionId, code);
+	};
+
+	// Handle code submission
+	const handleCodeSubmission = async (questionId: string, code: string, language: string = "cpp") => {
+		if (!code.trim()) return;
+
+		try {
+			// Store the language used for this submission
+			setSelectedLanguages(prev => ({
+				...prev,
+				[questionId]: language
+			}));
+
+			const submission = await submitCode.mutateAsync({
+				interviewId,
+				questionId,
+				code,
+				language
+			});
+
+			// Update submission history state
+			setAllSubmissionsByQuestion(prev => ({
+				...prev,
+				[questionId]: [submission, ...(prev[questionId] || [])]
+			}));
+
+			setNotification({
+				visible: true,
+				message: "Code submitted successfully!",
+				type: "success",
+			});
+
+			return submission;
+		} catch (error: any) {
+			console.error("Code submission failed:", error);
+			setNotification({
+				visible: true,
+				message: error.response?.data?.message || "Failed to submit code",
+				type: "error",
+			});
+			throw error;
+		}
+	};
+
+	// Handle language change for a specific question
+	const handleLanguageChange = (questionId: string, language: string) => {
+		setSelectedLanguages(prev => ({
+			...prev,
+			[questionId]: language
+		}));
+	};
+
+	// Handle final interview submission
+	// TODO: remove sent data
+	const handleSubmitInterview = () => {
+		const mcqAnswersArray = Object.entries(mcqAnswers).map(([questionId, selectedOptionId]) => {
+			const question = questions.find(q => q.id === questionId);
+			return {
+				interviewId,
+				questionId,
+				selectedOptionId,
+				correctOptionId: question?.type === "mcq" ? question.correctOptionId || "" : "",
+				isCorrect: question?.type === "mcq" ? selectedOptionId === question.correctOptionId : false,
+			};
+		});
+
+		const codeSubmissionsArray = Object.entries(currentCodes).map(([questionId, code]) => ({
+			interviewId,
+			questionId,
+			language: selectedLanguages[questionId] || "cpp",
+			code,
+		}));
+
+		submitInterview.mutate({
+			interviewId,
+			submission: {
+				mcqAnswers: mcqAnswersArray,
+				codeSubmissions: codeSubmissionsArray,
+			},
+		}, {
+			onSuccess: () => {
+				navigate(`/interview/${interviewId}/results`);
+			},
+		});
+	};
+
+	// Check if question is answered
+	const isQuestionAnswered = (questionId: string): boolean => {
+		const question = questions.find(q => q.id === questionId);
+		if (!question) return false;
+		
+		if (question.type === "mcq") {
+			return !!mcqAnswers[questionId];
+		} else {
+			return (allSubmissionsByQuestion[questionId]?.length || 0) > 0;
+		}
+	};
+
+	// Get submission history for a question
+	const getSubmissionHistory = (questionId: string) => {
+		return allSubmissionsByQuestion[questionId] || [];
+	};
+
+	// Get submission count
+	const getSubmissionCount = (questionId: string) => {
+		return allSubmissionsByQuestion[questionId]?.length || 0;
+	};
+
+	// Check if has accepted submission
+	const hasAcceptedSubmission = (questionId: string) => {
+		const submissions = allSubmissionsByQuestion[questionId] || [];
+		return submissions.some(sub => 
+			sub.testCaseResults?.every((result) => result.passed === true)
+		);
+	};
+
+	// Loading state
+	if (isLoading) {
 		return (
 			<div className="flex items-center justify-center min-h-screen">
 				<div className="text-center">
@@ -185,7 +313,8 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 		);
 	}
 
-	if (interviewError || !interviewWithQuestions) {
+	// Error state
+	if (error || !interviewWithQuestions) {
 		return (
 			<div className="flex items-center justify-center min-h-screen">
 				<div className="text-center">
@@ -201,201 +330,7 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 		);
 	}
 
-	// Check if a question is answered
-	const isQuestionAnswered = (questionId: string): boolean => {
-		const question = questions.find(q => q.id === questionId);
-		if (!question) return false;
-		
-		if (question.type === "mcq") {
-			return !isNil(userAnswers[questionId]);
-		} else if (question.type === "coding") {
-			// For coding questions, check if there's at least one accepted submission
-			// If no accepted submissions, check if there's any code (current or submitted)
-			return hasAcceptedSubmission(questionId) || 
-				   getSubmissionCount(questionId) > 0 ||
-				   !isNil(codeSubmissions[questionId]);
-		}
-		return false;
-	};
-
-	// Auto-save MCQ answers to backend when they change
-	useEffect(() => {
-		if (interviewId && user.data?.id && Object.keys(userAnswers).length > 0) {
-			Object.entries(userAnswers).forEach(([questionId, selectedOptionId]) => {
-				const question = questions.find(q => q.id.toString() === questionId);
-				if (question && question.type === "mcq" && selectedOptionId) {
-					autoSaveMCQAnswer.mutate({
-						interviewId,
-						questionId,
-						selectedOptionId,
-						correctOptionId: question.correctOptionId || "",
-						isCorrect: selectedOptionId === question.correctOptionId,
-					});
-				}
-			});
-		}
-	}, [userAnswers, interviewId, user.data?.id, questions, autoSaveMCQAnswer]);
-
-	// Handle MCQ answer changes
-	const handleMCQAnswerChange = (questionId: string, selectedOptionId: string) => {
-		console.log("handleMCQAnswerChange called:", { questionId, selectedOptionId });
-		console.log("Current userAnswers before update:", userAnswers);
-		
-		setUserAnswers(prev => {
-			const updated = {
-				...prev,
-				[questionId]: selectedOptionId,
-			};
-			console.log("Updated userAnswers:", updated);
-			return updated;
-		});
-		// MCQ auto-save is handled by the useEffect above
-	};
-
-	// Handle code changes (localStorage only, no backend submission)
-	const handleCodeChange = (questionId: string, code: string) => {
-		setCodeSubmissions(prev => ({
-			...prev,
-			[questionId]: code,
-		}));
-
-		// Save to localStorage for persistence
-		if (interviewId) {
-			saveCodeToLocalStorage(interviewId, questionId, code);
-		}
-	};
-
-	// Get submission history for a question
-	const getSubmissionHistory = (questionId: string) => {
-		const submissions = allSubmissionsByQuestion[questionId] || [];
-		return submissions.sort((a, b) => 
-			new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
-		);
-	};
-
-	// Get the best submission for a question (most recent accepted, or most recent if none accepted)
-	const getBestSubmission = (questionId: string) => {
-		const submissions = getSubmissionHistory(questionId);
-		if (submissions.length === 0) return null;
-		
-		// Find the most recent accepted submission
-		const acceptedSubmission = submissions.find(sub => 
-			sub.testCaseResults?.every((result: any) => result.passed === true)
-		);
-		
-		if (acceptedSubmission) return acceptedSubmission;
-		
-		// If no accepted submissions, return the most recent one
-		return submissions[0];
-	};
-
-	// Check if a question has at least one accepted submission
-	const hasAcceptedSubmission = (questionId: string) => {
-		const submissions = allSubmissionsByQuestion[questionId] || [];
-		return submissions.some(sub => 
-			sub.testCaseResults?.every((result: any) => result.passed === true)
-		);
-	};
-
-	// Get submission count for a question
-	const getSubmissionCount = (questionId: string) => {
-		return allSubmissionsByQuestion[questionId]?.length || 0;
-	};
-
-	// Handle code submission for a specific question (like LeetCode submit)
-	const handleCodeSubmission = async (questionId: string, code: string, language: string = "cpp") => {
-		if (!interviewId || !code.trim()) return;
-
-		// Map language to languageId (you may need to adjust these mappings)
-		const languageMap: Record<string, number> = {
-			cpp: 54,    // C++ (GCC 9.2.0)
-			python: 71, // Python (3.8.1)
-			java: 62,   // Java (OpenJDK 13.0.1)
-		};
-
-		const languageId = languageMap[language] || 54; // Default to C++
-
-		try {
-			const submission = await submitCode.mutateAsync({
-				interviewId,
-				questionId,
-				code,
-				languageId,
-				language: language as any,
-			});
-
-			// Update local submissions after successful submission
-			setAllSubmissionsByQuestion(prev => {
-				const updated = { ...prev };
-				if (!updated[questionId]) {
-					updated[questionId] = [];
-				}
-				// Add the new submission to the front (most recent)
-				updated[questionId] = [submission, ...updated[questionId]];
-				return updated;
-			});
-
-			// Show success notification
-			setNotification({
-				visible: true,
-				message: "Code submitted successfully!",
-				type: "success",
-			});
-
-			return submission;
-		} catch (error: any) {
-			console.error("Code submission failed:", error);
-			
-			// Show error notification
-			setNotification({
-				visible: true,
-				message: error.response?.data?.message || "Failed to submit code",
-				type: "error",
-			});
-			
-			throw error;
-		}
-	};
-
-	// Handle final interview submission
-	const handleSubmitInterview = () => {
-		if (!interviewId) return;
-
-		const mcqAnswers = Object.entries(userAnswers).map(([questionId, selectedOptionId]) => {
-			const question = questions.find(q => q.id.toString() === questionId);
-			return {
-				interviewId,
-				questionId,
-				selectedOptionId,
-				correctOptionId: question?.type === "mcq" ? question.correctOptionId || "" : "",
-				isCorrect: question?.type === "mcq" ? selectedOptionId === question.correctOptionId : false,
-			};
-		});
-
-		const codeSubmissionsArray = Object.entries(codeSubmissions).map(([questionId, code]) => ({
-			interviewId,
-			questionId,
-			languageId: 54, // Default to C++ for final submission
-			language: "cpp",
-			code,
-		}));
-
-		submitInterview.mutate({
-			interviewId,
-			submission: {
-				mcqAnswers,
-				codeSubmissions: codeSubmissionsArray,
-			},
-		}, {
-			onSuccess: () => {
-				// Clear localStorage after successful submission
-				navigate(`/interview/${interviewId}/results`);
-				clearCodeFromLocalStorage(interviewId);
-			},
-		});
-	};
-
-	// If no questions, show error
+	// No questions check
 	if (questions.length === 0) {
 		return (
 			<div className="flex items-center justify-center min-h-screen">
@@ -405,7 +340,7 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 						onClick={() => navigate("/interview")}
 						className="bg-blue-600 text-white px-4 py-2 rounded"
 					>
-						Start New Interview
+						Go Back
 					</button>
 				</div>
 			</div>
@@ -421,14 +356,14 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 				src="/rectangle.png"
 			/>
 			
-			{/* Simplified header */}
+			{/* Header */}
 			<InterviewQuestionsPageHeader
 				questions={questions}
 				currentQuestionIndex={currentQuestionIndex}
 				setExitConfirmation={setExitConfirmation}
 				sidebarVisible={sidebarVisible}
 				setSidebarVisible={setSidebarVisible}
-				userAnswers={userAnswers}
+				userAnswers={mcqAnswers}
 			/>
 
 			{/* Main Content */}
@@ -441,24 +376,26 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 						: "px-[8vw]"
 				}`}
 			>
-				{/* Questions List Sidebar */}
+				{/* Sidebar */}
 				<QuestionListSidebar
 					questions={questions}
 					sidebarVisible={sidebarVisible}
 					currentQuestionIndex={currentQuestionIndex}
 					setSidebarVisible={setSidebarVisible}
 					setCurrentQuestionIndex={setCurrentQuestionIndex}
-					isQuestionAnswered={(questionId: string) => isQuestionAnswered(questionId)}
+					isQuestionAnswered={isQuestionAnswered}
 				/>
 
 				{/* Question Card */}
 				<QuestionCard
-					questions={questions}
-					userAnswers={userAnswers}
-					codeSubmissions={codeSubmissions}
-					setUserAnswers={handleMCQAnswerChange}
-					setCodeSubmissions={handleCodeChange}
 					currentQuestionIndex={currentQuestionIndex}
+					questions={questions}
+					userAnswers={mcqAnswers}
+					codeSubmissions={currentCodes}
+					selectedLanguages={selectedLanguages}
+					setUserAnswer={handleMCQAnswerChange}
+					setCodeSubmissions={handleCodeChange}
+					onLanguageChange={handleLanguageChange}
 					onSubmitCode={handleCodeSubmission}
 					getSubmissionHistory={getSubmissionHistory}
 					getSubmissionCount={getSubmissionCount}
@@ -466,6 +403,7 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 				/>
 			</div>
 
+			{/* Footer */}
 			<QuestionFooter
 				questions={questions}
 				sidebarVisible={sidebarVisible}
@@ -476,7 +414,7 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 				setSubmitConfirmation={setSubmitConfirmation}
 			/>
 
-			{/* Exit Confirmation Modal */}
+			{/* Modals */}
 			{exitConfirmation && (
 				<ExitConfirmationModel
 					navigate={navigate}
@@ -484,7 +422,6 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 				/>
 			)}
 
-			{/* Submit Confirmation Modal */}
 			{submitConfirmation && (
 				<SubmitConfirmationModal
 					setSubmitConfirmation={setSubmitConfirmation}
@@ -495,7 +432,7 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 				/>
 			)}
 
-			{/* Custom Notification with Backdrop Blur */}
+			{/* Notification */}
 			{notification.visible && (
 				<CustomNotificationBlur notification={notification} />
 			)}

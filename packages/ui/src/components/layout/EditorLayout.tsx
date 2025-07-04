@@ -27,6 +27,7 @@ type EditorLayoutProps = {
 	onChange?: (value: string | undefined) => void;
 	onRun?: () => void;
 	onSubmit?: () => void;
+	onLanguageChange?: (language: string) => void;
 
 	// Console related props
 	showConsole?: boolean;
@@ -37,11 +38,10 @@ type EditorLayoutProps = {
 		testCasesPassed?: number;
 		totalTestCases?: number;
 	};
-	onSubmissionsTabClick?: () => void; // Add this new prop
+	onSubmissionsTabClick?: () => void;
 
 	// Test cases related props
-	questions?: any[];
-	currentQuestionIndex?: number;
+	question: CodingQuestion;
 
 	// UI customization
 	showLanguageSelector?: boolean;
@@ -60,11 +60,11 @@ export const EditorLayout = ({
 	onChange,
 	onRun,
 	onSubmit,
+	onLanguageChange,
 	showConsole = false,
 	consoleOutput = "",
 	submissionStatus = { status: "none", message: "" },
-	questions = [],
-	currentQuestionIndex = 0,
+	question,	
 	showLanguageSelector = true,
 	availableLanguages = [
 		{ value: "python", label: "Python" },
@@ -106,70 +106,74 @@ export const EditorLayout = ({
 	const [isRunning, setIsRunning] = useState(false);
 
 	// Get current question
-	const currentQuestion = questions[currentQuestionIndex];
 	const sampleTestCases =
-		currentQuestion?.testCases?.filter(
+		question?.testCases?.filter(
 			(testCase: any) => testCase.isHidden === false
 		) || [];
 
-		   // Function to get the complete starter code for a given language
-    const getStarterCodeForLanguage = (question: CodingQuestion, lang: string): string => {
-        // Map language values to the keys used in starterCodes
-        const languageMap: { [key: string]: keyof typeof question.starterCodes.codeHeader } = {
-            'cpp': 'cpp',
-            'java': 'java',
-            'python': 'python',
-        };
+	// Function to get the complete starter code for a given language
+	const getStarterCodeForLanguage = (question: CodingQuestion, lang: string): string => {
+		// Map language values to the keys used in starterCodes
+		const languageMap: { [key: string]: keyof typeof question.starterCode.codeHeader } = {
+			'cpp': 'cpp',
+			'java': 'java',
+			'python': 'python',
+		};
 
-        const mappedLang = languageMap[lang];
-        
-        // If language is not supported in starter codes, return empty string or default
-        if (!mappedLang) {
-            return initialValue;
-        }
-        
-        const header = question.starterCodes.codeHeader[mappedLang] || '';
-        const starter = question.starterCodes.codeStarter[mappedLang] || '';
-        const footer = question.starterCodes.codeFooter[mappedLang] || '';
+		const mappedLang = languageMap[lang];
+		
+		// If language is not supported in starter codes, return empty string or default
+		if (!mappedLang || !question.starterCode) {
+			return initialValue;
+		}
+		
+		const starter = question.starterCode.codeStarter[mappedLang] || '';
+		return starter;
+	};
 
-        // Combine header, starter, and footer with appropriate spacing
-        const parts = [header, starter, footer].filter(part => part.trim() !== '');
-        return parts.join('\n\n');
-    };
+	// Effect to update editor value when question changes
+	useEffect(() => {
+		if (question && question.starterCode) {
+			const starterCode = getStarterCodeForLanguage(question, selectedLanguage);
+			if (starterCode && starterCode !== initialValue) {
+				setCode(starterCode);
+				// Don't call onChange here to avoid infinite loops
+			}
+		}
+	}, [question]);
 
- // Effect to update editor value when question changes
-    useEffect(() => {
-        if (currentQuestion && currentQuestion.starterCodes) {
-            const starterCode = getStarterCodeForLanguage(currentQuestion, selectedLanguage);
-            if (starterCode && starterCode !== initialValue) {
-                setCode(starterCode);
-                // Don't call onChange here to avoid infinite loops
-            }
-        }
-    }, [currentQuestionIndex, currentQuestion]);
-
-    // Effect to update editor value when language changes
-    useEffect(() => {
-        if (currentQuestion && currentQuestion.starterCodes) {
-            const starterCode = getStarterCodeForLanguage(currentQuestion, selectedLanguage);
-            if (starterCode) {
-                setCode(starterCode);
-                // Call onChange to notify parent component
-                if (onChange) {
-                    onChange(starterCode);
-                }
-            }
-        }
-    }, [selectedLanguage]);
+	// Effect to update editor value when language changes
+	useEffect(() => {
+		if (question && question.starterCode) {
+			const starterCode = getStarterCodeForLanguage(question, selectedLanguage);
+			if (starterCode) {
+				setCode(starterCode);
+				// Call onChange to notify parent component
+				if (onChange) {
+					onChange(starterCode);
+				}
+			}
+		}
+	}, [selectedLanguage]);
 
 	// Update console visibility when prop changes
 	useEffect(() => {
 		setConsoleVisible(showConsole);
 	}, [showConsole]);
 
+	// Synchronize internal selectedLanguage state with language prop
+	useEffect(() => {
+		if (language !== selectedLanguage) {
+			setSelectedLanguage(language);
+		}
+	}, [language]);
+
 	// Handle language change
 	const handleLanguageChange = (newLanguage: string) => {
 		setSelectedLanguage(newLanguage);
+		if (onLanguageChange) {
+			onLanguageChange(newLanguage);
+		}
 	};
 
 	// Handle code change
@@ -180,16 +184,16 @@ export const EditorLayout = ({
 		}
 	};
 
-	    // Get the current editor value (use starter code if available, otherwise use code state)
-    const getEditorValue = (): string => {
-        if (currentQuestion && currentQuestion.starterCodes) {
-            // If we have a current question with starter codes and code hasn't been modified from initial
-            if (code === initialValue) {
-                return getStarterCodeForLanguage(currentQuestion, selectedLanguage);
-            }
-        }
-        return code;
-    };
+	// Get the current editor value (use starter code if available, otherwise use code state)
+	const getEditorValue = (): string => {
+		if (question && question.starterCode) {
+			// If we have a current question with starter codes and code hasn't been modified from initial
+			if (code === initialValue) {
+				return getStarterCodeForLanguage(question, selectedLanguage);
+			}
+		}
+		return code;
+	};
 
 	// Test case management functions
 	const addCustomTestCase = () => {

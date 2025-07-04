@@ -3,10 +3,10 @@ import { CheckCircleIcon, XCircleIcon, InfoIcon } from "lucide-react";
 import { QuestionContentMCQ } from "./QuestionContentMCQ";
 import { QuestionContentCoding } from "./QuestionContentCoding";
 import { QuestionContentPerformance } from "./QuestionContentPerformance";
-import { MCQQuestion, CodingQuestion } from "../../types/questions";
+import { McqQuestion, CodingQuestion } from "../../types/questions";
 import { QuestionPerformance } from "../../types/performance";
 
-type Question = MCQQuestion | CodingQuestion;
+type Question = McqQuestion | CodingQuestion;
 
 interface DetailedQuestionsFeedbackProps {
   questions: Question[];

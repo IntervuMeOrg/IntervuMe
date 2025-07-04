@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 import { CheckCircleIcon, XCircleIcon } from "lucide-react";
-import { MCQQuestion, CodingQuestion } from "../../types/questions";
+import { McqQuestion, CodingQuestion } from "../../types/questions";
 
 type ResultSummaryPerformanceBreakdownProps = {
-	questions: (MCQQuestion | CodingQuestion)[];
+	questions: (McqQuestion | CodingQuestion)[];
 	userAnswers: Record<number, string>;
 };
 

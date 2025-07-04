@@ -53,7 +53,7 @@ export const QuestionContentCoding = ({
 				</h4>
 				<div className="bg-gray-900 p-4 rounded-lg border border-white/20">
 					<pre className="text-blue-400 text-sm overflow-x-auto">
-						<code>{question.solution}</code>
+						<code>{question.solutionCode}</code>
 					</pre>
 				</div>
 			</div>

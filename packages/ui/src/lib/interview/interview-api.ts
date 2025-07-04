@@ -1,4 +1,5 @@
 import api from '../api';
+import { McqQuestion, CodingQuestion } from '../../types/questions';
 
 // Types
 export interface CreateInterviewRequest {
@@ -34,6 +35,60 @@ export interface SubmitInterviewRequest {
   codeSubmissions: SubmitCodeRequest[];
 }
 
+// Question Types
+export interface QuestionOption {
+  id: string;
+  optionText: string;
+  isCorrect: boolean;
+}
+
+export interface InterviewQuestionWithDetails {
+  id: string;
+  interviewId: string;
+  questionId: string;
+  questionType: 'mcq' | 'coding';
+  orderIndex: number;
+  questionDetails: McqQuestion | CodingQuestion;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface McqAnswer {
+  id: string;
+  interviewId: string;
+  questionId: string;
+  selectedOptionId: string;
+  correctOptionId: string;
+  isCorrect: boolean;
+  timeSpent?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TestCaseResult {
+  id: string;
+  input: string;
+  expectedOutput: string;
+  actualOutput: string;
+  passed: boolean;
+  executionTime: number;
+  memoryUsed: number;
+}
+
+export interface CodeSubmissionWithResults {
+  id: string;
+  interviewId: string;
+  questionId: string;
+  code: string;
+  language: string;
+  submittedAt: string;
+  testCaseResults?: TestCaseResult[];
+  totalTestCases?: number;
+  passedTestCases?: number;
+  executionTime?: number;
+  memoryUsed?: number;
+}
+
 // Response Types
 export interface InterviewResponse {
   id: string;
@@ -52,9 +107,9 @@ export interface InterviewResponse {
 }
 
 export interface InterviewSessionResponse extends InterviewResponse {
-  interviewQuestions: any[];
-  answers: any[];
-  codeSubmissions: any[];
+  interviewQuestions: InterviewQuestionWithDetails[];
+  answers: McqAnswer[];
+  codeSubmissions: CodeSubmissionWithResults[];
 }
 
 export interface CodeSubmissionResponse {
@@ -62,18 +117,9 @@ export interface CodeSubmissionResponse {
   interviewId: string;
   questionId: string;
   code: string;
+  language: string;
   submittedAt: string;
   testCaseResults?: TestCaseResult[];
-}
-
-export interface TestCaseResult {
-  id: string;
-  input: string;
-  expectedOutput: string;
-  actualOutput: string;
-  isCorrect: boolean;
-  executionTime: number;
-  memoryUsed: number;
 }
 
 export interface InterviewSubmissionResult {
@@ -86,7 +132,7 @@ export interface InterviewSubmissionResult {
     maxPoints: number;
     percentage: number;
     totalTimeSpent: number;
-    answers: any[];
+    answers: McqAnswer[];
   };
   codeSubmissions: CodeSubmissionResponse[];
   totalScore: number;

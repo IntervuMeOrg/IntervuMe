@@ -1,53 +1,63 @@
-export type MCQOption = {
+// Backend types (for API responses)
+export type McqOption = {
 	id: string;
-	text: string;
+	optionText: string;
+	isCorrect?: boolean;
 };
 
-export type MCQQuestion = {
+
+export type McqQuestion = {
 	id: string;
 	type: "mcq";
 	text: string;
-	options: MCQOption[];
+	options: McqOption[];
 	points: number;
-	correctOptionId?: string; // Added for feedback
-	explanation?: string; // Added for feedback
+	explanation?: string;
+	tags?: string[];
+	// Frontend helper field
+	correctOptionId?: string;
 };
 
 export type CodingQuestion = {
-  id: string;
-  type: "coding";
-  title: string;
-  category: string;
-  difficulty: string;
-  points: number;
-  timeLimit: number;
-  problemStatement: string;
-  examples: { input: string; output: string; explanation?: string }[];
-  starterCodes: {
-    codeHeader: {
-      cpp: string;
-      java: string;
-      python: string;
-    };
-    codeStarter: {
-      cpp: string;
-      java: string;
-      python: string;
-    };
-    codeFooter: {
-      cpp: string;
-      java: string;
-      python: string;
-    };
-  };
-  constraints: string[];
-  followUp: string[];
-  tags: string[];
-  testCases: {
-    input: string;
-    expectedOutput: string;
-    isHidden: boolean;
-  }[];
-  solution?: string; // For feedback
-  explanation?: string; // For feedback
+	id: string;
+	type: "coding";
+	title: string;
+	category: string;
+	difficulty: string;
+	points: number;
+	timeLimit: number;
+	problemStatement: string;
+	starterCode: {
+		codeHeader: {
+			cpp: string;
+			java: string;
+			python: string;
+		};
+		codeStarter: {
+			cpp: string;
+			java: string;
+			python: string;
+		};
+		codeFooter: {
+			cpp: string;
+			java: string;
+			python: string;
+		};
+	};
+	examples: Array<{
+		input: string;
+		output: string;
+		explanation?: string;
+	}>;
+	constraints?: string[];
+	followUp?: string[];
+	hints?: string[];
+	tags?: string[];
+	testCases?: Array<{
+		input: string;
+		expectedOutput: string;
+		isHidden: boolean;
+	}>;
+	solutionCode?: string;
+	memoryLimit?: number;
 };
