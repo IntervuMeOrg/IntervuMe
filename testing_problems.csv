@@ -313,9 +313,7 @@ Explanation: ""aba"" is also a valid answer.
 
 Test Case 2:
 Input: s = ""cbbd""
-Output: ""bb""","babad
-
-cbbd
+Output: ""bb""","cbbd
 
 a
 
@@ -333,8 +331,7 @@ banana
 
 babadada
 
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","aba
-bb
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","bb
 a
 a
 geeksskeeg
