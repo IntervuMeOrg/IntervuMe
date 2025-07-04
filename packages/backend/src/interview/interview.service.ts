@@ -32,6 +32,7 @@ import {
 import { mcqAnswerService } from "../mcq/mcq-answer/mcq-answer.service";
 import { isNil } from "../common/utils";
 import { aiService } from "../ai/ai.service";
+import { testCaseResultService } from "../coding/test-case-result/testCaseResult.service";
 
 const InterviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
@@ -189,6 +190,8 @@ export const interviewService = {
       5
     );
 
+    console.log(aiAnalysis);
+
     const mcqRequirements = aiAnalysis.mcqAllocation.allocations
       ? Object.entries(aiAnalysis.mcqAllocation.allocations).map(
           ([skill, count]: [string, any]) => ({
@@ -313,7 +316,7 @@ export const interviewService = {
         const isCorrect = mcqAnswerData.selectedOptionId === correctOption.id;
         const timeSpent = mcqAnswerData.timeSpent || 0;
 
-        const questionPoints = 1;
+        const questionPoints = mcqQuestion.points || 1;
         maxPoints += questionPoints;
         if (isCorrect) {
           totalCorrect++;
@@ -334,15 +337,18 @@ export const interviewService = {
       const codeSubmissionsWithResults: CodeSubmission[] =
         await codeSubmissionService.getByInterviewId(interviewId);
 
-      // Adjust scoring later
+      const codeScore = await interviewService.calculateCodeScore(
+        codeSubmissionsWithResults
+      );
+
       const mcqPercentage = maxPoints > 0 ? (totalPoints / maxPoints) * 100 : 0;
-      const codeScore = this.calculateCodeScore(codeSubmissionsWithResults);
       const totalScore = mcqPercentage + codeScore;
 
       const updatedInterview = await InterviewRepository().save({
         ...interview,
         status: InterviewStatus.COMPLETED,
         submittedAt: new Date().toISOString(),
+        answers: mcqAnswers,
       });
 
       const mcqSummary: McqAnswerSummary = {
@@ -374,8 +380,39 @@ export const interviewService = {
     }
   },
 
-  // Placeholder method
-  calculateCodeScore(submissions: CodeSubmission[]): number {
-    return 75.5;
+  async calculateCodeScore(submissions: CodeSubmission[]): Promise<number> {
+    if (!submissions || submissions.length === 0) {
+      return 0;
+    }
+
+    const questionScores = new Map<string, number>();
+
+    for (const submission of submissions) {
+      const testCaseResults = await testCaseResultService.getByCodeSubmissionId(
+        submission.id
+      );
+      const passedTests =
+        testCaseResults?.filter((result) => result.passed).length || 0;
+      const totalTests = testCaseResults?.length || 0;
+
+      const submissionScore =
+        totalTests > 0 ? (passedTests / totalTests) * 100 : 0;
+
+      const currentBest = questionScores.get(submission.questionId) || 0;
+      if (submissionScore > currentBest) {
+        questionScores.set(submission.questionId, submissionScore);
+      }
+    }
+
+    const totalQuestions = questionScores.size;
+    if (totalQuestions === 0) {
+      return 0;
+    }
+
+    const totalScore = Array.from(questionScores.values()).reduce(
+      (sum, score) => sum + score,
+      0
+    );
+    return totalScore / totalQuestions;
   },
 };

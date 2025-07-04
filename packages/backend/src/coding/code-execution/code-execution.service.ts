@@ -1,5 +1,5 @@
 import axios from "axios";
-import { RunResult, Judge0Response, RunUserCode } from "./code-execution-types";
+import { RunResult, Judge0Response, RunCodeRequestBody, LANGUAGE_MAP } from "./code-execution-types";
 import { codingQuestionService } from "../coding-question/codingQuestion.service";
 import { CodingQuestion } from "../coding-question/codingQuestion-types";
 
@@ -7,10 +7,9 @@ const toBase64 = (s: string) => Buffer.from(s, "utf-8").toString("base64");
 const fromBase64 = (s: string) => Buffer.from(s, "base64").toString("utf-8");
 
 export const codeExecutionService = {
-  async run(request: RunUserCode): Promise<RunResult> {
+  async run(request: RunCodeRequestBody): Promise<RunResult> {
     const {
       questionId,
-      languageId,
       language,
       userCode,
       stdin,
@@ -21,7 +20,9 @@ export const codeExecutionService = {
     const question = await codingQuestionService.get(questionId);
 
     const sourceCode = await codeExecutionService.buildFullSource(question, request);
-
+    
+    const normalized = language.toLowerCase().trim();
+    const languageId = LANGUAGE_MAP[normalized as keyof typeof LANGUAGE_MAP];
     // send to Judge0
     const resp = await axios.post<Judge0Response>(
       `${process.env.JUDGE0_URL}/submissions?base64_encoded=true&wait=true`,
@@ -54,7 +55,7 @@ export const codeExecutionService = {
 
   async buildFullSource(
     question: CodingQuestion,
-    request: RunUserCode
+    request: RunCodeRequestBody
   ): Promise<string> {
     const { language, userCode } = request;
     const { codeHeader, codeStarter, codeFooter } = question.starterCode;

@@ -20,6 +20,7 @@ export const McqQuestion = Type.Object({
   explanation: Type.Optional(Type.String({ maxLength: 1000 })),
   options: Type.Array(McqOption, { minItems: 2, maxItems: 6 }),
   tags: Type.Array(Type.String()),
+  points: Type.Number(),
 });
 
 export type McqQuestion = Static<typeof McqQuestion>;
@@ -31,6 +32,7 @@ export const CreateMcqQuestionRequestBody = Type.Object({
   explanation: Type.Optional(Type.String({ maxLength: 1000 })),
   options: Type.Array(CreateMcqOptionRequestBody, { minItems: 2, maxItems: 6 }),
   tags: Type.Array(Type.String()),
+  points: Type.Optional(Type.Number({default: 1})),
 });
 
 export type CreateMcqQuestionRequestBody = Static<
@@ -49,6 +51,7 @@ export const UpdateMcqQuestionRequestBody = Type.Object({
       maxItems: 6,
     })
   ),
+  points: Type.Optional(Type.Number()),
 });
 
 export type UpdateMcqQuestionRequestBody = Static<

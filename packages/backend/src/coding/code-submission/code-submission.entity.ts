@@ -29,6 +29,14 @@ export const CodeSubmissionEntity = new EntitySchema<CodeSubmissionSchema>({
       type: "timestamp",
       nullable: false,
     },
+    score: {
+      type: Number,
+      default: 0,
+    },
+    totalTests: {
+      type: Number,
+      default: 0,
+    },
   },
   relations: {
     interview: {

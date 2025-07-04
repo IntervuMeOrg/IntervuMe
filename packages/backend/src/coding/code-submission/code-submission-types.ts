@@ -10,6 +10,8 @@ export const CodeSubmission = Type.Object({
   questionId: ApId,
   code: Type.String(),
   submittedAt: Type.String({ format: "date-time" }),
+  score: Type.Number({ default: 0 }),
+  totalTests: Type.Number({ default: 0 }),
 });
 
 export type CodeSubmission = Static<typeof CodeSubmission>;
@@ -28,7 +30,6 @@ export type CodeSubmissionWithResults = Static<
 export const CreateCodeSubmissionRequestBody = Type.Object({
   interviewId: ApId,
   questionId: ApId,
-  languageId: Type.Number(),
   language: Type.Enum(Programming_language),
   code: Type.String(),
 });
