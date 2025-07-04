@@ -100,3 +100,15 @@ export const InterviewSubmissionResult = Type.Object({
 export type InterviewSubmissionResult = Static<
   typeof InterviewSubmissionResult
 >;
+
+export const InterviewHistoryResponse = Type.Object({
+  totalInterviews: Type.Integer({ minimum: 0 }),
+  averageScore: Type.Number({ minimum: 0, maximum: 100 }),
+  totalPracticeTime: Type.Integer({ minimum: 0 }),
+  bestSkill: Type.String(),
+  skillNeedsFocus: Type.String(),
+  latestScore: Type.Number({ minimum: 0, maximum: 100 }),
+  improvementTrend: Type.Number(),
+});
+
+export type InterviewHistoryResponse = Static<typeof InterviewHistoryResponse>;

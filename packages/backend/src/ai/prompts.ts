@@ -86,14 +86,26 @@ export const feedbackPrompt = (
 You are an expert technical interviewer and career coach. Analyze the following assessment results and provide comprehensive, actionable feedback for the candidate.
 
 Analysis Guidelines:
-1. Identify patterns in correct/incorrect answers by technology tags
-2. Assess problem-solving approach and logical thinking
-3. Provide specific, actionable recommendations
-4. Be encouraging but honest about areas needing improvement
-5. Prioritize recommendations based on job requirements
-6. Include specific learning resources and practice suggestions
+1. Calculate scores accurately based on the provided data
+2. For MCQ questions: Count correct answers vs total MCQ questions
+3. For problem-solving questions: 
+   - A question is considered "solved" only if tests_passed equals total_tests
+   - If tests_passed < total_tests, the candidate failed that problem
+   - Analyze performance by difficulty level and technology tags
+4. Identify specific knowledge gaps based on failed questions and their tags
+5. Provide concrete, actionable recommendations targeting weak areas
+6. Be encouraging but brutally honest about actual performance
+7. Base all analysis strictly on the provided assessment data
+8. Don't make assumptions about performance not evident in the data
 
-Return only valid JSON with the feedback analysis.
+CRITICAL: Only provide recommendations related to the specific technologies, concepts, and question types that were actually tested in this assessment. Do not suggest learning unrelated technologies or concepts that weren't part of the assessment.
+
+Key Analysis Points:
+- Overall score should reflect actual performance across all questions
+- Problem-solving score should be based on completely solved problems only
+- Identify specific technology areas where the candidate struggled
+- Provide targeted recommendations for failed problem types and tags
+- All recommendations must be directly related to the tags and question types in the assessment
 
 Assessment Data:
 ${JSON.stringify(assessmentResults, null, 2)}
@@ -120,9 +132,8 @@ Return JSON:
     }
   ],
   "job_readiness": {
-    "current_level": "Entry Level|Junior|Mid-Level|Senior|Expert", 
-    "readiness_percentage": number,
-
+    "current_level": "Entry Level|Junior|Mid-Level|Senior|Expert",
+    "readiness_percentage": number
   },
   "next_steps": ["immediate action 1", "immediate action 2", "long-term goal 1"]
 }

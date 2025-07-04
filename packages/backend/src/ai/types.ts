@@ -1,7 +1,23 @@
-export interface AssessmentQuestion {
-  type: "mcq" | "problem_solving";
+export interface AssessmentMCQQuestion  {
+  type: "mcq";
   tags: string[];
   is_correct: boolean;
+}
+
+export interface ProblemSolvingQuestion {
+  type: "problem_solving";
+  tags: string[];
+  tests_passed: number;
+  total_tests: number;
+}
+
+export interface AssessmentResults {
+  total_questions: number;
+  overall_score: number;
+  mcq_score: number;
+  problem_solving_score: number;
+  mcq_questions: AssessmentMCQQuestion[];
+  problem_solving_questions: ProblemSolvingQuestion[];
 }
 
 export interface MCQQuestion {
@@ -43,15 +59,6 @@ export interface SimilarityResponse {
   matched_skills: MatchedSkill[];
 }
 
-export interface AssessmentResults {
-  job_title: string;
-  total_questions: number;
-  overall_score: number;
-  mcq_score: number;
-  problem_solving_score: number;
-  mcq_questions: AssessmentQuestion[];
-  problem_solving_questions: AssessmentQuestion[];
-}
 
 export interface FeedbackResponse {
   overall_performance: {

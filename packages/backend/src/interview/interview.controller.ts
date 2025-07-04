@@ -10,6 +10,7 @@ import {
   InterviewSubmissionResult,
   SubmitInterviewRequestBody,
   UpdateInterviewRequestBody,
+  InterviewHistoryResponse,
 } from "./interview-types";
 import { StatusCodes } from "http-status-codes";
 import { interviewService } from "./interview.service";
@@ -194,7 +195,7 @@ const GetInterviewsHistoryByUserRequest = {
       userId: ApId,
     }),
     response: {
-      [StatusCodes.OK]: Type.Array(Interview),
+      [StatusCodes.OK]: InterviewHistoryResponse,
     },
   },
 };
