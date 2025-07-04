@@ -25,10 +25,6 @@ import {
 import { mcqQuestionService } from "../mcq/mcq-question/mcq-question.service";
 import { DifficultyLevel } from "../coding/coding-question/codingQuestion-types";
 import { codeSubmissionService } from "../coding/code-submission/codeSubmission.service";
-import {
-  TestCaseResult,
-  Verdict,
-} from "../coding/test-case-result/testCaseResult-types";
 import { mcqAnswerService } from "../mcq/mcq-answer/mcq-answer.service";
 import { isNil } from "../common/utils";
 import { aiService } from "../ai/ai.service";
@@ -45,6 +41,13 @@ export const interviewService = {
   async getByUserId(userId: string): Promise<Interview[]> {
     return await interviewRepository().find({
       where: { userId, isActive: true },
+      order: { startTime: "DESC" },
+    });
+  },
+
+  async getCompletedByUserId(userId: string): Promise<Interview[]> {
+    return await interviewRepository().find({
+      where: { userId, isActive: true, status: InterviewStatus.COMPLETED},
       order: { startTime: "DESC" },
     });
   },
@@ -126,10 +129,7 @@ export const interviewService = {
     return await interviewRepository().save(updatedInterview);
   },
 
-  async getHistory(userId: string) {
-    const interviews = await interviewRepository().find({ where: { userId } });
-    if (!interviews) throw new Error("User has no previous interviews");
-  },
+
 
   async startInterview(id: string): Promise<InterviewWithQuestions> {
     const interview = await interviewRepository().findOne({
@@ -231,6 +231,7 @@ export const interviewService = {
       status: InterviewStatus.SCHEDULED,
       isActive: true,
       jobTitle: aiAnalysis.jobTitle,
+      startTime: new Date().toISOString(),
     });
 
     await interviewRepository().save(interview);
@@ -334,13 +335,15 @@ export const interviewService = {
       );
 
       const mcqPercentage = maxPoints > 0 ? (totalPoints / maxPoints) * 100 : 0;
-      const totalScore = mcqPercentage + codeScore;
+      const totalScore = (mcqPercentage + codeScore) / 2;
 
       const updatedInterview = await interviewRepository().save({
         ...interview,
         status: InterviewStatus.COMPLETED,
-        submittedAt: new Date().toISOString(),
+        endTime: new Date().toISOString(),
         answers: mcqAnswers,
+        totalScore,
+        maxScore: 100,
       });
 
       const mcqSummary: McqAnswerSummary = {
@@ -361,7 +364,6 @@ export const interviewService = {
         await interviewQuestionService.countByInterviewId(interviewId);
 
       const assessmentData: AssessmentResults = {
-        job_title: interview.jobTitle || "Full Stack Developer",
         total_questions: totalUniqueQuestions,
         overall_score: totalScore,
         mcq_score: mcqPercentage,
@@ -388,7 +390,8 @@ export const interviewService = {
             return {
               type: "problem_solving" as const,
               tags: questionDetails?.tags || [],
-              is_correct: submission.score === submission.totalTests,
+              tests_passed: submission.score,
+              total_tests: submission.totalTests,
             };
           }
         ),
@@ -401,7 +404,7 @@ export const interviewService = {
         console.error("Failed to get AI feedback:", error);
       }
 
-      Object.assign(updatedInterview, feedback);
+      updatedInterview.feedback = feedback;
       await interviewRepository().save(updatedInterview);
 
       const result: InterviewSubmissionResult = {
