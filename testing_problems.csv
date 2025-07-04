@@ -1,0 +1,980 @@
+Unnamed: 0,name,statement,difficulty,topics,tests_input_output,normalized_input,expected_output,python_stub,cpp_stub,java_stub,hidden_py_header,hidden_py_footer,hidden_cpp_header,hidden_cpp_footer,hidden_java_header,hidden_java_footer,cpp_solution,python_solution
+1,Two Sum,"Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+You can return the answer in any order.
+Example 1:
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+Example 2:
+Input: nums = [3,2,4], target = 6
+Output: [1,2]
+Example 3:
+Input: nums = [3,3], target = 6
+Output: [0,1]
+Constraints:
+2 <= nums.length <= 10^4
+-10^9 <= nums[i] <= 10^9
+-10^9 <= target <= 10^9
+Only one valid answer exists.
+Follow-up: Can you come up with an algorithm that is less than O(n^2)
+time complexity?",Easy,"Array, Hash Table","Test Case 1:
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+
+Test Case 2:
+Input: nums = [3,2,4], target = 6
+Output: [1,2]
+
+Test Case 3:
+Input: nums = [3,3], target = 6
+Output: [0,1]","4
+2 7 11 15
+9
+
+3
+3 2 4
+6
+
+2
+3 3
+6
+
+2
+-1 1
+0
+
+2
+0 0
+0
+
+3
+2147483647 -2147483648 -1
+-1
+
+2
+500000000 500000000
+1000000000
+
+5
+-10 -3 -4 -7 -2
+-5
+
+8
+8 13 1 0 5 9 3 11
+12
+
+7
+5 8 3 9 7 2 4
+6
+
+8
+8 13 1 0 5 9 3 11
+14
+
+6
+1 5 5 5 2 8
+3
+","[0,1]
+[1,2]
+[0,1]
+[0,1]
+[0,1]
+[0,1]
+[0,1]
+[1,4]
+[2,7]
+[5,6]
+[1,2]
+[0,4]","class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        ","class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        
+    }
+};","class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        
+    }
+}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
+    data = sys.stdin.read().strip().splitlines()
+    line_idx = 0
+
+    n_nums = int(data[line_idx])
+    line_idx += 1
+    nums = list(map(int, data[line_idx].split()))
+    line_idx += 1
+    target = int(data[line_idx])
+    line_idx += 1
+
+    sol = Solution()
+    ans = sol.twoSum(nums, target)
+
+    if isinstance(ans, list):
+        print(json.dumps(ans, separators=(',', ':')))
+    elif isinstance(ans, bool):
+        print('true' if ans else 'false')
+    else:
+        print(ans)","#include <bits/stdc++.h>
+using namespace std;","int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n_nums;
+    if (!(cin >> n_nums)) return 0;
+    vector<int> nums(n_nums);
+    for (int i = 0; i < n_nums; ++i) cin >> nums[i];
+    int target;
+    if (!(cin >> target)) return 0;
+
+    Solution sol;
+    vector<int> ans = sol.twoSum(nums, target);
+    cout << '[';
+    for (size_t i = 0; i < ans.size(); ++i) {
+        cout << ans[i] << (i + 1 == ans.size() ? ']' : ',');
+    }
+    cout << '\n';
+    return 0;
+}","import java.io.*;
+import java.util.*;","public class Main {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+
+        int n_nums = Integer.parseInt(br.readLine());
+        st = new StringTokenizer(br.readLine());
+        int[] nums = new int[n_nums];
+        for (int i = 0; i < n_nums; i++) {
+            nums[i] = Integer.parseInt(st.nextToken());
+        }
+        int target = Integer.parseInt(br.readLine());
+
+        Solution sol = new Solution();
+        int[] ans = sol.twoSum(nums, target);
+        System.out.print(""["");
+        for (int i = 0; i < ans.length; i++) {
+            System.out.print(ans[i] + (i == ans.length - 1 ? ""]"" : "",""));
+        }
+        System.out.println();
+    }
+}","        for (int i = 0; i< nums.size(); i++){
+            for (int j = 0; j < nums.size(); j++){
+                if (i == j) continue;
+                if (1ll * (nums[i] + nums[j]) == 1ll * target) {
+                    return {i,j};
+                }
+            }
+        }
+        return{};","        hashmap = {}
+        for i in range(len(nums)):
+            hashmap[nums[i]] = i
+        for i in range(len(nums)):
+            complement = target - nums[i]
+            if complement in hashmap and hashmap[complement] != i:
+                return [i, hashmap[complement]]
+        # If no valid pair is found, return an empty list
+        return []"
+2,Valid Parentheses,"Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+An input string is valid if:
+Open brackets must be closed by the same type of brackets.
+Open brackets must be closed in the correct order.
+Every close bracket has a corresponding open bracket of the same type.
+Example 1:
+Input:
+s = ""()""
+Output:
+true
+Example 2:
+Input:
+s = ""()[]{}""
+Output:
+true
+Example 3:
+Input:
+s = ""(]""
+Output:
+false
+Example 4:
+Input:
+s = ""([])""
+Output:
+true
+Constraints:
+1 <= s.length <= 10^4
+s consists of parentheses only '()[]{}'.",Easy,"String, Stack",,"()
+
+()[]{}
+
+(]
+
+([])
+
+))))
+
+((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((())))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+
+{}{{}{}{}{}{}{}{}}{{}{}{}}
+
+()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()[]{}{}{}{}{}{}{}{}{}[]
+
+}
+
+][","true
+true
+false
+true
+false
+false
+true
+true
+false
+false","class Solution:
+    def isValid(self, s: str) -> bool:
+        ","class Solution {
+public:
+    bool isValid(string s) {
+        
+    }
+};","class Solution {
+    public boolean isValid(String s) {
+        
+    }
+}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
+    data = sys.stdin.read().strip().splitlines()
+    line_idx = 0
+
+    s = data[line_idx]
+    line_idx += 1
+
+    sol = Solution()
+    ans = sol.isValid(s)
+
+    if isinstance(ans, list):
+        print(json.dumps(ans, separators=(',', ':')))
+    elif isinstance(ans, bool):
+        print('true' if ans else 'false')
+    else:
+        print(ans)","#include <bits/stdc++.h>
+using namespace std;","int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    string s;
+    if (!(cin >> s)) return 0;
+
+    Solution sol;
+    bool ans = sol.isValid(s);
+    cout << (ans ? ""true"" : ""false"");
+    cout << '\n';
+    return 0;
+}","import java.io.*;
+import java.util.*;","public class Main {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+
+        String s = br.readLine();
+
+        Solution sol = new Solution();
+        boolean ans = sol.isValid(s);
+        System.out.print(ans ? ""true"" : ""false"");
+        System.out.println();
+    }
+}","        stack<char> stack;
+        unordered_map<char, char> mapping = {{')', '('}, {']', '['}, {'}', '{'}};
+
+        for (char c : s) {
+            if (mapping.find(c) == mapping.end()) {
+                stack.push(c);
+            } else if (!stack.empty() && mapping[c] == stack.top()) {
+                stack.pop();
+            } else {
+                return false;
+            }
+        }
+
+        return stack.empty(); ","        stack = []
+        mapping = {"")"":""("", ""}"":""{"", ""]"":""[""}
+
+        for char in s:
+            if char in mapping.values():
+                stack.append(char)
+            elif char in mapping.keys():
+                if not stack or mapping[char] != stack.pop():
+                    return False
+        
+        return not stack"
+3,Longest Palindromic Substring,"Given a string s, return the longest palindromic substring in s.
+Example 1:
+Input: s = ""babad""
+Output: ""bab""
+Explanation: ""aba"" is also a valid answer.
+Example 2:
+Input: s = ""cbbd""
+Output: ""bb""
+Constraints:
+1 <= s.length <= 1000
+s consist of only digits and English letters.",Medium,"Two Pointers, String, Dynamic Programming","Test Case 1:
+Input: s = ""babad""
+Output: ""bab""
+Explanation: ""aba"" is also a valid answer.
+
+Test Case 2:
+Input: s = ""cbbd""
+Output: ""bb""","babad
+
+cbbd
+
+a
+
+ac
+
+forgeeksskeegfor
+
+abacdfgdcaba
+
+abacdedcaba
+
+12344321
+
+banana
+
+babadada
+
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","aba
+bb
+a
+a
+geeksskeeg
+aba
+abacdedcaba
+12344321
+anana
+adada
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        ","class Solution {
+public:
+    string longestPalindrome(string s) {
+        
+    }
+};","class Solution {
+    public String longestPalindrome(String s) {
+        
+    }
+}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
+    data = sys.stdin.read().strip().splitlines()
+    line_idx = 0
+
+    s = data[line_idx]
+    line_idx += 1
+
+    sol = Solution()
+    ans = sol.longestPalindrome(s)
+
+    if isinstance(ans, list):
+        print(json.dumps(ans, separators=(',', ':')))
+    elif isinstance(ans, bool):
+        print('true' if ans else 'false')
+    else:
+        print(ans)","#include <bits/stdc++.h>
+using namespace std;","int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    string s;
+    if (!(cin >> s)) return 0;
+
+    Solution sol;
+    string ans = sol.longestPalindrome(s);
+    cout << ans;
+    cout << '\n';
+    return 0;
+}","import java.io.*;
+import java.util.*;","public class Main {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+
+        String s = br.readLine();
+
+        Solution sol = new Solution();
+        String ans = sol.longestPalindrome(s);
+        System.out.print(ans);
+        System.out.println();
+    }
+}","        if (s.length() <= 1) {
+            return s;
+        }
+
+        auto expand_from_center = [&](int left, int right) {
+            while (left >= 0 && right < s.length() && s[left] == s[right]) {
+                left--;
+                right++;
+            }
+            return s.substr(left + 1, right - left - 1);
+        };
+
+        string max_str = s.substr(0, 1);
+
+        for (int i = 0; i < s.length() - 1; i++) {
+            string odd = expand_from_center(i, i);
+            string even = expand_from_center(i, i + 1);
+
+            if (odd.length() > max_str.length()) {
+                max_str = odd;
+            }
+            if (even.length() > max_str.length()) {
+                max_str = even;
+            }
+        }
+
+        return max_str;","if len(s) <= 1:
+            return s
+        
+        Max_Len=1
+        Max_Str=s[0]
+        for i in range(len(s)-1):
+            for j in range(i+1,len(s)):
+                if j-i+1 > Max_Len and s[i:j+1] == s[i:j+1][::-1]:
+                    Max_Len = j-i+1
+                    Max_Str = s[i:j+1]
+
+        return Max_Str"
+4,Edit Distance,"Given two strings word1 and word2, return the minimum number of operations required to convert word1 to word2.
+You have the following three operations permitted on a word:
+Insert a character
+Delete a character
+Replace a character
+Example 1:
+Input: word1 = ""horse"", word2 = ""ros""
+Output: 3
+Explanation:
+horse -> rorse (replace 'h' with 'r') rorse -> rose (remove 'r') rose -> ros (remove 'e')
+Example 2:
+Input: word1 = ""intention"", word2 = ""execution""
+Output: 5
+Explanation:
+intention -> inention (remove 't') inention -> enention (replace 'i' with 'e') enention -> exention (replace 'n' with 'x') exention -> exection (replace 'n' with 'c') exection -> execution (insert 'u')
+Constraints:
+0 <= word1.length, word2.length <= 500
+word1 and word2 consist of lowercase English letters.",Medium,"String, Dynamic Programming","Test Case 1:
+Input: word1 = ""horse"", word2 = ""ros""
+Output: 3
+Explanation: 
+horse -> rorse (replace 'h' with 'r')
+rorse -> rose (remove 'r')
+rose -> ros (remove 'e')
+
+Test Case 2:
+Input: word1 = ""intention"", word2 = ""execution""
+Output: 5
+Explanation: 
+intention -> inention (remove 't')
+inention -> enention (replace 'i' with 'e')
+enention -> exention (replace 'n' with 'x')
+exention -> exection (replace 'n' with 'c')
+exection -> execution (insert 'u')","horse ros
+
+intention execution
+
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii i
+
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+
+i k
+
+love movie
+
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+
+nwlrbbmqbhcdarzowkkyhiddqscdxrjmowfrxsjybldbefsarcbynecdyggxxpklorellnmpapqfwkhopkmcoqhnwnkuewhsqmgbbuqcljjivswmdkqtbxixmvtrrbljptnsnfwzqfjmafadrrwsofsbcnuvqhffbsaqxwpqcacehchzvfrkmlnozjkpqpxrjxkitzyxacbhhkicqcoendtomfgdwdwfcgpxiqvkuytdlcgdewhtaciohordtqkvwcsgspqoqmsboaguwnnyqxnzlgdgwpbtrwblnsadeuguumoqcdrubetokyxhoachwdvmxxrdryxlmndqtukwagmlejuukwcibxubumenmeyatdrmydiajxloghiqfmzhlvihjouvsuyoypayulyeimuotehzriicfskpggkbbipzzrzucxamludfykgruowzgiooobppleqlwphapjnadqhdcnvwdtxjbmyppphauxnspusgdhii hqflvvgkvbwxultiqeesbcxxkmwxrldgiqzlrmdsvfxvyzmulwvshywxsaarrjefilyffhgjujkzqebijegwikbhqheoyqbmkgavvokwfddcpmqgxeknvrcrgpnllvfdjnhmhzqtkzdguzuxllqmizmvwhopkbzzvmukrqjkwuwybwbtpzlegfhitdejkjrldrecntsruwvbbecwkwiyhxnigzaxqxqzwajrckpeosnxfwaxyqbnuwcibilxnkepqwmamjkikgmviuaoqhhskrhtfaxaqjvnlqvfhmuxyoaoogikwxlovyniesrbiuwbqxpgrrlxlsrfghxknoequagfydooeqwcvrovogyhgysunxlgsxcudrfiabckzgtbfpcbdiopmosisjusofsycgoinybtlccwzmejaaevvcjttltowrugfoxzsealoiqtaciiivjjfykfqjbujdhuxkbxwhpqxnrdvgsjjjbuorhmjomaxbcc
+
+
+bkzfppaepvqrofnckyymvwrregqrlfxacktflgxmpzrpstgofqpmbsqrmuulldyzcfszzbadodetkyvcdyaqcevbkbyiskvgeauppieqzxxwjgkaryehplwlajhffpzxdhbgbtknetxaotorffkgctgpqbijevttpgoelkdeqoqsvqvnjtfyazbcnxydedlfxlywhnmloqpvvywqeqcsbrhcaturkrktqudlwejyimhrzqurskvhoqwcvcfrheyjkqgugdeceagpcouikbbmelbnzurukdphfkpzbgorsiuiiaceqrfipshcymlvcoqvkrjallfrfmlzabrehiykouazsxiiykqwplipiasbasmohrfamrwoxlzcuvwetanvzjwvxcijgimcmdomizmswaichsvnfwwqtgyduuyppwdnnfniqloazirtmyuficknuwcccpddzsezkdvodxborevrqbjkrhlxpamdddvoilbgdigurvwa vdzgnwsxcorxgwplwxnnfbusnffwmmtogiliwgcfviihwwmxsenmttlyjehowlptdddyglqujmeqcecvrufjcudjlxqlhgmppuvewnnemghrcaqmqvcbynhamvwgflnusgoosqoswrwpzrspzfduqswiwdtrojooqxdlvbmxfsoqmgsmhsweeyntsipjschlvuheewueyqksljbevguilrrlicxteysyqmmldushxnxbcdrfdulhadbgpsrknfmozygqdmcwmearzrdsccskjrodwaqgjtvddfznhtooxexvejbsrvkshfcddhoarktsysostmqtpnzisfspdvvjjijnyslitmeagwjjznubtiufbxknsprppzwtqsnshsikpszwfprmemyynqxnamjdzrzrfqbygdsipkcngpbkgdnsnscqxqhaarucydycjlshspshbsztscousnywjouutpchdbhlyhmpktxxtgzkumcaawfcmnea
+
+
+vdzgnwsxco pjgxuuuymr","3
+5
+499
+0
+1
+2
+500
+446
+448
+10","class Solution:
+    def minDistance(self, word1: str, word2: str) -> int:
+        ","class Solution {
+public:
+    int minDistance(string word1, string word2) {
+        
+    }
+};","class Solution {
+    public int minDistance(String word1, String word2) {
+        
+    }
+}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
+    data = sys.stdin.read().strip().splitlines()
+    line_idx = 0
+
+    word1 = data[line_idx]
+    line_idx += 1
+    word2 = data[line_idx]
+    line_idx += 1
+
+    sol = Solution()
+    ans = sol.minDistance(word1, word2)
+
+    if isinstance(ans, list):
+        print(json.dumps(ans, separators=(',', ':')))
+    elif isinstance(ans, bool):
+        print('true' if ans else 'false')
+    else:
+        print(ans)","#include <bits/stdc++.h>
+using namespace std;","int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    string word1;
+    if (!(cin >> word1)) return 0;
+    string word2;
+    if (!(cin >> word2)) return 0;
+
+    Solution sol;
+    auto ans = sol.minDistance(word1, word2);
+    cout << ans;
+    cout << '\n';
+    return 0;
+}","import java.io.*;
+import java.util.*;","public class Main {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+
+        String word1 = br.readLine();
+        String word2 = br.readLine();
+
+        Solution sol = new Solution();
+        var ans = sol.minDistance(word1, word2);
+        System.out.print(ans);
+        System.out.println();
+    }
+}","        int m = word1.size(), n = word2.size(), pre;
+        vector<int> cur(n + 1, 0);
+        for (int j = 1; j <= n; j++) {
+            cur[j] = j;
+        }
+        for (int i = 1; i <= m; i++) {
+            pre = cur[0];
+            cur[0] = i;
+            for (int j = 1; j <= n; j++) {
+                int temp = cur[j];
+                if (word1[i - 1] == word2[j - 1]) {
+                    cur[j] = pre;
+                } else {
+                    cur[j] = min(pre, min(cur[j - 1], cur[j])) + 1;
+                }
+                pre = temp;
+            }
+        }
+        return cur[n];","    m = len(word1)
+    n = len(word2)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+
+    for i in range(1, m + 1):
+      dp[i][0] = i
+
+    for j in range(1, n + 1):
+      dp[0][j] = j
+
+    for i in range(1, m + 1):
+      for j in range(1, n + 1):
+        if word1[i - 1] == word2[j - 1]:
+          dp[i][j] = dp[i - 1][j - 1]
+        else:
+          dp[i][j] = min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]) + 1
+
+    return dp[m][n]"
+5,Max Points on a Line,"Given an array of points where points[i] = [x[i], y[i] ] represents a point on the X-Y plane, return the maximum number of points that lie on the same straight line.
+Example 1:
+Input: points = [[1,1],[2,2],[3,3]]
+Output: 3
+Example 2:
+Input: points = [[1,1],[3,2],[5,3],[4,1],[2,3],[1,4]]
+Output: 4
+Constraints:
+1 <= points.length <= 300
+points[i].length == 2
+-10^4 <= x[i], y[i] <= 10^4
+All the points are unique.",Hard,"Array, Hash Table, Math, Geometry","Test Case 1:
+Input: points = [[1,1],[2,2],[3,3]]
+Output: 3
+
+Test Case 2:
+Input: points = [[1,1],[3,2],[5,3],[4,1],[2,3],[1,4]]
+Output: 4","3 2
+1 1
+2 2
+3 3
+
+6 2
+1 1
+3 2
+5 3
+4 1
+2 3
+1 4
+
+1 2
+0 0
+
+2 2
+1 1
+2 3
+
+4 2
+1 1
+2 2
+3 3
+4 4
+
+5 2
+1 5
+2 5
+3 5
+4 5
+5 5
+
+4 2
+7 1
+7 2
+7 3
+7 4
+
+4 2
+0 0
+1 1
+1 0
+2 1
+
+7 2
+0 0
+5 5
+10 10
+1 2
+2 4
+3 6
+4 8
+
+7 2
+1 2
+2 4
+3 6
+4 8
+5 10
+1 0
+2 1
+
+5 2
+-1 -1
+0 0
+1 1
+2 2
+2 3
+
+1 2
+-1000 1000","3
+5
+1
+2
+4
+5
+4
+2
+5
+5
+4
+1","class Solution:
+    def maxPoints(self, points: List[List[int]]) -> int:
+        ","class Solution {
+public:
+    int maxPoints(vector<vector<int>>& points) {
+        
+    }
+};","class Solution {
+    public int maxPoints(int[][] points) {
+        
+    }
+}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
+    data = sys.stdin.read().strip().splitlines()
+    line_idx = 0
+
+    n_points = int(data[line_idx])
+    line_idx += 1
+    points = list(map(int, data[line_idx].split()))
+    line_idx += 1
+
+    sol = Solution()
+    ans = sol.maxPoints(points)
+
+    if isinstance(ans, list):
+        print(json.dumps(ans, separators=(',', ':')))
+    elif isinstance(ans, bool):
+        print('true' if ans else 'false')
+    else:
+        print(ans)","#include <bits/stdc++.h>
+using namespace std;","int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int m_points, n_points;
+    if (!(cin >> m_points >> n_points)) return 0;
+    vector<vector<int>> points(m_points, vector<int>(n_points));
+    for (int i = 0; i < m_points; ++i) {
+        for (int j = 0; j < n_points; ++j) {
+            cin >> points[i][j];
+        }
+    }
+
+    Solution sol;
+    auto ans = sol.maxPoints(points);
+    cout << ans;
+    cout << '\n';
+    return 0;
+}","import java.io.*;
+import java.util.*;","public class Main {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+
+        int n_points = Integer.parseInt(br.readLine());
+        st = new StringTokenizer(br.readLine());
+        int[] points = new int[n_points];
+        for (int i = 0; i < n_points; i++) {
+            points[i] = Integer.parseInt(st.nextToken());
+        }
+
+        Solution sol = new Solution();
+        var ans = sol.maxPoints(points);
+        System.out.print(ans);
+        System.out.println();
+    }
+}","        if (points.size() <= 2) {
+            return points.size();
+        }
+
+        int max = 2;
+
+        for (int i = 0; i < points.size() - 2; i++) {
+            for (int j = i + 1; j < points.size() - 1; j++) {
+                int n = 2;
+
+                for (int k = j + 1; k < points.size(); k++) {
+                    if ((points[k][1] - points[j][1]) * (points[j][0] - points[i][0]) ==
+                        (points[j][1] - points[i][1]) * (points[k][0] - points[j][0])) {
+                        n++;
+                    }
+                }
+
+                max = std::max(max, n);
+            }
+        }
+
+        return max;","        if len(points) <= 2:
+            return len(points)
+        
+        def find_slope(p1, p2):
+            x1, y1 = p1
+            x2, y2 = p2
+            if x1-x2 == 0:
+                return inf
+            return (y1-y2)/(x1-x2)
+        
+        ans = 1
+        for i, p1 in enumerate(points):
+            slopes = defaultdict(int)
+            for j, p2 in enumerate(points[i+1:]):
+                slope = find_slope(p1, p2)
+                slopes[slope] += 1
+                ans = max(slopes[slope], ans)
+        return ans+1"
+6,Minimum Window Substring,"Given two strings s and t of lengths m and n respectively, return the minimum window
+substring of s such that every character in t ( including duplicates ) is included in the window. If there is no such substring, return the empty string """".
+The testcases will be generated such that the answer is unique.
+Example 1:
+Input: s = ""ADOBECODEBANC"", t = ""ABC""
+Output: ""BANC""
+Explanation: The minimum window substring ""BANC"" includes 'A', 'B', and 'C' from string t.
+Example 2:
+Input: s = ""a"", t = ""a""
+Output: ""a""
+Explanation: The entire string s is the minimum window.
+Example 3:
+Input: s = ""a"", t = ""aa""
+Output: """"
+Explanation: Both 'a's from t must be included in the window. Since the largest window of s only has one 'a', return empty string.
+Constraints:
+m == s.length
+n == t.length
+1 <= m, n <= 10^5
+s and t consist of uppercase and lowercase English letters.
+Follow up: Could you find an algorithm that runs in O(m + n) time?",Hard,"Hash Table, String, Sliding Window","Test Case 1:
+Input: s = ""ADOBECODEBANC"", t = ""ABC""
+Output: ""BANC""
+Explanation: The minimum window substring ""BANC"" includes 'A', 'B', and 'C' from string t.
+
+Test Case 2:
+Input: s = ""a"", t = ""a""
+Output: ""a""
+Explanation: The entire string s is the minimum window.
+
+Test Case 3:
+Input: s = ""a"", t = ""aa""
+Output: """"
+Explanation: Both 'a's from t must be included in the window.
+Since the largest window of s only has one 'a', return empty string.","ADOBECODEBANC ABC
+
+a a
+
+bba ab
+
+aa aa
+
+abaac aac
+
+this th
+
+aaaaaaaaaaaaaab ab
+
+cabwefgewcwaefgcf cae
+
+ajaJAj aaj","BANC
+a
+ba
+aa
+aac
+th
+aaaaaaaaaaaaaab ab
+cwae
+aja","class Solution:
+    def minWindow(self, s: str, t: str) -> str:
+        ","class Solution {
+public:
+    string minWindow(string s, string t) {
+        
+    }
+};","class Solution {
+    public String minWindow(String s, String t) {
+        
+    }
+}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
+    data = sys.stdin.read().strip().splitlines()
+    line_idx = 0
+
+    s = data[line_idx]
+    line_idx += 1
+    t = data[line_idx]
+    line_idx += 1
+
+    sol = Solution()
+    ans = sol.minWindow(s, t)
+
+    if isinstance(ans, list):
+        print(json.dumps(ans, separators=(',', ':')))
+    elif isinstance(ans, bool):
+        print('true' if ans else 'false')
+    else:
+        print(ans)","#include <bits/stdc++.h>
+using namespace std;","int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    string s;
+    if (!(cin >> s)) return 0;
+    string t;
+    if (!(cin >> t)) return 0;
+
+    Solution sol;
+    string ans = sol.minWindow(s, t);
+    cout << ans;
+    cout << '\n';
+    return 0;
+}","import java.io.*;
+import java.util.*;","public class Main {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
+
+        String s = br.readLine();
+        String t = br.readLine();
+
+        Solution sol = new Solution();
+        String ans = sol.minWindow(s, t);
+        System.out.print(ans);
+        System.out.println();
+    }
+}","        int n = s.length(), m = t.length();
+        if (m > n) {
+            return """";
+        }
+        unordered_map <char, int> mp1;
+        unordered_map <char, int> mp2;
+
+        for (auto c : t)
+            mp1[c]++;
+        
+        int need = mp1.size();
+        int have = 0;
+        int l = 0, r = 0;
+        pair <int , int> ans = {0, 1e9};
+        while (r < s.size()) {
+            mp2[s[r]]++;
+            if (mp2[s[r]] == mp1[s[r]]) 
+                have++;
+            while (have == need) {
+                if (ans.second - ans.first > r - l) {
+                    ans = {l, r};
+                }
+                mp2[s[l]]--;
+                if (mp2[s[l]] < mp1[s[l]])
+                    have--;
+                l++;
+            }
+            r++;
+        }
+        if (ans.first == 0 && ans.second == 1e9) return """";
+        return s.substr(ans.first, ans.second - ans.first + 1);","        if not s or not t or len(s) < len(t):
+            return """"
+
+        map = [0] * 128
+        count = len(t)
+        start = 0
+        end = 0
+        min_len = float('inf')
+        start_index = 0
+        # UPVOTE !
+        for char in t:
+            map[ord(char)] += 1
+
+        while end < len(s):
+            if map[ord(s[end])] > 0:
+                count -= 1
+            map[ord(s[end])] -= 1
+            end += 1
+
+            while count == 0:
+                if end - start < min_len:
+                    start_index = start
+                    min_len = end - start
+
+                if map[ord(s[start])] == 0:
+                    count += 1
+                map[ord(s[start])] += 1
+                start += 1
+
+        return """" if min_len == float('inf') else s[start_index:start_index + min_len]"
