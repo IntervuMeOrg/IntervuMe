@@ -45,6 +45,7 @@ export const McqAnswerEntity = new EntitySchema<McqAnswerSchema>({
       type: "many-to-one",
       target: "interview",
       joinColumn: { name: "interviewId" },
+      onDelete: "CASCADE",
     },
   },
   indices: [
