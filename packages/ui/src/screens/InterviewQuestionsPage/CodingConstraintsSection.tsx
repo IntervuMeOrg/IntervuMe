@@ -1,22 +1,18 @@
 import { CodingQuestion } from "../../types/questions";
 
 type CodingConstraintsSectionProps = {
-	questions: CodingQuestion[];
-	currentQuestionIndex: number;
+	question: CodingQuestion;
 };
 
 export const CodingConstraintsSection = ({
-	questions,
-	currentQuestionIndex,
+	question,
 }: CodingConstraintsSectionProps) => {
 	return (
 		<div className="mt-6">
 			<p className="font-semibold text-m mb-2">Constraints:</p>
 			<div className="p-3 bg-gray-100 rounded-md">
 				<ul className="list-disc pl-4 space-y-1">
-					{(
-						questions[currentQuestionIndex] as CodingQuestion
-					).constraints.map((constraint, idx) => (
+					{question.constraints?.map((constraint: string, idx: number) => (
 						<li key={idx} className="text-m text-gray-700">
 							{constraint}
 						</li>

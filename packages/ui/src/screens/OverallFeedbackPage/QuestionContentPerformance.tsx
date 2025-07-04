@@ -1,4 +1,4 @@
-import { MCQQuestion, CodingQuestion } from "../../types/questions";
+import { McqQuestion, CodingQuestion } from "../../types/questions";
 import { StarIcon } from "lucide-react";
 
 type Performance = {
@@ -10,7 +10,7 @@ type Performance = {
 };
 
 type QuestionContentPerformanceProps = {
-	question: MCQQuestion | CodingQuestion;
+	question: McqQuestion | CodingQuestion;
 	performance: Performance;
 	isCorrect: boolean;
 };

@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 import { NavbarLayout } from "../../components/layout/NavbarLayout";
 import { DetailedFeedbackView } from "./DetailedFeedbackView";
 import { ResultSummaryCard } from "./ResultSummaryCard";
-import { MCQQuestion, CodingQuestion } from "../../types/questions";
+import { McqQuestion, CodingQuestion } from "../../types/questions";
 import { DetailedFeedbackData } from "../../types/performance";
 import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
 
-type Question = MCQQuestion | CodingQuestion;
+type Question = McqQuestion | CodingQuestion;
 
 const feedbackData: DetailedFeedbackData = {
 	questions: [

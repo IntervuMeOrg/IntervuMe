@@ -1,8 +1,8 @@
 import { CheckCircleIcon, XCircleIcon } from "lucide-react";
-import { MCQQuestion } from "../../types/questions";
+import { McqQuestion } from "../../types/questions";
 
 type QuestionContentMCQProps = {
-	question: MCQQuestion;
+	question: McqQuestion;
 	userAnswer: string | null;
 };
 

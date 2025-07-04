@@ -4,11 +4,11 @@ import { Button } from "../../components/ui/button";
 import { useLocation } from "react-router-dom";
 import { SidebarToogleButton } from "./SidebarToogleButton";
 import { CheckCircleIcon, TimerIcon, XIcon } from "lucide-react";
-import { MCQQuestion, CodingQuestion } from "../../types/questions";
+import { McqQuestion, CodingQuestion } from "../../types/questions";
 import { isNil } from "../../lib/utils";
 
 type InterviewQuestionsPageHeaderProps = {
-  questions: (MCQQuestion | CodingQuestion)[];
+  questions: (McqQuestion | CodingQuestion)[];
   currentQuestionIndex: number;
   setExitConfirmation: React.Dispatch<React.SetStateAction<boolean>>;
   sidebarVisible: boolean;

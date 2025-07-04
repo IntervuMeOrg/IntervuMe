@@ -1,17 +1,15 @@
 import { CodingQuestion } from "../../types/questions";
 
 type CodingExampleSectionProps = {
-	questions: CodingQuestion[];
-	currentQuestionIndex: number;
+	question: CodingQuestion;
 };
 
 export const CodingExampleSection = ({
-	questions,
-	currentQuestionIndex,
+	question,
 }: CodingExampleSectionProps) => {
 	return (
 		<div className="mt-6 space-y-4">
-			{(questions[currentQuestionIndex] as CodingQuestion).examples.map(
+			{question.examples.map(
 				(example, idx) => (
 					<div key={idx}>
 						<p className="font-semibold text-medium">Example {idx + 1}:</p>

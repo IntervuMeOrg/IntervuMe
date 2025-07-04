@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 import { CheckCircleIcon } from "lucide-react";
-import { MCQQuestion } from "../../types/questions";
+import { McqQuestion } from "../../types/questions";
 
 type QuestionContentMCQProps = {
-	question: MCQQuestion;
+	question: McqQuestion;
 	userAnswers: Record<string, string>;
 	setUserAnswer: (questionId: string, selectedOptionId: string) => void;
 };
@@ -51,7 +51,7 @@ export const QuestionContentMCQ = ({
 				</p>
 				
 				{currentQuestion.options.map((option, index) => {
-					const optionId = option.id.toString();
+					const optionId = option.id;
 					const isSelected = selectedAnswer === optionId;
 					const optionLetter = String.fromCharCode(65 + index);
 
@@ -88,7 +88,7 @@ export const QuestionContentMCQ = ({
 
 								{/* Option Text */}
 								<p className="flex-1 ml-3 font-['Nunito'] text-sm sm:text-base text-[#1d1d20] leading-snug">
-									{option.text}
+									{option.optionText}
 								</p>
 
 								{/* Selected Indicator */}

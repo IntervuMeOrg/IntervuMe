@@ -1,12 +1,12 @@
 import { CheckCircleIcon, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "../../components/ui/button";
-import { MCQQuestion, CodingQuestion } from "../../types/questions";
+import { McqQuestion, CodingQuestion } from "../../types/questions";
 import { useEffect, useRef } from "react";
 
 type QuestionListSidebarProps = {
 	currentQuestionIndex: number;
-	questions: (MCQQuestion | CodingQuestion)[];
+	questions: (McqQuestion | CodingQuestion)[];
 	setCurrentQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
 	sidebarVisible: boolean;
 	setSidebarVisible: React.Dispatch<React.SetStateAction<boolean>>;
