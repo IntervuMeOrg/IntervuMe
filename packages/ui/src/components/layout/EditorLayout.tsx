@@ -13,7 +13,8 @@ import {
 import { Editor } from "@monaco-editor/react";
 import { motion } from "framer-motion";
 import { CodingQuestion } from "../../types/questions";
-import { CodeSubmissionWithResults } from "../../lib/interview/interview-api";
+import { CodeSubmissionWithResults, RunCodeResult } from "../../lib/interview/interview-api";
+import { isNil } from "../../lib/utils";
 
 // Props type definition
 type EditorLayoutProps = {
@@ -34,6 +35,7 @@ type EditorLayoutProps = {
 	// Console related props
 	showConsole?: boolean;
 	consoleOutput?: string;
+	testCaseOutputs?: Record<number, RunCodeResult>;
 	submissionStatus?: {
 		status: "success" | "error" | "pending" | "none";
 		message: string;
@@ -68,6 +70,7 @@ export const EditorLayout = ({
 	onLanguageChange,
 	showConsole = false,
 	consoleOutput = "",
+	testCaseOutputs = {},
 	submissionStatus = { status: "none", message: "" },
 	question,	
 	showLanguageSelector = true,
@@ -447,32 +450,46 @@ export const EditorLayout = ({
 									<div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
 										<div className="flex items-center gap-3">
 											<div className="flex items-center gap-1">
-												{isRunning ? (
-													<>
-														<svg className="animate-spin h-3 w-3 text-blue-500" xmlns="http://w...content-available-to-author-only...3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-															<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-															<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-														</svg>
-														<span className="text-sm text-blue-600 font-medium">Running...</span>
-													</>
-												) : (
+												{(
 													<>
 														<div className="w-3 h-3 bg-blue-500 rounded-full"></div>
 														<span className="text-sm text-gray-600">Test Result</span>
 													</>
 												)}
 											</div>
-											{!isRunning && consoleOutput && consoleOutput !== "No output. Click 'Run' to execute your code." && sampleTestCases.length > 0 && (
+											{!isRunning && Object.keys(testCaseOutputs).length > 0 && sampleTestCases.length > 0 && (
 												<div className="flex items-center gap-2">
 													{(() => {
-														const isPassed = consoleOutput.trim() === sampleTestCases[selectedTestCase]?.expectedOutput?.trim();
+														const testCaseResult = testCaseOutputs[selectedTestCase];
+														if (!testCaseResult) return null;
+														
+														const isPassed = testCaseResult.status === "Correct";
+														const statusText = testCaseResult.status
+														
 														return (
-															<span className={`text-sm font-medium ${isPassed ? 'text-green-600' : 'text-red-600'}`}>
-																{isPassed ? 'Accepted' : 'Wrong Answer'}
-															</span>
+															<>
+																<div className={`flex items-center gap-1.5 px-3 py-1 rounded-full ${
+																	isPassed ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+																}`}>
+																	{isPassed ? (
+																		<svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+																			<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+																		</svg>
+																	) : (
+																		<svg className="w-4 h-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+																			<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+																		</svg>
+																	)}
+																	<span className={`text-sm font-medium ${isPassed ? 'text-green-600' : 'text-red-600'}`}>
+																		{statusText}
+																	</span>
+																</div>
+																{statusText !== "Compilation Error" && (
+																	<span className="text-sm text-gray-500">Runtime: {testCaseResult.time * 1000} ms</span>
+																)}
+															</>
 														);
 													})()}
-													<span className="text-sm text-gray-500">Runtime: 0 ms</span>
 												</div>
 											)}
 										</div>
@@ -483,8 +500,9 @@ export const EditorLayout = ({
 										<div className="px-4 py-3 border-b border-gray-200">
 											<div className="flex items-center gap-2">
 												{sampleTestCases.map((testCase: any, idx: number) => {
-													const isPassed = consoleOutput && consoleOutput.trim() === testCase.expectedOutput?.trim();
-													const hasOutput = consoleOutput && consoleOutput !== "No output. Click 'Run' to execute your code.";
+													const testCaseResult = testCaseOutputs[idx];
+													const isPassed = testCaseResult?.status === "Correct" || false;
+													const hasOutput = !isNil(testCaseResult);
 													
 													return (
 														<button
@@ -527,20 +545,15 @@ export const EditorLayout = ({
 													<div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
 														<pre className={`text-sm font-mono whitespace-pre-wrap overflow-x-auto ${
 															isRunning ? 'text-blue-600' : 
-															consoleOutput && consoleOutput !== "No output. Click 'Run' to execute your code." && 
-															consoleOutput.trim() !== sampleTestCases[selectedTestCase]?.expectedOutput?.trim() ? 
-															'text-red-600' : 'text-gray-800'
+															testCaseOutputs[selectedTestCase] && (testCaseOutputs[selectedTestCase].status !== "Correct") ? 
+															'text-red-600' : 'text-gray-800'	
 														}`}>
 															{isRunning ? (
 																<div className="flex items-center gap-2">
-																	<svg className="animate-spin h-4 w-4" xmlns="http://w...content-available-to-author-only...3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-																		<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-																		<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-																	</svg>
-																	Running code...
+																	<div className="w-4 h-4 border-2 border-t-transparent border-blue-600 rounded-full animate-spin"></div>
 																</div>
 															) : (
-																consoleOutput || "No output. Click 'Run' to execute your code."
+																testCaseOutputs[selectedTestCase]?.stdout || consoleOutput
 															)}
 														</pre>
 													</div>
@@ -551,8 +564,7 @@ export const EditorLayout = ({
 													<div className="text-sm font-medium text-gray-700 mb-2">Expected</div>
 													<div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
 														<pre className={`text-sm font-mono whitespace-pre-wrap overflow-x-auto ${
-															consoleOutput && consoleOutput !== "No output. Click 'Run' to execute your code." && 
-															consoleOutput.trim() !== sampleTestCases[selectedTestCase]?.expectedOutput?.trim() ? 
+															testCaseOutputs[selectedTestCase] && testCaseOutputs[selectedTestCase].status !== "Correct" ? 
 															'text-green-600' : 'text-gray-800'
 														}`}>
 															{sampleTestCases[selectedTestCase].expectedOutput || "No expected output"}
