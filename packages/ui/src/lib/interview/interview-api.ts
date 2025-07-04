@@ -120,6 +120,7 @@ export interface InterviewResponse {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  jobTitle?: string;
 }
 
 export interface InterviewSessionResponse extends InterviewResponse {
@@ -210,6 +211,11 @@ export const interviewApi = {
   // Run code with test cases
   runCode(request: RunCodeRequest) {
     return api.post<RunCodeResult>('/api/code-execution/run', request);
+  },
+
+  // Delete interview
+  deleteInterview(id: string) {
+    return api.delete(`/api/interview/${id}`);
   },
 };
 

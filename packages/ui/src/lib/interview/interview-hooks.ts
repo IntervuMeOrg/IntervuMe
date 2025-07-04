@@ -240,6 +240,30 @@ export const useInterviewProgress = (interviewId: string) => {
   });
 };
 
+// Delete interview hook
+export const useDeleteInterview = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (interviewId: string) => {
+      const response = await interviewApi.deleteInterview(interviewId);
+      return response.data;
+    },
+    onSuccess: (_, interviewId) => {
+      // Invalidate all interview-related queries
+      queryClient.invalidateQueries({ queryKey: ["interview", interviewId] });
+      queryClient.invalidateQueries({ queryKey: ["interview-session", interviewId] });
+      queryClient.invalidateQueries({ queryKey: ["interviews"] });
+    },
+    onError: (error: any) => {
+      console.error(
+        "Delete interview failed:",
+        error.response?.data?.message || error.message
+      );
+    },
+  });
+};
+
 // Interview session management with different auto-save strategies
 export const useInterviewSession = () => {
   const queryClient = useQueryClient();
