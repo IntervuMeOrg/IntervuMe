@@ -2,7 +2,7 @@ import { Static, Type } from "@sinclair/typebox";
 import { ApId } from "../../common/id-generator";
 
 export enum Programming_language {
-  PYTHON= 'python',
+  PYTHON = 'python',
   CPP = 'cpp',
   JAVA = 'java',
 }

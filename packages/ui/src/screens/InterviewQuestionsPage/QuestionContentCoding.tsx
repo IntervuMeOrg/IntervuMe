@@ -4,8 +4,8 @@ import { CodingQuestion } from "../../types/questions";
 import { EditorLayout } from "../../components/layout/EditorLayout";
 import { CodingExampleSection } from "./CodingExampleSection";
 import { CodingConstraintsSection } from "./CodingConstraintsSection";
-import { CodeSubmissionWithResults } from "../../lib/interview/interview-api";
-import { useRunCode, useSubmitCode, useInterviewSession } from "../../lib/interview/interview-hooks";
+import { CodeSubmissionWithResults, RunCodeResult } from "../../lib/interview/interview-api";
+import { useRunCode, useSubmitCode } from "../../lib/interview/interview-hooks";
 
 type QuestionContentCodingProps = {
 	question: CodingQuestion;
@@ -31,7 +31,7 @@ const getSubmissionStatus = (submission: CodeSubmissionWithResults) => {
 		countColor: allPassed ? "text-green-600" : "text-red-600",
 		message: allPassed 
 			? "Your solution passed all test cases. Great job!"
-			: "Your solution failed on some test cases. Check the error details and try again."
+			: "Your solution failed on some test cases. Try again."
 	};
 };
 
@@ -71,6 +71,7 @@ export const QuestionContentCoding = ({
 
 	// State for code execution output
 	const [codeOutput, setCodeOutput] = useState<string>("");
+	const [testCaseOutputs, setTestCaseOutputs] = useState<Record<number, RunCodeResult>>({});
 
 	// Updated submission status interface to match submission history structure
 	const [submissionStatus, setSubmissionStatus] = useState<{
@@ -478,32 +479,57 @@ export const QuestionContentCoding = ({
 					onLanguageChange={handleLanguageChange}
 					showConsole={consoleVisible}
 					consoleOutput={codeOutput}
+					testCaseOutputs={testCaseOutputs}
 					question={question}
 					submissionStatus={submissionStatus}
 					onSubmissionsTabClick={() => setActiveTab("submissions")}
 					isRunning={runCodeMutation.isPending}
 					allSubmissions={allSubmissions}
 					isSubmitting={submitCode.isPending}
-					onRun={async (testCaseIndex = 0) => {
+					onRun={async () => {
 						try {
 							// Show console when running
 							setConsoleVisible(true);
 							
-							// Get the selected test case or default to first
-							const testCase = question.testCases?.[testCaseIndex] || question.testCases?.[0];
+							// Run all sample test cases (non-hidden test cases)
+							const sampleTestCases = question.testCases?.filter(tc => !tc.isHidden) || [];
 							
-							// Call the run code function with selected test case
-							const result = await runCodeMutation.mutateAsync({
-								questionId: question.id,
-								language: selectedLanguage as 'python' | 'cpp' | 'java',
-								userCode: currentCode,
-								stdin: testCase?.input || "",
-								expected: testCase?.expectedOutput || "",
-								timeLimit: question.timeLimit || 2000,
-							});
+
+							// Clear previous outputs
+							setTestCaseOutputs({});		
+							// Run each sample test case
+							const outputs: Record<number, RunCodeResult> = {};
 							
-							// Update console output
-							setCodeOutput(result.stdout || "No output");
+							for (let i = 0; i < sampleTestCases.length; i++) {
+								const testCase = sampleTestCases[i];
+								
+								try {
+									const result = await runCodeMutation.mutateAsync({
+										questionId: question.id,
+										language: selectedLanguage as 'python' | 'cpp' | 'java',
+										userCode: currentCode,
+										stdin: testCase.input || "",
+										expected: testCase.expectedOutput || "",
+										timeLimit: question.timeLimit || 2000,
+									});
+									
+									// Store result for this test case
+									const { stdout, status, time } = result;
+									outputs[i] = { stdout, status, time };
+
+								} catch (error) {
+									// Store error for this test case
+									outputs[i] = { 
+										stdout: `Error: ${(error as Error).message}`, 
+										status: "error", 
+										time: 0 
+									};
+								}
+							}
+							
+							// Update state with all outputs
+							setTestCaseOutputs(outputs);
+							setCodeOutput(""); // Clear the general output
 							
 						} catch (error) {
 							console.error("Run failed:", error);
