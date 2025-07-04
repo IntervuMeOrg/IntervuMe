@@ -191,18 +191,8 @@ export const interviewService = {
     return await interviewRepository().save(interview);
   },
 
-  async delete(id: string): Promise<boolean> {
-    const interview = await interviewRepository().findOne({
-      where: { id },
-    });
-
-    if (isNil(interview)) {
-      throw new Error("Interview not found");
-    }
-
-    interview.isActive = false;
-    await interviewRepository().save(interview);
-    return true;
+  async delete(id: string): Promise<void> {
+    await interviewRepository().delete(id);
   },
 
   async create(request: CreateInterviewRequestBody): Promise<Interview> {
