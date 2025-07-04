@@ -150,11 +150,11 @@ def parse_test_cases(normalized_input: str, expected_output: str) -> List[Dict]:
     if len(inputs) != len(outputs):
         print(f"⚠️  Mismatch: {len(inputs)} inputs vs {len(outputs)} outputs")
         # choose the shorter length to avoid IndexError
-    for inp, out in zip(inputs, outputs):
+    for index, (inp, out) in enumerate(zip(inputs, outputs)):
         test_cases.append({
             "input": inp,
             "expectedOutput": out,
-            "isHidden": False
+            "isHidden": index >= 2  # First two test cases (index 0,1) are visible, rest are hidden
         })
     return test_cases
 
