@@ -66,6 +66,16 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
     }
   );
 
+  app.get(
+    "/user/:userId/completed",
+    GetInterviewsByUserRequest,
+    async (request, reply) => {
+      const { userId } = request.params as { userId: string };
+      const interviews = await interviewService.getCompletedByUserId(userId);
+      return interviews;
+    }
+  );
+
   // Get interviews by status
   app.get(
     "/status/:status",

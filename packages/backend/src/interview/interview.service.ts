@@ -43,6 +43,13 @@ export const interviewService = {
     });
   },
 
+  async getCompletedByUserId(userId: string): Promise<Interview[]> {
+    return await interviewRepository().find({
+      where: { userId, isActive: true, status: InterviewStatus.COMPLETED},
+      order: { startTime: "DESC" },
+    });
+  },
+
   async getByStatus(status: InterviewStatus): Promise<Interview[]> {
     return await interviewRepository().find({
       where: { status, isActive: true },
