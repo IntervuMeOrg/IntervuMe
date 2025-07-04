@@ -1,17 +1,37 @@
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { AlertCircleIcon } from "lucide-react";
+import { useDeleteInterview } from "../../lib/interview/interview-hooks";
 
-type ExitConfirmationModelProps = {
-	navigate: ReturnType<typeof useNavigate>;
-	setExitConfirmation: React.Dispatch<React.SetStateAction<boolean>>;
+type CancelConfirmationModelProps = {
+	navigate: (path: string) => void;
+	setCancelConfirmation: React.Dispatch<React.SetStateAction<boolean>>;
+	interviewId: string;
 };
 
-export const ExitConfirmationModel = ({
+export const CancelConfirmationModel = ({
 	navigate,
-	setExitConfirmation,
-}: ExitConfirmationModelProps) => {
+	setCancelConfirmation,
+	interviewId,
+}: CancelConfirmationModelProps) => {
+	const deleteInterview = useDeleteInterview();
+
+	const handleCancel = () => {
+		// Delete the interview on backend
+		deleteInterview.mutate(interviewId, {
+			onSuccess: () => {
+				setCancelConfirmation(false);
+				navigate("/app");
+			},
+			onError: (error) => {
+				console.error("Failed to delete interview:", error);
+				// Still navigate away even if delete fails
+				setCancelConfirmation(false);
+				navigate("/app");
+			},
+		});
+	};
+
 	return (
 		<>
 			{/* Backdrop blur overlay */}
@@ -35,27 +55,26 @@ export const ExitConfirmationModel = ({
 							<AlertCircleIcon className="h-10 w-10 text-red-500" />
 						</div>
 						<h3 className="font-['Nunito',Helvetica] text-xl font-semibold text-center text-white mb-2">
-							Exit Interview?
+							Cancel Interview?
 						</h3>
 						<p className="text-gray-300 text-center mb-6">
-							Are you sure you want to exit this interview? Your progress will
-							not be saved.
+							Are you sure you want to cancel this interview? Your progress will
+							not be saved and the interview will be terminated.
 						</p>
 						<div className="flex justify-center gap-4">
 							<Button
-								onClick={() => setExitConfirmation(false)}
+								onClick={() => setCancelConfirmation(false)}
 								className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-full"
+								disabled={deleteInterview.isPending}
 							>
-								Cancel
+								Continue Interview
 							</Button>
 							<Button
-								onClick={() => {
-									setExitConfirmation(false);
-									navigate("/app");
-								}}
+								onClick={handleCancel}
 								className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full"
+								disabled={deleteInterview.isPending}
 							>
-								Exit Interview
+								{deleteInterview.isPending ? "Cancelling..." : "Cancel Interview"}
 							</Button>
 						</div>
 					</div>

@@ -16,16 +16,9 @@ export const QuestionContentMCQ = ({
 	const questionId = currentQuestion.id;
 	const selectedAnswer = userAnswers[questionId];
 	
-	console.log("MCQ Component Debug:", {
-		questionId,
-		selectedAnswer,
-		userAnswers,
-		options: currentQuestion.options,
-	});
 
 	// Handle MCQ answer selection
 	const handleMCQAnswer = (questionId: string, optionId: string) => {
-		console.log("MCQ Answer Selected:", { questionId, optionId });
 		setUserAnswer(questionId, optionId);
 	};
 

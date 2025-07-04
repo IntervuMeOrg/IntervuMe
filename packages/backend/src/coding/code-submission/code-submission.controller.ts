@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { codeSubmissionService } from "./codeSubmission.service";
 import {
   CodeSubmission,
+  CodeSubmissionWithResults,
   CreateCodeSubmissionRequestBody,
   UpdateCodeSubmissionRequestBody,
 } from "./code-submission-types";
@@ -90,7 +91,7 @@ const CodeSubmissionRequestBodyRequest = {
   schema: {
     body: CreateCodeSubmissionRequestBody,
     response: {
-      [StatusCodes.OK]: CodeSubmission,
+      [StatusCodes.OK]: CodeSubmissionWithResults,
     },
   },
 };

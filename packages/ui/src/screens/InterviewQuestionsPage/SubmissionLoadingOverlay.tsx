@@ -2,35 +2,30 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, CheckCircle } from "lucide-react";
 
-interface LoadingOverlayProps {
+interface SubmissionLoadingOverlayProps {
 	isVisible: boolean;
 	onComplete?: () => void;
-	currentStep?: number;
-	isCreating?: boolean;
-	isStarting?: boolean;
+	isSubmitting?: boolean;
 	isComplete?: boolean;
 }
 
-export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
+export const SubmissionLoadingOverlay: React.FC<SubmissionLoadingOverlayProps> = ({
 	isVisible,
 	onComplete,
-	currentStep = 0,
-	isCreating = false,
-	isStarting = false,
+	isSubmitting = false,
 	isComplete = false,
 }) => {
 	const [animatedStep, setAnimatedStep] = React.useState(0);
 	const [progress, setProgress] = React.useState(0);
 
-	const preparationSteps = [
-		"Analyzing job requirements...",
-		"Extracting technical skills and keywords...",
-		"Generating MCQ questions...",
-		"Creating coding challenges...",
-		"Calibrating difficulty levels...",
-		"Validating question quality...",
-		"Processing interview structure...",
-		"Finalizing your personalized interview...",
+	const submissionSteps = [
+		"Analyzing your answers...",
+		"Evaluating MCQ responses...",
+		"Reviewing coding submissions...",
+		"Calculating performance metrics...",
+		"Generating personalized feedback...",
+		"Preparing detailed report...",
+		"Finalizing your results...",
 	];
 
 	// Reset state when overlay becomes visible
@@ -49,18 +44,14 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 		let targetProgress = 0;
 		let targetStep = 0;
 
-		if (isCreating) {
-			// Interview creation phase - this is where all the work happens (95% progress)
+		if (isSubmitting) {
+			// Submission processing phase - this is where all the work happens (95% progress)
 			targetProgress = 95;
-			targetStep = 6; // Steps 0-6 during creation
-		} else if (isStarting) {
-			// Interview starting phase - instant API call (95-98% progress)
-			targetProgress = 98;
-			targetStep = 7; // Just the final step
+			targetStep = 5; // Steps 0-5 during submission
 		} else if (isComplete) {
 			// Complete phase
 			targetProgress = 100;
-			targetStep = preparationSteps.length - 1;
+			targetStep = submissionSteps.length - 1;
 		}
 
 		// Smooth progress animation
@@ -71,9 +62,9 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 				}
 				return prev;
 			});
-		}, 600);
+		}, 300);
 
-		// Smooth step animation during creation, faster during starting
+		// Smooth step animation during submission
 		const stepInterval = setInterval(() => {
 			setAnimatedStep((prev) => {
 				if (prev < targetStep) {
@@ -81,13 +72,13 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 				}
 				return prev;
 			});
-		}, isCreating ? 1200 : 300); // Slower during creation, faster during starting
+		}, 1000);
 
 		return () => {
 			clearInterval(progressInterval);
 			clearInterval(stepInterval);
 		};
-	}, [isVisible, isCreating, isStarting, isComplete]);
+	}, [isVisible, isSubmitting, isComplete]);
 
 	// Call onComplete when actually complete
 	React.useEffect(() => {
@@ -123,7 +114,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 						<div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none" />
 
 						<div className="relative z-10 flex flex-col items-center space-y-6">
-							{/* Loading Icon - Optimized animation */}
+							{/* Loading Icon */}
 							<div className="relative">
 								{!isComplete ? (
 									<>
@@ -140,10 +131,10 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 
 							{/* Title */}
 							<h3 className="font-['Nunito'] font-bold text-white text-xl sm:text-2xl 3xl:text-3xl">
-								{isComplete ? "Interview Ready!" : "Preparing Your Interview"}
+								{isComplete ? "Results Ready!" : "Processing Your Interview"}
 							</h3>
 
-							{/* Current Step - Optimized transition */}
+							{/* Current Step */}
 							<div className="w-full min-h-[3rem] 3xl:min-h-[4rem] flex items-center justify-center">
 								<motion.p
 									key={animatedStep}
@@ -153,18 +144,18 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 									className="text-[#e8eef2] text-sm sm:text-base 3xl:text-lg text-center"
 								>
 									{isComplete
-										? "Your personalized interview is ready to begin!"
-										: preparationSteps[animatedStep]}
+										? "Your detailed results and feedback are ready!"
+										: submissionSteps[animatedStep]}
 								</motion.p>
 							</div>
 
-							{/* Progress Bar - Hardware accelerated */}
+							{/* Progress Bar */}
 							<div className="w-full space-y-3 3xl:space-y-4">
 								<div className="w-full bg-white/20 rounded-full h-3 3xl:h-4 overflow-hidden">
 									<div
 										style={{
 											width: `${progress}%`,
-											transform: "translateZ(0)", // Force hardware acceleration
+											transform: "translateZ(0)",
 											willChange: "width",
 										}}
 										className="bg-gradient-to-r from-[#0667D0] to-[#033464] h-full rounded-full transition-all duration-300 ease-out"
@@ -176,19 +167,17 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 									<span>{Math.round(progress)}% Complete</span>
 									<span>
 										{isComplete
-											? "Ready!"
-											: isCreating
-											? "Generating questions..."
-											: isStarting
-											? "Starting interview..."
+											? "Complete!"
+											: isSubmitting
+											? "Generating feedback..."
 											: "Processing..."}
 									</span>
 								</div>
 							</div>
 
-							{/* Step Indicators - Optimized */}
+							{/* Step Indicators */}
 							<div className="flex justify-center space-x-2 3xl:space-x-3">
-								{preparationSteps.map((_, index) => (
+								{submissionSteps.map((_, index) => (
 									<div
 										key={index}
 										style={{ transform: "translateZ(0)" }}
@@ -201,10 +190,11 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 								))}
 							</div>
 
-							{/* Simple loading message */}
+							{/* Loading message */}
 							<p className="text-xs 3xl:text-sm text-[#e8eef2] opacity-60 text-center">
-								Please wait while we create your personalized interview
-								experience
+								{isComplete 
+									? "Redirecting you to your results..."
+									: "Please wait while we analyze your performance and generate personalized feedback"}
 							</p>
 						</div>
 					</motion.div>
@@ -212,4 +202,4 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 			)}
 		</AnimatePresence>
 	);
-};
+}; 

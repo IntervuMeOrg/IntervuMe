@@ -1162,7 +1162,33 @@ Output:
 true
 Constraints:
 1 <= s.length <= 10^4
-s consists of parentheses only '()[]{}'.",Easy,"String, Stack",,,,"class Solution:
+s consists of parentheses only '()[]{}'.",Easy,"String, Stack",,"()
+
+()[]{}
+
+(]
+
+([])
+
+))))
+
+((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((())))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+
+{}{{}{}{}{}{}{}{}}{{}{}{}}
+
+()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()[]{}{}{}{}{}{}{}{}{}[]
+
+}
+
+][","true
+true
+false
+true
+false
+false
+true
+false
+false","class Solution:
     def isValid(self, s: str) -> bool:
         ","class Solution {
 public:
@@ -1290,120 +1316,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-15,Merge k Sorted Lists,"You are given an array of k linked-lists lists, each linked-list is sorted in ascending order.
-Merge all the linked-lists into one sorted linked-list and return it.
-Example 1:
-Input: lists = [[1,4,5],[1,3,4],[2,6]]
-Output: [1,1,2,3,4,4,5,6]
-Explanation: The linked-lists are: [ 1->4->5, 1->3->4, 2->6 ] merging them into one sorted list: 1->1->2->3->4->4->5->6
-Example 2:
-Input: lists = []
-Output: []
-Example 3:
-Input: lists = [[]]
-Output: []
-Constraints:
-k == lists.length
-0 <= k <= 10^4
-0 <= lists[i].length <= 500
--10^4 <= lists[i][j] <= 10^4
-lists[i] is sorted in ascending order.
-The sum of lists[i].length will not exceed 10^4.",Hard,"Linked List, Divide and Conquer, Heap (Priority Queue), Merge Sort","Test Case 1:
-Input: lists = [[1,4,5],[1,3,4],[2,6]]
-Output: [1,1,2,3,4,4,5,6]
-Explanation: The linked-lists are:
-[
-  1->4->5,
-  1->3->4,
-  2->6
-]
-merging them into one sorted list:
-1->1->2->3->4->4->5->6
-
-Test Case 2:
-Input: lists = []
-Output: []
-
-Test Case 3:
-Input: lists = [[]]
-Output: []","
-
-
-
-","[1,1,2,3,4,4,5,6]
-[]
-[]","# Definition for singly-linked list.
-# class ListNode:
-#     def __init__(self, val=0, next=None):
-#         self.val = val
-#         self.next = next
-class Solution:
-    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
-        ","/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
-class Solution {
-public:
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
-        
-    }
-};","/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
-class Solution {
-    public ListNode mergeKLists(ListNode[] lists) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-
-    sol = Solution()
-    ans = sol.mergeKLists()
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-
-    Solution sol;
-    sol.mergeKLists();
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-
-        Solution sol = new Solution();
-        sol.mergeKLists();
-        System.out.println();
-    }
-}"
-16,Find the Index of the First Occurrence in a String,"Given two strings needle and haystack, return the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.
+15,Find the Index of the First Occurrence in a String,"Given two strings needle and haystack, return the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.
 Example 1:
 Input: haystack = ""sadbutsad"", needle = ""sad""
 Output: 0
@@ -1486,7 +1399,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-17,Divide Two Integers,"Given two integers dividend and divisor, divide two integers without using multiplication, division, and mod operator.
+16,Divide Two Integers,"Given two integers dividend and divisor, divide two integers without using multiplication, division, and mod operator.
 The integer division should truncate toward zero, which means losing its fractional part. For example, 8.345 would be truncated to 8, and -2.7335 would be truncated to -2.
 Return the quotient after dividing dividend by divisor.
 Note: Assume we are dealing with an environment that could only store integers within the 32-bit signed integer range: [-2^31, 2^31 - 1]. For this problem, if the quotient is strictly greater than 2^31 - 1, then return 2^31 - 1, and if the quotient is strictly less than -2^31, then return -2^31.
@@ -1571,103 +1484,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-18,Substring with Concatenation of All Words,"You are given a string s and an array of strings words. All the strings of words are of the same length.
-A concatenated string is a string that exactly contains all the strings of any permutation of words concatenated.
-For example, if words = [""ab"",""cd"",""ef""], then ""abcdef"", ""abefcd"", ""cdabef"", ""cdefab"", ""efabcd"", and ""efcdab"" are all concatenated strings. ""acdbef"" is not a concatenated string because it is not the concatenation of any permutation of words.
-Return an array of the starting indices of all the concatenated substrings in s. You can return the answer in any order.
-Example 1:
-Input:
-s = ""barfoothefoobarman"", words = [""foo"",""bar""]
-Output:
-[0,9]
-Explanation:
-The substring starting at 0 is ""barfoo"". It is the concatenation of [""bar"",""foo""] which is a permutation of words.
-The substring starting at 9 is ""foobar"". It is the concatenation of [""foo"",""bar""] which is a permutation of words.
-Example 2:
-Input:
-s = ""wordgoodgoodgoodbestword"", words = [""word"",""good"",""best"",""word""]
-Output:
-[]
-Explanation:
-There is no concatenated substring.
-Example 3:
-Input:
-s = ""barfoofoobarthefoobarman"", words = [""bar"",""foo"",""the""]
-Output:
-[6,9,12]
-Explanation:
-The substring starting at 6 is ""foobarthe"". It is the concatenation of [""foo"",""bar"",""the""].
-The substring starting at 9 is ""barthefoo"". It is the concatenation of [""bar"",""the"",""foo""].
-The substring starting at 12 is ""thefoobar"". It is the concatenation of [""the"",""foo"",""bar""].
-Constraints:
-1 <= s.length <= 10^4
-1 <= words.length <= 5000
-1 <= words[i].length <= 30
-s and words[i] consist of lowercase English letters.",Hard,"Hash Table, String, Sliding Window",,,,"class Solution:
-    def findSubstring(self, s: str, words: List[str]) -> List[int]:
-        ","class Solution {
-public:
-    vector<int> findSubstring(string s, vector<string>& words) {
-        
-    }
-};","class Solution {
-    public List<Integer> findSubstring(String s, String[] words) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    s = data[line_idx]
-    line_idx += 1
-    words = data[line_idx]
-    line_idx += 1
-
-    sol = Solution()
-    ans = sol.findSubstring(s, words)
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    string s;
-    if (!(cin >> s)) return 0;
-    string words;
-    if (!(cin >> words)) return 0;
-
-    Solution sol;
-    vector<int> ans = sol.findSubstring(s, words);
-    cout << '[';
-    for (size_t i = 0; i < ans.size(); ++i) {
-        cout << ans[i] << (i + 1 == ans.size() ? ']' : ',');
-    }
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        String s = br.readLine();
-        String words = br.readLine();
-
-        Solution sol = new Solution();
-        int[] ans = sol.findSubstring(s, words);
-        System.out.print(""["");
-        for (int i = 0; i < ans.length; i++) {
-            System.out.print(ans[i] + (i == ans.length - 1 ? ""]"" : "",""));
-        }
-        System.out.println();
-    }
-}"
-19,Next Permutation,"A permutation of an array of integers is an arrangement of its members into a sequence or linear order.
+17,Next Permutation,"A permutation of an array of integers is an arrangement of its members into a sequence or linear order.
 For example, for arr = [1,2,3], the following are all the permutations of arr: [1,2,3], [1,3,2], [2, 1, 3], [2, 3, 1], [3,1,2], [3,2,1].
 The next permutation of an array of integers is the next lexicographically greater permutation of its integer. More formally, if all the permutations of the array are sorted in one container according to their lexicographical order, then the next permutation of that array is the permutation that follows it in the sorted container. If such arrangement is not possible, the array must be rearranged as the lowest possible order (i.e., sorted in ascending order).
 For example, the next permutation of arr = [1,2,3] is [1,3,2].
@@ -1769,7 +1586,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-20,Longest Valid Parentheses,"Given a string containing just the characters '(' and ')', return the length of the longest valid (well-formed) parentheses substring.
+18,Longest Valid Parentheses,"Given a string containing just the characters '(' and ')', return the length of the longest valid (well-formed) parentheses substring.
 Example 1:
 Input: s = ""(()""
 Output: 2
@@ -1854,7 +1671,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-21,Search in Rotated Sorted Array,"There is an integer array nums sorted in ascending order (with distinct values).
+19,Search in Rotated Sorted Array,"There is an integer array nums sorted in ascending order (with distinct values).
 Prior to being passed to your function, nums is possibly rotated at an unknown pivot index k ( 1 <= k < nums.length ) such that the resulting array is [nums[k], nums[k+1],..., nums[n-1], nums[0], nums[1],..., nums[k-1]] ( 0-indexed ). For example, [0,1,2,4,5,6,7] might be rotated at pivot index 3 and become [4,5,6,7,0,1,2].
 Given the array nums after the possible rotation and an integer target, return the index of target if it is in nums, or -1 if it is not in nums.
 You must write an algorithm with O(log n) runtime complexity.
@@ -1961,7 +1778,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-22,Find First and Last Position of Element in Sorted Array,"Given an array of integers nums sorted in non-decreasing order, find the starting and ending position of a given target value.
+20,Find First and Last Position of Element in Sorted Array,"Given an array of integers nums sorted in non-decreasing order, find the starting and ending position of a given target value.
 If target is not found in the array, return [-1, -1].
 You must write an algorithm with O(log n) runtime complexity.
 Example 1:
@@ -2071,7 +1888,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-23,Search Insert Position,"Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
+21,Search Insert Position,"Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
 You must write an algorithm with O(log n) runtime complexity.
 Example 1:
 Input: nums = [1,3,5,6], target = 5
@@ -2175,85 +1992,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-24,Count and Say,"The count-and-say sequence is a sequence of digit strings defined by the recursive formula:
-countAndSay(1) = ""1""
-countAndSay(n) is the run-length encoding of countAndSay(n - 1).
-Run-length encoding (RLE) is a string compression method that works by replacing consecutive identical characters (repeated 2 or more times) with the concatenation of the character and the number marking the count of the characters (length of the run). For example, to compress the string ""3322251"" we replace ""33"" with ""23"", replace ""222"" with ""32"", replace ""5"" with ""15"" and replace ""1"" with ""11"". Thus the compressed string becomes ""23321511"".
-Given a positive integer n, return the n th element of the count-and-say sequence.
-Example 1:
-Input:
-n = 4
-Output:
-""1211""
-Explanation:
-countAndSay(1) = ""1"" countAndSay(2) = RLE of ""1"" = ""11"" countAndSay(3) = RLE of ""11"" = ""21"" countAndSay(4) = RLE of ""21"" = ""1211""
-Example 2:
-Input:
-n = 1
-Output:
-""1""
-Explanation:
-This is the base case.
-Constraints:
-1 <= n <= 30
-Follow up: Could you solve it iteratively?",Medium,String,"Test Case 1:
-countAndSay(1) = ""1""
-countAndSay(2) = RLE of ""1"" = ""11""
-countAndSay(3) = RLE of ""11"" = ""21""
-countAndSay(4) = RLE of ""21"" = ""1211""",,,"class Solution:
-    def countAndSay(self, n: int) -> str:
-        ","class Solution {
-public:
-    string countAndSay(int n) {
-        
-    }
-};","class Solution {
-    public String countAndSay(int n) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    n = int(data[line_idx])
-    line_idx += 1
-
-    sol = Solution()
-    ans = sol.countAndSay(n)
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    int n;
-    if (!(cin >> n)) return 0;
-
-    Solution sol;
-    string ans = sol.countAndSay(n);
-    cout << ans;
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        int n = Integer.parseInt(br.readLine());
-
-        Solution sol = new Solution();
-        String ans = sol.countAndSay(n);
-        System.out.print(ans);
-        System.out.println();
-    }
-}"
-25,Combination Sum,"Given an array of distinct integers candidates and a target integer target, return a list of all unique combinations of candidates where the chosen numbers sum to target. You may return the combinations in any order.
+22,Combination Sum,"Given an array of distinct integers candidates and a target integer target, return a list of all unique combinations of candidates where the chosen numbers sum to target. You may return the combinations in any order.
 The same number may be chosen from candidates an unlimited number of times. Two combinations are unique if the frequency of at least one of the chosen numbers is different.
 The test cases are generated such that the number of unique combinations that sum up to target is less than 150 combinations for the given input.
 Example 1:
@@ -2374,7 +2113,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-26,Combination Sum II,"Given a collection of candidate numbers ( candidates ) and a target number ( target ), find all unique combinations in candidates where the candidate numbers sum to target.
+23,Combination Sum II,"Given a collection of candidate numbers ( candidates ) and a target number ( target ), find all unique combinations in candidates where the candidate numbers sum to target.
 Each number in candidates may only be used once in the combination.
 Note: The solution set must not contain duplicate combinations.
 Example 1:
@@ -2488,7 +2227,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-27,First Missing Positive,"Given an unsorted integer array nums. Return the smallest positive integer that is not present in nums.
+24,First Missing Positive,"Given an unsorted integer array nums. Return the smallest positive integer that is not present in nums.
 You must implement an algorithm that runs in O(n) time and uses O(1) auxiliary space.
 Example 1:
 Input: nums = [1,2,0]
@@ -2588,7 +2327,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-28,Trapping Rain Water,"Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.
+25,Trapping Rain Water,"Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.
 Example 1:
 Input: height = [0,1,0,2,1,0,1,3,2,1,2,1]
 Output: 6
@@ -2673,7 +2412,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-29,Multiply Strings,"Given two non-negative integers num1 and num2 represented as strings, return the product of num1 and num2, also represented as a string.
+26,Multiply Strings,"Given two non-negative integers num1 and num2 represented as strings, return the product of num1 and num2, also represented as a string.
 Note: You must not use any built-in BigInteger library or convert the inputs to integer directly.
 Example 1:
 Input: num1 = ""2"", num2 = ""3""
@@ -2753,7 +2492,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-30,Wildcard Matching,"Given an input string ( s ) and a pattern ( p ), implement wildcard pattern matching with support for '?' and '*' where:
+27,Wildcard Matching,"Given an input string ( s ) and a pattern ( p ), implement wildcard pattern matching with support for '?' and '*' where:
 '?' Matches any single character.
 '*' Matches any sequence of characters (including the empty sequence).
 The matching should cover the entire input string (not partial).
@@ -2852,7 +2591,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-31,Jump Game II,"You are given a 0-indexed array of integers nums of length n. You are initially positioned at nums[0].
+28,Jump Game II,"You are given a 0-indexed array of integers nums of length n. You are initially positioned at nums[0].
 Each element nums[i] represents the maximum length of a forward jump from index i. In other words, if you are at nums[i], you can jump to any nums[i + j] where:
 0 <= j <= nums[i] and
 i + j < n
@@ -2941,7 +2680,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-32,Permutations,"Given an array nums of distinct integers, return all the possible permutations. You can return the answer in any order.
+29,Permutations,"Given an array nums of distinct integers, return all the possible permutations. You can return the answer in any order.
 Example 1:
 Input: nums = [1,2,3]
 Output: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
@@ -3045,7 +2784,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-33,Permutations II,"Given a collection of numbers, nums, that might contain duplicates, return all possible unique permutations in any order.
+30,Permutations II,"Given a collection of numbers, nums, that might contain duplicates, return all possible unique permutations in any order.
 Example 1:
 Input: nums = [1,1,2]
 Output:
@@ -3141,7 +2880,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-34,Rotate Image,"You are given an n x n 2D matrix representing an image, rotate the image by 90 degrees (clockwise).
+31,Rotate Image,"You are given an n x n 2D matrix representing an image, rotate the image by 90 degrees (clockwise).
 You have to rotate the image in-place, which means you have to modify the input 2D matrix directly. DO NOT allocate another 2D matrix and do the rotation.
 Example 1:
 Input: matrix = [[1,2,3],[4,5,6],[7,8,9]]
@@ -3243,83 +2982,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-35,Group Anagrams,"Given an array of strings strs, group the anagrams together. You can return the answer in any order.
-Example 1:
-Input:
-strs = [""eat"",""tea"",""tan"",""ate"",""nat"",""bat""]
-Output:
-[[""bat""],[""nat"",""tan""],[""ate"",""eat"",""tea""]]
-Explanation:
-There is no string in strs that can be rearranged to form ""bat"".
-The strings ""nat"" and ""tan"" are anagrams as they can be rearranged to form each other.
-The strings ""ate"", ""eat"", and ""tea"" are anagrams as they can be rearranged to form each other.
-Example 2:
-Input:
-strs = [""""]
-Output:
-[[""""]]
-Example 3:
-Input:
-strs = [""a""]
-Output:
-[[""a""]]
-Constraints:
-1 <= strs.length <= 10^4
-0 <= strs[i].length <= 100
-strs[i] consists of lowercase English letters.",Medium,"Array, Hash Table, String, Sorting",,,,"class Solution:
-    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
-        ","class Solution {
-public:
-    vector<vector<string>> groupAnagrams(vector<string>& strs) {
-        
-    }
-};","class Solution {
-    public List<List<String>> groupAnagrams(String[] strs) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    strs = data[line_idx]
-    line_idx += 1
-
-    sol = Solution()
-    ans = sol.groupAnagrams(strs)
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    string strs;
-    if (!(cin >> strs)) return 0;
-
-    Solution sol;
-    string ans = sol.groupAnagrams(strs);
-    cout << ans;
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        String strs = br.readLine();
-
-        Solution sol = new Solution();
-        String ans = sol.groupAnagrams(strs);
-        System.out.print(ans);
-        System.out.println();
-    }
-}"
-36,"Pow(x, n)","Implement pow(x, n), which calculates x raised to the power n (i.e., x^n ).
+32,"Pow(x, n)","Implement pow(x, n), which calculates x raised to the power n (i.e., x^n ).
 Example 1:
 Input: x = 2.00000, n = 10
 Output: 1024.00000
@@ -3413,7 +3076,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-37,N-Queens,"The n-queens puzzle is the problem of placing n queens on an n x n chessboard such that no two queens attack each other.
+33,N-Queens,"The n-queens puzzle is the problem of placing n queens on an n x n chessboard such that no two queens attack each other.
 Given an integer n, return all distinct solutions to the n-queens puzzle. You may return the answer in any order.
 Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both indicate a queen and an empty space, respectively.
 Example 1:
@@ -3496,7 +3159,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-38,N-Queens II,"The n-queens puzzle is the problem of placing n queens on an n x n chessboard such that no two queens attack each other.
+34,N-Queens II,"The n-queens puzzle is the problem of placing n queens on an n x n chessboard such that no two queens attack each other.
 Given an integer n, return the number of distinct solutions to the n-queens puzzle.
 Example 1:
 Input: n = 4
@@ -3569,7 +3232,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-39,Maximum Subarray,"Given an integer array nums, find the subarray with the largest sum, and return its sum.
+35,Maximum Subarray,"Given an integer array nums, find the subarray with the largest sum, and return its sum.
 Example 1:
 Input: nums = [-2,1,-3,4,-1,2,1,-5,4]
 Output: 6
@@ -3669,7 +3332,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-40,Jump Game,"You are given an integer array nums. You are initially positioned at the array's first index, and each element in the array represents your maximum jump length at that position.
+36,Jump Game,"You are given an integer array nums. You are initially positioned at the array's first index, and each element in the array represents your maximum jump length at that position.
 Return true if you can reach the last index, or false otherwise.
 Example 1:
 Input: nums = [2,3,1,1,4]
@@ -3756,7 +3419,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-41,Merge Intervals,"Given an array of intervals where intervals[i] = [start[i], end[i] ], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.
+37,Merge Intervals,"Given an array of intervals where intervals[i] = [start[i], end[i] ], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.
 Example 1:
 Input: intervals = [[1,3],[2,6],[8,10],[15,18]]
 Output: [[1,6],[8,10],[15,18]]
@@ -3860,7 +3523,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-42,Insert Interval,"You are given an array of non-overlapping intervals intervals where intervals[i] = [start[i], end[i] ] represent the start and the end of the i-th interval and intervals is sorted in ascending order by start[i]. You are also given an interval newInterval = [start, end] that represents the start and end of another interval.
+38,Insert Interval,"You are given an array of non-overlapping intervals intervals where intervals[i] = [start[i], end[i] ] represent the start and the end of the i-th interval and intervals is sorted in ascending order by start[i]. You are also given an interval newInterval = [start, end] that represents the start and end of another interval.
 Insert newInterval into intervals such that intervals is still sorted in ascending order by start[i] and intervals still does not have any overlapping intervals (merge overlapping intervals if necessary).
 Return intervals after the insertion.
 Note that you don't need to modify intervals in-place. You can make a new array and return it.
@@ -3988,7 +3651,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-43,Length of Last Word,"Given a string s consisting of words and spaces, return the length of the last word in the string.
+39,Length of Last Word,"Given a string s consisting of words and spaces, return the length of the last word in the string.
 A word is a maximal substring consisting of non-space characters only.
 Example 1:
 Input: s = ""Hello World""
@@ -4077,7 +3740,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-44,Permutation Sequence,"The set [1, 2, 3,..., n] contains a total of n! unique permutations.
+40,Permutation Sequence,"The set [1, 2, 3,..., n] contains a total of n! unique permutations.
 By listing and labeling all of the permutations in order, we get the following sequence for n = 3:
 ""123""
 ""132""
@@ -4174,7 +3837,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-45,Unique Paths,"There is a robot on an m x n grid. The robot is initially located at the top-left corner (i.e., grid[0][0] ). The robot tries to move to the bottom-right corner (i.e., grid[m - 1][n - 1] ). The robot can only move either down or right at any point in time.
+41,Unique Paths,"There is a robot on an m x n grid. The robot is initially located at the top-left corner (i.e., grid[0][0] ). The robot tries to move to the bottom-right corner (i.e., grid[m - 1][n - 1] ). The robot can only move either down or right at any point in time.
 Given the two integers m and n, return the number of possible unique paths that the robot can take to reach the bottom-right corner.
 The test cases are generated so that the answer will be less than or equal to 2 * 10^9.
 Example 1:
@@ -4261,7 +3924,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-46,Unique Paths II,"You are given an m x n integer array grid. There is a robot initially located at the top-left corner (i.e., grid[0][0] ). The robot tries to move to the bottom-right corner (i.e., grid[m - 1][n - 1] ). The robot can only move either down or right at any point in time.
+42,Unique Paths II,"You are given an m x n integer array grid. There is a robot initially located at the top-left corner (i.e., grid[0][0] ). The robot tries to move to the bottom-right corner (i.e., grid[m - 1][n - 1] ). The robot can only move either down or right at any point in time.
 An obstacle and space are marked as 1 or 0 respectively in grid. A path that the robot takes cannot include any square that is an obstacle.
 Return the number of possible unique paths that the robot can take to reach the bottom-right corner.
 The testcases are generated so that the answer will be less than or equal to 2 * 10^9.
@@ -4362,7 +4025,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-47,Minimum Path Sum,"Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right, which minimizes the sum of all numbers along its path.
+43,Minimum Path Sum,"Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right, which minimizes the sum of all numbers along its path.
 Note: You can only move either down or right at any point in time.
 Example 1:
 Input: grid = [[1,3,1],[1,5,1],[4,2,1]]
@@ -4456,7 +4119,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-48,Plus One,"You are given a large integer represented as an integer array digits, where each digits[i] is the i th digit of the integer. The digits are ordered from most significant to least significant in left-to-right order. The large integer does not contain any leading 0 's.
+44,Plus One,"You are given a large integer represented as an integer array digits, where each digits[i] is the i th digit of the integer. The digits are ordered from most significant to least significant in left-to-right order. The large integer does not contain any leading 0 's.
 Increment the large integer by one and return the resulting array of digits.
 Example 1:
 Input: digits = [1,2,3]
@@ -4569,7 +4232,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-49,Add Binary,"Given two binary strings a and b, return their sum as a binary string.
+45,Add Binary,"Given two binary strings a and b, return their sum as a binary string.
 Example 1:
 Input: a = ""11"", b = ""1""
 Output: ""100""
@@ -4648,7 +4311,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-50,Sqrt(x),"Given a non-negative integer x, return the square root of x rounded down to the nearest integer. The returned integer should be non-negative as well.
+46,Sqrt(x),"Given a non-negative integer x, return the square root of x rounded down to the nearest integer. The returned integer should be non-negative as well.
 You must not use any built-in exponent function or operator.
 For example, do not use pow(x, 0.5) in c++ or x ** 0.5 in python.
 Example 1:
@@ -4724,7 +4387,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-51,Climbing Stairs,"You are climbing a staircase. It takes n steps to reach the top.
+47,Climbing Stairs,"You are climbing a staircase. It takes n steps to reach the top.
 Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
 Example 1:
 Input: n = 2
@@ -4807,111 +4470,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-52,Simplify Path,"You are given an absolute path for a Unix-style file system, which always begins with a slash '/'. Your task is to transform this absolute path into its simplified canonical path.
-The rules of a Unix-style file system are as follows:
-A single period '.' represents the current directory.
-A double period '..' represents the previous/parent directory.
-Multiple consecutive slashes such as '//' and '///' are treated as a single slash '/'.
-Any sequence of periods that does not match the rules above should be treated as a valid directory or
-file name. For example, '...' and '....' are valid directory or file names.
-The simplified canonical path should follow these rules:
-The path must start with a single slash '/'.
-Directories within the path must be separated by exactly one slash '/'.
-The path must not end with a slash '/', unless it is the root directory.
-The path must not have any single or double periods ( '.' and '..' ) used to denote current or parent directories.
-Return the simplified canonical path.
-Example 1:
-Input:
-path = ""/home/""
-Output:
-""/home""
-Explanation:
-The trailing slash should be removed.
-Example 2:
-Input:
-path = ""/home//foo/""
-Output:
-""/home/foo""
-Explanation:
-Multiple consecutive slashes are replaced by a single one.
-Example 3:
-Input:
-path = ""/home/user/Documents/../Pictures""
-Output:
-""/home/user/Pictures""
-Explanation:
-A double period "".."" refers to the directory up a level (the parent directory).
-Example 4:
-Input:
-path = ""/../""
-Output:
-""/""
-Explanation:
-Going one level up from the root directory is not possible.
-Example 5:
-Input:
-path = ""/.../a/../b/c/../d/./""
-Output:
-""/.../b/d""
-Explanation:
-""..."" is a valid name for a directory in this problem.
-Constraints:
-1 <= path.length <= 3000
-path consists of English letters, digits, period '.', slash '/' or '_'.
-path is a valid absolute Unix path.",Medium,"String, Stack",,,,"class Solution:
-    def simplifyPath(self, path: str) -> str:
-        ","class Solution {
-public:
-    string simplifyPath(string path) {
-        
-    }
-};","class Solution {
-    public String simplifyPath(String path) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    path = data[line_idx]
-    line_idx += 1
-
-    sol = Solution()
-    ans = sol.simplifyPath(path)
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    string path;
-    if (!(cin >> path)) return 0;
-
-    Solution sol;
-    string ans = sol.simplifyPath(path);
-    cout << ans;
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        String path = br.readLine();
-
-        Solution sol = new Solution();
-        String ans = sol.simplifyPath(path);
-        System.out.print(ans);
-        System.out.println();
-    }
-}"
-53,Edit Distance,"Given two strings word1 and word2, return the minimum number of operations required to convert word1 to word2.
+48,Edit Distance,"Given two strings word1 and word2, return the minimum number of operations required to convert word1 to word2.
 You have the following three operations permitted on a word:
 Insert a character
 Delete a character
@@ -5007,7 +4566,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-54,Set Matrix Zeroes,"Given an m x n integer matrix matrix, if an element is 0, set its entire row and column to 0 's.
+49,Set Matrix Zeroes,"Given an m x n integer matrix matrix, if an element is 0, set its entire row and column to 0 's.
 You must do it in place.
 Example 1:
 Input: matrix = [[1,1,1],[1,0,1],[1,1,1]]
@@ -5113,7 +4672,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-55,Search a 2D Matrix,"You are given an m x n integer matrix matrix with the following two properties:
+50,Search a 2D Matrix,"You are given an m x n integer matrix matrix with the following two properties:
 Each row is sorted in non-decreasing order.
 The first integer of each row is greater than the last integer of the previous row.
 Given an integer target, return true
@@ -5223,7 +4782,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-56,Sort Colors,"Given an array nums with n objects colored red, white, or blue, sort them in-place
+51,Sort Colors,"Given an array nums with n objects colored red, white, or blue, sort them in-place
 so that objects of the same color are adjacent, with the colors in the order red, white, and blue.
 We will use the integers 0, 1, and 2 to represent the color red, white, and blue, respectively.
 You must solve this problem without using the library's sort function.
@@ -5311,7 +4870,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-57,Minimum Window Substring,"Given two strings s and t of lengths m and n respectively, return the minimum window
+52,Minimum Window Substring,"Given two strings s and t of lengths m and n respectively, return the minimum window
 substring of s such that every character in t ( including duplicates ) is included in the window. If there is no such substring, return the empty string """".
 The testcases will be generated such that the answer is unique.
 Example 1:
@@ -5412,7 +4971,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-58,Combinations,"Given two integers n and k, return all possible combinations of k numbers chosen from the range [1, n].
+53,Combinations,"Given two integers n and k, return all possible combinations of k numbers chosen from the range [1, n].
 You may return the answer in any order.
 Example 1:
 Input: n = 4, k = 2
@@ -5506,7 +5065,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-59,Subsets,"Given an integer array nums of unique elements, return all possible
+54,Subsets,"Given an integer array nums of unique elements, return all possible
 subsets
 (the power set).
 The solution set must not contain duplicate subsets. Return the solution in any order.
@@ -5602,7 +5161,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-60,Word Search,"Given an m x n grid of characters board and a string word, return true if word exists in the grid.
+55,Word Search,"Given an m x n grid of characters board and a string word, return true if word exists in the grid.
 The word can be constructed from letters of sequentially adjacent cells, where adjacent cells are horizontally or vertically neighboring. The same letter cell may not be used more than once.
 Example 1:
 Input: board = [[""A"",""B"",""C"",""E""],[""S"",""F"",""C"",""S""],[""A"",""D"",""E"",""E""]], word = ""ABCCED""
@@ -5696,7 +5255,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-61,Search in Rotated Sorted Array II,"There is an integer array nums sorted in non-decreasing order (not necessarily with distinct values).
+56,Search in Rotated Sorted Array II,"There is an integer array nums sorted in non-decreasing order (not necessarily with distinct values).
 Before being passed to your function, nums is rotated at an unknown pivot index k ( 0 <= k < nums.length ) such that the resulting array is [nums[k], nums[k+1],..., nums[n-1], nums[0], nums[1],..., nums[k-1]] ( 0-indexed ). For example, [0,1,2,4,4,4,5,6,6,7] might be rotated at pivot index 5 and become [4,5,6,6,7,0,1,2,4,4].
 Given the array nums after the rotation and an integer target, return true if target is in nums, or false if it is not in nums.
 You must decrease the overall operation steps as much as possible.
@@ -5791,7 +5350,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-62,Largest Rectangle in Histogram,"Given an array of integers heights representing the histogram's bar height where the width of each bar is 1, return the area of the largest rectangle in the histogram.
+57,Largest Rectangle in Histogram,"Given an array of integers heights representing the histogram's bar height where the width of each bar is 1, return the area of the largest rectangle in the histogram.
 Example 1:
 Input: heights = [2,1,5,6,2,3]
 Output: 10
@@ -5876,7 +5435,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-63,Maximal Rectangle,"Given a rows x cols binary matrix filled with 0 's and 1 's, find the largest rectangle containing only 1 's and return its area.
+58,Maximal Rectangle,"Given a rows x cols binary matrix filled with 0 's and 1 's, find the largest rectangle containing only 1 's and return its area.
 Example 1:
 Input: matrix = [[""1"",""0"",""1"",""0"",""0""],[""1"",""0"",""1"",""1"",""1""],[""1"",""1"",""1"",""1"",""1""],[""1"",""0"",""0"",""1"",""0""]]
 Output: 6
@@ -5961,7 +5520,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-64,Merge Sorted Array,"You are given two integer arrays nums1 and nums2, sorted in non-decreasing order, and two integers m and n, representing the number of elements in nums1 and nums2 respectively.
+59,Merge Sorted Array,"You are given two integer arrays nums1 and nums2, sorted in non-decreasing order, and two integers m and n, representing the number of elements in nums1 and nums2 respectively.
 Merge nums1 and nums2 into a single array sorted in non-decreasing order.
 The final sorted array should not be returned by the function, but instead be stored inside the array nums1. To accommodate this, nums1 has a length of m + n, where the first m elements denote the elements that should be merged, and the last n elements are set to 0 and should be ignored. nums2 has a length of n.
 Example 1:
@@ -6106,7 +5665,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-65,Gray Code,"An n-bit gray code sequence is a sequence of 2^n integers where:
+60,Gray Code,"An n-bit gray code sequence is a sequence of 2^n integers where:
 Every integer is in the inclusive range [0, 2^n - 1],
 The first integer is 0,
 An integer appears no more than once in the sequence,
@@ -6210,7 +5769,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-66,Subsets II,"Given an integer array nums that may contain duplicates, return all possible
+61,Subsets II,"Given an integer array nums that may contain duplicates, return all possible
 subsets (the power set).
 The solution set must not contain duplicate subsets. Return the solution in any order.
 Example 1:
@@ -6304,97 +5863,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-67,Decode Ways,"You have intercepted a secret message encoded as a string of numbers. The message is decoded via the following mapping:
-""1"" -> 'A'
-""2"" -> 'B'
-...
-""25"" -> 'Y'
-""26"" -> 'Z'
-However, while decoding the message, you realize that there are many different ways you can decode the message because some codes are contained in other codes ( ""2"" and ""5"" vs ""25"" ).
-For example, ""11106"" can be decoded into:
-""AAJF"" with the grouping (1, 1, 10, 6)
-""KJF"" with the grouping (11, 10, 6)
-The grouping (1, 11, 06) is invalid because ""06"" is not a valid code (only ""6"" is valid).
-Note: there may be strings that are impossible to decode.
-Given a string s containing only digits, return the number of ways to decode it. If the entire string cannot be decoded in any valid way, return 0.
-The test cases are generated so that the answer fits in a 32-bit integer.
-Example 1:
-Input:
-s = ""12""
-Output:
-2
-Explanation:
-""12"" could be decoded as ""AB"" (1 2) or ""L"" (12).
-Example 2:
-Input:
-s = ""226""
-Output:
-3
-Explanation:
-""226"" could be decoded as ""BZ"" (2 26), ""VF"" (22 6), or ""BBF"" (2 2 6).
-Example 3:
-Input:
-s = ""06""
-Output:
-0
-Explanation:
-""06"" cannot be mapped to ""F"" because of the leading zero (""6"" is different from ""06""). In this case, the string is not a valid encoding, so return 0.
-Constraints:
-1 <= s.length <= 100
-s contains only digits and may contain leading zero(s).",Medium,"String, Dynamic Programming",,,,"class Solution:
-    def numDecodings(self, s: str) -> int:
-        ","class Solution {
-public:
-    int numDecodings(string s) {
-        
-    }
-};","class Solution {
-    public int numDecodings(String s) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    s = data[line_idx]
-    line_idx += 1
-
-    sol = Solution()
-    ans = sol.numDecodings(s)
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    string s;
-    if (!(cin >> s)) return 0;
-
-    Solution sol;
-    auto ans = sol.numDecodings(s);
-    cout << ans;
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        String s = br.readLine();
-
-        Solution sol = new Solution();
-        var ans = sol.numDecodings(s);
-        System.out.print(ans);
-        System.out.println();
-    }
-}"
-68,Restore IP Addresses,"A valid IP address consists of exactly four integers separated by single dots. Each integer is between 0 and 255 ( inclusive ) and cannot have leading zeros.
+62,Restore IP Addresses,"A valid IP address consists of exactly four integers separated by single dots. Each integer is between 0 and 255 ( inclusive ) and cannot have leading zeros.
 For example, ""0.1.2.201"" and ""192.168.1.1"" are valid IP addresses, but ""0.011.255.245"", ""192.168.1.312"" and ""192.168@1.1"" are invalid IP addresses.
 Given a string s containing only digits, return all possible valid IP addresses that can be formed by inserting dots into s. You are not allowed to reorder or remove any digits in s. You may return the valid IP addresses in any order.
 Example 1:
@@ -6482,7 +5951,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-69,Interleaving String,"Given strings s1, s2, and s3, find whether s3 is formed by an interleaving of s1 and s2.
+63,Interleaving String,"Given strings s1, s2, and s3, find whether s3 is formed by an interleaving of s1 and s2.
 An interleaving of two strings s and t is a configuration where s and t are divided into n and m
 substrings respectively, such that:
 s = s[1] + s[2] + ... + s[n]
@@ -6596,7 +6065,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-70,Distinct Subsequences,"Given two strings s and t, return the number of distinct subsequences of s which equals t.
+64,Distinct Subsequences,"Given two strings s and t, return the number of distinct subsequences of s which equals t.
 The test cases are generated so that the answer fits on a 32-bit signed integer.
 Example 1:
 Input: s = ""rabbbit"", t = ""rabbit""
@@ -6699,7 +6168,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-71,Pascal's Triangle,"Given an integer numRows, return the first numRows of Pascal's triangle.
+65,Pascal's Triangle,"Given an integer numRows, return the first numRows of Pascal's triangle.
 In Pascal's triangle, each number is the sum of the two numbers directly above it.
 Example 1:
 Input: numRows = 5
@@ -6780,7 +6249,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-72,Pascal's Triangle II,"Given an integer rowIndex, return the rowIndex-th ( 0-indexed ) row of the Pascal's triangle.
+66,Pascal's Triangle II,"Given an integer rowIndex, return the rowIndex-th ( 0-indexed ) row of the Pascal's triangle.
 In Pascal's triangle, each number is the sum of the two numbers directly above it as shown:
 Example 1:
 Input: rowIndex = 3
@@ -6868,7 +6337,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-73,Triangle,"Given a triangle array, return the minimum path sum from top to bottom.
+67,Triangle,"Given a triangle array, return the minimum path sum from top to bottom.
 For each step, you may move to an adjacent number of the row below. More formally, if you are on index i on the current row, you may move to either index i or index i + 1 on the next row.
 Example 1:
 Input: triangle = [[2],[3,4],[6,5,7],[4,1,8,3]]
@@ -6973,7 +6442,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-74,Best Time to Buy and Sell Stock,"You are given an array prices where prices[i] is the price of a given stock on the i th day.
+68,Best Time to Buy and Sell Stock,"You are given an array prices where prices[i] is the price of a given stock on the i th day.
 You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.
 Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.
 Example 1:
@@ -7062,7 +6531,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-75,Best Time to Buy and Sell Stock II,"You are given an integer array prices where prices[i] is the price of a given stock on the i th day.
+69,Best Time to Buy and Sell Stock II,"You are given an integer array prices where prices[i] is the price of a given stock on the i th day.
 On each day, you may decide to buy and/or sell the stock. You can only hold at most one share of the stock at any time. However, you can buy it then immediately sell it on the same day.
 Find and return the maximum profit you can achieve.
 Example 1:
@@ -7166,7 +6635,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-76,Best Time to Buy and Sell Stock III,"You are given an array prices where prices[i] is the price of a given stock on the i th day.
+70,Best Time to Buy and Sell Stock III,"You are given an array prices where prices[i] is the price of a given stock on the i th day.
 Find the maximum profit you can achieve. You may complete at most two transactions.
 Note: You may not engage in multiple transactions simultaneously (i.e., you must sell the stock before you buy again).
 Example 1:
@@ -7269,7 +6738,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-77,Valid Palindrome,"A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.
+71,Valid Palindrome,"A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.
 Given a string s, return true if it is a palindrome, or false otherwise.
 Example 1:
 Input: s = ""A man, a plan, a canal: Panama""
@@ -7358,7 +6827,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-78,Word Ladder II,"A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words beginWord -> s[1] -> s[2] ->... -> s[k] such that:
+72,Word Ladder II,"A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words beginWord -> s[1] -> s[2] ->... -> s[k] such that:
 Every adjacent pair of words differs by a single letter.
 Every s[i] for 1 <= i <= k is in wordList. Note that beginWord does not need to be in wordList.
 s[k] == endWord
@@ -7459,7 +6928,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-79,Word Ladder,"A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words beginWord -> s[1] -> s[2] ->... -> s[k] such that:
+73,Word Ladder,"A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words beginWord -> s[1] -> s[2] ->... -> s[k] such that:
 Every adjacent pair of words differs by a single letter.
 Every s i for 1 <= i <= k is in wordList. Note that beginWord does not need to be in wordList.
 s[k] == endWord
@@ -7557,7 +7026,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-80,Longest Consecutive Sequence,"Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence.
+74,Longest Consecutive Sequence,"Given an unsorted array of integers nums, return the length of the longest consecutive elements sequence.
 You must write an algorithm that runs in O(n) time.
 Example 1:
 Input: nums = [100,4,200,1,3,2]
@@ -7653,83 +7122,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-81,Surrounded Regions,"You are given an m x n matrix board containing letters
-'X' and 'O', capture regions that are surrounded:
-Connect: A cell is connected to adjacent cells horizontally or vertically.
-Region: To form a region connect every 'O' cell.
-Surround: The region is surrounded with 'X' cells if you can connect the region with 'X' cells and none of the region cells are on the edge of the board.
-To capture a surrounded region, replace all 'O' s with 'X' s in-place within the original board. You do not need to return anything.
-Example 1:
-Input:
-board = [[""X"",""X"",""X"",""X""],[""X"",""O"",""O"",""X""],[""X"",""X"",""O"",""X""],[""X"",""O"",""X"",""X""]]
-Output:
-[[""X"",""X"",""X"",""X""],[""X"",""X"",""X"",""X""],[""X"",""X"",""X"",""X""],[""X"",""O"",""X"",""X""]]
-Explanation:
-the bottom region is not captured because it is on the edge of the board and cannot be surrounded.
-Example 2:
-Input:
-board = [[""X""]]
-Output:
-[[""X""]]
-Constraints:
-m == board.length
-n == board[i].length
-1 <= m, n <= 200
-board[i][j] is 'X' or 'O'.",Medium,"Array, Depth-First Search, Breadth-First Search, Union Find, Matrix",,,,"class Solution:
-    def solve(self, board: List[List[str]]) -> None:
-        """"""
-        Do not return anything, modify board in-place instead.
-        """"""
-        ","class Solution {
-public:
-    void solve(vector<vector<char>>& board) {
-        
-    }
-};","class Solution {
-    public void solve(char[][] board) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    board = data[line_idx]
-    line_idx += 1
-
-    sol = Solution()
-    ans = sol.solve(board)
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    string board;
-    if (!(cin >> board)) return 0;
-
-    Solution sol;
-    sol.solve(board);
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        String board = br.readLine();
-
-        Solution sol = new Solution();
-        sol.solve(board);
-        System.out.println();
-    }
-}"
-82,Palindrome Partitioning,"Given a string s, partition s such that every substring of the partition is a palindrome. Return all possible palindrome partitioning of s.
+75,Palindrome Partitioning,"Given a string s, partition s such that every substring of the partition is a palindrome. Return all possible palindrome partitioning of s.
 Example 1:
 Input: s = ""aab""
 Output: [[""a"",""a"",""b""],[""aa"",""b""]]
@@ -7809,7 +7202,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-83,Palindrome Partitioning II,"Given a string s, partition s such that every substring of the partition is a palindrome.
+76,Palindrome Partitioning II,"Given a string s, partition s such that every substring of the partition is a palindrome.
 Return the minimum cuts needed for a palindrome partitioning of s.
 Example 1:
 Input: s = ""aab""
@@ -7893,7 +7286,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-84,Gas Station,"There are n gas stations along a circular route, where the amount of gas at the i th station is gas[i].
+77,Gas Station,"There are n gas stations along a circular route, where the amount of gas at the i th station is gas[i].
 You have a car with an unlimited gas tank and it costs cost[i] of gas to travel from the i th station to its next (i + 1) th station. You begin the journey with an empty tank at one of the gas stations.
 Given two integer arrays gas and cost, return the starting gas station's index if you can travel around the circuit once in the clockwise direction, otherwise return
 -1. If there exists a solution, it is guaranteed to be unique.
@@ -8017,7 +7410,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-85,Candy,"There are n children standing in a line. Each child is assigned a rating value given in the integer array ratings.
+78,Candy,"There are n children standing in a line. Each child is assigned a rating value given in the integer array ratings.
 You are giving candies to these children subjected to the following requirements:
 Each child must have at least one candy.
 Children with a higher rating get more candies than their neighbors.
@@ -8109,89 +7502,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-86,Single Number,"Given a non-empty array of integers nums, every element appears twice except for one. Find that single one.
-You must implement a solution with a linear runtime complexity and use only constant extra space.
-Example 1:
-Input:
-nums = [2,2,1]
-Output:
-1
-Example 2:
-Input:
-nums = [4,1,2,1,2]
-Output:
-4
-Example 3:
-Input:
-nums = [1]
-Output:
-1
-Constraints:
-1 <= nums.length <= 3 * 10^4
--3 * 10^4 <= nums[i] <= 3 * 10^4
-Each element in the array appears twice except for one element which appears only once.",Easy,"Array, Bit Manipulation",,,,"class Solution:
-    def singleNumber(self, nums: List[int]) -> int:
-        ","class Solution {
-public:
-    int singleNumber(vector<int>& nums) {
-        
-    }
-};","class Solution {
-    public int singleNumber(int[] nums) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    n_nums = int(data[line_idx])
-    line_idx += 1
-    nums = list(map(int, data[line_idx].split()))
-    line_idx += 1
-
-    sol = Solution()
-    ans = sol.singleNumber(nums)
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    int n_nums;
-    if (!(cin >> n_nums)) return 0;
-    vector<int> nums(n_nums);
-    for (int i = 0; i < n_nums; ++i) cin >> nums[i];
-
-    Solution sol;
-    auto ans = sol.singleNumber(nums);
-    cout << ans;
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        int n_nums = Integer.parseInt(br.readLine());
-        st = new StringTokenizer(br.readLine());
-        int[] nums = new int[n_nums];
-        for (int i = 0; i < n_nums; i++) {
-            nums[i] = Integer.parseInt(st.nextToken());
-        }
-
-        Solution sol = new Solution();
-        var ans = sol.singleNumber(nums);
-        System.out.print(ans);
-        System.out.println();
-    }
-}"
-87,Single Number II,"Given an integer array nums where every element appears three times except for one, which appears exactly once. Find the single element and return it.
+79,Single Number II,"Given an integer array nums where every element appears three times except for one, which appears exactly once. Find the single element and return it.
 You must implement a solution with a linear runtime complexity and use only constant extra space.
 Example 1:
 Input: nums = [2,2,3,2]
@@ -8275,7 +7586,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-88,Word Break,"Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated sequence of one or more dictionary words.
+80,Word Break,"Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated sequence of one or more dictionary words.
 Note that the same word in the dictionary may be reused multiple times in the segmentation.
 Example 1:
 Input: s = ""leetcode"", wordDict = [""leet"",""code""]
@@ -8373,7 +7684,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-89,Word Break II,"Given a string s and a dictionary of strings wordDict, add spaces in s to construct a sentence where each word is a valid dictionary word. Return all such possible sentences in any order.
+81,Word Break II,"Given a string s and a dictionary of strings wordDict, add spaces in s to construct a sentence where each word is a valid dictionary word. Return all such possible sentences in any order.
 Note that the same word in the dictionary may be reused multiple times in the segmentation.
 Example 1:
 Input: s = ""catsanddog"", wordDict = [""cat"",""cats"",""and"",""sand"",""dog""]
@@ -8472,7 +7783,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-90,Max Points on a Line,"Given an array of points where points[i] = [x[i], y[i] ] represents a point on the X-Y plane, return the maximum number of points that lie on the same straight line.
+82,Max Points on a Line,"Given an array of points where points[i] = [x[i], y[i] ] represents a point on the X-Y plane, return the maximum number of points that lie on the same straight line.
 Example 1:
 Input: points = [[1,1],[2,2],[3,3]]
 Output: 3
@@ -8567,7 +7878,7 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-91,Evaluate Reverse Polish Notation,"You are given an array of strings tokens that represents an arithmetic expression in a Reverse Polish Notation.
+83,Evaluate Reverse Polish Notation,"You are given an array of strings tokens that represents an arithmetic expression in a Reverse Polish Notation.
 Evaluate the expression. Return an integer that represents the value of the expression.
 Note that:
 The valid operators are '+', '-', '*', and '/'.

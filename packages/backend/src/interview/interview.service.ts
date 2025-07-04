@@ -35,6 +35,8 @@ const interviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
 };
 
+const MODEL_NAME = "gemini-2.5-flash";
+
 export const interviewService = {
   async getByUserId(userId: string): Promise<Interview[]> {
     return await interviewRepository().find({
@@ -206,7 +208,7 @@ export const interviewService = {
   async create(request: CreateInterviewRequestBody): Promise<Interview> {
     const aiAnalysis = await aiService.analyzeJobDescription(
       request.jobDescription,
-      "deepseek-r1",
+      MODEL_NAME,
       5
     );
 
@@ -397,7 +399,7 @@ export const interviewService = {
 
       let feedback = null;
       try {
-        feedback = await aiService.getFeedback(assessmentData, "deepseek-r1");
+        feedback = await aiService.getFeedback(assessmentData, MODEL_NAME);
       } catch (error) {
         console.error("Failed to get AI feedback:", error);
       }
