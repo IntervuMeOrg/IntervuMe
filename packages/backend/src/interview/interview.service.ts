@@ -127,90 +127,7 @@ export const interviewService = {
     return await interviewRepository().save(updatedInterview);
   },
 
-  async getHistory(userId: string) {
-    const interviews = await interviewRepository().find({ where: { userId } });
-    if (!interviews || interviews.length === 0) {
-      throw new Error("User has no previous interviews");
-    }
 
-    // Filter only completed interviews for meaningful analytics
-    const completedInterviews = interviews.filter(
-      (interview) => interview.status === InterviewStatus.COMPLETED
-    );
-
-    if (completedInterviews.length === 0) {
-      throw new Error("User has no completed interviews");
-    }
-
-    // Calculate total interviews
-    const totalInterviews = completedInterviews.length;
-
-    // Calculate average score using feedback score_percentage
-    const scores = completedInterviews.map(
-      (interview) =>
-        interview.feedback?.overall_performance?.score_percentage || 0
-    );
-    const averageScore =
-      scores.reduce((sum, score) => sum + score, 0) / scores.length;
-
-    // Calculate total practice time using startTime and endTime
-    const totalPracticeTime = completedInterviews.reduce((total, interview) => {
-      if (interview.startTime && interview.endTime) {
-        const start = new Date(interview.startTime);
-        const end = new Date(interview.endTime);
-        const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
-        return total + durationMinutes;
-      }
-      return total + (interview.timeLimit || 0); // Fallback to timeLimit if endTime not available
-    }, 0);
-
-    // Find best skill (most frequently mentioned strength)
-    const strengthsMap = new Map<string, number>();
-    completedInterviews.forEach((interview) => {
-      interview.feedback?.strengths?.forEach((strength: any) => {
-        const area = strength.area;
-        strengthsMap.set(area, (strengthsMap.get(area) || 0) + 1);
-      });
-    });
-
-    const bestSkill =
-      strengthsMap.size > 0
-        ? Array.from(strengthsMap.entries()).reduce((a, b) =>
-            a[1] > b[1] ? a : b
-          )[0]
-        : "No strengths identified";
-
-    // Find skill that needs focus (most frequently mentioned critical gap)
-    const gapsMap = new Map<string, number>();
-    completedInterviews.forEach((interview) => {
-      interview.feedback?.critical_gaps?.forEach((gap: any) => {
-        const area = gap.area;
-        gapsMap.set(area, (gapsMap.get(area) || 0) + 1);
-      });
-    });
-
-    const skillNeedsFocus =
-      gapsMap.size > 0
-        ? Array.from(gapsMap.entries()).reduce((a, b) =>
-            a[1] > b[1] ? a : b
-          )[0]
-        : "No critical gaps identified";
-
-    const result = {
-      totalInterviews,
-      averageScore: Math.round(averageScore * 100) / 100, // Round to 2 decimal places
-      totalPracticeTime: Math.round(totalPracticeTime), // in minutes, rounded
-      bestSkill,
-      skillNeedsFocus,
-      // Optional: Additional insights
-      latestScore: scores[scores.length - 1] || 0,
-      improvementTrend:
-        scores.length > 1
-          ? Math.round((scores[scores.length - 1] - scores[0]) * 100) / 100
-          : 0,
-    };
-    return result;
-  },
 
   async startInterview(id: string): Promise<InterviewWithQuestions> {
     const interview = await interviewRepository().findOne({
@@ -416,13 +333,15 @@ export const interviewService = {
       );
 
       const mcqPercentage = maxPoints > 0 ? (totalPoints / maxPoints) * 100 : 0;
-      const totalScore = mcqPercentage + codeScore;
+      const totalScore = (mcqPercentage + codeScore) / 2;
 
       const updatedInterview = await interviewRepository().save({
         ...interview,
         status: InterviewStatus.COMPLETED,
         endTime: new Date().toISOString(),
         answers: mcqAnswers,
+        totalScore,
+        maxScore: 100,
       });
 
       const mcqSummary: McqAnswerSummary = {

@@ -112,3 +112,25 @@ export const InterviewHistoryResponse = Type.Object({
 });
 
 export type InterviewHistoryResponse = Static<typeof InterviewHistoryResponse>;
+
+export const DayPracticeStats = Type.Object({
+  date: Type.String(), // YYYY-MM-DD format
+  totalInterviews: Type.Number(),
+  completedInterviews: Type.Number(),
+  averagePercentage: Type.Number(),
+  totalScore: Type.Number(),
+  maxPossibleScore: Type.Number(),
+  interviews: Type.Array(Interview),
+});
+
+export type DayPracticeStats = Static<typeof DayPracticeStats>;
+
+export const UserPracticeAnalytics = Type.Object({
+  userId: Type.String(),
+  totalDays: Type.Number(),
+  totalInterviews: Type.Number(),
+  overallAveragePercentage: Type.Number(),
+  dailyStats: Type.Array(DayPracticeStats),
+});
+
+export type UserPracticeAnalytics = Static<typeof UserPracticeAnalytics>;

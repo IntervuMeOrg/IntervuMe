@@ -11,10 +11,12 @@ import {
   SubmitInterviewRequestBody,
   UpdateInterviewRequestBody,
   InterviewHistoryResponse,
+  UserPracticeAnalytics,
 } from "./interview-types";
 import { StatusCodes } from "http-status-codes";
 import { interviewService } from "./interview.service";
 import { ApId } from "../common/id-generator";
+import { interviewStatsService } from "./interview-stats.service";
 
 export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);
@@ -132,13 +134,62 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
   );
 
   // Get interview stats
-    app.get(
+  app.get(
     "/user/:userId/history",
     GetInterviewsHistoryByUserRequest,
     async (request, reply) => {
       const { userId } = request.params as { userId: string };
-      const interviews = await interviewService.getHistory(userId);
+      const interviews = await interviewStatsService.getHistory(userId);
       return interviews;
+    }
+  );
+
+  app.get(
+    "/analytics/:userId",
+    GetUserAnalyticsRequest,
+    async (request, reply) => {
+      const { userId } = request.params as { userId: string };
+      const { days } = request.query as { days?: number };
+
+      let analytics: UserPracticeAnalytics;
+
+      if (days) {
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() - days);
+        const endDate = new Date(); // Today
+        
+        analytics = await interviewStatsService.getUserPracticeAnalytics(
+          userId,
+          startDate.toISOString().split('T')[0],
+          endDate.toISOString().split('T')[0]
+        );
+      } else {
+        analytics = await interviewStatsService.getUserPracticeAnalytics(userId);
+      }
+
+      return analytics;
+    }
+  );
+
+  // Summary
+  app.get(
+    "/analytics/:userId/summary",
+    GetUserAnalyticsSummaryRequest,
+    async (request, reply) => {
+      const { userId } = request.params as { userId: string };
+
+      const analytics = await interviewStatsService.getUserPracticeAnalytics(
+        userId
+      );
+
+      return {
+        success: true,
+        data: {
+          totalDays: analytics.totalDays,
+          totalInterviews: analytics.totalInterviews,
+          overallAverage: analytics.overallAveragePercentage,
+        },
+      };
     }
   );
 };
@@ -283,6 +334,48 @@ const SubmitInterviewRequest = {
     },
     response: {
       [StatusCodes.OK]: InterviewSubmissionResult,
+    },
+  },
+};
+
+const GetUserAnalyticsRequest = {
+  schema: {
+    params: Type.Object({
+      userId: ApId,
+    }),
+    querystring: Type.Object({
+      days: Type.Optional(Type.Number({ minimum: 1 })),
+    }),
+    response: {
+      [StatusCodes.OK]: UserPracticeAnalytics,
+      [StatusCodes.NOT_FOUND]: Type.Object({
+        success: Type.Boolean(),
+        error: Type.String(),
+        message: Type.String(),
+      }),
+    },
+  },
+};
+
+const GetUserAnalyticsSummaryRequest = {
+  schema: {
+    params: Type.Object({
+      userId: ApId,
+    }),
+    response: {
+      [StatusCodes.OK]: Type.Object({
+        success: Type.Boolean(),
+        data: Type.Object({
+          totalDays: Type.Number(),
+          totalInterviews: Type.Number(),
+          overallAverage: Type.Number(),
+        }),
+      }),
+      [StatusCodes.NOT_FOUND]: Type.Object({
+        success: Type.Boolean(),
+        error: Type.String(),
+        message: Type.String(),
+      }),
     },
   },
 };
