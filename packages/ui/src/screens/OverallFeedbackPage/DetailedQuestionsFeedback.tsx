@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import { CheckCircleIcon, XCircleIcon, InfoIcon } from "lucide-react";
 import { QuestionContentMCQ } from "./QuestionContentMCQ";
-import { QuestionContentProblemSolving } from "./QuestionContentProblemSolving";
+import { QuestionContentCoding } from "./QuestionContentCoding";
 import { QuestionContentPerformance } from "./QuestionContentPerformance";
-import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
+import { MCQQuestion, CodingQuestion } from "../../types/questions";
 import { QuestionPerformance } from "../../types/performance";
 
-type Question = MCQQuestion | ProblemSolvingQuestion;
+type Question = MCQQuestion | CodingQuestion;
 
 interface DetailedQuestionsFeedbackProps {
   questions: Question[];
@@ -65,7 +65,7 @@ export const DetailedQuestionsFeedback = ({
                 >
                   {question.type === "mcq"
                     ? "Multiple Choice"
-                    : "Problem Solving"}
+                    : "Coding"}
                 </span>
 
                 <span className="text-[#e8eef2] text-sm">
@@ -76,12 +76,12 @@ export const DetailedQuestionsFeedback = ({
               {/* Question Text */}
               <div className="mb-6">
                 <h3 className="font-['Nunito'] font-bold text-white text-lg mb-3">
-                  {question.type === "problem_solving"
+                  {question.type === "coding"
                     ? question.title
                     : "Question"}
                 </h3>
                 <p className="text-[#e8eef2] text-base leading-relaxed">
-                  {question.type === "problem_solving"
+                  {question.type === "coding"
                   ? question.problemStatement
                 : question.text}
                 </p>
@@ -95,9 +95,9 @@ export const DetailedQuestionsFeedback = ({
                 />
               )}
 
-              {/* Problem Solving Specific Content */}
-              {question.type === "problem_solving" && (
-                <QuestionContentProblemSolving
+              {/* Coding Specific Content */}
+              {question.type === "coding" && (
+                <QuestionContentCoding
                   question={question}
                   userAnswer={userAnswer}
                 />

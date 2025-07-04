@@ -1,14 +1,14 @@
-import { ProblemSolvingQuestion } from "../../types/questions";
+import { CodingQuestion } from "../../types/questions";
 
-type QuestionContentProblemSolvingProps = {
-	question: ProblemSolvingQuestion;
+type QuestionContentCodingProps = {
+	question: CodingQuestion;
 	userAnswer: string | null;
 };
 
-export const QuestionContentProblemSolving = ({
+export const QuestionContentCoding = ({
 	question,
 	userAnswer,
-}: QuestionContentProblemSolvingProps) => {
+}: QuestionContentCodingProps) => {
 	return (
 		<div className="mb-6 space-y-4">
 			{/* Examples */}

@@ -4,15 +4,16 @@ import { Button } from "../../components/ui/button";
 import { useLocation } from "react-router-dom";
 import { SidebarToogleButton } from "./SidebarToogleButton";
 import { CheckCircleIcon, TimerIcon, XIcon } from "lucide-react";
-import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
+import { MCQQuestion, CodingQuestion } from "../../types/questions";
+import { isNil } from "../../lib/utils";
 
 type InterviewQuestionsPageHeaderProps = {
-  questions: (MCQQuestion | ProblemSolvingQuestion)[];
+  questions: (MCQQuestion | CodingQuestion)[];
   currentQuestionIndex: number;
   setExitConfirmation: React.Dispatch<React.SetStateAction<boolean>>;
   sidebarVisible: boolean;
   setSidebarVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  userAnswers: Record<number, string>;
+  userAnswers: Record<string, string>;
 };
 
 export const InterviewQuestionsPageHeader = ({
@@ -23,14 +24,14 @@ export const InterviewQuestionsPageHeader = ({
   setSidebarVisible,
   userAnswers,
 }: InterviewQuestionsPageHeaderProps) => {
-  const [timerActive, setTimerActive] = useState(true);
+  const [timerActive] = useState(true);
   const location = useLocation();
   
   const [interviewData] = useState({
-    title: location.state?.title || "Frontend Developer Interview",
-    totalTime: location.state?.totalTime || 45 * 60,
+    title: location.state?.title,
+    totalTime: location.state?.totalTime,
     totalQuestions: questions.length,
-    jobDescription: location.state?.jobDescription || "",
+    jobDescription: location.state?.jobDescription,
   });
   
   const [remainingTime, setRemainingTime] = useState(interviewData.totalTime);
@@ -46,9 +47,7 @@ export const InterviewQuestionsPageHeader = ({
 
   // Count answered questions
   const answeredQuestionsCount = Object.keys(userAnswers).filter(
-    (key) =>
-      userAnswers[parseInt(key)] !== undefined &&
-      userAnswers[parseInt(key)] !== ""
+    (key) => !isNil(userAnswers[key])
   ).length;
 
   // Timer effect

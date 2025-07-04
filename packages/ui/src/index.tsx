@@ -51,12 +51,14 @@ createRoot(document.getElementById("app") as HTMLElement).render(
 						<Route path="/profile" element={<ProfilePage />} />
 						<Route path="/settings" element={<SettingsPage />} />
 
-						<Route path="/start-interview" element={<StartInterviewPage />} />
+
+						{/* Interview Routes */}
+						<Route path="/interview" element={<StartInterviewPage />} />
 						<Route
-							path="/interview-questions"
+							path="/interview/:id"
 							element={<InterviewQuestionsPage />}
 						/>
-						<Route path="/overall-feedback" element={<OverallFeedbackPage />} />
+						<Route path="/interview/:id/results" element={<OverallFeedbackPage />} />
 					</Route>
 
 					{/* Catch-all route for 404 - must be last */}

@@ -1,16 +1,16 @@
 import { CheckCircleIcon, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "../../components/ui/button";
-import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
+import { MCQQuestion, CodingQuestion } from "../../types/questions";
 import { useEffect, useRef } from "react";
 
 type QuestionListSidebarProps = {
 	currentQuestionIndex: number;
-	questions: (MCQQuestion | ProblemSolvingQuestion)[];
+	questions: (MCQQuestion | CodingQuestion)[];
 	setCurrentQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
 	sidebarVisible: boolean;
 	setSidebarVisible: React.Dispatch<React.SetStateAction<boolean>>;
-	isQuestionAnswered: (questionId: number) => boolean;
+	isQuestionAnswered: (questionId: string) => boolean;
 };
 
 export const QuestionListSidebar = ({
@@ -143,7 +143,7 @@ export const QuestionListSidebar = ({
 										<p className="text-xs sm:text-sm opacity-80 mt-0.5">
 											{question.type === "mcq"
 												? "Multiple Choice"
-												: "Problem Solving"}
+												: "Coding"}
 										</p>
 									</div>
 

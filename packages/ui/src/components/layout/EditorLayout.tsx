@@ -14,7 +14,7 @@ import {
 import { Editor } from "@monaco-editor/react";
 import { motion } from "framer-motion";
 import { CheckCircleIcon, AlertCircleIcon, SendIcon } from "lucide-react";
-import { ProblemSolvingQuestion } from "../../types/questions";
+import { CodingQuestion } from "../../types/questions";
 
 // Props type definition
 type EditorLayoutProps = {
@@ -113,7 +113,7 @@ export const EditorLayout = ({
 		) || [];
 
 		   // Function to get the complete starter code for a given language
-    const getStarterCodeForLanguage = (question: ProblemSolvingQuestion, lang: string): string => {
+    const getStarterCodeForLanguage = (question: CodingQuestion, lang: string): string => {
         // Map language values to the keys used in starterCodes
         const languageMap: { [key: string]: keyof typeof question.starterCodes.codeHeader } = {
             'cpp': 'cpp',

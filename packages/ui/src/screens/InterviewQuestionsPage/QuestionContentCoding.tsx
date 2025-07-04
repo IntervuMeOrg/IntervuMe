@@ -1,23 +1,23 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Card, CardContent } from "../../components/ui/card";
-import { ProblemSolvingQuestion } from "../../types/questions";
+import { CodingQuestion } from "../../types/questions";
 import { EditorLayout } from "../../components/layout/EditorLayout";
-import { ProblemSolvingExampleSection } from "./ProblemSolvingExampleSection";
-import { ProblemSolvingConstraintsSection } from "./ProblemSolvingConstraintsSection";
+import { CodingExampleSection } from "./CodingExampleSection";
+import { CodingConstraintsSection } from "./CodingConstraintsSection";
 
-type QuestionContentProblemSolvingProps = {
-	questions: ProblemSolvingQuestion[];
+type QuestionContentCodingProps = {
+	questions: CodingQuestion[];
 	userAnswers: Record<string, string>;
-	setUserAnswers: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+	setUserAnswers: (questionId: string, code: string) => void;
 	currentQuestionIndex: number;
 };
 
-export const QuestionContentProblemSolving = ({
+export const QuestionContentCoding = ({
 	questions,
 	userAnswers,
 	setUserAnswers,
 	currentQuestionIndex,
-}: QuestionContentProblemSolvingProps) => {
+}: QuestionContentCodingProps) => {
 	// State for console visibility and active tab
 	const [consoleVisible, setConsoleVisible] = useState(false);
 
@@ -64,13 +64,11 @@ export const QuestionContentProblemSolving = ({
 		};
 	}>({ status: "none", message: "" });
 
-	// Handle problem solving answer
-	const handleProblemSolvingAnswer = (questionId: number, answer: string) => {
-		setUserAnswers((prev) => ({
-			...prev,
-			[questionId]: answer,
-		}));
+	// Handle problem solving answer (code changes)
+	const handleCodingAnswer = (questionId: string, answer: string) => {
+		setUserAnswers(questionId, answer);
 	};
+
 	// State for panel resizing
 	const [leftPanelWidth, setLeftPanelWidth] = useState(50); // percentage
 	const [isResizing, setIsResizing] = useState(false);
@@ -124,9 +122,11 @@ export const QuestionContentProblemSolving = ({
 		};
 	}, [isResizing, handleMouseMove, handleMouseUp]);
 
+	const currentQuestion = questions[currentQuestionIndex];
+	const currentCode = userAnswers[currentQuestion.id] || "";
+
 	return (
-		<div   className="font-['Nunito'] mt-4 sm:mt-2 md:mt-0 lg:-mt-2 xl:-mt-4 flex relative"
->
+		<div className="font-['Nunito'] mt-4 sm:mt-2 md:mt-0 lg:-mt-2 xl:-mt-4 flex relative" ref={containerRef}>
 			{/* Left Panel with Tabs */}
 			<div
 				className="rounded-md overflow-y-auto min-h-[calc(100vh-150px)] max-h-[calc(100vh-150px)]"
@@ -183,41 +183,29 @@ export const QuestionContentProblemSolving = ({
 							<div className="mb-3">
 								<h3 className="font-bold text-2xl mb-1 flex justify-between items-start">
 									<span className="flex-1">
-										{
-											(
-												questions[
-													currentQuestionIndex
-												] as ProblemSolvingQuestion
-											).title
-										}
+										{currentQuestion.title}
 									</span>
 									<span className="bg-[#0667D0] text-white px-3 py-1 rounded-full text-sm font-semibold ml-4">
-										{questions[currentQuestionIndex].points} points
+										{currentQuestion.points} points
 									</span>
 								</h3>
 								<span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-sm font-medium">
-									{
-										(questions[currentQuestionIndex] as ProblemSolvingQuestion)
-											.difficulty
-									}
+									{currentQuestion.difficulty}
 								</span>
 							</div>
 							<div className="text-gray-700 whitespace-pre-line">
-								{
-									(questions[currentQuestionIndex] as ProblemSolvingQuestion)
-										.problemStatement
-								}
+								{currentQuestion.problemStatement}
 							</div>
 
 							{/* Examples Section */}
-							<ProblemSolvingExampleSection
-								questions={questions as ProblemSolvingQuestion[]}
+							<CodingExampleSection
+								questions={questions}
 								currentQuestionIndex={currentQuestionIndex}
 							/>
 
 							{/* Constraints Section */}
-							<ProblemSolvingConstraintsSection
-								questions={questions as ProblemSolvingQuestion[]}
+							<CodingConstraintsSection
+								questions={questions}
 								currentQuestionIndex={currentQuestionIndex}
 							/>
 						</CardContent>
@@ -349,14 +337,15 @@ export const QuestionContentProblemSolving = ({
 			>
 				<EditorLayout
 					initialValue={
-						userAnswers[questions[currentQuestionIndex].id] ||
+						currentCode ||
+						currentQuestion.starterCodes?.codeStarter?.cpp ||
 						"// Write your solution here\n"
 					}
 					language="cpp"
 					height="100%"
 					onChange={(value) =>
-						handleProblemSolvingAnswer(
-							questions[currentQuestionIndex].id,
+						handleCodingAnswer(
+							currentQuestion.id,
 							value || ""
 						)
 					}
@@ -373,24 +362,22 @@ export const QuestionContentProblemSolving = ({
 						setConsoleVisible(true);
 						setConsoleTab("output");
 					}}
-					onSubmissionsTabClick={() => setActiveTab("submissions")} // Add this prop
+					onSubmissionsTabClick={() => setActiveTab("submissions")}
 					onSubmit={() => {
 						// Simulate submission with random results
-						// Make submissions alternate: fail, pass, fail, pass...
-						// OLD===== const isSuccess = Math.random() > 0.3; // 70% chance of success
 						const submissionCount = submissionHistory.length;
 						const isSuccess = submissionCount % 2 === 1;
-						const testCasesPassed = isSuccess ? 5 : 0; // 1-4 if failed OLD==== Math.floor(Math.random() * 4) + 1;
+						const testCasesPassed = isSuccess ? 5 : 0;
 
 						const newSubmission = {
 							status: isSuccess ? ("success" as const) : ("error" as const),
 							message: isSuccess
 								? "Your solution passed all test cases. Great job!"
-								: "Your solution failed on all test cases. Check the error details and try again.",
+								: "Your solution failed on test cases. Check the error details and try again.",
 							testCasesPassed: testCasesPassed,
 							totalTestCases: 5,
 							timestamp: new Date().toLocaleString(),
-							language: "C++", // You can make this dynamic based on selected language
+							language: "C++",
 							...(isSuccess
 								? {}
 								: {
@@ -404,18 +391,16 @@ export const QuestionContentProblemSolving = ({
 
 						// Add to submission history
 						setSubmissionHistory((prev) => [newSubmission, ...prev]);
-
 						setSubmissionStatus(newSubmission);
 
-						handleProblemSolvingAnswer(
-							questions[currentQuestionIndex].id,
-							userAnswers[questions[currentQuestionIndex].id] || ""
+						// Update the code in parent state
+						handleCodingAnswer(
+							currentQuestion.id,
+							currentCode
 						);
 
 						setConsoleVisible(true);
 						setConsoleTab("submissions");
-
-						// Add this line to switch left panel to submissions tab
 						setActiveTab("submissions");
 					}}
 					availableLanguages={[

@@ -16,6 +16,7 @@ import { useSignUp } from "../../lib/authentication/authentication-hooks"; // Ad
 import { SignUpRequest } from "../../lib/authentication/authentication-api"; // Update this path
 import { Toast } from "../../components/ui/Toast";
 import { CircleAlert, CheckCircle2, XCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const passwordRequirements = [
 	{ id: 1, text: "At least 8 characters", regex: /.{8,}/ },
@@ -147,6 +148,7 @@ export const RegistrationForm = ({
 	genders,
 	months,
 }: RegistrationFormProps) => {
+	const navigate = useNavigate();
 	const signUpMutation = useSignUp();
 	// Toast notification state
 	const [toast, setToast] = useState<{
@@ -218,7 +220,11 @@ export const RegistrationForm = ({
 
 		try {
 			window.scrollTo(0, 0);
-			await signUpMutation.mutateAsync(signUpRequest);
+			await signUpMutation.mutateAsync(signUpRequest, {
+				onSuccess: () => {
+					navigate("/app", { replace: true });
+				},
+			});
 		} catch (error: any) {
 			const errorMessage =
 				error?.response?.data?.message ||
