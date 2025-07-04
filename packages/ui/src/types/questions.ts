@@ -4,7 +4,7 @@ export type MCQOption = {
 };
 
 export type MCQQuestion = {
-	id: number;
+	id: string;
 	type: "mcq";
 	text: string;
 	options: MCQOption[];
@@ -14,7 +14,7 @@ export type MCQQuestion = {
 };
 
 export type CodingQuestion = {
-  id: number;
+  id: string;
   type: "coding";
   title: string;
   category: string;

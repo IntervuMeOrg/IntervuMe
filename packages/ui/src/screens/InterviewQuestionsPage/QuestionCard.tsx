@@ -2,24 +2,36 @@ import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "../../components/ui/card";
 import { QuestionContentMCQ } from "./QuestionContentMCQ";
-import { QuestionContentProblemSolving } from "./QuestionContentProblemSolving";
-import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
+import { QuestionContentCoding } from "./QuestionContentCoding";
+import { MCQQuestion, CodingQuestion } from "../../types/questions";
 
 type QuestionCardProps = {
 	currentQuestionIndex: number;
-	questions: (MCQQuestion | ProblemSolvingQuestion)[];
+	questions: (MCQQuestion | CodingQuestion)[];
 	userAnswers: Record<string, string>;
-	setUserAnswers: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+	codeSubmissions?: Record<string, string>;
+	setUserAnswers: (questionId: string, selectedOptionId: string) => void;
+	setCodeSubmissions?: (questionId: string, code: string) => void;
+	onSubmitCode?: (questionId: string, code: string, language: string) => Promise<any>;
+	getSubmissionHistory?: (questionId: string) => any[];
+	getSubmissionCount?: (questionId: string) => number;
+	hasAcceptedSubmission?: (questionId: string) => boolean;
 };
 
 export const QuestionCard = ({
 	currentQuestionIndex,
 	questions,
 	userAnswers,
+	codeSubmissions = {},
 	setUserAnswers,
+	setCodeSubmissions,
+	onSubmitCode,
+	getSubmissionHistory,
+	getSubmissionCount,
+	hasAcceptedSubmission,
 }: QuestionCardProps) => {
 	const currentQuestion = questions[currentQuestionIndex];
-	const isProblemSolving = currentQuestion.type === "problem_solving";
+	const isCoding = currentQuestion.type === "coding";
 	const isMCQ = currentQuestion.type === "mcq";
 
 	const cardRef = useRef<HTMLDivElement>(null);
@@ -57,13 +69,13 @@ export const QuestionCard = ({
 			<Card className="bg-[#E8EEF2] shadow-xl border-0 overflow-hidden">
 				<CardContent
 					className={`p-4 sm:p-6 lg:p-8 ${
-						currentQuestion.type === "problem_solving" ? "lg:pt-10" : ""
+						currentQuestion.type === "coding" ? "lg:pt-10" : ""
 					}`}
 				>
 					{/* Header Section */}
 					<div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-3">
 						<div className="flex-1">
-							{!isProblemSolving && (
+							{!isCoding && (
 								<>
 									<h2 className="font-['Nunito'] font-bold text-xl sm:text-2xl lg:text-3xl text-[#1d1d20]">
 										Question {currentQuestionIndex + 1}
@@ -75,7 +87,7 @@ export const QuestionCard = ({
 							)}
 						</div>
 
-						{!isProblemSolving && (
+						{!isCoding && (
 							<div className="self-start sm:self-auto">
 								<span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs sm:text-sm font-semibold bg-[#0667D0] text-white">
 									{currentQuestion.points} points
@@ -87,25 +99,22 @@ export const QuestionCard = ({
 					{/* Question Content Container */}
 					<div
 						className={`${
-							isProblemSolving
+							isCoding
 								? "min-h-[500px] lg:min-h-[600px]"
 								: "min-h-[350px] sm:min-h-[350px]"
 						}`}
 					>
 						{isMCQ ? (
 							<QuestionContentMCQ
-								questions={
-									questions.filter((q) => q.type === "mcq") as MCQQuestion[]
-								}
+								question={currentQuestion as MCQQuestion}
 								userAnswers={userAnswers}
-								setUserAnswers={setUserAnswers}
-								currentQuestionIndex={currentQuestionIndex}
+								setUserAnswer={setUserAnswers}
 							/>
 						) : (
-							<QuestionContentProblemSolving
-								questions={questions as ProblemSolvingQuestion[]}
-								userAnswers={userAnswers}
-								setUserAnswers={setUserAnswers}
+							<QuestionContentCoding
+								questions={questions as CodingQuestion[]}
+								userAnswers={codeSubmissions}
+								setUserAnswers={setCodeSubmissions || (() => {})}
 								currentQuestionIndex={currentQuestionIndex}
 							/>
 						)}
