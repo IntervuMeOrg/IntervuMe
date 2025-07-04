@@ -35,7 +35,7 @@ export const McqQuestionEntity = new EntitySchema<McqQuestion>({
     points: {
       type: Number,
       default: 1,
-    }
+    },
   },
   relations: {
     options: {

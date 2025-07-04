@@ -2,7 +2,7 @@ import { Static, Type } from "@fastify/type-provider-typebox";
 import { BaseModelSchema } from "../common/base-model";
 import { CodeSubmission, CodeSubmissionWithResults, CreateCodeSubmissionRequestBody } from "../coding/code-submission/code-submission-types";
 import { CreateMcqAnswerRequestBody, McqAnswer, McqAnswerSummary } from "../mcq/mcq-answer/mcq-answer-types";
-import { InterviewQuestionWithDetails } from "./interview-question/interview-question-types";
+import { InterviewQuestion } from "./interview-question/interview-question-types";
 import { ApId } from "../common/id-generator";
 
 export enum InterviewStatus {
@@ -30,18 +30,17 @@ export const Interview = Type.Object({
 export type Interview = Static<typeof Interview>;
 
 
-
-export const InterviewWithQuestions = Type.Composite([
+export const InterviewSession  = Type.Composite([
   Interview,
   Type.Object({
-    interviewQuestions: Type.Array(InterviewQuestionWithDetails),
+    interviewQuestions: Type.Array(InterviewQuestion),
     answers: Type.Array(McqAnswer),
     codeSubmissions: Type.Array(CodeSubmissionWithResults),
   }),
 ]);
 
-export type InterviewWithQuestions = Static<
-  typeof InterviewWithQuestions
+export type InterviewSession  = Static<
+  typeof InterviewSession 
 >;
 
 export const CreateInterviewRequestBody = Type.Object({
@@ -74,7 +73,6 @@ export type UpdateInterviewRequestBody = Static<
 
 export const SubmitInterviewRequestBody = Type.Object({
   mcqAnswers: Type.Array(CreateMcqAnswerRequestBody),
-  codeSubmissions: Type.Array(CreateCodeSubmissionRequestBody),
 });
 
 export type SubmitInterviewRequestBody = Static<typeof SubmitInterviewRequestBody>;

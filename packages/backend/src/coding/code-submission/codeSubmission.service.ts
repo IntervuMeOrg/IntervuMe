@@ -51,10 +51,11 @@ export const codeSubmissionService = {
         });
 
         const passed = runResult.status === "Correct";
-        if(passed)
-          score += 1;
+        if (passed) score += 1;
 
-        const verdict = await codeSubmissionService.mapStatusToVerdict(runResult.status);
+        const verdict = await codeSubmissionService.mapStatusToVerdict(
+          runResult.status
+        );
 
         const testCaseResult = await testCaseResultService.create({
           codeSubmissionId: savedCodeSubmission.id,
@@ -81,7 +82,10 @@ export const codeSubmissionService = {
       }
     }
 
-    Object.assign(savedCodeSubmission, {score, totalTests: testCaseResults.length});
+    Object.assign(savedCodeSubmission, {
+      score,
+      totalTests: testCaseResults.length,
+    });
     await codeSubmissionRepository().save(savedCodeSubmission);
     return {
       ...savedCodeSubmission,

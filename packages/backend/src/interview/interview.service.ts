@@ -18,7 +18,7 @@ import {
   CreateInterviewRequestBody,
   UpdateInterviewRequestBody,
   InterviewStatus,
-  InterviewWithQuestions,
+  InterviewSession,
   SubmitInterviewRequestBody,
   InterviewSubmissionResult,
 } from "./interview-types";
@@ -31,31 +31,34 @@ import {
 } from "../coding/test-case-result/testCaseResult-types";
 import { mcqAnswerService } from "../mcq/mcq-answer/mcq-answer.service";
 import { isNil } from "../common/utils";
-import { testCaseResultService } from "../coding/test-case-result/testCaseResult.service";
 import { aiService } from "../ai/ai.service";
+import { testCaseResultService } from "../coding/test-case-result/testCaseResult.service";
 
-const interviewRepository = () => {
+const InterviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
 };
 
 export const interviewService = {
-  async getByUserId(userId: string): Promise<Interview[]> {
-    return await interviewRepository().find({
+  async getByUserId(userId: string): Promise<InterviewSession[]> {
+    return await InterviewRepository().find({
       where: { userId, isActive: true },
       order: { startTime: "DESC" },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
   },
 
-  async getByStatus(status: InterviewStatus): Promise<Interview[]> {
-    return await interviewRepository().find({
+  async getByStatus(status: InterviewStatus): Promise<InterviewSession[]> {
+    return await InterviewRepository().find({
       where: { status, isActive: true },
       order: { startTime: "ASC" },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
   },
 
-  async get(id: string): Promise<Interview> {
-    const interview = await interviewRepository().findOne({
+  async get(id: string): Promise<InterviewSession> {
+    const interview = await InterviewRepository().findOne({
       where: { id },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
     if (isNil(interview)) {
@@ -65,44 +68,26 @@ export const interviewService = {
     return interview;
   },
 
-  async getWithQuestions(id: string): Promise<InterviewWithQuestions> {
-    const interview = await interviewRepository().findOne({
-      where: { id },
-      relations: ["answers", "codeSubmissions"],
-    });
-
-    if (isNil(interview)) {
-      throw new Error("Interview not found");
-    }
-
-    // Get interview questions with full details
-    const questionsWithDetails =
-      await interviewQuestionService.getByInterviewIdWithDetails(id);
-
-    return {
-      ...interview,
-      interviewQuestions: questionsWithDetails,
-    };
-  },
-
-  async list(userId: string): Promise<Interview[]> {
+  async list(userId: string): Promise<InterviewSession[]> {
     const whereCondition: any = { isActive: true };
     whereCondition.userId = userId;
 
-    return await interviewRepository().find({
+    return await InterviewRepository().find({
       where: whereCondition,
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
       order: { startTime: "DESC" },
     });
   },
 
-  async listUpcoming(userId: string): Promise<Interview[]> {
-    return await interviewRepository().find({
+  async listUpcoming(userId: string): Promise<InterviewSession[]> {
+    return await InterviewRepository().find({
       where: {
         userId,
         status: InterviewStatus.SCHEDULED,
         startTime: MoreThan(new Date().toISOString()),
         isActive: true,
       },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
       order: { startTime: "ASC" },
     });
   },
@@ -110,21 +95,22 @@ export const interviewService = {
   async update(
     id: string,
     request: UpdateInterviewRequestBody
-  ): Promise<Interview> {
-    const interview = await interviewRepository().findOne({
+  ): Promise<InterviewSession> {
+    const interview = await InterviewRepository().findOne({
       where: { id },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
     if (isNil(interview)) {
       throw new Error("Interview not found");
     }
 
-    const updatedInterview = interviewRepository().merge(interview, request);
-    return await interviewRepository().save(updatedInterview);
+    const updatedInterview = InterviewRepository().merge(interview, request);
+    return await InterviewRepository().save(updatedInterview);
   },
 
-  async startInterview(id: string): Promise<InterviewWithQuestions> {
-    const interview = await interviewRepository().findOne({
+  async startInterview(id: string): Promise<InterviewSession> {
+    const interview = await InterviewRepository().findOne({
       where: { id },
       relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
@@ -137,18 +123,16 @@ export const interviewService = {
       throw new Error("Interview cannot be started");
     }
 
-    const updatedInterview = await interviewRepository().save({
-      ...interview,
-      status: InterviewStatus.IN_PROGRESS,
-      startTime: new Date().toISOString(),
-    });
+    interview.status = InterviewStatus.IN_PROGRESS;
+    interview.startTime = new Date().toISOString();
 
-    return this.getWithQuestions(updatedInterview.id);
+    return await InterviewRepository().save(interview);
   },
 
-  async calculateScore(id: string): Promise<Interview> {
-    const interview = await interviewRepository().findOne({
+  async calculateScore(id: string): Promise<InterviewSession> {
+    const interview = await InterviewRepository().findOne({
       where: { id },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
     if (isNil(interview)) {
@@ -181,12 +165,13 @@ export const interviewService = {
     interview.maxScore = maxScore;
     interview.isPassed = totalScore >= maxScore * 0.6; // 60% pass rate
 
-    return await interviewRepository().save(interview);
+    return await InterviewRepository().save(interview);
   },
 
   async delete(id: string): Promise<boolean> {
-    const interview = await interviewRepository().findOne({
+    const interview = await InterviewRepository().findOne({
       where: { id },
+      relations: ["interviewQuestions", "answers", "codeSubmissions"],
     });
 
     if (isNil(interview)) {
@@ -194,7 +179,7 @@ export const interviewService = {
     }
 
     interview.isActive = false;
-    await interviewRepository().save(interview);
+    await InterviewRepository().save(interview);
     return true;
   },
 
@@ -218,21 +203,22 @@ export const interviewService = {
 
     const codingDifficulties = aiAnalysis.codingDifficulty.difficulties;
 
-    const interview = interviewRepository().create({
+    const interview = InterviewRepository().create({
       id: apId(),
       ...request,
       status: InterviewStatus.SCHEDULED,
       isActive: true,
     });
 
-    await interviewRepository().save(interview);
+    await InterviewRepository().save(interview);
 
     // Generate MCQ questions based on AI analysis
     let questionOrder = 1;
 
+    // Convert array of tag requirements to the expected format
     const tagCounts: { [tag: string]: number } = {};
     for (const tagRequirement of mcqRequirements) {
-      tagCounts[tagRequirement.tag] = tagRequirement.count;
+      tagCounts[tagRequirement.tag.toLowerCase()] = tagRequirement.count;
     }
 
     const mcqQuestions = await mcqQuestionService.getRandomByTagsAndCount(
@@ -248,19 +234,21 @@ export const interviewService = {
       });
     }
 
-    const codingQuestions =
-      await codingQuestionService.getRandomByDifficultyAndCount(
-        "medium" as DifficultyLevel,
-        2
-      );
+    for (const difficulty of codingDifficulties) {
+      const codingQuestions =
+        await codingQuestionService.getRandomByDifficultyAndCount(
+          difficulty as DifficultyLevel,
+          1
+        );
 
-    for (const codingQuestion of codingQuestions) {
-      await interviewQuestionService.create({
-        interviewId: interview.id,
-        questionType: QuestionType.CODING,
-        questionId: codingQuestion.id,
-        questionOrder: questionOrder++,
-      });
+      for (const codingQuestion of codingQuestions) {
+        await interviewQuestionService.create({
+          interviewId: interview.id,
+          questionType: QuestionType.CODING,
+          questionId: codingQuestion.id,
+          questionOrder: questionOrder++,
+        });
+      }
     }
 
     return interview;
@@ -270,6 +258,22 @@ export const interviewService = {
     interviewId: string,
     submissionData: SubmitInterviewRequestBody
   ): Promise<InterviewSubmissionResult> {
+    const interview = await interviewService.get(interviewId);
+    if (!interview) {
+      throw new Error(`Interview not found: ${interviewId}`);
+    }
+    const currentTime = new Date();
+    const interviewEndTime = new Date(interview.startTime);
+    interviewEndTime.setMinutes(
+      interviewEndTime.getMinutes() + interview.timeLimit
+    );
+
+    if (currentTime > interviewEndTime) {
+      throw new Error(
+        `Interview time has expired. Cannot submit after ${interviewEndTime.toISOString()}`
+      );
+    }
+
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -340,12 +344,7 @@ export const interviewService = {
       const mcqPercentage = maxPoints > 0 ? (totalPoints / maxPoints) * 100 : 0;
       const totalScore = mcqPercentage + codeScore;
 
-      const interview = await interviewService.get(interviewId);
-      if (!interview) {
-        throw new Error(`Interview not found: ${interviewId}`);
-      }
-
-      const updatedInterview = await interviewRepository().save({
+      const updatedInterview = await InterviewRepository().save({
         ...interview,
         status: InterviewStatus.COMPLETED,
         submittedAt: new Date().toISOString(),
