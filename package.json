@@ -17,6 +17,7 @@
   "devDependencies": {
     "@nx/workspace": "^17.0.0",
     "@types/date-fns": "^2.5.3",
+    "@types/node-cron": "^3.0.11",
     "@types/nodemailer": "^6.4.17",
     "nx": "^17.0.0",
     "typescript": "^5.3.3"
@@ -33,6 +34,7 @@
     "ai": "^4.3.16",
     "axios": "^1.10.0",
     "google-auth-library": "^10.1.0",
+    "node-cron": "^4.2.0",
     "nodemailer": "^7.0.3",
     "zod": "^3.25.71"
   }
