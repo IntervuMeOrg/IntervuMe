@@ -73,13 +73,7 @@ export const codeExecutionService = {
         ? header
         : `${header}\nfrom typing import List`;
 
-      const indent = "        "; // 8 spaces
-      const indented = userCode
-        .split("\n")
-        .map((line) => indent + line)
-        .join("\n");
-
-      body = [headerWithTyping, indented, footer].join("\n");
+      body = [headerWithTyping, userCode, footer].join("\n");
     } else {
       // C++/Java: no extra indentation required
       body = [header, userCode, footer].join("\n");
