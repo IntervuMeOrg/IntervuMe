@@ -37,10 +37,13 @@ export const StartInterviewFormPanel = ({
 	const [jobDescription, setJobDescription] = useState("");
 	const [selectedTemplate, setSelectedTemplate] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
+	const [isCompleted, setIsCompleted] = useState(false);
 
-	// Handle loading completion and navigation
+	// Handle loading completion - now only used for LoadingOverlay animation, not actual completion
 	const handleLoadingComplete = () => {
+		// Reset states after overlay finishes
 		setIsLoading(false);
+		setIsCompleted(false);
 	};
 
 	// Handle form submission with backend integration
@@ -50,6 +53,7 @@ export const StartInterviewFormPanel = ({
 		if (!user.data?.id) return;
 
 		setIsLoading(true);
+		setIsCompleted(false);
 
 		try {
 			// Prepare the job description based on input method
@@ -70,22 +74,30 @@ export const StartInterviewFormPanel = ({
 				onSuccess: (interview) => {
 					startInterview.mutate(interview.id, {
 						onSuccess: () => {
-							navigate(`/interview/${interview.id}`);
+							// Mark as completed and let LoadingOverlay handle the navigation
+							setIsCompleted(true);
+							setTimeout(() => {
+								navigate(`/interview/${interview.id}`);
+							}, 1000); // Small delay to show completion state
 						},
 						onError: (error) => {
 							console.error("Failed to start interview:", error);
+							setIsLoading(false);
+							setIsCompleted(false);
 						},
 					});
 				},
 				onError: (error) => {
 					console.error("Failed to create interview:", error);
 					setIsLoading(false);
+					setIsCompleted(false);
 				},
 			});
 
 		} catch (error) {
 			console.error("Error creating interview:", error);
 			setIsLoading(false);
+			setIsCompleted(false);
 		}
 	};
 
@@ -103,6 +115,9 @@ export const StartInterviewFormPanel = ({
 			<LoadingOverlay
 				isVisible={isLoading}
 				onComplete={handleLoadingComplete}
+				isCreating={createInterview.isPending}
+				isStarting={startInterview.isPending}
+				isComplete={isCompleted}
 			/>
 
 			<motion.div
@@ -245,16 +260,22 @@ export const StartInterviewFormPanel = ({
 						>
 							<Button
 								onClick={handleStartInterview}
-								disabled={!isFormValid || isLoading || createInterview.isPending}
+								disabled={!isFormValid || isLoading || createInterview.isPending || startInterview.isPending || isCompleted}
 								className={`rounded-md h-12 sm:h-14 md:h-16 3xl:h-20 px-6 sm:px-8 md:px-10 3xl:px-14 transition-all duration-200 flex items-center gap-2 sm:gap-3 3xl:gap-4 border-0 ${
-									isFormValid && !isLoading && !createInterview.isPending
+									isFormValid && !isLoading && !createInterview.isPending && !startInterview.isPending && !isCompleted
 										? "bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] hover:opacity-90 cursor-pointer"
 										: "bg-gray-500 opacity-50 cursor-not-allowed"
 								}`}
 							>
 								<PlayIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 3xl:h-8 3xl:w-8" />
 								<span className="font-['Nunito'] font-semibold text-white text-sm sm:text-base md:text-lg 3xl:text-2xl">
-									{isLoading || createInterview.isPending ? "Creating Interview..." : "Start Interview"}
+									{isCompleted 
+										? "Interview Ready!" 
+										: createInterview.isPending 
+											? "Creating Interview..." 
+											: startInterview.isPending
+												? "Starting Interview..."
+												: "Start Interview"}
 								</span>
 							</Button>
 						</motion.div>
@@ -270,6 +291,39 @@ export const StartInterviewFormPanel = ({
 							{inputMethod === "custom"
 								? "Please enter a job description to continue"
 								: "Please select a template to continue"}
+						</motion.p>
+					)}
+
+					{/* Loading time expectation message */}
+					{createInterview.isPending && (
+						<motion.p
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							className="text-center text-[#e8eef2] text-xs sm:text-sm 3xl:text-lg opacity-70 mt-3"
+						>
+							This process may take 1-2 minutes to generate your personalized interview
+						</motion.p>
+					)}
+
+					{/* Starting message */}
+					{startInterview.isPending && !createInterview.isPending && (
+						<motion.p
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							className="text-center text-[#e8eef2] text-xs sm:text-sm 3xl:text-lg opacity-70 mt-3"
+						>
+							Starting your interview now...
+						</motion.p>
+					)}
+
+					{/* Completion message */}
+					{isCompleted && (
+						<motion.p
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							className="text-center text-green-400 text-xs sm:text-sm 3xl:text-lg opacity-90 mt-3"
+						>
+							Your interview is ready! Redirecting you now...
 						</motion.p>
 					)}
 

@@ -4,15 +4,16 @@ import { QuestionCard } from "./QuestionCard";
 import { QuestionListSidebar } from "./SidebarQuestionList";
 import { QuestionFooter } from "./QuestionFooter";
 import { InterviewQuestionsPageHeader } from "./InterviewQuestionPageHeader";
-import { ExitConfirmationModel } from "./ExitConfirmationModel";
+import { CancelConfirmationModel } from "./CancelConfirmationModel";
 import { SubmitConfirmationModal } from "./SubmitConfirmationModal";
 import { CustomNotificationBlur } from "./CustomNotificationBlur";
+import { SubmissionLoadingOverlay } from "./SubmissionLoadingOverlay";
 import { McqQuestion, CodingQuestion, McqOption } from "../../types/questions";
 import { 
 	useInterviewWithQuestions, 
 	useStartInterview, 
 	useSubmitInterview,
-	useInterviewSession 
+	useInterviewSession,
 } from "../../lib/interview/interview-hooks";
 import { 
 	McqAnswer,
@@ -37,8 +38,10 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 	const [sidebarVisible, setSidebarVisible] = useState(false);
 	const [footerVisible, setFooterVisible] = useState(true);
-	const [exitConfirmation, setExitConfirmation] = useState(false);
+	const [cancelConfirmation, setCancelConfirmation] = useState(false);
 	const [submitConfirmation, setSubmitConfirmation] = useState(false);
+	const [isSubmissionLoading, setIsSubmissionLoading] = useState(false);
+	const [isSubmissionCompleted, setIsSubmissionCompleted] = useState(false);
 	const [notification, setNotification] = useState<{
 		visible: boolean;
 		message: string;
@@ -52,6 +55,21 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 	// Initialize all state variables with empty values first
 	const [mcqAnswers, setMcqAnswers] = useState<Record<string, string>>({});
 	const [codingQuestionStatus, setCodingQuestionStatus] = useState<Record<string, { hasSubmissions: boolean; hasAccepted: boolean }>>({});
+
+	// Check interview status and redirect if completed/expired
+	useEffect(() => {
+		if (interviewWithQuestions) {
+			const status = interviewWithQuestions.status;
+			if (status === "COMPLETED" || status === "CANCELLED" || status === "EXPIRED") {
+				// Redirect to results page if completed, otherwise to home
+				if (status === "COMPLETED") {
+					navigate(`/interview/${interviewId}/results`);
+				} else {
+					navigate("/app");
+				}
+			}
+		}
+	}, [interviewWithQuestions, interviewId, navigate]);
 
 	// Initialize MCQ answers after data loads
 	useEffect(() => {
@@ -94,8 +112,6 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 		}
 	}, [interviewWithQuestions?.codeSubmissions]);
 
-
-
 	// Transform questions once (only when data is available)
 	const questions: Question[] = interviewWithQuestions?.interviewQuestions?.map((q: InterviewQuestionWithDetails) => {
 		if (q.questionType === "mcq") {
@@ -116,8 +132,6 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 			} as CodingQuestion;
 		}
 	}) || [];
-
-
 
 	// Start interview if needed
 	useEffect(() => {
@@ -149,14 +163,35 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 		}
 	};
 
-
+	// Handle loading overlay completion for submission
+	const handleSubmissionLoadingComplete = () => {
+		setIsSubmissionLoading(false);
+		setIsSubmissionCompleted(false);
+	};
 
 	// Handle final interview submission
-	// TODO: remove sent data
 	const handleSubmitInterview = () => {
+		setIsSubmissionLoading(true);
+		setIsSubmissionCompleted(false);
+		setSubmitConfirmation(false); // Close the confirmation modal
+		
 		submitInterview.mutate(interviewId, {
 			onSuccess: () => {
-				navigate(`/interview/${interviewId}/results`);
+				// Mark as completed and let LoadingOverlay handle the navigation
+				setIsSubmissionCompleted(true);
+				setTimeout(() => {
+					navigate(`/interview/${interviewId}/results`);
+				}, 1000); // Small delay to show completion state
+			},
+			onError: (error) => {
+				console.error("Failed to submit interview:", error);
+				setIsSubmissionLoading(false);
+				setIsSubmissionCompleted(false);
+				setNotification({
+					visible: true,
+					message: "Failed to submit interview. Please try again.",
+					type: "error",
+				});
 			},
 		});
 	};
@@ -240,8 +275,7 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 			{/* Header */}
 			<InterviewQuestionsPageHeader
 				questions={questions}
-				currentQuestionIndex={currentQuestionIndex}
-				setExitConfirmation={setExitConfirmation}
+				setCancelConfirmation={setCancelConfirmation}
 				sidebarVisible={sidebarVisible}
 				setSidebarVisible={setSidebarVisible}
 				userAnswers={mcqAnswers}
@@ -288,21 +322,31 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 				currentQuestionIndex={currentQuestionIndex}
 				setCurrentQuestionIndex={setCurrentQuestionIndex}
 				setSubmitConfirmation={setSubmitConfirmation}
+				isSubmissionLoading={isSubmissionLoading}
+			/>
+
+			{/* Submission Loading Overlay */}
+			<SubmissionLoadingOverlay
+				isVisible={isSubmissionLoading}
+				onComplete={handleSubmissionLoadingComplete}
+				isSubmitting={submitInterview.isPending}
+				isComplete={isSubmissionCompleted}
 			/>
 
 			{/* Modals */}
-			{exitConfirmation && (
-				<ExitConfirmationModel
+			{cancelConfirmation && (
+				<CancelConfirmationModel
 					navigate={navigate}
-					setExitConfirmation={setExitConfirmation}
+					setCancelConfirmation={setCancelConfirmation}
+					interviewId={interviewId}
 				/>
 			)}
 
-			{submitConfirmation && (
+			{submitConfirmation && !isSubmissionLoading && (
 				<SubmitConfirmationModal
 					setSubmitConfirmation={setSubmitConfirmation}
 					onSubmit={handleSubmitInterview}
-					isSubmitting={submitInterview.isPending}
+					isSubmitting={submitInterview.isPending || isSubmissionLoading}
 					notification={notification}
 					setNotification={setNotification}
 				/>

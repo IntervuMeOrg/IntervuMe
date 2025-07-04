@@ -5,77 +5,99 @@ import { Loader2, CheckCircle } from "lucide-react";
 interface LoadingOverlayProps {
 	isVisible: boolean;
 	onComplete?: () => void;
+	currentStep?: number;
+	isCreating?: boolean;
+	isStarting?: boolean;
+	isComplete?: boolean;
 }
 
 export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 	isVisible,
 	onComplete,
+	currentStep = 0,
+	isCreating = false,
+	isStarting = false,
+	isComplete = false,
 }) => {
-	const [currentStep, setCurrentStep] = React.useState(0);
+	const [animatedStep, setAnimatedStep] = React.useState(0);
 	const [progress, setProgress] = React.useState(0);
-	const [isComplete, setIsComplete] = React.useState(false);
 
 	const preparationSteps = [
 		"Analyzing job requirements...",
-		"Processing technical skills...",
-		"Generating interview questions...",
+		"Extracting technical skills and keywords...",
+		"Generating MCQ questions...",
+		"Creating coding challenges...",
 		"Calibrating difficulty levels...",
-		"Setting up environment...",
-		"Preparing scenarios...",
-		"Finalizing sequences...",
-		"Almost ready!",
+		"Validating question quality...",
+		"Processing interview structure...",
+		"Finalizing your personalized interview...",
 	];
 
+	// Reset state when overlay becomes visible
 	React.useEffect(() => {
 		if (!isVisible) {
-			setCurrentStep(0);
+			setAnimatedStep(0);
 			setProgress(0);
-			setIsComplete(false);
 			return;
 		}
+	}, [isVisible]);
 
-		// Simplified timing - 90 seconds total
-		const totalDuration = 5000;
-		const stepDuration = totalDuration / preparationSteps.length; // ~11.25 seconds per step
-		const progressUpdateInterval = 500; // Update every 500ms for better performance
-		const progressIncrement = 100 / (totalDuration / progressUpdateInterval);
+	// Update progress based on actual backend state
+	React.useEffect(() => {
+		if (!isVisible) return;
 
-		let progressTimer: NodeJS.Timeout;
-		let stepTimers: NodeJS.Timeout[] = [];
+		let targetProgress = 0;
+		let targetStep = 0;
 
-		// Smooth progress updates
-		progressTimer = setInterval(() => {
+		if (isCreating) {
+			// Interview creation phase - this is where all the work happens (95% progress)
+			targetProgress = 95;
+			targetStep = 6; // Steps 0-6 during creation
+		} else if (isStarting) {
+			// Interview starting phase - instant API call (95-98% progress)
+			targetProgress = 98;
+			targetStep = 7; // Just the final step
+		} else if (isComplete) {
+			// Complete phase
+			targetProgress = 100;
+			targetStep = preparationSteps.length - 1;
+		}
+
+		// Smooth progress animation
+		const progressInterval = setInterval(() => {
 			setProgress((prev) => {
-				const newProgress = prev + progressIncrement;
-				if (newProgress >= 100) {
-					clearInterval(progressTimer);
-					setIsComplete(true);
-					// Call onComplete after a brief delay to show completion state
-					setTimeout(() => {
-						onComplete?.();
-					}, 1500);
-					return 100;
+				if (prev < targetProgress) {
+					return Math.min(prev + 1, targetProgress);
 				}
-				return newProgress;
+				return prev;
 			});
-		}, progressUpdateInterval);
+		}, 600);
 
-		// Schedule all step updates at once
-		preparationSteps.forEach((_, index) => {
-			if (index > 0) {
-				const timer = setTimeout(() => {
-					setCurrentStep(index);
-				}, stepDuration * index);
-				stepTimers.push(timer);
-			}
-		});
+		// Smooth step animation during creation, faster during starting
+		const stepInterval = setInterval(() => {
+			setAnimatedStep((prev) => {
+				if (prev < targetStep) {
+					return prev + 1;
+				}
+				return prev;
+			});
+		}, isCreating ? 1200 : 300); // Slower during creation, faster during starting
 
-		// Cleanup
 		return () => {
-			if (progressTimer) clearInterval(progressTimer);
-			stepTimers.forEach((timer) => clearTimeout(timer));
+			clearInterval(progressInterval);
+			clearInterval(stepInterval);
 		};
-	}, [isVisible, onComplete]);
+	}, [isVisible, isCreating, isStarting, isComplete]);
+
+	// Call onComplete when actually complete
+	React.useEffect(() => {
+		if (isComplete && progress >= 100) {
+			const timer = setTimeout(() => {
+				onComplete?.();
+			}, 500);
+			return () => clearTimeout(timer);
+		}
+	}, [isComplete, progress, onComplete]);
 
 	return (
 		<AnimatePresence>
@@ -124,7 +146,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 							{/* Current Step - Optimized transition */}
 							<div className="w-full min-h-[3rem] 3xl:min-h-[4rem] flex items-center justify-center">
 								<motion.p
-									key={currentStep}
+									key={animatedStep}
 									initial={{ opacity: 0 }}
 									animate={{ opacity: 1 }}
 									transition={{ duration: 0.2 }}
@@ -132,7 +154,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 								>
 									{isComplete
 										? "Your personalized interview is ready to begin!"
-										: preparationSteps[currentStep]}
+										: preparationSteps[animatedStep]}
 								</motion.p>
 							</div>
 
@@ -155,10 +177,11 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 									<span>
 										{isComplete
 											? "Ready!"
-											: `${Math.max(
-													1,
-													Math.round(((100 - progress) * 5) / 100)
-											  )}s remaining`}
+											: isCreating
+											? "Generating questions..."
+											: isStarting
+											? "Starting interview..."
+											: "Processing..."}
 									</span>
 								</div>
 							</div>
@@ -170,7 +193,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 										key={index}
 										style={{ transform: "translateZ(0)" }}
 										className={`w-2 h-2 3xl:w-[0.7rem] 3xl:h-[0.7rem] rounded-full transition-all duration-200 ${
-											index <= currentStep
+											index <= animatedStep
 												? "bg-[#0667D0] scale-125"
 												: "bg-white/30"
 										}`}
