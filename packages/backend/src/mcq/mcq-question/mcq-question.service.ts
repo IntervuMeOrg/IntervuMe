@@ -129,4 +129,12 @@ export const mcqQuestionService = {
     }
     return shuffled;
   },
+
+  async getAllUniqueTags(): Promise<string[]> {
+    const mcqQuestions = await mcqQuestionRepository().find();
+
+    const allTags = mcqQuestions.flatMap((question) => question.tags || []);
+
+    return [...new Set(allTags)];
+  },
 };
