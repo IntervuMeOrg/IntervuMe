@@ -61,7 +61,7 @@ export const DetailedPerfomanceMetrics = ({
         </div>
       )}
 
-      {/* Problem Solving Performance */}
+      {/* Coding Performance */}
       {problemSolvingTotal > 0 && (
         <div className="bg-white/10 rounded-lg p-4 border border-white/20 text-center">
           <AlertTriangleIcon className="h-8 w-8 text-purple-400 mx-auto mb-2" />
@@ -69,7 +69,7 @@ export const DetailedPerfomanceMetrics = ({
             {problemSolvingPercentage}%
           </div>
           <div className="text-[#e8eef2] text-sm opacity-80">
-            Problem Solving
+            Coding
           </div>
           <div className="text-[#e8eef2] text-xs opacity-60">
             {problemSolvingCorrect}/{problemSolvingTotal} attempted

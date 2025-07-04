@@ -11,6 +11,7 @@ import {
 } from "./interview-question-types";
 import { StatusCodes } from "http-status-codes";
 import { ApId } from "../../common/id-generator";
+import { UserRole } from "../../user/user-types";
 
 export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
   app
@@ -18,7 +19,7 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
   app.addHook("onRequest", app.authenticate);
 
   app.post("/", CreateInterviewQuestionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
@@ -75,7 +76,7 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
   );
 
   app.put("/:id", UpdateInterviewQuestionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
@@ -88,7 +89,7 @@ export const interviewQuestionController: FastifyPluginAsyncTypebox = async (
   });
 
   app.delete("/:id", GetInterviewQuestionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });

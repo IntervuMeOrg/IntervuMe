@@ -1,10 +1,10 @@
 import { ChevronLeftIcon, ChevronRightIcon, SendIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
+import { MCQQuestion, CodingQuestion } from "../../types/questions";
 
 type QuestionFooterProps = {
 	currentQuestionIndex: number;
-	questions: (MCQQuestion | ProblemSolvingQuestion)[];
+	questions: (MCQQuestion | CodingQuestion)[];
 	setCurrentQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
 	sidebarVisible: boolean;
 	footerVisible: boolean;

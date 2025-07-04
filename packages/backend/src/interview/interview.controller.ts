@@ -5,7 +5,7 @@ import {
 import {
   CreateInterviewRequestBody,
   Interview,
-  InterviewSession,
+  InterviewWithQuestions,
   InterviewStatus,
   InterviewSubmissionResult,
   SubmitInterviewRequestBody,
@@ -32,10 +32,10 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
 
   app.get(
     "/:id/with-questions",
-    GetInterviewWithSessionRequest,
+    GetInterviewWithQuestionsRequest,
     async (request, reply) => {
       const { id } = request.params as { id: string };
-      const interview = await interviewService.get(id);
+      const interview = await interviewService.getWithQuestions(id);
       return interview;
     }
   );
@@ -221,13 +221,13 @@ const CalculateScoreRequest = {
   },
 };
 
-const GetInterviewWithSessionRequest = {
+const GetInterviewWithQuestionsRequest = {
   schema: {
     params: {
       id: ApId,
     },
     response: {
-      [StatusCodes.OK]: InterviewSession,
+      [StatusCodes.OK]: InterviewWithQuestions,
     },
   },
 };
@@ -238,7 +238,7 @@ const GetInterviewsWithResultsRequest = {
       userId: ApId,
     }),
     response: {
-      [StatusCodes.OK]: Type.Array(InterviewSession),
+      [StatusCodes.OK]: Type.Array(Interview),
     },
   },
 };

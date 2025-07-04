@@ -26,7 +26,7 @@ export const AppHeroSection = ({
     
     switch (stepId) {
       case 1:
-        navigate("/start-interview");
+        navigate("/interview");
         break;
       case 2:
         navigate("/history");

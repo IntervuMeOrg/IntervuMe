@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { TrophyIcon } from "lucide-react";
-import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
+import { MCQQuestion, CodingQuestion } from "../../types/questions";
 import { ResultSummaryOverallFeedback } from "./ResultSummaryOverallFeedback";
 import { ResultSummaryPerformanceBreakdown } from "./ResultSummaryPerformanceBreakdown";
 import { ResultSummaryStatsGrid } from "./ResultSummaryStatsGrid";
 import { ResultSummaryActionButtons } from "./ResultSummaryActionButtons";
 
-type Question = MCQQuestion | ProblemSolvingQuestion;
+type Question = MCQQuestion | CodingQuestion;
 
 interface ResultSummaryCardProps {
 	questions: Question[];

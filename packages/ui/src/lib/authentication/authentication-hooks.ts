@@ -89,7 +89,6 @@ export const authenticationSession = {
 
 // Sign in hook - updated to handle rememberMe
 export const useSignIn = () => {
-	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -103,7 +102,6 @@ export const useSignIn = () => {
 			const { rememberMe = false, ...userData } = data;
 			authenticationSession.setSession(userData, rememberMe);
 			queryClient.invalidateQueries({ queryKey: ["current-user"] });
-			navigate("/app");
 		},
 		onError: (error: any) => {
 			console.error(
@@ -116,7 +114,6 @@ export const useSignIn = () => {
 
 // Google Sign In hook - for now treating as rememberMe = true, but you can modify
 export const useGoogleSignIn = () => {
-	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -127,9 +124,9 @@ export const useGoogleSignIn = () => {
 		},
 		onSuccess: (data: AuthResponse & { rememberMe?: boolean }) => {
 			const { rememberMe = true, ...userData } = data; // Default to true for Google sign-in
+			console.log("Remember me value: ",rememberMe)
 			authenticationSession.setSession(userData, rememberMe);
 			queryClient.invalidateQueries({ queryKey: ["current-user"] });
-			navigate("/app");
 		},
 		onError: (error: any) => {
 			console.error(
@@ -142,7 +139,6 @@ export const useGoogleSignIn = () => {
 
 // Sign up hook
 export const useSignUp = () => {
-	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -155,7 +151,6 @@ export const useSignUp = () => {
 			const { rememberMe = true, ...userData } = data; // Default to true for sign-up
 			authenticationSession.setSession(userData, rememberMe);
 			queryClient.invalidateQueries({ queryKey: ["current-user"] });
-			navigate("/app");
 		},
 		onError: (error: any) => {
 			console.error(
@@ -236,7 +231,6 @@ export const useAuthentication = () => {
 
 	const logout = () => {
 		authenticationSession.clearSession();
-		navigate("/login");
 	};
 
 	const requireAuth = () => {

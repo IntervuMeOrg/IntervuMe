@@ -13,9 +13,9 @@ export type MCQQuestion = {
 	explanation?: string; // Added for feedback
 };
 
-export type ProblemSolvingQuestion = {
+export type CodingQuestion = {
   id: number;
-  type: "problem_solving";
+  type: "coding";
   title: string;
   category: string;
   difficulty: string;
