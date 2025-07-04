@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, CheckCircle } from "lucide-react";
+import { Loader2, CheckCircle, Check } from "lucide-react";
 
 interface SubmissionLoadingOverlayProps {
 	isVisible: boolean;
@@ -17,6 +17,7 @@ export const SubmissionLoadingOverlay: React.FC<SubmissionLoadingOverlayProps> =
 }) => {
 	const [animatedStep, setAnimatedStep] = React.useState(0);
 	const [progress, setProgress] = React.useState(0);
+	const [isPaused, setIsPaused] = React.useState(false);
 
 	const submissionSteps = [
 		"Analyzing your answers...",
@@ -54,16 +55,9 @@ export const SubmissionLoadingOverlay: React.FC<SubmissionLoadingOverlayProps> =
 			targetStep = submissionSteps.length - 1;
 		}
 
-		// Smooth progress animation
-		const progressInterval = setInterval(() => {
-			setProgress((prev) => {
-				if (prev < targetProgress) {
-					return Math.min(prev + 1, targetProgress);
-				}
-				return prev;
-			});
-		}, 300);
-
+		// Calculate progress per step
+		const progressPerStep = targetProgress / (targetStep + 1);
+		
 		// Smooth step animation during submission
 		const stepInterval = setInterval(() => {
 			setAnimatedStep((prev) => {
@@ -72,13 +66,46 @@ export const SubmissionLoadingOverlay: React.FC<SubmissionLoadingOverlayProps> =
 				}
 				return prev;
 			});
-		}, 1000);
+		}, 1200); // Slightly slower for better UX
+
+		// Dynamic progress animation based on steps
+		const progressInterval = setInterval(() => {
+			setProgress((prev) => {
+				const currentTargetProgress = Math.min(
+					(animatedStep + 1) * progressPerStep,
+					targetProgress
+				);
+				
+				if (prev < currentTargetProgress) {
+					// Add occasional pauses for realism (10% chance)
+					if (!isPaused && Math.random() < 0.1) {
+						setIsPaused(true);
+						setTimeout(() => setIsPaused(false), Math.random() * 800 + 200);
+						return prev;
+					}
+					
+					// Dynamic increment: faster at start, slower near end
+					const remaining = currentTargetProgress - prev;
+					const baseIncrement = Math.max(
+						Math.min(remaining * 0.15, 8), // 15% of remaining, max 8%
+						0.5 // minimum 0.5%
+					);
+					
+					// Add variance to increment (±30%)
+					const variance = 0.7 + Math.random() * 0.6;
+					const increment = baseIncrement * variance;
+					
+					return Math.min(prev + increment, currentTargetProgress);
+				}
+				return prev;
+			});
+		}, 50); // Faster updates for smoother animation
 
 		return () => {
 			clearInterval(progressInterval);
 			clearInterval(stepInterval);
 		};
-	}, [isVisible, isSubmitting, isComplete]);
+	}, [isVisible, isSubmitting, isComplete, animatedStep, isPaused]);
 
 	// Call onComplete when actually complete
 	React.useEffect(() => {
@@ -97,105 +124,100 @@ export const SubmissionLoadingOverlay: React.FC<SubmissionLoadingOverlayProps> =
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
-					transition={{ duration: 0.2, ease: "easeOut" }}
-					className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-					style={{
-						WebkitBackdropFilter: "blur(8px)",
-					}}
+					transition={{ duration: 0.3 }}
+					className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
 				>
 					<motion.div
-						initial={{ opacity: 0, scale: 0.95 }}
-						animate={{ opacity: 1, scale: 1 }}
-						exit={{ opacity: 0, scale: 0.95 }}
-						transition={{ duration: 0.2, ease: "easeOut" }}
-						className="bg-[#1d1d20] rounded-xl p-6 sm:p-8 3xl:p-10 max-w-lg 3xl:max-w-[42rem] w-full mx-4 text-center shadow-2xl relative overflow-hidden"
+						initial={{ scale: 0.9, opacity: 0 }}
+						animate={{ scale: 1, opacity: 1 }}
+						exit={{ scale: 0.9, opacity: 0 }}
+						transition={{ duration: 0.3 }}
+						className="bg-white rounded-2xl shadow-2xl p-8 sm:p-10 3xl:p-12 max-w-md sm:max-w-lg 3xl:max-w-xl w-full mx-4"
 					>
-						{/* Gradient overlay */}
-						<div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none" />
-
-						<div className="relative z-10 flex flex-col items-center space-y-6">
-							{/* Loading Icon */}
-							<div className="relative">
-								{!isComplete ? (
-									<>
-										<Loader2 className="h-16 w-16 3xl:h-20 3xl:w-20 text-[#0667D0] animate-spin" />
-										<div className="absolute inset-0 rounded-full border-2 border-[#0667D0] animate-ping" />
-									</>
+						<div className="text-center">
+							{/* Icon */}
+							<div className="mb-6 3xl:mb-8">
+								{isComplete ? (
+									<CheckCircle className="w-16 h-16 3xl:w-20 3xl:h-20 text-green-500 mx-auto" />
 								) : (
-									<>
-										<CheckCircle className="h-16 w-16 3xl:h-20 3xl:w-20 text-green-400" />
-										<div className="absolute inset-0 rounded-full bg-green-400/20 animate-ping" />
-									</>
+									<Loader2 className="w-16 h-16 3xl:w-20 3xl:h-20 text-blue-500 animate-spin mx-auto" />
 								)}
 							</div>
 
 							{/* Title */}
-							<h3 className="font-['Nunito'] font-bold text-white text-xl sm:text-2xl 3xl:text-3xl">
-								{isComplete ? "Results Ready!" : "Processing Your Interview"}
+							<h3 className="text-xl sm:text-2xl 3xl:text-3xl font-bold text-gray-900 mb-6">
+								{isComplete
+									? "Interview Submitted!"
+									: "Processing Your Interview"}
 							</h3>
 
-							{/* Current Step */}
-							<div className="w-full min-h-[3rem] 3xl:min-h-[4rem] flex items-center justify-center">
-								<motion.p
-									key={animatedStep}
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									transition={{ duration: 0.2 }}
-									className="text-[#e8eef2] text-sm sm:text-base 3xl:text-lg text-center"
-								>
-									{isComplete
-										? "Your detailed results and feedback are ready!"
-										: submissionSteps[animatedStep]}
-								</motion.p>
-							</div>
-
-							{/* Progress Bar */}
-							<div className="w-full space-y-3 3xl:space-y-4">
-								<div className="w-full bg-white/20 rounded-full h-3 3xl:h-4 overflow-hidden">
-									<div
-										style={{
-											width: `${progress}%`,
-											transform: "translateZ(0)",
-											willChange: "width",
-										}}
-										className="bg-gradient-to-r from-[#0667D0] to-[#033464] h-full rounded-full transition-all duration-300 ease-out"
-									/>
-								</div>
-
-								{/* Progress info */}
-								<div className="flex justify-between text-xs 3xl:text-sm text-[#e8eef2] opacity-80">
-									<span>{Math.round(progress)}% Complete</span>
-									<span>
-										{isComplete
-											? "Complete!"
-											: isSubmitting
-											? "Generating feedback..."
-											: "Processing..."}
-									</span>
-								</div>
-							</div>
-
-							{/* Step Indicators */}
-							<div className="flex justify-center space-x-2 3xl:space-x-3">
-								{submissionSteps.map((_, index) => (
+							{/* Steps */}
+							<div className="space-y-2 mb-6 text-left max-h-64 overflow-y-auto">
+								{submissionSteps.map((step, index) => (
 									<div
 										key={index}
-										style={{ transform: "translateZ(0)" }}
-										className={`w-2 h-2 3xl:w-[0.7rem] 3xl:h-[0.7rem] rounded-full transition-all duration-200 ${
+										className={`flex items-center space-x-3 transition-all duration-300 ${
 											index <= animatedStep
-												? "bg-[#0667D0] scale-125"
-												: "bg-white/30"
+												? "opacity-100"
+												: "opacity-40"
 										}`}
-									/>
+									>
+										<div
+											className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0 ${
+												index < animatedStep
+													? "bg-green-500"
+													: index === animatedStep
+													? "bg-blue-500 animate-pulse"
+													: "bg-gray-300"
+											}`}
+										>
+											{index < animatedStep ? (
+												<Check className="w-3 h-3 text-white" />
+											) : index === animatedStep ? (
+												<div className="w-2 h-2 bg-white rounded-full animate-ping" />
+											) : (
+												<div className="w-2 h-2 bg-gray-400 rounded-full" />
+											)}
+										</div>
+										<span
+											className={`text-sm ${
+												index === animatedStep
+													? "text-gray-900 font-medium"
+													: index < animatedStep
+													? "text-gray-700"
+													: "text-gray-500"
+											}`}
+										>
+											{step}
+											{index === animatedStep && (
+												<span className="ml-1 text-blue-500 animate-pulse">
+													...
+												</span>
+											)}
+										</span>
+									</div>
 								))}
 							</div>
 
-							{/* Loading message */}
-							<p className="text-xs 3xl:text-sm text-[#e8eef2] opacity-60 text-center">
-								{isComplete 
-									? "Redirecting you to your results..."
-									: "Please wait while we analyze your performance and generate personalized feedback"}
-							</p>
+							{/* Progress Bar */}
+							<div className="relative w-full h-3 3xl:h-4 bg-gray-200 rounded-full overflow-hidden">
+								<div
+									style={{
+										width: `${progress}%`,
+										transition: "width 0.3s ease-out",
+									}}
+									className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"
+								/>
+							</div>
+
+							{/* Progress info */}
+							<div className="flex justify-between text-xs 3xl:text-sm text-gray-600 mt-2">
+								<span>{Math.round(progress)}% Complete</span>
+								<span>
+									Step {Math.min(animatedStep + 1, submissionSteps.length)} of{" "}
+									{submissionSteps.length}
+								</span>
+							</div>
 						</div>
 					</motion.div>
 				</motion.div>

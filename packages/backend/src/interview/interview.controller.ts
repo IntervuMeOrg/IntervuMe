@@ -12,6 +12,7 @@ import {
   UpdateInterviewRequestBody,
   InterviewHistoryResponse,
   UserPracticeAnalytics,
+  InterviewWithStats,
 } from "./interview-types";
 import { StatusCodes } from "http-status-codes";
 import { interviewService } from "./interview.service";
@@ -51,7 +52,6 @@ export const interviewController: FastifyPluginAsyncTypebox = async (app) => {
     return interview;
   });
 
-  // soft delete
   app.delete("/:id", DeleteInterviewRequest, async (request, reply) => {
     const { id } = request.params as { id: string };
     await interviewService.delete(id);
@@ -245,7 +245,7 @@ const GetInterviewsByUserRequest = {
       userId: ApId,
     }),
     response: {
-      [StatusCodes.OK]: Type.Array(Interview),
+      [StatusCodes.OK]: Type.Array(InterviewWithStats),
     },
   },
 };

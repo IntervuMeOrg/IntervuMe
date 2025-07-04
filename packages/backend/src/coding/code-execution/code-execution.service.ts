@@ -43,14 +43,15 @@ export const codeExecutionService = {
     if ((data.memory ?? 0) > 131_072) status = "Memory Limit Exceeded";
 
     // decode output
-    const stdout = data.stdout ? fromBase64(data.stdout) : "";
+    const stdout = data.stdout && status === "Accepted" ? fromBase64(data.stdout) : "";
 
     // correctness check
     if (status === "Accepted") {
       status = stdout.trim() === expected.trim() ? "Correct" : "Wrong Answer";
     }
+    
 
-    return { stdout, status, time: timeUsed };
+    return { stdout, status: cleanStatus(status), time: timeUsed };
   },
 
   async buildFullSource(
@@ -86,4 +87,12 @@ export const codeExecutionService = {
 
     return body;
   },
+};
+
+
+const cleanStatus = (status: string): string => {
+  if(status === "Accepted" || status === "Correct" || status === "Wrong Answer" || status === "Runtime Error" || status === "Compilation Error" || status === "Memory Limit Exceeded" || status === "Time Limit Exceeded") {
+    return status;
+  }
+  return "Runtime Error";
 };

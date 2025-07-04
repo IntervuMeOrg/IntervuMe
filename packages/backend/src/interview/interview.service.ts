@@ -21,6 +21,7 @@ import {
   InterviewWithQuestions,
   SubmitInterviewRequestBody,
   InterviewSubmissionResult,
+  InterviewWithStats,
 } from "./interview-types";
 import { mcqQuestionService } from "../mcq/mcq-question/mcq-question.service";
 import { DifficultyLevel } from "../coding/coding-question/codingQuestion-types";
@@ -30,6 +31,7 @@ import { isNil } from "../common/utils";
 import { aiService } from "../ai/ai.service";
 import { testCaseResultService } from "../coding/test-case-result/testCaseResult.service";
 import { AssessmentResults } from "../ai/types";
+import cron from "node-cron";
 
 const interviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
@@ -45,11 +47,33 @@ export const interviewService = {
     });
   },
 
-  async getCompletedByUserId(userId: string): Promise<Interview[]> {
-    return await interviewRepository().find({
-      where: { userId, isActive: true, status: InterviewStatus.COMPLETED},
+  async getCompletedByUserId(userId: string): Promise<InterviewWithStats[]> {
+    const interviews = await interviewRepository().find({
+      where: { userId, isActive: true, status: InterviewStatus.COMPLETED },
       order: { startTime: "DESC" },
     });
+
+    const interviewsWithStats = await Promise.all(
+      interviews.map(async (interview) => {
+        const questions =
+          await interviewQuestionService.getByInterviewIdWithDetails(
+            interview.id
+          );
+
+        const questionCount = questions.length;
+
+        const allTags = questions.flatMap((q) => q.questionDetails?.tags || []);
+        const uniqueTags = [...new Set(allTags)];
+
+        return {
+          ...interview,
+          questionCount,
+          uniqueTags,
+        } as InterviewWithStats;
+      })
+    );
+
+    return interviewsWithStats;
   },
 
   async getByStatus(status: InterviewStatus): Promise<Interview[]> {
@@ -129,8 +153,6 @@ export const interviewService = {
     return await interviewRepository().save(updatedInterview);
   },
 
-
-
   async startInterview(id: string): Promise<InterviewWithQuestions> {
     const interview = await interviewRepository().findOne({
       where: { id },
@@ -191,18 +213,8 @@ export const interviewService = {
     return await interviewRepository().save(interview);
   },
 
-  async delete(id: string): Promise<boolean> {
-    const interview = await interviewRepository().findOne({
-      where: { id },
-    });
-
-    if (isNil(interview)) {
-      throw new Error("Interview not found");
-    }
-
-    interview.isActive = false;
-    await interviewRepository().save(interview);
-    return true;
+  async delete(id: string): Promise<void> {
+    await interviewRepository().delete(id);
   },
 
   async create(request: CreateInterviewRequestBody): Promise<Interview> {
@@ -231,7 +243,6 @@ export const interviewService = {
       status: InterviewStatus.SCHEDULED,
       isActive: true,
       jobTitle: aiAnalysis.jobTitle,
-      startTime: new Date().toISOString(),
     });
 
     await interviewRepository().save(interview);
@@ -461,5 +472,37 @@ export const interviewService = {
       0
     );
     return totalScore / totalQuestions;
+  },
+
+  async checkAndSubmitExpiredInterviews(): Promise<void> {
+    const now = new Date();
+
+    const activeInterviews = await interviewRepository().find({
+      where: {
+        status: InterviewStatus.IN_PROGRESS,
+        isActive: true,
+      },
+    });
+
+    for (const interview of activeInterviews) {
+      const startTime = new Date(interview.startTime);
+      const expiryTime = new Date(startTime.getTime() + interview.timeLimit);
+
+      if (now > expiryTime) {
+        await this.submitInterview(interview.id);
+      }
+    }
+  },
+
+  initializeScheduler(): void {
+    cron.schedule("* * * * *", async () => {
+      try {
+        await this.checkAndSubmitExpiredInterviews();
+      } catch (error) {
+        console.error("Error checking expired interviews:", error);
+      }
+    });
+
+    console.log("Interview expiry scheduler initialized");
   },
 };
