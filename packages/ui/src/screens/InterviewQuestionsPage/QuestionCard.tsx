@@ -9,34 +9,29 @@ type QuestionCardProps = {
 	currentQuestionIndex: number;
 	questions: (McqQuestion | CodingQuestion)[];
 	userAnswers: Record<string, string>;
-	codeSubmissions: Record<string, string>;
-	selectedLanguages: Record<string, string>;
 	setUserAnswer: (questionId: string, selectedOptionId: string) => void;
-	setCodeSubmissions: (questionId: string, code: string) => void;
-	onLanguageChange: (questionId: string, language: string) => void;
-	onSubmitCode: (questionId: string, code: string, language: string) => Promise<any>;
-	getSubmissionHistory: (questionId: string) => any[];
-	getSubmissionCount: (questionId: string) => number;
-	hasAcceptedSubmission: (questionId: string) => boolean;
+	interviewId: string;
+	codeSubmissions?: any[]; // CodeSubmissionWithResults[]
+	onSubmissionUpdate?: (questionId: string, hasSubmissions: boolean, hasAccepted: boolean) => void;
 };
 
 export const QuestionCard = ({
 	currentQuestionIndex,
 	questions,
 	userAnswers,
-	codeSubmissions,
-	selectedLanguages,
 	setUserAnswer,
-	setCodeSubmissions,
-	onLanguageChange,
-	onSubmitCode,
-	getSubmissionHistory,
-	getSubmissionCount,
-	hasAcceptedSubmission,
+	interviewId,
+	codeSubmissions = [],
+	onSubmissionUpdate,
 }: QuestionCardProps) => {
 	const currentQuestion = questions[currentQuestionIndex];
 	const isCoding = currentQuestion.type === "coding";
 	const isMCQ = currentQuestion.type === "mcq";
+
+	// Filter submissions for the current question
+	const currentQuestionSubmissions = codeSubmissions.filter(
+		submission => submission.questionId === currentQuestion.id
+	);
 
 	const cardRef = useRef<HTMLDivElement>(null);
 
@@ -117,14 +112,9 @@ export const QuestionCard = ({
 						) : (
 							<QuestionContentCoding
 								question={currentQuestion as CodingQuestion}
-								userAnswers={codeSubmissions}
-								selectedLanguage={selectedLanguages[currentQuestion.id] || "cpp"}
-								setUserAnswers={setCodeSubmissions}
-								onLanguageChange={(language) => onLanguageChange(currentQuestion.id, language)}
-								onSubmitCode={onSubmitCode}
-								getSubmissionHistory={getSubmissionHistory}
-								getSubmissionCount={getSubmissionCount}
-								hasAcceptedSubmission={hasAcceptedSubmission}
+								interviewId={interviewId}
+								initialSubmissions={currentQuestionSubmissions}
+								onSubmissionUpdate={onSubmissionUpdate}
 							/>
 						)}
 					</div>

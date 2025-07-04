@@ -5,30 +5,59 @@ import { EditorLayout } from "../../components/layout/EditorLayout";
 import { CodingExampleSection } from "./CodingExampleSection";
 import { CodingConstraintsSection } from "./CodingConstraintsSection";
 import { CodeSubmissionWithResults } from "../../lib/interview/interview-api";
+import { useRunCode, useSubmitCode, useInterviewSession } from "../../lib/interview/interview-hooks";
 
 type QuestionContentCodingProps = {
 	question: CodingQuestion;
-	userAnswers: Record<string, string>;
-	selectedLanguage: string;
-	setUserAnswers: (questionId: string, code: string) => void;
-	onLanguageChange: (language: string) => void;
-	onSubmitCode: (questionId: string, code: string, language: string) => Promise<any>;
-	getSubmissionHistory: (questionId: string) => any[];
-	getSubmissionCount: (questionId: string) => number;
-	hasAcceptedSubmission: (questionId: string) => boolean;
+	interviewId: string;
+	initialSubmissions?: CodeSubmissionWithResults[];
+	onSubmissionUpdate?: (questionId: string, hasSubmissions: boolean, hasAccepted: boolean) => void;
+};
+
+// Helper function to calculate submission status
+const getSubmissionStatus = (submission: CodeSubmissionWithResults) => {
+	const passedCount = submission.passedTestCases ?? 
+		(submission.testCaseResults?.filter((result) => result.passed === true).length || 0);
+	const totalCount = submission.totalTestCases ?? 
+		(submission.testCaseResults?.length || 0);
+	const allPassed = passedCount === totalCount && totalCount > 0;
+
+	return {
+		passedCount,
+		totalCount,
+		allPassed,
+		statusText: allPassed ? "Accepted" : "Wrong Answer",
+		statusColor: allPassed ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700",
+		countColor: allPassed ? "text-green-600" : "text-red-600",
+		message: allPassed 
+			? "Your solution passed all test cases. Great job!"
+			: "Your solution failed on some test cases. Check the error details and try again."
+	};
 };
 
 export const QuestionContentCoding = ({
 	question,
-	userAnswers,
-	selectedLanguage,
-	setUserAnswers,
-	onLanguageChange,
-	onSubmitCode,
-	getSubmissionHistory,
-	getSubmissionCount,
-	hasAcceptedSubmission,
+	interviewId,
+	initialSubmissions = [],
+	onSubmissionUpdate,
 }: QuestionContentCodingProps) => {
+	// Hooks for coding functionality
+	const submitCode = useSubmitCode();
+	const runCodeMutation = useRunCode();
+
+	// Internal state for coding
+	const [currentCode, setCurrentCode] = useState<string>("");
+	const [selectedLanguage, setSelectedLanguage] = useState<string>("cpp");
+	const [allSubmissions, setAllSubmissions] = useState<CodeSubmissionWithResults[]>(initialSubmissions);
+
+	// Notify parent about initial submission state when submissions load
+	useEffect(() => {
+		if (onSubmissionUpdate && allSubmissions.length >= 0) {
+			const hasAccepted = allSubmissions.some(sub => getSubmissionStatus(sub).allPassed);
+			onSubmissionUpdate(question.id, allSubmissions.length > 0, hasAccepted);
+		}
+	}, [allSubmissions, onSubmissionUpdate, question.id]);
+
 	// State for console visibility and active tab
 	const [consoleVisible, setConsoleVisible] = useState(false);
 
@@ -57,6 +86,34 @@ export const QuestionContentCoding = ({
 			expected: string;
 		};
 	}>({ status: "none", message: "" });
+
+	// Initialize code from localStorage or submissions when component mounts
+	useEffect(() => {
+		// Try localStorage first with language-specific key
+		const key = `interview_${interviewId}_question_${question.id}_${selectedLanguage}_code`;
+		let localCode = "";
+		try {
+			localCode = localStorage.getItem(key) || "";
+		} catch (error) {
+			console.warn("Failed to get code from localStorage:", error);
+		}
+		
+		if (localCode && localCode.trim() && localCode !== interviewId && localCode !== question.id) {
+			setCurrentCode(localCode);
+		} else {
+			// Fall back to most recent submission
+			if (allSubmissions.length > 0) {
+				const mostRecent = allSubmissions.sort((a, b) => 
+					new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
+				)[0];
+				setCurrentCode(mostRecent.code || "");
+			} else {
+				// Fall back to starter code
+				const starterCode = question.starterCode?.codeStarter?.[selectedLanguage as keyof typeof question.starterCode.codeStarter] || "";
+				setCurrentCode(starterCode);
+			}
+		}
+	}, [interviewId, question.id, allSubmissions, selectedLanguage]);
 
 	// State for panel resizing
 	const [leftPanelWidth, setLeftPanelWidth] = useState(50); // percentage
@@ -111,7 +168,94 @@ export const QuestionContentCoding = ({
 		};
 	}, [isResizing, handleMouseMove, handleMouseUp]);
 
-	const currentCode = userAnswers[question.id] || "";
+	// Handler functions for coding functionality
+	const handleCodeChange = (code: string) => {
+		setCurrentCode(code);
+		// Save code to localStorage automatically with language-specific key
+		const key = `interview_${interviewId}_question_${question.id}_${selectedLanguage}_code`;
+		try {
+			localStorage.setItem(key, code);
+		} catch (error) {
+			console.warn("Failed to save code to localStorage:", error);
+		}
+	};
+
+	const handleLanguageChange = (language: string) => {
+		setSelectedLanguage(language);
+		
+		// Check if user has saved code for this language
+		const key = `interview_${interviewId}_question_${question.id}_${language}_code`;
+		let savedCode = "";
+		try {
+			savedCode = localStorage.getItem(key) || "";
+		} catch (error) {
+			console.warn("Failed to get code from localStorage:", error);
+		}
+		
+		if (savedCode && savedCode.trim()) {
+			// Use saved code if it exists
+			setCurrentCode(savedCode);
+		} else {
+			// Load starter code for the new language if no saved code
+			const starterCode = question.starterCode?.codeStarter?.[language as keyof typeof question.starterCode.codeStarter] || "";
+			setCurrentCode(starterCode);
+			
+			// Save the starter code to localStorage for this language
+			try {
+				localStorage.setItem(key, starterCode);
+			} catch (error) {
+				console.warn("Failed to save code to localStorage:", error);
+			}
+		}
+	};
+
+	const handleCodeSubmission = async (code: string, language: string) => {
+		if (!code.trim()) return;
+
+		try {
+			const submission = await submitCode.mutateAsync({
+				interviewId,
+				questionId: question.id,
+				code,
+				language
+			});
+
+			// Update submission history
+			setAllSubmissions(prev => {
+				const newSubmissions = [submission, ...prev];
+				// Notify parent about submission update
+				if (onSubmissionUpdate) {
+					const hasAccepted = newSubmissions.some(sub => getSubmissionStatus(sub).allPassed);
+					onSubmissionUpdate(question.id, newSubmissions.length > 0, hasAccepted);
+				}
+				return newSubmissions;
+			});
+
+			return submission;
+		} catch (error) {
+			console.error("Code submission failed:", error);
+			throw error;
+		}
+	};
+
+	// Submission history functions
+	const getSubmissionHistory = () => {
+		return allSubmissions;
+	};
+
+	const getSubmissionCount = () => {
+		return allSubmissions.length;
+	};
+
+	const hasAcceptedSubmission = () => {
+		return allSubmissions.some(sub => getSubmissionStatus(sub).allPassed);
+	};
+
+	// console.log("QuestionContentCoding Debug:", {
+	// 	questionId: question.id,
+	// 	currentCode,
+	// 	selectedLanguage
+	// });
 
 	// Get available languages from the question's starter code
 	const getAvailableLanguages = () => {
@@ -144,14 +288,11 @@ export const QuestionContentCoding = ({
 	useEffect(() => {
 		const availableLanguages = getAvailableLanguages();
 		if (availableLanguages.length > 0 && !availableLanguages.find(lang => lang.value === selectedLanguage)) {
-			onLanguageChange(availableLanguages[0].value);
+			handleLanguageChange(availableLanguages[0].value);
 		}
-	}, [question]);
+	}, [question, selectedLanguage]);
 
-	// Handle problem solving answer (code changes)
-	const handleCodingAnswer = (questionId: string, answer: string) => {
-		setUserAnswers(questionId, answer);
-	};
+
 
 	return (
 		<div className="font-['Nunito'] mt-4 sm:mt-2 md:mt-0 lg:-mt-2 xl:-mt-4 flex relative" ref={containerRef}>
@@ -253,72 +394,45 @@ export const QuestionContentCoding = ({
 					<Card className="shadow-md border border-gray-200 overflow-visible h-auto">
 						<CardContent className="p-6">
 							<h3 className="font-bold text-xl mb-4">Submissions</h3>
-							{getSubmissionHistory(question.id).length === 0 ? (
+							{getSubmissionHistory().length === 0 ? (
 								<p className="text-gray-500 text-center py-8">
 									No submissions yet
 								</p>
 							) : (
 								<div className="space-y-4">
-									{getSubmissionHistory(question.id).map((submission: CodeSubmissionWithResults, index: number) => (
-										<div
-											key={index}
-											className="border border-gray-400 rounded-lg p-4 hover:bg-gray-50 transition-colors"
-										>
-											<div className="flex justify-between items-start mb-2">
-												<div className="flex items-center gap-3">
-													<span
-														className={`px-2 py-1 rounded text-sm font-medium ${
-															submission.testCaseResults?.every((result: any) => result.passed === true)
-																? "bg-green-100 text-green-700"
-																: "bg-red-100 text-red-700"
-														}`}
-													>
-														{submission.testCaseResults?.every((result: any) => result.passed === true)
-															? "Accepted"
-															: "Wrong Answer"}
-													</span>
-													<span className="text-gray-600 text-sm">
-														{submission.language}
-													</span>
-												</div>
-												<span className="text-gray-500 text-sm">
-													{new Date(submission.submittedAt).toLocaleString()}
-												</span>
-											</div>
-											<div className="text-sm text-gray-600 mb-2">
-												{submission.testCaseResults?.every((result: any) => result.passed === true)
-													? "Your solution passed all test cases. Great job!"
-													: "Your solution failed on some test cases. Check the error details and try again."}
-											</div>
-											<div className="text-sm">
-												<span className="font-medium">Test Cases: </span>
-												<span
-													className={`${
-														submission.testCaseResults?.every((result: any) => result.passed === true)
-															? "text-green-600"
-															: "text-red-600"
-													}`}
-												>
-													{submission.testCaseResults?.filter((result: any) => result.passed === true).length || 0}/
-													{submission.testCaseResults?.length || 0} passed
-												</span>
-											</div>
-											{submission.testCaseResults && !submission.testCaseResults.every((result: any) => result.passed === true) && (
-												<div className="mt-3 p-3 bg-gray-100 rounded text-sm">
-													<div className="font-medium text-gray-700 mb-1">
-														First failed test case:
+									{getSubmissionHistory().map((submission: CodeSubmissionWithResults, index: number) => {
+										const status = getSubmissionStatus(submission);
+										
+										return (
+											<div
+												key={index}
+												className="border border-gray-400 rounded-lg p-4 hover:bg-gray-50 transition-colors"
+											>
+												<div className="flex justify-between items-start mb-2">
+													<div className="flex items-center gap-3">
+														<span className={`px-2 py-1 rounded text-sm font-medium ${status.statusColor}`}>
+															{status.statusText}
+														</span>
+														<span className="text-gray-600 text-sm">
+															{submission.language}
+														</span>
 													</div>
-													{submission.testCaseResults.find((result: any) => !result.passed) && (
-														<div className="text-gray-600">
-															<div><strong>Input:</strong> {submission.testCaseResults.find((result: any) => !result.passed)?.input || "N/A"}</div>
-															<div><strong>Your Output:</strong> {submission.testCaseResults.find((result: any) => !result.passed)?.actualOutput || "N/A"}</div>
-															<div><strong>Expected:</strong> {submission.testCaseResults.find((result: any) => !result.passed)?.expectedOutput || "N/A"}</div>
-														</div>
-													)}
+													<span className="text-gray-500 text-sm">
+														{new Date(submission.submittedAt).toLocaleString()}
+													</span>
 												</div>
-											)}
-										</div>
-									))}
+												<div className="text-sm text-gray-600 mb-2">
+													{status.message}
+												</div>
+												<div className="text-sm">
+													<span className="font-medium">Test Cases: </span>
+													<span className={status.countColor}>
+														{status.passedCount}/{status.totalCount} passed
+													</span>
+												</div>
+											</div>
+										);
+									})}
 								</div>
 							)}
 						</CardContent>
@@ -357,40 +471,53 @@ export const QuestionContentCoding = ({
 				style={{ width: `${100 - leftPanelWidth}%` }}
 			>
 				<EditorLayout
-					initialValue={
-						currentCode ||
-						question.starterCode?.codeStarter?.[selectedLanguage as keyof typeof question.starterCode.codeStarter] ||
-						"// Write your solution here\n"
-					}
+					value={currentCode}
 					language={selectedLanguage}
 					height="100%"
-					onChange={(value) =>
-						handleCodingAnswer(
-							question.id,
-							value || ""
-						)
-					}
-					onLanguageChange={(language) => onLanguageChange(language)}
+					onChange={handleCodeChange}
+					onLanguageChange={handleLanguageChange}
 					showConsole={consoleVisible}
 					consoleOutput={codeOutput}
 					question={question}
 					submissionStatus={submissionStatus}
-					onRun={() => {
-						// Simulate code execution
-						setCodeOutput(
-							"// Output would appear here\n// This is a simulated output\nconsole.log('Hello, world!');"
-						);
-						setConsoleVisible(true);
-						setConsoleTab("output");
-					}}
 					onSubmissionsTabClick={() => setActiveTab("submissions")}
+					isRunning={runCodeMutation.isPending}
+					allSubmissions={allSubmissions}
+					isSubmitting={submitCode.isPending}
+					onRun={async (testCaseIndex = 0) => {
+						try {
+							// Show console when running
+							setConsoleVisible(true);
+							
+							// Get the selected test case or default to first
+							const testCase = question.testCases?.[testCaseIndex] || question.testCases?.[0];
+							
+							// Call the run code function with selected test case
+							const result = await runCodeMutation.mutateAsync({
+								questionId: question.id,
+								language: selectedLanguage as 'python' | 'cpp' | 'java',
+								userCode: currentCode,
+								stdin: testCase?.input || "",
+								expected: testCase?.expectedOutput || "",
+								timeLimit: question.timeLimit || 2000,
+							});
+							
+							// Update console output
+							setCodeOutput(result.stdout || "No output");
+							
+						} catch (error) {
+							console.error("Run failed:", error);
+							setCodeOutput("Error: " + (error as Error).message);
+						}
+					}}
 					onSubmit={async () => {
 						try {
-							// Call the actual submission function from parent with selected language
-							await onSubmitCode(question.id, currentCode, selectedLanguage);
+							// Call the actual submission function with selected language
+							await handleCodeSubmission(currentCode, selectedLanguage);
 							
 							// Switch to submissions tab to show results
 							setActiveTab("submissions");
+							
 						} catch (error) {
 							console.error("Submission failed:", error);
 						}
