@@ -1162,7 +1162,33 @@ Output:
 true
 Constraints:
 1 <= s.length <= 10^4
-s consists of parentheses only '()[]{}'.",Easy,"String, Stack",,,,"class Solution:
+s consists of parentheses only '()[]{}'.",Easy,"String, Stack",,"()
+
+()[]{}
+
+(]
+
+([])
+
+))))
+
+((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((())))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+
+{}{{}{}{}{}{}{}{}}{{}{}{}}
+
+()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()[]{}{}{}{}{}{}{}{}{}[]
+
+}
+
+][","true
+true
+false
+true
+false
+false
+true
+false
+false","class Solution:
     def isValid(self, s: str) -> bool:
         ","class Solution {
 public:
@@ -1287,119 +1313,6 @@ import java.util.*;","public class Main {
         Solution sol = new Solution();
         String ans = sol.generateParenthesis(n);
         System.out.print(ans);
-        System.out.println();
-    }
-}"
-15,Merge k Sorted Lists,"You are given an array of k linked-lists lists, each linked-list is sorted in ascending order.
-Merge all the linked-lists into one sorted linked-list and return it.
-Example 1:
-Input: lists = [[1,4,5],[1,3,4],[2,6]]
-Output: [1,1,2,3,4,4,5,6]
-Explanation: The linked-lists are: [ 1->4->5, 1->3->4, 2->6 ] merging them into one sorted list: 1->1->2->3->4->4->5->6
-Example 2:
-Input: lists = []
-Output: []
-Example 3:
-Input: lists = [[]]
-Output: []
-Constraints:
-k == lists.length
-0 <= k <= 10^4
-0 <= lists[i].length <= 500
--10^4 <= lists[i][j] <= 10^4
-lists[i] is sorted in ascending order.
-The sum of lists[i].length will not exceed 10^4.",Hard,"Linked List, Divide and Conquer, Heap (Priority Queue), Merge Sort","Test Case 1:
-Input: lists = [[1,4,5],[1,3,4],[2,6]]
-Output: [1,1,2,3,4,4,5,6]
-Explanation: The linked-lists are:
-[
-  1->4->5,
-  1->3->4,
-  2->6
-]
-merging them into one sorted list:
-1->1->2->3->4->4->5->6
-
-Test Case 2:
-Input: lists = []
-Output: []
-
-Test Case 3:
-Input: lists = [[]]
-Output: []","
-
-
-
-","[1,1,2,3,4,4,5,6]
-[]
-[]","# Definition for singly-linked list.
-# class ListNode:
-#     def __init__(self, val=0, next=None):
-#         self.val = val
-#         self.next = next
-class Solution:
-    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
-        ","/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
-class Solution {
-public:
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
-        
-    }
-};","/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
-class Solution {
-    public ListNode mergeKLists(ListNode[] lists) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-
-    sol = Solution()
-    ans = sol.mergeKLists()
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-
-    Solution sol;
-    sol.mergeKLists();
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-
-        Solution sol = new Solution();
-        sol.mergeKLists();
         System.out.println();
     }
 }"
@@ -1568,102 +1481,6 @@ import java.util.*;","public class Main {
         Solution sol = new Solution();
         var ans = sol.divide(dividend, divisor);
         System.out.print(ans);
-        System.out.println();
-    }
-}"
-18,Substring with Concatenation of All Words,"You are given a string s and an array of strings words. All the strings of words are of the same length.
-A concatenated string is a string that exactly contains all the strings of any permutation of words concatenated.
-For example, if words = [""ab"",""cd"",""ef""], then ""abcdef"", ""abefcd"", ""cdabef"", ""cdefab"", ""efabcd"", and ""efcdab"" are all concatenated strings. ""acdbef"" is not a concatenated string because it is not the concatenation of any permutation of words.
-Return an array of the starting indices of all the concatenated substrings in s. You can return the answer in any order.
-Example 1:
-Input:
-s = ""barfoothefoobarman"", words = [""foo"",""bar""]
-Output:
-[0,9]
-Explanation:
-The substring starting at 0 is ""barfoo"". It is the concatenation of [""bar"",""foo""] which is a permutation of words.
-The substring starting at 9 is ""foobar"". It is the concatenation of [""foo"",""bar""] which is a permutation of words.
-Example 2:
-Input:
-s = ""wordgoodgoodgoodbestword"", words = [""word"",""good"",""best"",""word""]
-Output:
-[]
-Explanation:
-There is no concatenated substring.
-Example 3:
-Input:
-s = ""barfoofoobarthefoobarman"", words = [""bar"",""foo"",""the""]
-Output:
-[6,9,12]
-Explanation:
-The substring starting at 6 is ""foobarthe"". It is the concatenation of [""foo"",""bar"",""the""].
-The substring starting at 9 is ""barthefoo"". It is the concatenation of [""bar"",""the"",""foo""].
-The substring starting at 12 is ""thefoobar"". It is the concatenation of [""the"",""foo"",""bar""].
-Constraints:
-1 <= s.length <= 10^4
-1 <= words.length <= 5000
-1 <= words[i].length <= 30
-s and words[i] consist of lowercase English letters.",Hard,"Hash Table, String, Sliding Window",,,,"class Solution:
-    def findSubstring(self, s: str, words: List[str]) -> List[int]:
-        ","class Solution {
-public:
-    vector<int> findSubstring(string s, vector<string>& words) {
-        
-    }
-};","class Solution {
-    public List<Integer> findSubstring(String s, String[] words) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    s = data[line_idx]
-    line_idx += 1
-    words = data[line_idx]
-    line_idx += 1
-
-    sol = Solution()
-    ans = sol.findSubstring(s, words)
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    string s;
-    if (!(cin >> s)) return 0;
-    string words;
-    if (!(cin >> words)) return 0;
-
-    Solution sol;
-    vector<int> ans = sol.findSubstring(s, words);
-    cout << '[';
-    for (size_t i = 0; i < ans.size(); ++i) {
-        cout << ans[i] << (i + 1 == ans.size() ? ']' : ',');
-    }
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        String s = br.readLine();
-        String words = br.readLine();
-
-        Solution sol = new Solution();
-        int[] ans = sol.findSubstring(s, words);
-        System.out.print(""["");
-        for (int i = 0; i < ans.length; i++) {
-            System.out.print(ans[i] + (i == ans.length - 1 ? ""]"" : "",""));
-        }
         System.out.println();
     }
 }"
@@ -4807,110 +4624,6 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-52,Simplify Path,"You are given an absolute path for a Unix-style file system, which always begins with a slash '/'. Your task is to transform this absolute path into its simplified canonical path.
-The rules of a Unix-style file system are as follows:
-A single period '.' represents the current directory.
-A double period '..' represents the previous/parent directory.
-Multiple consecutive slashes such as '//' and '///' are treated as a single slash '/'.
-Any sequence of periods that does not match the rules above should be treated as a valid directory or
-file name. For example, '...' and '....' are valid directory or file names.
-The simplified canonical path should follow these rules:
-The path must start with a single slash '/'.
-Directories within the path must be separated by exactly one slash '/'.
-The path must not end with a slash '/', unless it is the root directory.
-The path must not have any single or double periods ( '.' and '..' ) used to denote current or parent directories.
-Return the simplified canonical path.
-Example 1:
-Input:
-path = ""/home/""
-Output:
-""/home""
-Explanation:
-The trailing slash should be removed.
-Example 2:
-Input:
-path = ""/home//foo/""
-Output:
-""/home/foo""
-Explanation:
-Multiple consecutive slashes are replaced by a single one.
-Example 3:
-Input:
-path = ""/home/user/Documents/../Pictures""
-Output:
-""/home/user/Pictures""
-Explanation:
-A double period "".."" refers to the directory up a level (the parent directory).
-Example 4:
-Input:
-path = ""/../""
-Output:
-""/""
-Explanation:
-Going one level up from the root directory is not possible.
-Example 5:
-Input:
-path = ""/.../a/../b/c/../d/./""
-Output:
-""/.../b/d""
-Explanation:
-""..."" is a valid name for a directory in this problem.
-Constraints:
-1 <= path.length <= 3000
-path consists of English letters, digits, period '.', slash '/' or '_'.
-path is a valid absolute Unix path.",Medium,"String, Stack",,,,"class Solution:
-    def simplifyPath(self, path: str) -> str:
-        ","class Solution {
-public:
-    string simplifyPath(string path) {
-        
-    }
-};","class Solution {
-    public String simplifyPath(String path) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    path = data[line_idx]
-    line_idx += 1
-
-    sol = Solution()
-    ans = sol.simplifyPath(path)
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    string path;
-    if (!(cin >> path)) return 0;
-
-    Solution sol;
-    string ans = sol.simplifyPath(path);
-    cout << ans;
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        String path = br.readLine();
-
-        Solution sol = new Solution();
-        String ans = sol.simplifyPath(path);
-        System.out.print(ans);
-        System.out.println();
-    }
-}"
 53,Edit Distance,"Given two strings word1 and word2, return the minimum number of operations required to convert word1 to word2.
 You have the following three operations permitted on a word:
 Insert a character
@@ -6304,96 +6017,6 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-67,Decode Ways,"You have intercepted a secret message encoded as a string of numbers. The message is decoded via the following mapping:
-""1"" -> 'A'
-""2"" -> 'B'
-...
-""25"" -> 'Y'
-""26"" -> 'Z'
-However, while decoding the message, you realize that there are many different ways you can decode the message because some codes are contained in other codes ( ""2"" and ""5"" vs ""25"" ).
-For example, ""11106"" can be decoded into:
-""AAJF"" with the grouping (1, 1, 10, 6)
-""KJF"" with the grouping (11, 10, 6)
-The grouping (1, 11, 06) is invalid because ""06"" is not a valid code (only ""6"" is valid).
-Note: there may be strings that are impossible to decode.
-Given a string s containing only digits, return the number of ways to decode it. If the entire string cannot be decoded in any valid way, return 0.
-The test cases are generated so that the answer fits in a 32-bit integer.
-Example 1:
-Input:
-s = ""12""
-Output:
-2
-Explanation:
-""12"" could be decoded as ""AB"" (1 2) or ""L"" (12).
-Example 2:
-Input:
-s = ""226""
-Output:
-3
-Explanation:
-""226"" could be decoded as ""BZ"" (2 26), ""VF"" (22 6), or ""BBF"" (2 2 6).
-Example 3:
-Input:
-s = ""06""
-Output:
-0
-Explanation:
-""06"" cannot be mapped to ""F"" because of the leading zero (""6"" is different from ""06""). In this case, the string is not a valid encoding, so return 0.
-Constraints:
-1 <= s.length <= 100
-s contains only digits and may contain leading zero(s).",Medium,"String, Dynamic Programming",,,,"class Solution:
-    def numDecodings(self, s: str) -> int:
-        ","class Solution {
-public:
-    int numDecodings(string s) {
-        
-    }
-};","class Solution {
-    public int numDecodings(String s) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    s = data[line_idx]
-    line_idx += 1
-
-    sol = Solution()
-    ans = sol.numDecodings(s)
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    string s;
-    if (!(cin >> s)) return 0;
-
-    Solution sol;
-    auto ans = sol.numDecodings(s);
-    cout << ans;
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        String s = br.readLine();
-
-        Solution sol = new Solution();
-        var ans = sol.numDecodings(s);
-        System.out.print(ans);
-        System.out.println();
-    }
-}"
 68,Restore IP Addresses,"A valid IP address consists of exactly four integers separated by single dots. Each integer is between 0 and 255 ( inclusive ) and cannot have leading zeros.
 For example, ""0.1.2.201"" and ""192.168.1.1"" are valid IP addresses, but ""0.011.255.245"", ""192.168.1.312"" and ""192.168@1.1"" are invalid IP addresses.
 Given a string s containing only digits, return all possible valid IP addresses that can be formed by inserting dots into s. You are not allowed to reorder or remove any digits in s. You may return the valid IP addresses in any order.
@@ -7653,82 +7276,6 @@ import java.util.*;","public class Main {
         System.out.println();
     }
 }"
-81,Surrounded Regions,"You are given an m x n matrix board containing letters
-'X' and 'O', capture regions that are surrounded:
-Connect: A cell is connected to adjacent cells horizontally or vertically.
-Region: To form a region connect every 'O' cell.
-Surround: The region is surrounded with 'X' cells if you can connect the region with 'X' cells and none of the region cells are on the edge of the board.
-To capture a surrounded region, replace all 'O' s with 'X' s in-place within the original board. You do not need to return anything.
-Example 1:
-Input:
-board = [[""X"",""X"",""X"",""X""],[""X"",""O"",""O"",""X""],[""X"",""X"",""O"",""X""],[""X"",""O"",""X"",""X""]]
-Output:
-[[""X"",""X"",""X"",""X""],[""X"",""X"",""X"",""X""],[""X"",""X"",""X"",""X""],[""X"",""O"",""X"",""X""]]
-Explanation:
-the bottom region is not captured because it is on the edge of the board and cannot be surrounded.
-Example 2:
-Input:
-board = [[""X""]]
-Output:
-[[""X""]]
-Constraints:
-m == board.length
-n == board[i].length
-1 <= m, n <= 200
-board[i][j] is 'X' or 'O'.",Medium,"Array, Depth-First Search, Breadth-First Search, Union Find, Matrix",,,,"class Solution:
-    def solve(self, board: List[List[str]]) -> None:
-        """"""
-        Do not return anything, modify board in-place instead.
-        """"""
-        ","class Solution {
-public:
-    void solve(vector<vector<char>>& board) {
-        
-    }
-};","class Solution {
-    public void solve(char[][] board) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    board = data[line_idx]
-    line_idx += 1
-
-    sol = Solution()
-    ans = sol.solve(board)
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    string board;
-    if (!(cin >> board)) return 0;
-
-    Solution sol;
-    sol.solve(board);
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        String board = br.readLine();
-
-        Solution sol = new Solution();
-        sol.solve(board);
-        System.out.println();
-    }
-}"
 82,Palindrome Partitioning,"Given a string s, partition s such that every substring of the partition is a palindrome. Return all possible palindrome partitioning of s.
 Example 1:
 Input: s = ""aab""
@@ -8105,88 +7652,6 @@ import java.util.*;","public class Main {
 
         Solution sol = new Solution();
         var ans = sol.candy(ratings);
-        System.out.print(ans);
-        System.out.println();
-    }
-}"
-86,Single Number,"Given a non-empty array of integers nums, every element appears twice except for one. Find that single one.
-You must implement a solution with a linear runtime complexity and use only constant extra space.
-Example 1:
-Input:
-nums = [2,2,1]
-Output:
-1
-Example 2:
-Input:
-nums = [4,1,2,1,2]
-Output:
-4
-Example 3:
-Input:
-nums = [1]
-Output:
-1
-Constraints:
-1 <= nums.length <= 3 * 10^4
--3 * 10^4 <= nums[i] <= 3 * 10^4
-Each element in the array appears twice except for one element which appears only once.",Easy,"Array, Bit Manipulation",,,,"class Solution:
-    def singleNumber(self, nums: List[int]) -> int:
-        ","class Solution {
-public:
-    int singleNumber(vector<int>& nums) {
-        
-    }
-};","class Solution {
-    public int singleNumber(int[] nums) {
-        
-    }
-}","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    n_nums = int(data[line_idx])
-    line_idx += 1
-    nums = list(map(int, data[line_idx].split()))
-    line_idx += 1
-
-    sol = Solution()
-    ans = sol.singleNumber(nums)
-
-    if isinstance(ans, list):
-        print(json.dumps(ans, separators=(',', ':')))
-    elif isinstance(ans, bool):
-        print('true' if ans else 'false')
-    else:
-        print(ans)","#include <bits/stdc++.h>
-using namespace std;","int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    int n_nums;
-    if (!(cin >> n_nums)) return 0;
-    vector<int> nums(n_nums);
-    for (int i = 0; i < n_nums; ++i) cin >> nums[i];
-
-    Solution sol;
-    auto ans = sol.singleNumber(nums);
-    cout << ans;
-    cout << '\n';
-    return 0;
-}","import java.io.*;
-import java.util.*;","public class Main {
-    public static void main(String[] args) throws Exception {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-
-        int n_nums = Integer.parseInt(br.readLine());
-        st = new StringTokenizer(br.readLine());
-        int[] nums = new int[n_nums];
-        for (int i = 0; i < n_nums; i++) {
-            nums[i] = Integer.parseInt(st.nextToken());
-        }
-
-        Solution sol = new Solution();
-        var ans = sol.singleNumber(nums);
         System.out.print(ans);
         System.out.println();
     }
