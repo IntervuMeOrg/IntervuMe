@@ -43,6 +43,7 @@ export const CodeSubmissionEntity = new EntitySchema<CodeSubmissionSchema>({
       type: "many-to-one",
       target: "interview",
       joinColumn: { name: "interviewId" },
+      onDelete: "CASCADE",
     },
     testCaseResults: {
       type: "one-to-many",

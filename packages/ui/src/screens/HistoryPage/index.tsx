@@ -293,7 +293,7 @@ export const HistoryPage = (): JSX.Element => {
 																		e.stopPropagation();
 																		window.scrollTo(0, 0);
 																		navigate(
-																			`/interview/${interview.userId}/results`
+																			`/interview/${interview.id}/results`
 																		);
 																	}}
 																>
