@@ -1,13 +1,16 @@
 import { motion } from "framer-motion";
-import { CalendarIcon, ClockIcon, BarChart4Icon } from "lucide-react";
+import { CalendarIcon, ClockIcon, BarChart4Icon,TrendingUpIcon, AwardIcon, AlertTriangleIcon } from "lucide-react";
 import type { InterviewHistoryResponse } from "../../lib/History/interview-history-api";
+import type { AnalyticsSummaryResponse } from "../../lib/History/interview-history-api";
 
 type HistoryStatsOverviewProps = {
   interviewHistory: InterviewHistoryResponse;
+  analyticsData: AnalyticsSummaryResponse
 };
 
 export const HistoryStatsOverview = ({
   interviewHistory,
+  analyticsData,
 }: HistoryStatsOverviewProps) => {
   if (!interviewHistory) {
     return (
@@ -48,6 +51,20 @@ export const HistoryStatsOverview = ({
     return total.toString();
   };
 
+    const getStatsData = () => {
+    const totalHours = interviewHistory?.totalPracticeTime ? formatPracticeTime(interviewHistory.totalPracticeTime) : 0;
+    const topPerformingSkill = interviewHistory?.bestSkill || "N/A";
+    const lowestPerformingSkill = interviewHistory?.skillNeedsFocus || "N/A";
+
+    return {
+      totalHours,
+      topPerformingSkill,
+      lowestPerformingSkill,
+    };
+  };
+
+  const statsData = getStatsData();
+
   const stats = [
     {
       icon: <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#e8eef2] flex-shrink-0" />,
@@ -73,8 +90,32 @@ export const HistoryStatsOverview = ({
       delay: 0.4,
       hasData: isValidValue(interviewHistory.totalPracticeTime),
     },
+     {
+      icon: <TrendingUpIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
+      title: "Days Active",
+      value: analyticsData?.success 
+        ? analyticsData.data.totalDays.toString() 
+        : "0",
+      subtitle: interviewHistory?.bestSkill 
+        ? `Best: ${interviewHistory.bestSkill}` 
+        : (interviewHistory?.skillNeedsFocus ? `Focus: ${interviewHistory.skillNeedsFocus}` : "No data yet"),
+      delay: 0.3,
+    },
+    {
+      icon: <AwardIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
+      title: "Top Skill",
+      value: statsData.topPerformingSkill,
+      subtitle: "Best performing area",
+      delay: 0.6,
+    },
+    {
+      icon: <AlertTriangleIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
+      title: "Focus Area",
+      value: statsData.lowestPerformingSkill,
+      subtitle: "Needs improvement",
+      delay: 0.7,
+    },
   ];
-  console.log("SSS",interviewHistory)
 
   return (
     <motion.section
