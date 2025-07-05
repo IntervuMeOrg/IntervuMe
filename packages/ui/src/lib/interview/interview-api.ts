@@ -1,5 +1,6 @@
 import api from '../api';
 import { McqQuestion, CodingQuestion } from '../../types/questions';
+import { FeedbackResponse } from '../../types/ai';
 
 // Types
 export interface CreateInterviewRequest {
@@ -121,6 +122,7 @@ export interface InterviewResponse {
   createdAt: string;
   updatedAt: string;
   jobTitle?: string;
+  feedback?: FeedbackResponse;
 }
 
 export interface InterviewSessionResponse extends InterviewResponse {

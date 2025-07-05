@@ -6,6 +6,7 @@ import { ResultSummaryOverallFeedback } from "./ResultSummaryOverallFeedback";
 import { ResultSummaryPerformanceBreakdown } from "./ResultSummaryPerformanceBreakdown";
 import { ResultSummaryStatsGrid } from "./ResultSummaryStatsGrid";
 import { ResultSummaryActionButtons } from "./ResultSummaryActionButtons";
+import { McqAnswer } from "../../types/mcq";
 
 type Question = McqQuestion | CodingQuestion;
 
@@ -17,7 +18,7 @@ interface ResultSummaryCardProps {
 	totalQuestions: number;
 	overallPercentage:number;
 	accuracy:number;
-	userAnswers: Record<number, string>;
+	userAnswers: McqAnswer[];
 	setShowDetailedFeedback: (show: boolean) => void;
 }
 
@@ -134,12 +135,7 @@ export const ResultSummaryCard = ({
 				/>
 
 				{/* Overall Feedback Section */}
-				<ResultSummaryOverallFeedback
-					accuracy={accuracy}
-					totalQuestions={totalQuestions}
-					correctAnswers={correctAnswers}
-					overallPercentage={overallPercentage}
-				/>
+				<ResultSummaryOverallFeedback/>
 
 				{/* Performance Breakdown */}
 				<ResultSummaryPerformanceBreakdown questions={questions} userAnswers={userAnswers} />
