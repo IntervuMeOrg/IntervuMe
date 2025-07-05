@@ -221,7 +221,7 @@ export const interviewService = {
     const aiAnalysis = await aiService.analyzeJobDescription(
       request.jobDescription,
       MODEL_NAME,
-      5
+      10
     );
 
     console.log(aiAnalysis);

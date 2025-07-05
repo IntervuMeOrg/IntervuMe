@@ -1,23 +1,85 @@
 import { motion } from "framer-motion";
+import type { InterviewHistoryResponse } from "../../lib/History/interview-history-api";
+import type { AnalyticsSummaryResponse } from "../../lib/History/interview-history-api";
 
-export const DashboardStats = () => {
+type DashboardStatsProps = {
+  interviewHistory?: InterviewHistoryResponse;
+  analyticsSummary?: AnalyticsSummaryResponse;
+};
+
+export const DashboardStats = ({ interviewHistory, analyticsSummary }: DashboardStatsProps) => {
+  // Helper function to format practice time
+  const formatPracticeTime = (minutes: number) => {
+    if (minutes < 60) return `${minutes}m`;
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
+  };
+
+  // Helper function to format improvement trend
+  const formatImprovementTrend = (trend?: number) => {
+    if (!trend) return "No change";
+    const sign = trend > 0 ? "+" : "";
+    return `${sign}${trend}% from last month`;
+  };
+
+  // Helper function to get the best data source for total interviews
+  const getTotalInterviews = () => {
+    // Prioritize analytics summary if available, fallback to interview history
+    if (analyticsSummary?.success && analyticsSummary.data.totalInterviews !== undefined) {
+      return analyticsSummary.data.totalInterviews;
+    }
+    return interviewHistory?.totalInterviews || 0;
+  };
+
+  // Helper function to get the best data source for average score
+  const getAverageScore = () => {
+    // Prioritize analytics summary if available, fallback to interview history
+    if (analyticsSummary?.success && analyticsSummary.data.overallAverage !== undefined) {
+      return analyticsSummary.data.overallAverage;
+    }
+    return interviewHistory?.averageScore;
+  };
+
+  // Helper function to format days active
+  const formatDaysActive = (days: number) => {
+    if (days === 0) return "Start today";
+    if (days === 1) return "1 day active";
+    if (days < 7) return `${days} days active`;
+    const weeks = Math.floor(days / 7);
+    const remainingDays = days % 7;
+    if (weeks === 1) {
+      return remainingDays > 0 ? `1 week, ${remainingDays} days` : "1 week";
+    }
+    return remainingDays > 0 ? `${weeks} weeks, ${remainingDays} days` : `${weeks} weeks`;
+  };
+
   const stats = [
     {
       title: "Interviews Completed",
-      value: "5",
-      subtitle: "+3 this month",
+      value: getTotalInterviews().toString(),
+      subtitle: analyticsSummary?.success 
+        ? formatDaysActive(analyticsSummary.data.totalDays)
+        : "Keep practicing!", // Fallback subtitle
       delay: 0.1,
     },
     {
       title: "Average Score",
-      value: "85%",
-      subtitle: "+5% from last month",
+      value: (() => {
+        const avgScore = getAverageScore();
+        return avgScore ? `${Math.round(avgScore)}%` : "N/A";
+      })(),
+      subtitle: formatImprovementTrend(interviewHistory?.improvementTrend),
       delay: 0.2,
     },
     {
-      title: "Skills Improved",
-      value: "8",
-      subtitle: "Technical & Soft Skills",
+      title: "Days Active",
+      value: analyticsSummary?.success 
+        ? analyticsSummary.data.totalDays.toString() 
+        : "0",
+      subtitle: interviewHistory?.bestSkill 
+        ? `Best: ${interviewHistory.bestSkill}` 
+        : (interviewHistory?.skillNeedsFocus ? `Focus: ${interviewHistory.skillNeedsFocus}` : "No data yet"),
       delay: 0.3,
     },
   ];

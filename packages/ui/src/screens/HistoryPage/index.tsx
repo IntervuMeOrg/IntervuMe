@@ -11,9 +11,10 @@ import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
 import {
 	useInterviewHistory,
 	useCompletedInterviews,
+	useUserPracticeAnalytics,
 } from "../../lib/History/interview-history-hooks";
 import { InterviewHistoryResponse } from "../../lib/History/interview-history-api";
-import type { InterviewWithStats } from "../../lib/History/interview-history-api";
+import type { AnalyticsSummaryResponse, InterviewWithStats } from "../../lib/History/interview-history-api";
 
 export const HistoryPage = (): JSX.Element => {
 	const user = useCurrentUser();
@@ -35,6 +36,12 @@ export const HistoryPage = (): JSX.Element => {
 		isLoading: isPendingCompleteInterview,
 		error: errorCompleteInterview,
 	} = useCompletedInterviews(user.data?.id as string);
+
+	const {
+		data: analyticsData,
+		isLoading: isLoadingAnalytics,
+		error: errorAnalytics,
+	} = useUserPracticeAnalytics(user.data?.id as string);
 
 	// State for active navigation item tracking
 	const activeNavItem = "History";
@@ -165,6 +172,7 @@ export const HistoryPage = (): JSX.Element => {
 							{/* Stats Overview Section */}
 							<HistoryStatsOverview
 								interviewHistory={interviewHistory as InterviewHistoryResponse}
+								analyticsData={analyticsData as AnalyticsSummaryResponse}
 							/>
 
 							{/* Performance Statistics Section */}

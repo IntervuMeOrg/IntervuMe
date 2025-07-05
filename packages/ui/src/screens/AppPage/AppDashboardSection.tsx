@@ -6,6 +6,8 @@ import { DashboardTipsTricks } from "./DashboardTipsTricsk";
 import { DashboardActionButtons } from "./DashboardActionButtons";
 import { DashboardRecentActivity } from "./DashboardRecentActivity";
 import { LightbulbIcon, TrendingUpIcon } from "lucide-react";
+import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
+import { useInterviewHistory, useUserPracticeAnalytics } from "../../lib/History/interview-history-hooks";
 
 type AppDashboardSectionProps = {
   historySectionRef: React.RefObject<HTMLElement>;
@@ -20,6 +22,22 @@ export const AppDashboardSection = ({
   const carouselRef = useRef<HTMLDivElement>(null);
   // State for active tip in carousel
   const [activeTip, setActiveTip] = useState(0);
+
+  // Get current user
+  const user = useCurrentUser();
+
+  // Fetch dashboard data
+  const {
+    data: interviewHistory,
+    isLoading: isLoadingHistory,
+    error: errorHistory,
+  } = useInterviewHistory(user.data?.id as string);
+
+  const {
+    data: analyticsSummary,
+    isLoading: isLoadingAnalytics,
+    error: errorAnalytics,
+  } = useUserPracticeAnalytics(user.data?.id as string);
 
   // Tips and tricks data
   const tipsAndTricks = [
@@ -81,12 +99,15 @@ export const AppDashboardSection = ({
         >
           Your Dashboard
         </motion.h2>
-
+        
         {/* Dashboard Components */}
         <div className="space-y-8 sm:space-y-10 md:space-y-12 3xl:space-y-14">
-          {/* Dashboard Stats */}
-          <DashboardStats />
-
+          {/* Dashboard Stats - now with proper data */}
+          <DashboardStats 
+            interviewHistory={interviewHistory}
+            analyticsSummary={analyticsSummary}
+          />
+          
           {/* Tips and Tricks Carousel Section */}
           <DashboardTipsTricks
             carouselRef={carouselRef}
@@ -95,10 +116,10 @@ export const AppDashboardSection = ({
             setActiveTip={setActiveTip}
             navigateTip={navigateTip}
           />
-
+          
           {/* Recent Activity */}
           <DashboardRecentActivity />
-
+          
           {/* Action Buttons */}
           <DashboardActionButtons navigate={navigate} />
         </div>
