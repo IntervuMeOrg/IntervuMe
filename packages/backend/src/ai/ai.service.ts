@@ -154,13 +154,11 @@ export const aiService = {
 
     const mcqTags = await mcqQuestionService.getAllUniqueTags();
 
-    const [mcqAllocation, similarity, codingDifficulty] = await Promise.all([
-      this.getMcqAlloc(jobDescription, langs, numMcqQuestions, modelName),
-      this.getSimilarity(
-        topics,
-        mcqTags, 
-        modelName
-      ),
+    const similarity = await this.getSimilarity(topics, mcqTags, modelName);
+    const matchedCategories = similarity.matched_skills.map(skill => skill.matched_category);
+
+    const [mcqAllocation, codingDifficulty] = await Promise.all([
+      this.getMcqAlloc(jobDescription, matchedCategories, numMcqQuestions, modelName),
       this.getCodingDifficulty(jobDescription, modelName),
     ]);
 
