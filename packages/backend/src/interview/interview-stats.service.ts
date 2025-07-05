@@ -18,8 +18,8 @@ export const interviewStatsService = {
     const interviews = await interviewRepository().find({ where: { userId } });
     if (!interviews || interviews.length === 0) {
       return {
-        totalInterviews: 0,
-        totalPracticeTime: 0,
+        totalInterviews: -1,
+        totalPracticeTime: -1,
       };
     }
 

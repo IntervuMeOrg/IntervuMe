@@ -19,12 +19,12 @@ export const HistoryStatsOverview = ({
 
   // Helper function to check if a value is valid
   const isValidValue = (value: any): boolean => {
-    return value !== null && value !== undefined && !isNaN(value) && value !== '';
+    return value !== null && value !== undefined && !isNaN(value) && value !== '' && value !== -1;
   };
 
   // Helper function to format practice time
   const formatPracticeTime = (totalMinutes: number): string => {
-    if (!isValidValue(totalMinutes) || totalMinutes === 0) {
+    if (!isValidValue(totalMinutes)) {
       return "No data";
     }
     const hours = Math.floor(totalMinutes / 60);
@@ -60,7 +60,7 @@ export const HistoryStatsOverview = ({
     {
       icon: <BarChart4Icon className="h-4 w-4 sm:h-5 sm:w-5 text-[#e8eef2] flex-shrink-0" />,
       title: "Average Score",
-      value: formatAverageScore(interviewHistory.averageScore),
+      value: formatAverageScore(interviewHistory.averageScore as number),
       subtitle: "Across all interviews",
       delay: 0.3,
       hasData: isValidValue(interviewHistory.averageScore),
@@ -74,6 +74,7 @@ export const HistoryStatsOverview = ({
       hasData: isValidValue(interviewHistory.totalPracticeTime),
     },
   ];
+  console.log("SSS",interviewHistory)
 
   return (
     <motion.section
