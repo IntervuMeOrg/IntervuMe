@@ -17,7 +17,10 @@ const mcqQuestionRepository = () => {
 
 export const mcqQuestionService = {
   async create(request: CreateMcqQuestionRequestBody): Promise<McqQuestion> {
-    const { options, ...questionFields } = request;
+    const { options, tags, ...questionFields } = request;
+
+    const lowercaseTags = tags.map((tag) => tag.toLowerCase());
+
     const normalizedOptions = options.map(({ optionText, isCorrect }) => ({
       id: apId(),
       optionText,
@@ -29,6 +32,7 @@ export const mcqQuestionService = {
       ...questionFields,
       difficulty: questionFields.difficulty || DifficultyLevel.MID,
       options: normalizedOptions,
+      tags: lowercaseTags,
     });
 
     return await mcqQuestionRepository().save(question);
@@ -126,18 +130,76 @@ export const mcqQuestionService = {
     },
     difficulty: string
   ): Promise<McqQuestion[]> {
-    const allQuestions: McqQuestion[] = [];
+    const allQuestionsSet = new Set<McqQuestion>();
+    const totalRequired = Object.values(tagCounts).reduce(
+      (sum, count) => sum + count,
+      0
+    );
+
+    const difficultyFallbacks: { [key: string]: string[] } = {
+      entry: ["mid", "senior"],
+      mid: ["entry", "senior"],
+      senior: ["mid", "entry"],
+    };
 
     for (const [tag, count] of Object.entries(tagCounts)) {
-      const questions = await mcqQuestionRepository()
+      let questions: McqQuestion[] = [];
+      let remainingCount = count;
+
+      const primaryQuestions = await mcqQuestionRepository()
         .createQueryBuilder("mcq")
-        .where("mcq.tags && :tags::varchar[]", { tags: [tag] })
-        .andWhere("mcq.difficulty = :difficulty", { difficulty: difficulty as DifficultyLevel })
+        .where("mcq.tags && :tags::varchar[]", { tags: [tag.toLowerCase()] })
+        .andWhere("mcq.difficulty = :difficulty", {
+          difficulty: difficulty as DifficultyLevel,
+        })
         .orderBy("RANDOM()")
-        .take(count)
+        .take(remainingCount)
         .getMany();
 
-      allQuestions.push(...questions);
+      questions.push(...primaryQuestions);
+      console.log(questions);
+      remainingCount -= primaryQuestions.length;
+
+      if (remainingCount > 0 && difficultyFallbacks[difficulty]) {
+        for (const fallbackDifficulty of difficultyFallbacks[difficulty]) {
+          if (remainingCount <= 0) break;
+
+          const fallbackQuestions = await mcqQuestionRepository()
+            .createQueryBuilder("mcq")
+            .where("mcq.tags && :tags::varchar[]", {
+              tags: [tag.toLowerCase()],
+            })
+            .andWhere("mcq.difficulty = :difficulty", {
+              difficulty: fallbackDifficulty as DifficultyLevel,
+            })
+            .orderBy("RANDOM()")
+            .take(remainingCount)
+            .getMany();
+
+          questions.push(...fallbackQuestions);
+          remainingCount -= fallbackQuestions.length;
+        }
+      }
+
+      questions.forEach((question) => allQuestionsSet.add(question));
+    }
+
+    let allQuestions = Array.from(allQuestionsSet);
+
+    if (allQuestions.length < totalRequired) {
+      const missingCount = totalRequired - allQuestions.length;
+      const existingIds = allQuestions.map((q) => q.id);
+      const allTags = Object.keys(tagCounts).map((tag) => tag.toLowerCase());
+
+      const additionalQuestions = await mcqQuestionRepository()
+        .createQueryBuilder("mcq")
+        .where("mcq.tags && :tags::varchar[]", { tags: allTags })
+        .andWhere("mcq.id NOT IN (:...existingIds)", { existingIds })
+        .orderBy("RANDOM()")
+        .take(missingCount)
+        .getMany();
+
+      allQuestions.push(...additionalQuestions);
     }
 
     return mcqQuestionService.shuffleArray(allQuestions);
