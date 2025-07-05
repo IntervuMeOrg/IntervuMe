@@ -19,13 +19,13 @@ export const HistoryStatsOverview = ({
 
   // Helper function to check if a value is valid
   const isValidValue = (value: any): boolean => {
-    return value !== null && value !== undefined && !isNaN(value) && value !== '' && value !== -1;
+    return value !== null && value !== undefined && !isNaN(value) && value !== '';
   };
 
   // Helper function to format practice time
   const formatPracticeTime = (totalMinutes: number): string => {
-    if (!isValidValue(totalMinutes)) {
-      return "No data";
+    if (!isValidValue(totalMinutes)){
+      return "N/A";
     }
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
@@ -35,7 +35,7 @@ export const HistoryStatsOverview = ({
   // Helper function to format average score
   const formatAverageScore = (score: number): string => {
     if (!isValidValue(score)) {
-      return "No data";
+      return "N/A";
     }
     return `${Math.round(score)}%`;
   };
@@ -43,7 +43,7 @@ export const HistoryStatsOverview = ({
   // Helper function to format total interviews
   const formatTotalInterviews = (total: number): string => {
     if (!isValidValue(total)) {
-      return "No data";
+      return "N/A";
     }
     return total.toString();
   };
@@ -119,7 +119,7 @@ export const HistoryStatsOverview = ({
               
               {/* Value */}
               <p className={`font-['Nunito'] text-xl sm:text-2xl md:text-3xl font-bold mb-2 ${
-                stat.hasData ? 'text-[#e8eef2]' : 'text-gray-400'
+                stat.hasData ? 'text-[#e8eef2]' : 'text-[#e8eef2]'
               }`}>
                 {stat.value}
               </p>

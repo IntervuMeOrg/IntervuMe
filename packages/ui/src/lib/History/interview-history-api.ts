@@ -28,6 +28,17 @@ export interface InterviewWithStats {
   uniqueTags: string[];
 }
 
+interface AnalyticsSummaryData {
+  totalDays: number;
+  totalInterviews: number;
+  overallAverage: number;
+}
+
+export interface AnalyticsSummaryResponse {
+  success: boolean;
+  data: AnalyticsSummaryData;
+}
+
 // API functions following your preferred style
 export const interviewHistoryApi = {
   getInterviewHistory(userId: string) {
@@ -36,6 +47,10 @@ export const interviewHistoryApi = {
 
   getCompletedInterviews(userId: string) {
     return api.get<InterviewWithStats[]>(`api/interview/user/${userId}/completed`);
+  },
+
+  getUserAnalyticsSummary(userId: string) {
+    return api.get<AnalyticsSummaryResponse>(`api/interview/user/${userId}/summary`);
   }
 
 //   getUpcomingInterviews(userId: string) {

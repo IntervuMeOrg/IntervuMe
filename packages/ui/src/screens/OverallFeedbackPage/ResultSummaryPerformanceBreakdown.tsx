@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
 import { CheckCircleIcon, XCircleIcon } from "lucide-react";
 import { McqQuestion, CodingQuestion } from "../../types/questions";
+import { McqAnswer } from "../../types/mcq";
 
 type ResultSummaryPerformanceBreakdownProps = {
 	questions: (McqQuestion | CodingQuestion)[];
-	userAnswers: Record<number, string>;
+	userAnswers: McqAnswer[];
 };
 
 export const ResultSummaryPerformanceBreakdown = ({
@@ -26,7 +27,9 @@ export const ResultSummaryPerformanceBreakdown = ({
 
 			<div className="space-y-3">
 				{questions.map((question, index) => {
-					const userAnswer = userAnswers[question.id];
+					const userAnswer = userAnswers.find(
+						(answer) => answer.questionId === question.id
+					)?.selectedOptionId;
 					const isCorrect =
 						question.type === "mcq"
 							? userAnswer === question.correctOptionId

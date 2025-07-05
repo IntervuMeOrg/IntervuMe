@@ -23,8 +23,12 @@ export interface SkillAssessment {
 }
 
 export interface StudyRecommendations {
-  studyResources: string[];
-  practiceAreas: string[];
+  recommendations: {
+    area: string;
+    priority: string;
+    actions: string[];
+    timeline: string;
+  }[];
 }
 
 // Main interface for all backend data
