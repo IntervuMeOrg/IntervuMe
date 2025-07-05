@@ -21,7 +21,9 @@ export const mcqQuestionService = {
 
     const lowercaseTags = tags.map((tag) => tag.toLowerCase());
 
-    const normalizedOptions = options.map(({ optionText, isCorrect }) => ({
+    const shuffledOptions = mcqQuestionService.shuffleArray(options);
+
+    const normalizedOptions = shuffledOptions.map(({ optionText, isCorrect }) => ({
       id: apId(),
       optionText,
       isCorrect,

@@ -1,27 +1,28 @@
-#!/usr/bin/env python3
-
 """
-CSV to MCQ Questions API Script
+CSV to MCQ Questions API Script (Parallel Version)
 
-This script reads a CSV file containing MCQ problems and creates them in your database via API calls.
+This script reads a CSV file containing MCQ problems and creates them in your database via parallel API calls.
 
 Requirements:
 - pandas
 - requests
+- tqdm
 
 Usage:
-1. Update the csv_file_path variable in main()
+1. Update the `csv_file_path` variable in main()
 2. Ensure your API server is running at http://localhost:3000
-3. Run: python csv_to_mcq_api_script.py
+3. Run: python csv_to_mcq_api_script_parallel.py
 """
 
 import pandas as pd
 import requests
 import json
-from typing import List, Dict, Optional
+from typing import List, Dict
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm
 
 # Add your authentication token
-AUTH_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJyRkY2STR2a0xodGZsc2RESU96UTYiLCJyb2xlIjoiYWRtaW4iLCJ0b2tlblZlcnNpb24iOiIwIiwiaWF0IjoxNzUxNjczNDIwLCJleHAiOjE3NTE3NTk4MjB9.hAANSAlWW-TUJFLBhxIgxLk3VxXKwuXl1_9ftUpbICI"
+AUTH_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJDODNQWW5UNTFQaEt1NVJ4WG5NY0siLCJyb2xlIjoiYWRtaW4iLCJ0b2tlblZlcnNpb24iOiIwIiwiaWF0IjoxNzUxNjkxMDQ3LCJleHAiOjE3NTE3Nzc0NDd9.VUXlvPCOsYv2gCMvQh7RkSr53pGglfNDzigrC9mugjw"
 
 # Common headers for all API requests
 API_HEADERS = {
@@ -29,291 +30,151 @@ API_HEADERS = {
     'Authorization': f'Bearer {AUTH_TOKEN}'
 }
 
+# Parallelism settings
+MAX_WORKERS = 10  # Adjust based on your CPU/IO capacity
+
+
 def map_experience_to_difficulty(experience_level: str) -> str:
-    """
-    Map experience level to difficulty
-    
-    Args:
-        experience_level: Experience level from CSV (Entry, Mid, Senior)
-    
-    Returns:
-        Lowercase difficulty string
-    """
     mapping = {
         'Entry': 'entry',
-        'Mid': 'mid', 
+        'Mid': 'mid',
         'Senior': 'senior'
     }
     return mapping.get(experience_level, 'entry')
 
+
 def map_difficulty_to_points(difficulty: int) -> int:
-    """
-    Map difficulty number to points
-    
-    Args:
-        difficulty: Difficulty number from CSV (1-4)
-    
-    Returns:
-        Points value
-    """
-    mapping = {
-        1: 10,
-        2: 20,
-        3: 30,
-        4: 40
-    }
+    mapping = {1: 10, 2: 20, 3: 30, 4: 40}
     return mapping.get(difficulty, 10)
 
+
 def create_mcq_options(row) -> List[Dict]:
-    """
-    Create options array for MCQ question
-    
-    Args:
-        row: Pandas DataFrame row containing MCQ data
-    
-    Returns:
-        List of option dictionaries
-    """
     options = []
-    
-    # Define option mapping
-    option_columns = ['option_a', 'option_b', 'option_c', 'option_d']
-    option_letters = ['A', 'B', 'C', 'D']
-    
-    correct_answer = str(row['correct_answer']).upper()
-    
-    for col, letter in zip(option_columns, option_letters):
-        if not pd.isna(row[col]):
-            option = {
-                "optionText": str(row[col]).strip(),
-                "isCorrect": letter == correct_answer
-            }
-            options.append(option)
-    
+    cols = ['option_a', 'option_b', 'option_c', 'option_d']
+    letters = ['A', 'B', 'C', 'D']
+    correct = str(row['correct_answer']).upper()
+
+    for col, letter in zip(cols, letters):
+        if pd.notna(row[col]):
+            options.append({
+                'optionText': str(row[col]).strip(),
+                'isCorrect': letter == correct
+            })
     return options
 
+
 def parse_tags(subcategory: str) -> List[str]:
-    """
-    Parse subcategory into tags array
-    
-    Args:
-        subcategory: Subcategory from CSV
-    
-    Returns:
-        List of tags
-    """
     if pd.isna(subcategory):
         return []
-    
-    # Clean and split subcategory, handle various formats
     tags = [tag.strip() for tag in str(subcategory).split(',') if tag.strip()]
-    if not tags:
-        tags = [str(subcategory).strip()]
-    
-    return tags
+    return tags or [str(subcategory).strip()]
 
-def create_mcq_question_payload(row) -> Dict:
-    """
-    Create the payload for the MCQ question API
-    
-    Args:
-        row: Pandas DataFrame row containing MCQ data
-    
-    Returns:
-        Dictionary payload for the API
-    """
-    
-    # Map basic fields
-    text = str(row['question']).strip()
-    difficulty = map_experience_to_difficulty(str(row['experience_level']))
-    points = map_difficulty_to_points(int(row['difficulty']))
-    
-    # Create options
-    options = create_mcq_options(row)
-    
-    # Parse tags from subcategory
-    tags = parse_tags(row['subcategory'])
-    
-    # Create payload
+
+def create_mcq_payload(row) -> Dict:
     payload = {
-        "text": text,
-        "allowMultiple": False,
-        "options": options,
-        "tags": tags,
-        "difficulty": difficulty,
-        "points": points
+        'text': str(row['question']).strip(),
+        'allowMultiple': False,
+        'options': create_mcq_options(row),
+        'tags': parse_tags(row['subcategory']),
+        'difficulty': map_experience_to_difficulty(str(row['experience_level'])),
+        'points': map_difficulty_to_points(int(row['difficulty']))
     }
-    
-    # Add explanation if available
-    if not pd.isna(row['explanation']):
-        explanation = str(row['explanation']).strip()
-        if explanation:
-            payload["explanation"] = explanation
-    
+    if pd.notna(row.get('explanation', None)):
+        expl = str(row['explanation']).strip()
+        if expl:
+            payload['explanation'] = expl
     return payload
 
-def process_csv_and_create_mcq_questions(csv_file_path: str, base_url: str = "http://localhost:3000"):
-    """
-    Main function to process CSV file and create MCQ questions via API
-    
-    Args:
-        csv_file_path: Path to the CSV file
-        base_url: Base URL of the API server
-    """
-    try:
-        # Read the CSV file
-        print(f"Reading CSV file: {csv_file_path}")
-        df = pd.read_csv(csv_file_path)
-        print(f"Found {len(df)} MCQ questions in the CSV file")
-        
-        # API endpoint
-        mcq_question_url = f"{base_url}/api/mcq-question/"
-        
-        success_count = 0
-        error_count = 0
-        
-        for index, row in df.iterrows():
-            if index == 100:
-                break
-            try:
-                print(f"\nProcessing MCQ question {index + 1}/{len(df)}")
-                
-                # Create MCQ question payload
-                question_payload = create_mcq_question_payload(row)
-                
-                # Debug: Show payload structure for first few questions
-                if index < 3:
-                    print(f"Sample payload: {json.dumps(question_payload, indent=2)}")
-                
-                # Create MCQ question
-                print(f"Creating MCQ question...")
-                response = requests.post(
-                    mcq_question_url,
-                    json=question_payload,
-                    headers=API_HEADERS,
-                    timeout=30
-                )
-                
-                if response.status_code in [200, 201]:
-                    success_count += 1
-                    print(f"✓ Successfully created MCQ question {index + 1}")
-                else:
-                    error_count += 1
-                    print(f"✗ Failed to create MCQ question {index + 1}: {response.status_code}")
-                    print(f"Response: {response.text}")
-                    
-            except requests.exceptions.RequestException as e:
-                error_count += 1
-                print(f"✗ Network error processing MCQ question {index + 1}: {str(e)}")
-                continue
-            except Exception as e:
-                error_count += 1
-                print(f"✗ Error processing MCQ question {index + 1}: {str(e)}")
-                continue
-        
-        print(f"\n=== MCQ Questions Summary ===")
-        print(f"Total MCQ questions: {len(df)}")
-        print(f"Successfully created: {success_count}")
-        print(f"Failed: {error_count}")
-        
-    except FileNotFoundError:
-        print(f"Error: CSV file '{csv_file_path}' not found")
-    except Exception as e:
-        print(f"Error reading CSV file: {str(e)}")
 
-def validate_mcq_csv_structure(csv_file_path: str) -> bool:
+def send_question(index: int, row, url: str) -> Dict:
     """
-    Validate that the CSV has all required columns for MCQ questions
-    
-    Args:
-        csv_file_path: Path to the CSV file
-    
-    Returns:
-        True if validation passes, False otherwise
+    Send a single MCQ question payload to the API.
+    Returns result dict with status and index.
     """
-    required_columns = [
-        'question', 'option_a', 'option_b', 'option_c', 'option_d', 
-        'correct_answer', 'subcategory', 'experience_level', 'difficulty'
-    ]
-    
     try:
-        df = pd.read_csv(csv_file_path)
-        missing_columns = [col for col in required_columns if col not in df.columns]
-        
-        if missing_columns:
-            print(f"Error: Missing required columns: {missing_columns}")
-            print(f"Available columns: {list(df.columns)}")
-            return False
-        
-        print("✓ MCQ CSV structure validation passed")
-        print(f"Found {len(df)} rows in the CSV file")
-        
-        # Show sample data
-        print(f"\nSample data preview:")
-        print(f"Experience levels: {df['experience_level'].unique()}")
-        print(f"Difficulties: {df['difficulty'].unique()}")
-        print(f"Correct answers: {df['correct_answer'].unique()}")
-        
-        return True
-        
+        payload = create_mcq_payload(row)
+        resp = requests.post(url, json=payload, headers=API_HEADERS, timeout=30)
+        if resp.status_code in (200, 201):
+            return {'index': index, 'status': 'success'}
+        else:
+            return {'index': index, 'status': 'error', 'code': resp.status_code, 'text': resp.text}
     except Exception as e:
-        print(f"Error validating CSV: {str(e)}")
-        return False
+        return {'index': index, 'status': 'error', 'exception': str(e)}
 
-def test_api_connection(base_url: str) -> bool:
-    """
-    Test if the API server is reachable
-    
-    Args:
-        base_url: Base URL of the API server
-    
-    Returns:
-        True if server is reachable, False otherwise
-    """
+
+def process_csv_parallel(csv_file_path: str, base_url: str = "http://localhost:3000"):
+    df = pd.read_csv(csv_file_path)
+    total = len(df)
+    url = f"{base_url}/api/mcq-question/"
+
+    success = 0
+    errors = 0
+    results = []
+
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = {executor.submit(send_question, idx, row, url): idx for idx, row in df.iterrows()}
+
+        for future in tqdm(as_completed(futures), total=total, desc="Uploading MCQs"):
+            res = future.result()
+            results.append(res)
+            if res['status'] == 'success':
+                success += 1
+            else:
+                errors += 1
+                print(f"✗ Question {res['index']+1} failed: {res.get('code', '')} {res.get('exception', '')} {res.get('text', '')}")
+
+    print(f"\n=== Summary ===")
+    print(f"Total: {total}, Success: {success}, Errors: {errors}")
+
+
+def validate_csv(csv_file_path: str) -> pd.DataFrame:
+    required = ['question', 'option_a', 'option_b', 'option_c', 'option_d', 
+                'correct_answer', 'subcategory', 'experience_level', 'difficulty']
+    df = pd.read_csv(csv_file_path)
+    missing = [c for c in required if c not in df.columns]
+    if missing:
+        raise ValueError(f"Missing columns: {missing}")
+    return df
+
+
+def test_connection(base_url: str) -> bool:
     try:
-        response = requests.get(f"{base_url}/health", headers=API_HEADERS, timeout=5)
-        print("✓ API server is reachable")
-        return True
+        resp = requests.get(f"{base_url}/health", headers=API_HEADERS, timeout=5)
+        return resp.ok
     except:
         try:
-            # Try a simple GET to the base URL
-            response = requests.get(base_url, headers=API_HEADERS, timeout=5)
-            print("✓ API server is reachable (no health endpoint)")
-            return True
+            resp = requests.get(base_url, headers=API_HEADERS, timeout=5)
+            return resp.ok
         except:
-            print(f"✗ Warning: Cannot reach API server at {base_url}")
-            print("Make sure your API server is running before proceeding")
             return False
 
-def main():
-    """
-    Main execution function
-    """
-    print("=== CSV to MCQ Questions API Script ===\n")
-    
-    # Configuration
-    csv_file_path = "faang_mcq_final_cleaned_576.csv"  # Update this to your CSV file path
-    base_url = "http://localhost:3000"
-    
-    print(f"CSV File: {csv_file_path}")
-    print(f"API Server: {base_url}\n")
-    
-    # Validate CSV structure
-    if not validate_mcq_csv_structure(csv_file_path):
-        return
-    
-    # Test API connection
-    test_api_connection(base_url)
-    
-    # Process confirmation
-    print(f"\nReady to process CSV file and create MCQ questions.")
-    response = input("Do you want to continue? (y/n): ")
-    if response.lower() != 'y':
-        print("Operation cancelled")
-        return
-    
-    # Process the CSV
-    process_csv_and_create_mcq_questions(csv_file_path, base_url)
 
-if __name__ == "__main__":
+def main():
+    print("=== CSV to MCQ Parallel Uploader ===\n")
+    csv_file = "faang_mcq_final_cleaned_576.csv"
+    base = "http://localhost:3000"
+
+    print(f"CSV file: {csv_file}")
+    print(f"API URL: {base}\n")
+
+    try:
+        validate_csv(csv_file)
+        print("CSV validation passed.")
+    except Exception as e:
+        print(f"CSV validation error: {e}")
+        return
+
+    if not test_connection(base):
+        print(f"✗ Cannot reach API at {base}")
+        return
+    print("API connection OK.\n")
+
+    cont = input("Proceed with uploading questions? (y/n): ")
+    if cont.lower() != 'y':
+        print("Cancelled.")
+        return
+
+    process_csv_parallel(csv_file, base)
+
+if __name__ == '__main__':
     main()
