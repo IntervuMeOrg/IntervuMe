@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { HistoryPerformanceBreakdown } from "./HistoryPerformanceBreakdown";
 import { HistoryPerformanceOverTimeChart } from "./HistoryPerformanceOverTimeChart";
 import type { InterviewWithStats } from "../../lib/History/interview-history-api";
 

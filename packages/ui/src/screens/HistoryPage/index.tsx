@@ -226,7 +226,7 @@ export const HistoryPage = (): JSX.Element => {
 														onClick={() => {
 															window.scrollTo(0, 0);
 															navigate(
-																`/interview/${interview.userId}/results`
+																`/interview/${interview.id}/results`
 															);
 														}}
 													>
