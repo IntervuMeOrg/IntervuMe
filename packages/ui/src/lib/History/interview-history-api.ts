@@ -12,6 +12,7 @@ export interface InterviewHistoryResponse {
 }
 
 export interface InterviewWithStats {
+  id: string; 
   userId: string;
   startTime: string;
   endTime?: string;
