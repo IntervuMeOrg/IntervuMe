@@ -3,12 +3,12 @@ import api from '../api';
 
 export interface InterviewHistoryResponse {
   totalInterviews: number;
-  averageScore: number;
+  averageScore?: number;
   totalPracticeTime: number;
-  bestSkill: string;
-  skillNeedsFocus: string;
-  latestScore: number;
-  improvementTrend: number;
+  bestSkill?: string;
+  skillNeedsFocus?: string;
+  latestScore?: number;
+  improvementTrend?: number;
 }
 
 export interface InterviewWithStats {
@@ -31,11 +31,11 @@ export interface InterviewWithStats {
 // API functions following your preferred style
 export const interviewHistoryApi = {
   getInterviewHistory(userId: string) {
-    return api.get<InterviewHistoryResponse>(`/user/${userId}/history`);
+    return api.get<InterviewHistoryResponse>(`api/interview/user/${userId}/history`);
   },
 
   getCompletedInterviews(userId: string) {
-    return api.get<InterviewWithStats[]>(`/user/${userId}/completed`);
+    return api.get<InterviewWithStats[]>(`api/interview/user/${userId}/completed`);
   }
 
 //   getUpcomingInterviews(userId: string) {

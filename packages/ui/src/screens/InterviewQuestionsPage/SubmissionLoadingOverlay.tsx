@@ -20,13 +20,12 @@ export const SubmissionLoadingOverlay: React.FC<SubmissionLoadingOverlayProps> =
 	const [isPaused, setIsPaused] = React.useState(false);
 
 	const submissionSteps = [
-		"Analyzing your answers...",
-		"Evaluating MCQ responses...",
-		"Reviewing coding submissions...",
-		"Calculating performance metrics...",
-		"Generating personalized feedback...",
-		"Preparing detailed report...",
-		"Finalizing your results...",
+		"Analyzing your answers",
+		"Evaluating MCQ responses",
+		"Reviewing coding submissions",
+		"Calculating performance metrics",
+		"Generating personalized feedback",
+		"Finalizing your results",
 	];
 
 	// Reset state when overlay becomes visible
@@ -125,30 +124,31 @@ export const SubmissionLoadingOverlay: React.FC<SubmissionLoadingOverlayProps> =
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 					transition={{ duration: 0.3 }}
-					className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+					className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+					style={{
+						WebkitBackdropFilter: "blur(8px)",
+					}}
 				>
 					<motion.div
 						initial={{ scale: 0.9, opacity: 0 }}
 						animate={{ scale: 1, opacity: 1 }}
 						exit={{ scale: 0.9, opacity: 0 }}
 						transition={{ duration: 0.3 }}
-						className="bg-white rounded-2xl shadow-2xl p-8 sm:p-10 3xl:p-12 max-w-md sm:max-w-lg 3xl:max-w-xl w-full mx-4"
+						className="bg-[#1d1d20] rounded-xl p-8 sm:p-10 3xl:p-12 max-w-md sm:max-w-lg 3xl:max-w-xl w-full mx-4"
 					>
 						<div className="text-center">
 							{/* Icon */}
 							<div className="mb-6 3xl:mb-8">
 								{isComplete ? (
-									<CheckCircle className="w-16 h-16 3xl:w-20 3xl:h-20 text-green-500 mx-auto" />
+									<CheckCircle className="w-16 h-16 3xl:w-20 3xl:h-20 text-green-400 mx-auto" />
 								) : (
-									<Loader2 className="w-16 h-16 3xl:w-20 3xl:h-20 text-blue-500 animate-spin mx-auto" />
+									<Loader2 className="w-16 h-16 3xl:w-20 3xl:h-20 text-[#0667D0] animate-spin mx-auto" />
 								)}
 							</div>
 
 							{/* Title */}
-							<h3 className="text-xl sm:text-2xl 3xl:text-3xl font-bold text-gray-900 mb-6">
-								{isComplete
-									? "Interview Submitted!"
-									: "Processing Your Interview"}
+							<h3 className="text-xl sm:text-2xl 3xl:text-3xl font-bold text-white mb-6">
+								{isComplete ? "Interview Submitted!" : "Processing Your Interview"}
 							</h3>
 
 							{/* Steps */}
@@ -165,32 +165,32 @@ export const SubmissionLoadingOverlay: React.FC<SubmissionLoadingOverlayProps> =
 										<div
 											className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0 ${
 												index < animatedStep
-													? "bg-green-500"
+													? "bg-green-400"
 													: index === animatedStep
-													? "bg-blue-500 animate-pulse"
-													: "bg-gray-300"
+													? "bg-[#0667D0] animate-pulse"
+													: "bg-white/20"
 											}`}
 										>
 											{index < animatedStep ? (
-												<Check className="w-3 h-3 text-white" />
+												<Check className="w-3 h-3 text-[#1d1d20]" />
 											) : index === animatedStep ? (
 												<div className="w-2 h-2 bg-white rounded-full animate-ping" />
 											) : (
-												<div className="w-2 h-2 bg-gray-400 rounded-full" />
+												<div className="w-2 h-2 bg-white/40 rounded-full" />
 											)}
 										</div>
 										<span
 											className={`text-sm ${
 												index === animatedStep
-													? "text-gray-900 font-medium"
+													? "text-white font-medium"
 													: index < animatedStep
-													? "text-gray-700"
-													: "text-gray-500"
+													? "text-[#e8eef2]"
+													: "text-[#e8eef2]/60"
 											}`}
 										>
 											{step}
 											{index === animatedStep && (
-												<span className="ml-1 text-blue-500 animate-pulse">
+												<span className="ml-1 text-[#0667D0] animate-pulse">
 													...
 												</span>
 											)}
@@ -200,18 +200,18 @@ export const SubmissionLoadingOverlay: React.FC<SubmissionLoadingOverlayProps> =
 							</div>
 
 							{/* Progress Bar */}
-							<div className="relative w-full h-3 3xl:h-4 bg-gray-200 rounded-full overflow-hidden">
+							<div className="relative w-full h-3 3xl:h-4 bg-white/20 rounded-full overflow-hidden">
 								<div
 									style={{
 										width: `${progress}%`,
 										transition: "width 0.3s ease-out",
 									}}
-									className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"
+									className="h-full bg-gradient-to-r from-[#0667D0] to-[#033464] rounded-full"
 								/>
 							</div>
 
 							{/* Progress info */}
-							<div className="flex justify-between text-xs 3xl:text-sm text-gray-600 mt-2">
+							<div className="flex justify-between text-xs 3xl:text-sm text-[#e8eef2]/80 mt-2">
 								<span>{Math.round(progress)}% Complete</span>
 								<span>
 									Step {Math.min(animatedStep + 1, submissionSteps.length)} of{" "}
