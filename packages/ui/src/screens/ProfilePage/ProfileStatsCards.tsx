@@ -32,19 +32,6 @@ export const ProfileStatsCards = () => {
   };
 
 
-  // Helper function to format days active
-    const formatDaysActive = (days: number) => {
-      if (days === 0) return "Start today";
-      if (days === 1) return "1 day active";
-      if (days < 7) return `${days} days active`;
-      const weeks = Math.floor(days / 7);
-      const remainingDays = days % 7;
-      if (weeks === 1) {
-        return remainingDays > 0 ? `1 week, ${remainingDays} days` : "1 week";
-      }
-      return remainingDays > 0 ? `${weeks} weeks, ${remainingDays} days` : `${weeks} weeks`;
-    };
-
   // Combine data from both sources
   const getStatsData = () => {
     const totalInterviews = analyticsData?.data.totalInterviews || interviewHistory?.totalInterviews || 0;
