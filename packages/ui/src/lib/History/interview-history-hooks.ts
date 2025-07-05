@@ -12,6 +12,7 @@ export const useInterviewHistory = (userId: string, options = {}) => {
         queryKey: ["interview-history", userId],
         queryFn: async () => {
             const response = await interviewHistoryApi.getInterviewHistory(userId);
+			
             return response.data;
         },
         enabled: !!userId,

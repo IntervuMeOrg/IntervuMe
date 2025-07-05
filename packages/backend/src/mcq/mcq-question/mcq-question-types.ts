@@ -7,9 +7,9 @@ import {
 } from "../mcq-option/mcq-option-types";
 
 export enum DifficultyLevel {
-  EASY = "easy",
-  MEDIUM = "medium",
-  HARD = "hard",
+  ENTRY = "entry",
+  MID = "mid",
+  SENIOR = "senior",
 }
 
 export const McqQuestion = Type.Object({

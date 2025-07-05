@@ -46,6 +46,7 @@ export interface KeywordExtractionResponse {
   programming_languages: string[];
   tools_technologies: string[];
   experience: string;
+  seniority: string;
   qualifications: string[];
   company_name: string;
 }
@@ -99,4 +100,5 @@ export interface ComprehensiveAnalysisResponse {
   mcqAllocation: AllocationResponse;
   similarity: SimilarityResponse;
   codingDifficulty: CodingDifficultyResponse;
+  seniority: string,
 }

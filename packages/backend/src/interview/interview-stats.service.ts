@@ -3,6 +3,7 @@ import {
   DayPracticeStats,
   Interview,
   InterviewStatus,
+  InterviewHistoryResponse,
   UserPracticeAnalytics,
 } from "./interview-types";
 import { InterviewEntity } from "./interview.entity";
@@ -13,10 +14,13 @@ const interviewRepository = () => {
 };
 
 export const interviewStatsService = {
-  async getHistory(userId: string) {
+  async getHistory(userId: string): Promise<InterviewHistoryResponse> {
     const interviews = await interviewRepository().find({ where: { userId } });
     if (!interviews || interviews.length === 0) {
-      throw new Error("User has no previous interviews");
+      return {
+        totalInterviews: -1,
+        totalPracticeTime: -1,
+      };
     }
 
     const completedInterviews = interviews.filter(
@@ -24,7 +28,10 @@ export const interviewStatsService = {
     );
 
     if (completedInterviews.length === 0) {
-      throw new Error("User has no completed interviews");
+      return {
+        totalInterviews: 0,
+        totalPracticeTime: 0,
+      };
     }
 
     const totalInterviews = completedInterviews.length;
