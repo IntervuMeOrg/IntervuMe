@@ -71,7 +71,7 @@ export const codeExecutionService = {
       // ensure List import once
       const headerWithTyping = header.includes("from typing")
         ? header
-        : `${header}\nfrom typing import List`;
+        : `${header}\nfrom typing import List\nfrom collections import defaultdict`;
 
       body = [headerWithTyping, userCode, footer].join("\n");
     } else {
