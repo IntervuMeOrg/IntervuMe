@@ -37,7 +37,7 @@ const interviewRepository = () => {
   return AppDataSource.getRepository(InterviewEntity);
 };
 
-const MODEL_NAME = "deepseek-r1";
+const MODEL_NAME = "gemini-2.5-flash";
 
 export const interviewService = {
   async getByUserId(userId: string): Promise<Interview[]> {
@@ -256,8 +256,9 @@ export const interviewService = {
       tagCounts[tagRequirement.tag.toLowerCase()] = tagRequirement.count;
     }
 
-    const mcqQuestions = await mcqQuestionService.getRandomByTagsAndCount(
-      tagCounts
+    const mcqQuestions = await mcqQuestionService.getRandomByTagsCountDifficulty(
+      tagCounts,
+      aiAnalysis.seniority,
     );
 
     for (const mcqQuestion of mcqQuestions) {

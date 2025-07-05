@@ -9,6 +9,7 @@ Analyze the following job description and extract relevant keywords. The extract
   "programming_languages": ["list of programming languages"],
   "tools_technologies": ["list of tools, platforms, cloud services, and frameworks"],
   "experience": "experience level or years",
+  "seniority": "Determine the seniority level based on the job requirements and responsibilities. Return exactly one of: 'entry' (junior/entry-level), 'mid' (mid-level/intermediate), or 'senior' (senior/expert-level)",
   "qualifications": ["list of qualifications"],
   "company_name": "the company name"
 }

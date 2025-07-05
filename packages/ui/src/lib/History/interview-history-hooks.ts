@@ -25,7 +25,6 @@ export const useCompletedInterviews = (userId: string, options = {}) => {
     queryKey: ["completed-interviews", userId],
     queryFn: async () => {
       const response = await interviewHistoryApi.getCompletedInterviews(userId);
-	  console.log("WE HERE 2",response.data)
       return response.data;
     },
     enabled: !!userId,
