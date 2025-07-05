@@ -20,7 +20,7 @@ IMPORTANT: Only extract information that is explicitly mentioned in the job desc
 - Do not assume, guess, or infer values that are not explicitly stated
 - Do not use placeholder values like "N/A", "Not specified", or similar
 
-Return only the JSON output.
+Return only the JSON output without backticks.
 Job Description:
 ${jobDescription}
 `;
