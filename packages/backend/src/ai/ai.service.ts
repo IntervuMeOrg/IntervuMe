@@ -12,14 +12,12 @@ import {
   AssessmentResults,
   FeedbackResponse,
   AllocationResponse,
-  MCQQuestion,
   KeywordExtractionResponse,
   SimilarityResponse,
   CodingDifficultyResponse,
   ComprehensiveAnalysisResponse,
 } from "./types";
 import { mcqQuestionService } from "../mcq/mcq-question/mcq-question.service";
-import { set } from "date-fns";
 
 // Model configuration
 const MODEL_CONFIGS = {
@@ -150,6 +148,7 @@ export const aiService = {
     const jobTitle = keywords.job_title;
     const langs = keywords.programming_languages;
     const techs = keywords.tools_technologies;
+    const seniority = keywords.seniority;
 
     const topics = [...new Set([...langs, ...techs])];
 
@@ -171,6 +170,7 @@ export const aiService = {
       mcqAllocation,
       similarity,
       codingDifficulty,
+      seniority,
     };
   },
 

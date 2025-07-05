@@ -18,7 +18,6 @@ const mcqQuestionRepository = () => {
 export const mcqQuestionService = {
   async create(request: CreateMcqQuestionRequestBody): Promise<McqQuestion> {
     const { options, ...questionFields } = request;
-
     const normalizedOptions = options.map(({ optionText, isCorrect }) => ({
       id: apId(),
       optionText,
@@ -28,7 +27,7 @@ export const mcqQuestionService = {
     const question = mcqQuestionRepository().create({
       id: apId(),
       ...questionFields,
-      difficulty: questionFields.difficulty || DifficultyLevel.MEDIUM,
+      difficulty: questionFields.difficulty || DifficultyLevel.MID,
       options: normalizedOptions,
     });
 
@@ -111,6 +110,29 @@ export const mcqQuestionService = {
       const questions = await mcqQuestionRepository()
         .createQueryBuilder("mcq")
         .where("mcq.tags && :tags::varchar[]", { tags: [tag] })
+        .orderBy("RANDOM()")
+        .take(count)
+        .getMany();
+
+      allQuestions.push(...questions);
+    }
+
+    return mcqQuestionService.shuffleArray(allQuestions);
+  },
+
+  async getRandomByTagsCountDifficulty(
+    tagCounts: {
+      [tag: string]: number;
+    },
+    difficulty: string
+  ): Promise<McqQuestion[]> {
+    const allQuestions: McqQuestion[] = [];
+
+    for (const [tag, count] of Object.entries(tagCounts)) {
+      const questions = await mcqQuestionRepository()
+        .createQueryBuilder("mcq")
+        .where("mcq.tags && :tags::varchar[]", { tags: [tag] })
+        .andWhere("mcq.difficulty = :difficulty", { difficulty: difficulty as DifficultyLevel })
         .orderBy("RANDOM()")
         .take(count)
         .getMany();
