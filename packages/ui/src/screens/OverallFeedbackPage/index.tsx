@@ -3,9 +3,13 @@ import { motion } from "framer-motion";
 import { NavbarLayout } from "../../components/layout/NavbarLayout";
 import { DetailedFeedbackView } from "./DetailedFeedbackView";
 import { ResultSummaryCard } from "./ResultSummaryCard";
-import { McqQuestion, CodingQuestion } from "../../types/questions";
+import { McqQuestion, CodingQuestion, McqOption } from "../../types/questions";
 import { DetailedFeedbackData } from "../../types/performance";
 import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
+import { useParams } from "react-router-dom";
+import { useMcqAnswers } from "../../lib/mcq/mcq-hooks";
+import { InterviewQuestionWithDetails } from "../../lib/interview/interview-api";
+import { useInterviewWithQuestions } from "../../lib/interview/interview-hooks";
 
 type Question = McqQuestion | CodingQuestion;
 
@@ -137,39 +141,61 @@ const feedbackData: DetailedFeedbackData = {
 };
 export const OverallFeedbackPage = (): JSX.Element => {
 	const user = useCurrentUser();
-
+	const params = useParams();
+	const interviewId = params.id as string;
 	const userName = user.data 
 		? `${user.data.firstName} ${user.data.lastName}`
 		: '';
 	// State for detailed feedback visibility
 	const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
 
-	// Mock questions data with correct answers and explanations
-	const [questions, setQuestions] = useState<Question[]>(
-		feedbackData.questions
-	);
+	const { data: interviewWithQuestions } = useInterviewWithQuestions(interviewId);
 
-	// Mock user answers
-	const [userAnswers, setUserAnswers] = useState<Record<number, string>>(
-		feedbackData.userAnswers
-	);
+		// Transform questions once (only when data is available)
+		const questions: Question[] = interviewWithQuestions?.interviewQuestions?.map(
+			(q: InterviewQuestionWithDetails) => {
+				if (q.questionType === "mcq") {
+					const mcqDetails = q.questionDetails as McqQuestion;
+					const correctOption = mcqDetails.options.find(
+						(opt: McqOption) => opt.isCorrect
+					);
+					return {
+						...mcqDetails,
+						id: q.questionId,
+						type: "mcq",
+						correctOptionId: correctOption ? correctOption.id : "",
+					} as McqQuestion;
+				} else {
+					const codingDetails = q.questionDetails as CodingQuestion;
+					return {
+						...codingDetails,
+						id: q.questionId,
+						type: "coding",
+					} as CodingQuestion;
+				}
+			}
+		) || [];
+
+	// Real user answers
+	const { data: userAnswers } = useMcqAnswers(interviewId);
+
 
 	// State for active navigation item tracking
 	const activeNavItem = "";
 
-	const totalPoints = feedbackData.questions.reduce(
+	const totalPoints = questions.reduce(
 		(sum, q) => sum + q.points,
 		0
 	);
 	const totalQuestions = questions.length;
-	const correctAnswers = feedbackData.questions.filter((q) => {
-		const userAnswer = feedbackData.userAnswers[q.id];
+	const correctAnswers = questions.filter((q) => {
+		const userAnswer = userAnswers[q.id];
 		return q.type === "mcq"
 			? userAnswer === q.correctOptionId
 			: !!(userAnswer && userAnswer.trim().length > 0);
 	}).length;
-	const earnedPoints = feedbackData.questions.reduce((sum, q) => {
-		const userAnswer = feedbackData.userAnswers[q.id];
+	const earnedPoints = questions.reduce((sum, q) => {
+		const userAnswer = userAnswers[q.id];
 		const isCorrect =
 			q.type === "mcq"
 				? userAnswer === q.correctOptionId
