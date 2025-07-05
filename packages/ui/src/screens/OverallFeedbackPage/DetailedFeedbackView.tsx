@@ -4,16 +4,105 @@ import { Button } from "../../components/ui/button";
 import { DetailedQuestionsFeedback } from "./DetailedQuestionsFeedback";
 import { DetailedPerformanceSection } from "./DetailedPerformanceSection";
 import { DetailedFeedbackData } from "../../types/performance";
+import { McqQuestion, McqOption, CodingQuestion } from "../../types/questions";
+import { InterviewQuestionWithDetails } from "../../lib/interview/interview-api";
+import { useParams } from "react-router-dom";
+import { useInterview } from "../../lib/interview/interview-hooks";
+import { FeedbackResponse } from "../../types/ai";
+import { useInterviewWithQuestions } from "../../lib/interview/interview-hooks";
+import { useMcqAnswers } from "../../lib/mcq/mcq-hooks";
+import { useCodeSubmissionsByInterviewAndQuestion } from "../../lib/coding/coding-hooks";
+
+type Question = McqQuestion | CodingQuestion;
 
 interface DetailedFeedbackViewProps {
-  data: DetailedFeedbackData;
   setShowDetailedFeedback: (show: boolean) => void;
 }
 
 export const DetailedFeedbackView = ({
-  data,
   setShowDetailedFeedback,
 }: DetailedFeedbackViewProps) => {
+
+  const params = useParams(); 
+	const interviewId = params.id as string;
+	const { data: interview } = useInterview(interviewId);
+	const feedback = interview?.feedback as FeedbackResponse;
+  const { data: interviewWithQuestions } = useInterviewWithQuestions(interviewId);
+  const { data: userAnswers } = useMcqAnswers(interviewId);
+
+	if (!feedback) {
+		return null;
+	}
+
+
+  const questions: Question[] = interviewWithQuestions?.interviewQuestions?.map(
+    (q: InterviewQuestionWithDetails) => {
+      if (q.questionType === "mcq") {
+        const mcqDetails = q.questionDetails as McqQuestion;
+        const correctOption = mcqDetails.options.find(
+          (opt: McqOption) => opt.isCorrect
+        );
+        return {
+          ...mcqDetails,
+          id: q.questionId,
+          type: "mcq",
+          correctOptionId: correctOption ? correctOption.id : "",
+        } as McqQuestion;
+      } else {
+        const codingDetails = q.questionDetails as CodingQuestion;
+        return {
+          ...codingDetails,
+          id: q.questionId,
+          type: "coding",
+        } as CodingQuestion;
+      }
+    }
+  ) || [];
+
+
+  let mcqCorrect = 0;
+  let mcqTotal = 0;
+  let problemSolvingCorrect = 0;
+  let problemSolvingTotal = 0;
+
+  questions.forEach((question) => {
+		const userAnswer = (userAnswers || []).find((answer) => answer.questionId === question.id)?.selectedOptionId;
+		if (question.type === "mcq") {
+			mcqTotal++;
+			if (userAnswer === question.correctOptionId) {
+				mcqCorrect++;
+			}
+		} else if (question.type === "coding") {
+			problemSolvingTotal++;
+      const { data: codeSubmissions } = useCodeSubmissionsByInterviewAndQuestion(interviewId, question.id);
+      // check if the user submited a code or not
+      if (codeSubmissions && codeSubmissions.data && codeSubmissions.data.length > 0) {
+        problemSolvingCorrect++;
+      }
+		}
+	});
+  const problemSolvingPercentage = (problemSolvingCorrect / problemSolvingTotal) * 100;
+  const mcqPercentage = (mcqCorrect / mcqTotal) * 100; 
+  const performanceMetrics = {
+    overallPercentage: feedback.overall_performance.score_percentage,
+    mcqPercentage: mcqPercentage,
+    mcqCorrect: mcqCorrect,
+    mcqTotal: mcqTotal,
+    problemSolvingPercentage: problemSolvingPercentage,
+    problemSolvingCorrect: problemSolvingCorrect,
+    problemSolvingTotal: problemSolvingTotal,
+  }
+
+
+  const skillAssessment = {
+    strengths: feedback.strengths.map((strength) => strength.details),
+    improvements: feedback.critical_gaps.map((improvement) => improvement.details),
+  }
+
+  const studyRecommendations = {
+    recommendations: feedback.recommendations,
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -37,16 +126,14 @@ export const DetailedFeedbackView = ({
 
       {/* Performance Analysis Section */}
       <DetailedPerformanceSection
-        performanceMetrics={data.performanceMetrics}
-        skillAssessment={data.skillAssessment}
-        studyRecommendations={data.studyRecommendations}
+        performanceMetrics={performanceMetrics}
+        skillAssessment={skillAssessment}
+        studyRecommendations={studyRecommendations}
       />
 
       {/* Questions Feedback */}
       <DetailedQuestionsFeedback
-        questions={data.questions}
-        userAnswers={data.userAnswers}
-        questionPerformances={data.questionPerformances}
+        questions={questions}
       />
     </motion.div>
   );
