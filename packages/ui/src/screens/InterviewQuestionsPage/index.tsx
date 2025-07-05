@@ -199,8 +199,8 @@ export const InterviewQuestionsPage = (): JSX.Element => {
 	// Handle submission updates from coding questions
 	const handleSubmissionUpdate = (questionId: string, hasSubmissions: boolean, hasAccepted: boolean) => {
 		setCodingQuestionStatus(prev => ({
-			...prev,
-			[questionId]: { hasSubmissions, hasAccepted }
+			[questionId]: { hasSubmissions, hasAccepted },
+			...prev
 		}));
 	};
 
