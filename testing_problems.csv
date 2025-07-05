@@ -441,7 +441,7 @@ Output: 5
 Explanation:
 intention -> inention (remove 't') inention -> enention (replace 'i' with 'e') enention -> exention (replace 'n' with 'x') exention -> exection (replace 'n' with 'c') exection -> execution (insert 'u')
 Constraints:
-0 <= word1.length, word2.length <= 500
+0 <= word1.length,word2.length <= 500
 word1 and word2 consist of lowercase English letters.",Medium,"String, Dynamic Programming","Test Case 1:
 Input: word1 = ""horse"", word2 = ""ros""
 Output: 3
@@ -470,9 +470,7 @@ i k
 
 love movie
 
-iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-
+iiiiiii aaaaaaa
 
 nwlrbbmqbhcdarzowkkyhiddqscdxrjmowfrxsjybldbefsarcbynecdyggxxpklorellnmpapqfwkhopkmcoqhnwnkuewhsqmgbbuqcljjivswmdkqtbxixmvtrrbljptnsnfwzqfjmafadrrwsofsbcnuvqhffbsaqxwpqcacehchzvfrkmlnozjkpqpxrjxkitzyxacbhhkicqcoendtomfgdwdwfcgpxiqvkuytdlcgdewhtaciohordtqkvwcsgspqoqmsboaguwnnyqxnzlgdgwpbtrwblnsadeuguumoqcdrubetokyxhoachwdvmxxrdryxlmndqtukwagmlejuukwcibxubumenmeyatdrmydiajxloghiqfmzhlvihjouvsuyoypayulyeimuotehzriicfskpggkbbipzzrzucxamludfykgruowzgiooobppleqlwphapjnadqhdcnvwdtxjbmyppphauxnspusgdhii hqflvvgkvbwxultiqeesbcxxkmwxrldgiqzlrmdsvfxvyzmulwvshywxsaarrjefilyffhgjujkzqebijegwikbhqheoyqbmkgavvokwfddcpmqgxeknvrcrgpnllvfdjnhmhzqtkzdguzuxllqmizmvwhopkbzzvmukrqjkwuwybwbtpzlegfhitdejkjrldrecntsruwvbbecwkwiyhxnigzaxqxqzwajrckpeosnxfwaxyqbnuwcibilxnkepqwmamjkikgmviuaoqhhskrhtfaxaqjvnlqvfhmuxyoaoogikwxlovyniesrbiuwbqxpgrrlxlsrfghxknoequagfydooeqwcvrovogyhgysunxlgsxcudrfiabckzgtbfpcbdiopmosisjusofsycgoinybtlccwzmejaaevvcjttltowrugfoxzsealoiqtaciiivjjfykfqjbujdhuxkbxwhpqxnrdvgsjjjbuorhmjomaxbcc
 
@@ -486,7 +484,7 @@ vdzgnwsxco pjgxuuuymr","3
 0
 1
 2
-500
+7
 446
 448
 10","class Solution:
@@ -667,7 +665,7 @@ Output: 4","3 2
 
 1 2
 -1000 1000","3
-5
+4
 1
 2
 4
@@ -761,14 +759,16 @@ import java.util.*;","public class Main {
             }
         }
 
-        return max;","        if len(points) <= 2:
+        return max;","class Solution:
+    def maxPoints(self, points: List[List[int]]) -> int:
+        if len(points) <= 2:
             return len(points)
         
         def find_slope(p1, p2):
             x1, y1 = p1
             x2, y2 = p2
             if x1-x2 == 0:
-                return inf
+                return 100000001
             return (y1-y2)/(x1-x2)
         
         ans = 1
@@ -778,7 +778,7 @@ import java.util.*;","public class Main {
                 slope = find_slope(p1, p2)
                 slopes[slope] += 1
                 ans = max(slopes[slope], ans)
-        return ans+1"
+        return ans+1        "
 6,Minimum Window Substring,"Given two strings s and t of lengths m and n respectively, return the minimum window
 substring of s such that every character in t ( including duplicates ) is included in the window. If there is no such substring, return the empty string """".
 The testcases will be generated such that the answer is unique.
@@ -790,10 +790,6 @@ Example 2:
 Input: s = ""a"", t = ""a""
 Output: ""a""
 Explanation: The entire string s is the minimum window.
-Example 3:
-Input: s = ""a"", t = ""aa""
-Output: """"
-Explanation: Both 'a's from t must be included in the window. Since the largest window of s only has one 'a', return empty string.
 Constraints:
 m == s.length
 n == t.length
@@ -807,13 +803,7 @@ Explanation: The minimum window substring ""BANC"" includes 'A', 'B', and 'C' fr
 Test Case 2:
 Input: s = ""a"", t = ""a""
 Output: ""a""
-Explanation: The entire string s is the minimum window.
-
-Test Case 3:
-Input: s = ""a"", t = ""aa""
-Output: """"
-Explanation: Both 'a's from t must be included in the window.
-Since the largest window of s only has one 'a', return empty string.","ADOBECODEBANC ABC
+Explanation: The entire string s is the minimum window.","ADOBECODEBANC ABC
 
 a a
 
@@ -829,15 +819,15 @@ aaaaaaaaaaaaaab ab
 
 cabwefgewcwaefgcf cae
 
-ajaJAj aaj","BANC
+ajaJAj a","BANC
 a
 ba
 aa
 aac
 th
-aaaaaaaaaaaaaab ab
+ab
 cwae
-aja","class Solution:
+a","class Solution:
     def minWindow(self, s: str, t: str) -> str:
         ","class Solution {
 public:
