@@ -159,7 +159,6 @@ export const mcqQuestionService = {
         .getMany();
 
       questions.push(...primaryQuestions);
-      console.log(questions);
       remainingCount -= primaryQuestions.length;
 
       if (remainingCount > 0 && difficultyFallbacks[difficulty]) {
