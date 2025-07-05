@@ -50,7 +50,7 @@ export const interviewHistoryApi = {
   },
 
   getUserAnalyticsSummary(userId: string) {
-    return api.get<AnalyticsSummaryResponse>(`api/interview/user/${userId}/summary`);
+    return api.get<AnalyticsSummaryResponse>(`api/interview/analytics/${userId}/summary`);
   }
 
 //   getUpcomingInterviews(userId: string) {
