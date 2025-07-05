@@ -25,7 +25,7 @@ export const HistoryStatsOverview = ({
   // Helper function to format practice time
   const formatPracticeTime = (totalMinutes: number): string => {
     if (!isValidValue(totalMinutes)){
-      return "No data";
+      return "N/A";
     }
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
@@ -35,7 +35,7 @@ export const HistoryStatsOverview = ({
   // Helper function to format average score
   const formatAverageScore = (score: number): string => {
     if (!isValidValue(score)) {
-      return "0%";
+      return "N/A";
     }
     return `${Math.round(score)}%`;
   };
@@ -43,7 +43,7 @@ export const HistoryStatsOverview = ({
   // Helper function to format total interviews
   const formatTotalInterviews = (total: number): string => {
     if (!isValidValue(total)) {
-      return "No data";
+      return "N/A";
     }
     return total.toString();
   };
