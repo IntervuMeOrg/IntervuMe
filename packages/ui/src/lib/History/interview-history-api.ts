@@ -31,11 +31,13 @@ export interface InterviewWithStats {
 // API functions following your preferred style
 export const interviewHistoryApi = {
   getInterviewHistory(userId: string) {
-    return api.get<InterviewHistoryResponse>(`/user/${userId}/history`);
+    
+    return api.get<InterviewHistoryResponse>(`api/interview/user/${userId}/history`);
   },
 
   getCompletedInterviews(userId: string) {
-    return api.get<InterviewWithStats[]>(`/user/${userId}/completed`);
+    console.log("we reach here")
+    return api.get<InterviewWithStats[]>(`api/interview/user/${userId}/completed`);
   }
 
 //   getUpcomingInterviews(userId: string) {
