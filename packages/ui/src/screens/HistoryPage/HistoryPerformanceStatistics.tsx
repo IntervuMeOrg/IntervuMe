@@ -21,20 +21,19 @@ export const HistoryPerformanceStatistics = ({
 					day: "numeric",
 				});
 
-				// Calculate score percentage
-				const score =
-					interview.totalScore && interview.maxScore
-						? Math.round((interview.totalScore / interview.maxScore) * 100)
-						: 0;
+				// Use totalScore directly since it's already a percentage
+				const score = interview.totalScore || 0;
 
 				return {
 					date: formattedDate,
 					score: score,
+					originalDate: date, // Keep original date for sorting
 				};
 			})
-			.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()); // Sort by date
+			.sort((a, b) => a.originalDate.getTime() - b.originalDate.getTime()) // Sort by original date
+			.map(({ date, score }) => ({ date, score })); // Remove originalDate from final result
 	};
-
+	
 	const performanceData = formatPerformanceData(completedInterviews || []);
 
 	return (

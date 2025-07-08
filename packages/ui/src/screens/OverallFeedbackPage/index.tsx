@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { NavbarLayout } from "../../components/layout/NavbarLayout";
 import { DetailedFeedbackView } from "./DetailedFeedbackView";
@@ -7,7 +7,7 @@ import { McqQuestion, CodingQuestion, McqOption } from "../../types/questions";
 import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
 import { useParams } from "react-router-dom";
 import { useMcqAnswers } from "../../lib/mcq/mcq-hooks";
-import { InterviewQuestionWithDetails } from "../../lib/interview/interview-api";
+import interviewApi, { InterviewQuestionWithDetails } from "../../lib/interview/interview-api";
 import { useInterviewWithQuestions } from "../../lib/interview/interview-hooks";
 
 type Question = McqQuestion | CodingQuestion;
@@ -170,6 +170,13 @@ export const OverallFeedbackPage = (): JSX.Element => {
 
 	const overallPercentage = Math.round((earnedPoints / totalPoints) * 100);
 	const accuracy = Math.round((correctAnswers / totalQuestions) * 100);
+	
+	useEffect(() => {
+		interviewApi.updateInterview(interviewId, {
+			totalScore: overallPercentage,
+		});
+	}, [overallPercentage]);
+	
 
 	return (
 		<NavbarLayout activeNavItem={activeNavItem} userName={userName}>

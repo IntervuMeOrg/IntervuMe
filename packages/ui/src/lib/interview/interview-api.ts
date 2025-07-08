@@ -125,6 +125,20 @@ export interface InterviewResponse {
   feedback?: FeedbackResponse;
 }
 
+export interface UpdateInterviewRequest {
+  jobDescription?: string;
+  startTime?: string;
+  timeLimit?: number;
+  notes?: string;
+  status?: 'SCHEDULED' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'EXPIRED';
+  isActive?: boolean;
+  jobTitle?: string;
+  feedback?: FeedbackResponse;
+  totalScore?: number;
+  // Add any other updatable fields here
+}
+
+
 export interface InterviewSessionResponse extends InterviewResponse {
   interviewQuestions: InterviewQuestionWithDetails[];
   answers: McqAnswer[];
@@ -157,6 +171,7 @@ export interface InterviewSubmissionResult {
   totalScore: number;
   submittedAt: string;
 }
+
 
 // API functions following your preferred style
 export const interviewApi = {
@@ -218,6 +233,10 @@ export const interviewApi = {
   // Delete interview
   deleteInterview(id: string) {
     return api.delete(`/api/interview/${id}`);
+  },
+
+  updateInterview(id: string, data: UpdateInterviewRequest) {
+    return api.put<InterviewResponse>(`/api/interview/${id}`, data);
   },
 };
 
