@@ -107,6 +107,11 @@ export const mcqQuestionService = {
     await mcqQuestionRepository().remove(question);
   },
 
+  async deleteAll(): Promise<void> {
+    const questions = await mcqQuestionRepository().find();
+    await mcqQuestionRepository().remove(questions);
+  },
+
   async getRandomByTagsAndCount(tagCounts: {
     [tag: string]: number;
   }): Promise<McqQuestion[]> {
@@ -192,10 +197,15 @@ export const mcqQuestionService = {
       const existingIds = allQuestions.map((q) => q.id);
       const allTags = Object.keys(tagCounts).map((tag) => tag.toLowerCase());
 
-      const additionalQuestions = await mcqQuestionRepository()
+      const query = mcqQuestionRepository()
         .createQueryBuilder("mcq")
         .where("mcq.tags && :tags::varchar[]", { tags: allTags })
-        .andWhere("mcq.id NOT IN (:...existingIds)", { existingIds })
+
+      if (existingIds.length > 0) {
+        query.andWhere("mcq.id NOT IN (:...existingIds)", { existingIds });
+      }
+
+      const additionalQuestions = await query
         .orderBy("RANDOM()")
         .take(missingCount)
         .getMany();

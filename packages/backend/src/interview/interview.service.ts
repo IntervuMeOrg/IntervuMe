@@ -224,7 +224,7 @@ export const interviewService = {
       10
     );
 
-    console.log(aiAnalysis);
+    console.log(JSON.stringify(aiAnalysis, null, 2));
 
     const mcqRequirements = aiAnalysis.mcqAllocation.allocations
       ? Object.entries(aiAnalysis.mcqAllocation.allocations).map(

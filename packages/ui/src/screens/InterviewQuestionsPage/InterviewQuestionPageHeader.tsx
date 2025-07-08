@@ -119,10 +119,19 @@ export const InterviewQuestionsPageHeader = ({
     };
   };
 
-  // Count answered questions
-  const answeredQuestionsCount = Object.keys(userAnswers).filter(
-    (key) => !isNil(userAnswers[key])
-  ).length;
+  // Count answered questions - both MCQ and coding
+  const answeredQuestionsCount = questions.reduce((count, question) => {
+    if (question.type === "mcq") {
+      // For MCQ, check if there's an answer in userAnswers
+      return count + (userAnswers[question.id] ? 1 : 0);
+    } else {
+      // For coding questions, check if there's any submission
+      const hasSubmission = interviewWithQuestions?.codeSubmissions?.some(
+        sub => sub.questionId === question.id
+      );
+      return count + (hasSubmission ? 1 : 0);
+    }
+  }, 0);
 
   // Timer effect - recalculate remaining time every second
   useEffect(() => {

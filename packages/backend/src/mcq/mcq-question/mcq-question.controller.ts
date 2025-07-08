@@ -59,6 +59,16 @@ export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
     const { id } = request.params as { id: string };
     await mcqQuestionService.delete(id);
   });
+
+  app.delete("/", async (request, reply) => {
+    if (request.user.role !== UserRole.ADMIN) {
+      return reply
+        .status(StatusCodes.FORBIDDEN)
+        .send({ message: "Forbidden: admins only" });
+    }
+
+    await mcqQuestionService.deleteAll();
+  });
 };
 
 const createMcqQuestionRequest = {
