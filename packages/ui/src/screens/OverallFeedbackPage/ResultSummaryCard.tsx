@@ -7,6 +7,7 @@ import { ResultSummaryPerformanceBreakdown } from "./ResultSummaryPerformanceBre
 import { ResultSummaryStatsGrid } from "./ResultSummaryStatsGrid";
 import { ResultSummaryActionButtons } from "./ResultSummaryActionButtons";
 import { McqAnswer } from "../../types/mcq";
+import { CodeSubmissionWithResults } from "../../lib/interview/interview-api";
 
 type Question = McqQuestion | CodingQuestion;
 
@@ -19,12 +20,14 @@ interface ResultSummaryCardProps {
 	overallPercentage:number;
 	accuracy:number;
 	userAnswers: McqAnswer[];
+	codeSubmissions: CodeSubmissionWithResults[];
 	setShowDetailedFeedback: (show: boolean) => void;
 }
 
 export const ResultSummaryCard = ({
 	questions,
 	userAnswers,
+	codeSubmissions,
 	totalQuestions,
 	totalPoints,
 	earnedPoints,
@@ -138,7 +141,7 @@ export const ResultSummaryCard = ({
 				<ResultSummaryOverallFeedback/>
 
 				{/* Performance Breakdown */}
-				<ResultSummaryPerformanceBreakdown questions={questions} userAnswers={userAnswers} />
+				<ResultSummaryPerformanceBreakdown questions={questions} userAnswers={userAnswers} codeSubmissions={codeSubmissions} />
 
 				{/* Action Buttons */}
 				<ResultSummaryActionButtons

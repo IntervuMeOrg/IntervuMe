@@ -53,6 +53,7 @@ export const OverallFeedbackPage = (): JSX.Element => {
 	const { data: userAnswers } = useMcqAnswers(interviewId);
 
 
+
 	// State for active navigation item tracking
 	const activeNavItem = "";
 
@@ -62,35 +63,107 @@ export const OverallFeedbackPage = (): JSX.Element => {
 	);
 	const totalQuestions = questions.length;
 	const correctAnswers = questions.filter((q) => {
-		const userAnswer = (userAnswers || []).find((answer) => answer.questionId === q.id)?.selectedOptionId;
-		return q.type === "mcq"
-			? userAnswer === q.correctOptionId
-			: !!(userAnswer && userAnswer.trim().length > 0);
+		if (q.type === "mcq") {
+			const userAnswer = (userAnswers || []).find((answer) => answer.questionId === q.id)?.selectedOptionId;
+			return userAnswer === q.correctOptionId;
+		} else {
+			// Get all submissions for this question
+			const questionSubmissions = (interviewWithQuestions?.codeSubmissions || []).filter(
+				(sub) => sub.questionId === q.id
+			);
+
+			if (questionSubmissions.length > 0) {
+				// Find the submission with the most passed test cases
+				const bestSubmission = questionSubmissions.reduce((best, current) => {
+					const bestPassedCount = best.passedTestCases ?? 
+						(best.testCaseResults?.filter((result) => result.passed === true).length || 0);
+					const currentPassedCount = current.passedTestCases ?? 
+						(current.testCaseResults?.filter((result) => result.passed === true).length || 0);
+					
+					return currentPassedCount > bestPassedCount ? current : best;
+				}, questionSubmissions[0]);
+
+				const passedCount = bestSubmission.passedTestCases ?? 
+					(bestSubmission.testCaseResults?.filter((result) => result.passed === true).length || 0);
+				const totalCount = bestSubmission.totalTestCases ?? 
+					(bestSubmission.testCaseResults?.length || 0);
+				
+				return passedCount === totalCount && totalCount > 0;
+			}
+			return false;
+		}
 	}).length;
+
 	const earnedPoints = questions.reduce((sum, q) => {
-		const userAnswer = (userAnswers || []).find((answer) => answer.questionId === q.id)?.selectedOptionId;
-		const isCorrect =
-			q.type === "mcq"
-				? userAnswer === q.correctOptionId
-				: !!(userAnswer && userAnswer.trim().length > 0);
-		return sum + (isCorrect ? q.points : 0);
+		if (q.type === "mcq") {
+			const userAnswer = (userAnswers || []).find((answer) => answer.questionId === q.id)?.selectedOptionId;
+			return sum + (userAnswer === q.correctOptionId ? q.points : 0);
+		} else {
+			// Get all submissions for this question
+			const questionSubmissions = (interviewWithQuestions?.codeSubmissions || []).filter(
+				(sub) => sub.questionId === q.id
+			);
+
+			if (questionSubmissions.length > 0) {
+				// Find the submission with the most passed test cases
+				const bestSubmission = questionSubmissions.reduce((best, current) => {
+					const bestPassedCount = best.passedTestCases ?? 
+						(best.testCaseResults?.filter((result) => result.passed === true).length || 0);
+					const currentPassedCount = current.passedTestCases ?? 
+						(current.testCaseResults?.filter((result) => result.passed === true).length || 0);
+					
+					return currentPassedCount > bestPassedCount ? current : best;
+				}, questionSubmissions[0]);
+
+				const passedCount = bestSubmission.passedTestCases ?? 
+					(bestSubmission.testCaseResults?.filter((result) => result.passed === true).length || 0);
+				const totalCount = bestSubmission.totalTestCases ?? 
+					(bestSubmission.testCaseResults?.length || 0);
+				
+				return sum + (passedCount === totalCount && totalCount > 0 ? q.points : 0);
+			}
+			return sum;
+		}
 	}, 0);
+
 	let mcqCorrect = 0;
 	let mcqTotal = 0;
 	let problemSolvingCorrect = 0;
 	let problemSolvingTotal = 0;
 
 	questions.forEach((question) => {
-		const userAnswer = (userAnswers || []).find((answer) => answer.questionId === question.id)?.selectedOptionId;
 		if (question.type === "mcq") {
 			mcqTotal++;
+			const userAnswer = (userAnswers || []).find((answer) => answer.questionId === question.id)?.selectedOptionId;
 			if (userAnswer === question.correctOptionId) {
 				mcqCorrect++;
 			}
 		} else if (question.type === "coding") {
 			problemSolvingTotal++;
-			if (userAnswer && userAnswer.trim().length > 0) {
-				problemSolvingCorrect++;
+			// Get all submissions for this question
+			const questionSubmissions = (interviewWithQuestions?.codeSubmissions || []).filter(
+				(sub) => sub.questionId === question.id
+			);
+
+			if (questionSubmissions.length > 0) {
+				// Find the submission with the most passed test cases
+				const bestSubmission = questionSubmissions.reduce((best, current) => {
+					const bestPassedCount = best.passedTestCases ?? 
+						(best.testCaseResults?.filter((result) => result.passed === true).length || 0);
+					const currentPassedCount = current.passedTestCases ?? 
+						(current.testCaseResults?.filter((result) => result.passed === true).length || 0);
+					
+					return currentPassedCount > bestPassedCount ? current : best;
+				}, questionSubmissions[0]);
+
+				const passedCount = bestSubmission.passedTestCases ?? 
+					(bestSubmission.testCaseResults?.filter((result) => result.passed === true).length || 0);
+				const totalCount = bestSubmission.totalTestCases ?? 
+					(bestSubmission.testCaseResults?.length || 0);
+				
+				if (passedCount === totalCount && totalCount > 0) {
+					problemSolvingCorrect++;
+				}
 			}
 		}
 	});
@@ -128,6 +201,7 @@ export const OverallFeedbackPage = (): JSX.Element => {
 							<ResultSummaryCard
 								questions={questions}
 								userAnswers={userAnswers || []}
+								codeSubmissions={interviewWithQuestions?.codeSubmissions || []}
 								overallPercentage={overallPercentage}
 								earnedPoints={earnedPoints}
 								totalPoints={totalPoints}
