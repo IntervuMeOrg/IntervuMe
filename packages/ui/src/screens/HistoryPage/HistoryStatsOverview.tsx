@@ -107,7 +107,7 @@ export const HistoryStatsOverview = ({
       value: statsData.topPerformingSkill,
       subtitle: "Best performing area",
       delay: 0.6,
-      hasData: isValidValue(statsData.topPerformingSkill),
+      hasData: 1,
     },
     {
       icon: <AlertTriangleIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
@@ -115,7 +115,7 @@ export const HistoryStatsOverview = ({
       value: statsData.lowestPerformingSkill,
       subtitle: "Needs improvement",
       delay: 0.7,
-      hasData: isValidValue(statsData.lowestPerformingSkill),
+      hasData: 1,
     },
   ];
 
