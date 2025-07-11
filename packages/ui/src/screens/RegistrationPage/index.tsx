@@ -2,9 +2,17 @@
 import { useNavigate } from "react-router-dom";
 import { RegistrationHeader } from "./RegistrationHeader";
 import { RegistrationForm } from "./RegistrationForm";
+import { authenticationSession } from "../../lib/authentication/authentication-hooks";
+import { useEffect } from "react";
 
 export const RegistrationPage = (): JSX.Element => {
 	const navigate = useNavigate();
+		useEffect(() => {
+		// If the user is already authenticated, redirect them
+		if (authenticationSession.isAuthenticated()) {
+			navigate("/app", { replace: true });
+		}
+	}, []);
 
 	const handleBackToLogin = () => {
 		navigate("/login");

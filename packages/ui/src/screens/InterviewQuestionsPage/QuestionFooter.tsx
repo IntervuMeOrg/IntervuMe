@@ -1,15 +1,16 @@
 import { ChevronLeftIcon, ChevronRightIcon, SendIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
+import { McqQuestion, CodingQuestion } from "../../types/questions";
 
 type QuestionFooterProps = {
 	currentQuestionIndex: number;
-	questions: (MCQQuestion | ProblemSolvingQuestion)[];
+	questions: (McqQuestion | CodingQuestion)[];
 	setCurrentQuestionIndex: React.Dispatch<React.SetStateAction<number>>;
 	sidebarVisible: boolean;
 	footerVisible: boolean;
 	setFooterVisible: React.Dispatch<React.SetStateAction<boolean>>;
 	setSubmitConfirmation: React.Dispatch<React.SetStateAction<boolean>>;
+	isSubmissionLoading?: boolean;
 };
 
 export const QuestionFooter = ({
@@ -20,6 +21,7 @@ export const QuestionFooter = ({
 	footerVisible,
 	setFooterVisible,
 	setSubmitConfirmation,
+	isSubmissionLoading = false,
 }: QuestionFooterProps) => {
 	// Navigate to next question
 	const goToNextQuestion = () => {
@@ -76,10 +78,10 @@ export const QuestionFooter = ({
 								<motion.button
 									whileTap={{ scale: 0.95 }}
 									onClick={goToPreviousQuestion}
-									disabled={currentQuestionIndex === 0}
+									disabled={currentQuestionIndex === 0 || isSubmissionLoading}
 									className={`flex-1 flex items-center justify-center gap-0.5 px-2 py-1.5 rounded-md transition-all duration-200 text-xs font-['Nunito'] font-semibold
                     ${
-											currentQuestionIndex === 0
+											currentQuestionIndex === 0 || isSubmissionLoading
 												? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
 												: "bg-[#0667D0] hover:bg-[#054E9D] text-white active:bg-[#033464]"
 										}`}
@@ -90,20 +92,25 @@ export const QuestionFooter = ({
 
 								<motion.button
 									whileTap={{ scale: 0.95 }}
-									onClick={() => setSubmitConfirmation(true)}
-									className="flex items-center justify-center gap-0.5 px-3 py-1.5 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white rounded-md transition-all duration-200 text-xs font-['Nunito'] font-semibold"
+									onClick={() => !isSubmissionLoading && setSubmitConfirmation(true)}
+									disabled={isSubmissionLoading}
+									className={`flex items-center justify-center gap-0.5 px-3 py-1.5 rounded-md transition-all duration-200 text-xs font-['Nunito'] font-semibold ${
+										isSubmissionLoading
+											? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
+											: "bg-green-600 hover:bg-green-700 active:bg-green-800 text-white"
+									}`}
 								>
 									<SendIcon className="h-3.5 w-3.5" />
-									<span>Submit</span>
+									<span>{isSubmissionLoading ? "Processing..." : "Submit"}</span>
 								</motion.button>
 
 								<motion.button
 									whileTap={{ scale: 0.95 }}
 									onClick={goToNextQuestion}
-									disabled={currentQuestionIndex === questions.length - 1}
+									disabled={currentQuestionIndex === questions.length - 1 || isSubmissionLoading}
 									className={`flex-1 flex items-center justify-center gap-0.5 px-2 py-1.5 rounded-md transition-all duration-200 text-xs font-['Nunito'] font-semibold
                     ${
-											currentQuestionIndex === questions.length - 1
+											currentQuestionIndex === questions.length - 1 || isSubmissionLoading
 												? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
 												: "bg-[#0667D0] hover:bg-[#054E9D] text-white active:bg-[#033464]"
 										}`}
@@ -121,10 +128,10 @@ export const QuestionFooter = ({
 								whileHover={{ scale: 1.02, x: -2 }}
 								whileTap={{ scale: 0.98 }}
 								onClick={goToPreviousQuestion}
-								disabled={currentQuestionIndex === 0}
+								disabled={currentQuestionIndex === 0 || isSubmissionLoading}
 								className={`flex items-center gap-1.5 px-3 lg:px-4 py-1.5 h-8 rounded-full transition-all duration-200 font-['Nunito'] font-semibold text-sm
                   ${
-										currentQuestionIndex === 0
+										currentQuestionIndex === 0 || isSubmissionLoading
 											? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
 											: "bg-[#0667D0] hover:bg-[#054E9D] text-white shadow-lg"
 									}`}
@@ -158,21 +165,26 @@ export const QuestionFooter = ({
 								<motion.button
 									whileHover={{ scale: 1.02 }}
 									whileTap={{ scale: 0.98 }}
-									onClick={() => setSubmitConfirmation(true)}
-									className="flex items-center gap-1.5 px-3 lg:px-4 py-1.5 h-8 bg-green-600 hover:bg-green-700 text-white rounded-full transition-all duration-200 shadow-lg font-['Nunito'] font-semibold text-sm"
+									onClick={() => !isSubmissionLoading && setSubmitConfirmation(true)}
+									disabled={isSubmissionLoading}
+									className={`flex items-center gap-1.5 px-3 lg:px-4 py-1.5 h-8 rounded-full transition-all duration-200 shadow-lg font-['Nunito'] font-semibold text-sm ${
+										isSubmissionLoading
+											? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
+											: "bg-green-600 hover:bg-green-700 text-white"
+									}`}
 								>
 									<SendIcon className="h-3.5 w-3.5" />
-									<span>Submit</span>
+									<span>{isSubmissionLoading ? "Processing..." : "Submit"}</span>
 								</motion.button>
 
 								<motion.button
 									whileHover={{ scale: 1.02, x: 2 }}
 									whileTap={{ scale: 0.98 }}
 									onClick={goToNextQuestion}
-									disabled={currentQuestionIndex === questions.length - 1}
+									disabled={currentQuestionIndex === questions.length - 1 || isSubmissionLoading}
 									className={`flex items-center gap-1.5 px-3 lg:px-4 py-1.5 h-8 rounded-full transition-all duration-200 font-['Nunito'] font-semibold text-sm
                     ${
-											currentQuestionIndex === questions.length - 1
+											currentQuestionIndex === questions.length - 1 || isSubmissionLoading
 												? "bg-gray-700/50 text-gray-400 cursor-not-allowed"
 												: "bg-[#0667D0] hover:bg-[#054E9D] text-white shadow-lg"
 										}`}

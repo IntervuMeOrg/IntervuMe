@@ -7,65 +7,131 @@ import {
   AwardIcon,
   AlertTriangleIcon
 } from "lucide-react";
+import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
+import { useInterviewHistory, useUserPracticeAnalytics } from "../../lib/History/interview-history-hooks";
 
-type InterviewStats = {
-  totalInterviews: number;
-  averageScore: number;
-  totalHours: number;
-  skillsImproved: number;
-  topPerformingSkill: string;
-  lowestPerformingSkill: string;
-};
+export const ProfileStatsCards = () => {
+  const user = useCurrentUser();
+  
+  const {
+    data: interviewHistory,
+    isLoading: isLoadingHistory,
+    error: errorHistory,
+  } = useInterviewHistory(user.data?.id as string);
 
-type ProfileStatsCardsProps = {
-  interviewStats: InterviewStats;
-};
+  const {
+    data: analyticsData,
+    isLoading: isLoadingAnalytics,
+    error: errorAnalytics,
+  } = useUserPracticeAnalytics(user.data?.id as string);
 
-export const ProfileStatsCards = ({ interviewStats }: ProfileStatsCardsProps) => {
+  // Helper function to format practice time
+  const formatPracticeTime = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    return hours;
+  };
+
+
+  // Combine data from both sources
+  const getStatsData = () => {
+    const totalInterviews = analyticsData?.data.totalInterviews || interviewHistory?.totalInterviews || 0;
+    const averageScore = analyticsData?.data.overallAverage || interviewHistory?.averageScore || 0;
+    const totalHours = interviewHistory?.totalPracticeTime ? formatPracticeTime(interviewHistory.totalPracticeTime) : 0;
+    const topPerformingSkill = interviewHistory?.bestSkill || "N/A";
+    const lowestPerformingSkill = interviewHistory?.skillNeedsFocus || "N/A";
+
+    return {
+      totalInterviews,
+      averageScore: Math.round(averageScore),
+      totalHours,
+      topPerformingSkill,
+      lowestPerformingSkill,
+    };
+  };
+
+  const statsData = getStatsData();
+
   const stats = [
     {
       icon: <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
       title: "Total Interviews",
-      value: interviewStats.totalInterviews.toString(),
+      value: statsData.totalInterviews,
       subtitle: "Completed sessions",
       delay: 0.2,
     },
     {
       icon: <BarChart4Icon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
       title: "Average Score",
-      value: `${interviewStats.averageScore}%`,
+      value: `${statsData.averageScore}%`,
       subtitle: "Overall performance",
       delay: 0.3,
     },
     {
       icon: <ClockIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
       title: "Practice Time",
-      value: `${interviewStats.totalHours} hrs`,
+      value: `${statsData.totalHours} hrs`,
       subtitle: "Total time invested",
       delay: 0.4,
     },
     {
       icon: <TrendingUpIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
-      title: "Skills Improved",
-      value: interviewStats.skillsImproved.toString(),
-      subtitle: "Areas of growth",
-      delay: 0.5,
+      title: "Days Active",
+      value: analyticsData?.success 
+        ? analyticsData.data.totalDays.toString() 
+        : "0",
+      subtitle: interviewHistory?.bestSkill 
+        ? `Best: ${interviewHistory.bestSkill}` 
+        : (interviewHistory?.skillNeedsFocus ? `Focus: ${interviewHistory.skillNeedsFocus}` : "No data yet"),
+      delay: 0.3,
     },
     {
       icon: <AwardIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
       title: "Top Skill",
-      value: interviewStats.topPerformingSkill,
+      value: statsData.topPerformingSkill,
       subtitle: "Best performing area",
       delay: 0.6,
     },
     {
       icon: <AlertTriangleIcon className="h-4 w-4 sm:h-5 sm:w-5 3xl:w-7 3xl:h-7 text-[#e8eef2] flex-shrink-0" />,
       title: "Focus Area",
-      value: interviewStats.lowestPerformingSkill,
+      value: statsData.lowestPerformingSkill,
       subtitle: "Needs improvement",
       delay: 0.7,
     },
   ];
+
+  // Loading state
+  if (isLoadingHistory || isLoadingAnalytics) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 3xl:gap-6">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <div
+            key={index}
+            className="bg-[#1d1d20] rounded-lg p-4 sm:p-5 3xl:p-6 shadow-lg h-[120px] animate-pulse"
+          >
+            <div className="h-4 bg-white/10 rounded mb-3"></div>
+            <div className="h-6 bg-white/10 rounded mb-2"></div>
+            <div className="h-3 bg-white/10 rounded"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Error state
+  if (errorHistory || errorAnalytics) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-400 mb-4">Failed to load profile statistics</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 3xl:gap-6">

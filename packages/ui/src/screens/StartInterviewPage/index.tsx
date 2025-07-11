@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavbarLayout } from "../../components/layout/NavbarLayout";
 import { motion } from "framer-motion";
 import { StartInterviewFormPanel } from "./StartInterviewFormPanel";
+import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
 
 export const StartInterviewPage = (): JSX.Element => {
+	const user = useCurrentUser();
 	// State for active navigation item tracking
 	const activeNavItem = "";
-	// State for logged in user (simulated)
-	const [userName, setUserName] = useState("Mohamed Essam");
+	const userName = user.data 
+		? `${user.data.firstName} ${user.data.lastName}`
+		: '';
 	// State for input method (custom or template)
 	const [inputMethod, setInputMethod] = useState<"custom" | "template">(
 		"custom"

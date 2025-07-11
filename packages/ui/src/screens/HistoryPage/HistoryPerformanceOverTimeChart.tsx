@@ -1,28 +1,19 @@
 import { LineChartIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
-type PerformanceData = {
-	date: string;
-	score: number;
-};
+type PerformanceData = { date: string; score: number };
+type Props = { performanceData: PerformanceData[] };
 
-type HistoryPerformanceOverTimeChartProps = {
-	performanceData: PerformanceData[];
-};
-
-export const HistoryPerformanceOverTimeChart = ({
-	performanceData,
-}: HistoryPerformanceOverTimeChartProps) => {
-	// Y-axis labels for the chart
+export const HistoryPerformanceOverTimeChart = ({ performanceData }: Props) => {
 	const yAxisLabels = ["100%", "75%", "50%", "25%", "0%"];
 
 	return (
 		<motion.div
-			initial={{ opacity: 0, x: -20 }}
+			initial={{ opacity: 0, x: 20 }}
 			whileInView={{ opacity: 1, x: 0 }}
 			viewport={{ once: true }}
-			transition={{ delay: 0.2 }}
-			className="bg-[#1d1d20] rounded-lg p-4 sm:p-5 md:p-6 shadow-lg relative overflow-hidden group"
+			transition={{ delay: 0.3 }}
+			className="bg-[#1d1d20] rounded-lg p-4 sm:p-5 md:p-6 shadow-lg relative overflow-hidden group font-['Nunito']"
 			whileHover={{
 				scale: 1.02,
 				boxShadow:
@@ -33,100 +24,71 @@ export const HistoryPerformanceOverTimeChart = ({
 			{/* Gradient overlay */}
 			<div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent pointer-events-none" />
 
-			<div className="relative z-10">
-				{/* Header */}
-				<div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-					<LineChartIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#e8eef2] flex-shrink-0" />
-					<h3 className="font-['Nunito'] font-bold text-[#e8eef2] text-base sm:text-lg md:text-xl">
-						Performance Over Time
-					</h3>
-				</div>
-
-				{/* Chart Container - Responsive heights using CSS custom properties */}
-				<div className="w-full relative h-32 sm:h-40 md:h-48 lg:h-56 [--chart-height:80px] sm:[--chart-height:120px] md:[--chart-height:170px] xl:[--chart-height:215px]">
-					{/* Chart Area */}
-					<div className="absolute left-8 sm:left-10 bottom-6 sm:bottom-8 right-2 sm:right-4 top-2 sm:top-4">
-						{/* Chart Bars */}
-						<div className="h-full w-full flex items-end justify-between gap-1 sm:gap-2">
-							{performanceData.map((item, index) => (
-								<motion.div
-									key={index}
-									initial={{ opacity: 0, y: 20 }}
-									whileInView={{ opacity: 1, y: 0 }}
-									viewport={{ once: true }}
-									transition={{ delay: 0.2 + index * 0.1 }}
-									className="flex flex-col items-center gap-1 sm:gap-2 flex-1 max-w-16"
-								>
-									{/* Score tooltip */}
-									<motion.div
-										initial={{ opacity: 0, scale: 0.8 }}
-										whileInView={{ opacity: 1, scale: 1 }}
-										viewport={{ once: true }}
-										transition={{ delay: 0.6 + index * 0.1 }}
-										className="text-xs sm:text-sm font-bold text-[#e8eef2] mb-1"
-									>
-										{item.score}%
-									</motion.div>
-
-									{/* Bar - Truly responsive height using CSS custom properties */}
-									<motion.div
-										initial={{ height: 0 }}
-										whileInView={{
-											height: `calc(var(--chart-height) * ${item.score / 100})`,
-										}}
-										viewport={{ once: true }}
-										transition={{
-											delay: 0.4 + index * 0.1,
-											duration: 0.6,
-											ease: "easeOut",
-										}}
-										className="w-6 sm:w-8 md:w-10 bg-[#0667D0] rounded-t-sm"
-										style={{
-											minHeight: "8px", // Ensure minimum visibility
-										}}
-									/>
-
-									{/* Date label */}
-									<span className="text-xs sm:text-sm text-[#e8eef2] text-center leading-tight">
-										{item.date}
-									</span>
-								</motion.div>
-							))}
-						</div>
-					</div>
-
-					{/* Y-axis labels */}
-					<div className="absolute left-0 top-2 sm:top-4 bottom-6 sm:bottom-8 flex flex-col justify-between text-xs sm:text-sm text-[#e8eef2] pr-1 sm:pr-2">
-						{yAxisLabels.map((label, index) => (
-							<motion.span
-								key={index}
-								initial={{ opacity: 0, x: -10 }}
-								whileInView={{ opacity: 1, x: 0 }}
-								viewport={{ once: true }}
-								transition={{ delay: 0.3 + index * 0.05 }}
-								className="leading-none"
-							>
-								{label}
-							</motion.span>
-						))}
-					</div>
-
-					{/* Grid lines */}
-					<div className="absolute left-8 sm:left-10 right-2 sm:right-4 top-2 sm:top-4 bottom-6 sm:bottom-8 pointer-events-none">
-						{yAxisLabels.map((_, index) => (
-							<motion.div
-								key={index}
-								initial={{ opacity: 0 }}
-								whileInView={{ opacity: 0.1 }}
-								viewport={{ once: true }}
-								transition={{ delay: 0.5 + index * 0.05 }}
-								className="absolute w-full border-t border-[#e8eef2]"
-								style={{ top: `${(index / (yAxisLabels.length - 1)) * 100}%` }}
-							/>
-						))}
-					</div>
-				</div>
+			{/* Header */}
+			<div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+				<LineChartIcon className="h-4 w-4 sm:h-5 sm:w-5 text-[#e8eef2] flex-shrink-0" />
+				<h3 className="font-['Nunito'] font-bold text-[#e8eef2] text-base sm:text-lg md:text-xl">
+					Performance Over Time
+				</h3>
 			</div>
+
+			{/* Conditional rendering based on data availability */}
+			{performanceData && performanceData.length > 0 ? (
+				// Original chart content
+				<div className="relative h-52">
+					{/* Y‑axis labels */}
+					<div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between place-items-center text-xs text-white">
+						{yAxisLabels.map((label, i) => (
+							<span key={i}>{label}</span>
+						))}
+					</div>
+					{/* Grid lines */}
+					<div className="absolute left-10 right-0 top-0 bottom-0">
+						{yAxisLabels.map((_, i) => (
+							<div
+								key={i}
+								className="absolute w-full border-t border-white/20"
+								style={{ top: `${(i / (yAxisLabels.length - 1)) * 100}%` }}
+							></div>
+						))}
+					</div>
+					{/* Bars + labels container */}
+					<div className="absolute left-8 right-0 bottom-0 top-0 flex justify-between px-20 ">
+						{performanceData.map((item, idx) => (
+							<div key={idx} className="flex-1 max-w-[60px] relative">
+								{/* Bar (absolute bottom) */}
+								<motion.div
+									initial={{ height: 0 }}
+									whileInView={{ height: `${item.score}%` }}
+									transition={{ delay: 0.2 + idx * 0.1, duration: 0.6 }}
+									className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 sm:w-16 bg-[#0667D0] rounded-t-md"
+								/>
+								{/* Date & Score below */}
+								<div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 mt-2 text-center">
+									<div className="flex justify-center gap-1 text-sm text-[#e8eef2]">
+										<span>{item.date.split(" ")[0]}</span>
+										<span>{item.date.split(" ")[1]}</span>
+									</div>
+									<div className="text-sm text-[#e8eef2]">{item.score}%</div>
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
+			) : (
+				// Empty state
+				<div className="relative h-52 flex items-center justify-center">
+					<div className="text-center text-white/60">
+						<LineChartIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
+						<h4 className="font-['Nunito'] font-bold text-xl mb-2">
+							No Performance Data Yet
+						</h4>
+						<p className="text-base">
+							Complete your first interview to see your performance trends here.
+						</p>
+					</div>
+				</div>
+			)}
 		</motion.div>
 	);
 };

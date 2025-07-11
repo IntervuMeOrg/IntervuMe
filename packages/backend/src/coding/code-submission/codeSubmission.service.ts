@@ -37,12 +37,12 @@ export const codeSubmissionService = {
     const question = await codingQuestionService.get(request.questionId);
 
     const testCaseResults: TestCaseResult[] = [];
+    let score = 0;
 
     for (const testCase of question.testCases) {
       try {
         const runResult = await codeExecutionService.run({
           questionId: request.questionId,
-          languageId: request.languageId,
           language: request.language,
           userCode: request.code,
           stdin: testCase.input,
@@ -51,8 +51,11 @@ export const codeSubmissionService = {
         });
 
         const passed = runResult.status === "Correct";
+        if (passed) score += 1;
 
-        const verdict = await codeSubmissionService.mapStatusToVerdict(runResult.status);
+        const verdict = await codeSubmissionService.mapStatusToVerdict(
+          runResult.status
+        );
 
         const testCaseResult = await testCaseResultService.create({
           codeSubmissionId: savedCodeSubmission.id,
@@ -79,6 +82,11 @@ export const codeSubmissionService = {
       }
     }
 
+    Object.assign(savedCodeSubmission, {
+      score,
+      totalTests: testCaseResults.length,
+    });
+    await codeSubmissionRepository().save(savedCodeSubmission);
     return {
       ...savedCodeSubmission,
       testCaseResults,

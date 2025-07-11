@@ -32,6 +32,7 @@ export const InterviewQuestionEntity =
         type: "many-to-one",
         target: "interview",
         joinColumn: { name: "interviewId" },
+        onDelete: "CASCADE",
       },
     },
   });

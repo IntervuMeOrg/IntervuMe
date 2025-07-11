@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { BookTemplateIcon as TemplateIcon, CheckIcon } from "lucide-react";
+import { templateData } from "./template-data";
 
 interface TemplateSelectionProps {
 	selectedTemplate: string;
@@ -11,65 +12,6 @@ export const TemplateSelection = ({
 	selectedTemplate,
 	setSelectedTemplate,
 }: TemplateSelectionProps) => {
-	// Template categories and items (restored from your original structure)
-	const templates = [
-		{
-			category: "Software Engineering",
-			items: [
-				"Frontend Developer",
-				"Backend Developer",
-				"Full Stack Developer",
-				"Mobile Developer",
-			],
-			descriptions: [
-				"Develop user interfaces using React, Angular, or Vue. Implement responsive designs and optimize web performance for modern web applications.",
-				"Build server-side applications using Node.js, Python, or Java. Design and implement APIs and database schemas for scalable systems.",
-				"Create end-to-end applications handling both frontend and backend development. Coordinate between different system layers and technologies.",
-				"Develop native or cross-platform mobile applications for iOS and Android using React Native, Flutter, or native technologies.",
-			],
-		},
-		{
-			category: "DevOps",
-			items: ["DevOps Engineer", "Site Reliability Engineer", "Cloud Engineer"],
-			descriptions: [
-				"Implement CI/CD pipelines and automate deployment processes. Manage infrastructure as code using tools like Terraform or Ansible.",
-				"Ensure system reliability, availability, and performance. Implement monitoring and alerting systems for large-scale applications.",
-				"Design and implement cloud infrastructure on AWS, Azure, or GCP. Optimize cloud resources and implement security best practices.",
-			],
-		},
-		{
-			category: "Backend",
-			items: [
-				"Java Developer",
-				"Python Developer",
-				"Node.js Developer",
-				".NET Developer",
-			],
-			descriptions: [
-				"Develop enterprise applications using Java and related frameworks like Spring. Design and implement RESTful APIs and microservices.",
-				"Build backend services using Python and frameworks like Django or Flask. Implement data processing pipelines and machine learning integrations.",
-				"Create scalable server-side applications using Node.js and Express. Implement real-time features using WebSockets and event-driven architecture.",
-				"Develop enterprise applications using .NET Core or Framework. Implement microservices architecture and cloud-native solutions.",
-			],
-		},
-		{
-			category: "Google SW-1",
-			items: ["Software Engineer L3", "Software Engineer L4"],
-			descriptions: [
-				"Entry-level software engineer position at Google. Focus on implementing features and fixing bugs under supervision while learning Google's engineering practices.",
-				"Mid-level software engineer position at Google. Design and implement medium-sized features independently and contribute to system architecture decisions.",
-			],
-		},
-		{
-			category: "Amazon SW-2",
-			items: ["SDE I", "SDE II"],
-			descriptions: [
-				"Entry-level software development engineer at Amazon. Implement well-defined features and participate in code reviews while following Amazon's leadership principles.",
-				"Mid-level software development engineer at Amazon. Design and implement complex features and mentor junior engineers while driving technical excellence.",
-			],
-		},
-	];
-
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 	const [count, setCount] = useState(0);
 
@@ -114,7 +56,7 @@ export const TemplateSelection = ({
 
 			{/* Template Categories */}
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8 3xl:mb-8">
-				{templates.map((templateCategory, categoryIndex) => (
+				{templateData.map((templateCategory, categoryIndex) => (
 					<motion.div
 						key={templateCategory.category}
 						custom={categoryIndex}
@@ -165,10 +107,10 @@ export const TemplateSelection = ({
 						{selectedCategory} Templates
 					</h4>
 					<div className="space-y-2 sm:space-y-3 3xl:space-y-4">
-						{templates
+						{templateData
 							.find((t) => t.category === selectedCategory)
 							?.items.map((template, index) => {
-								const categoryIndex = templates.findIndex(
+								const categoryIndex = templateData.findIndex(
 									(t) => t.category === selectedCategory
 								);
 								const isSelected = selectedTemplate === template;
@@ -206,11 +148,11 @@ export const TemplateSelection = ({
 												{template}
 											</h5>
 											<p className="text-[#e8eef2] text-xs sm:text-sm 3xl:text-lg opacity-80 mt-1 leading-relaxed">
-												{templates[categoryIndex].descriptions[index].substring(
+												{templateData[categoryIndex].descriptions[index].substring(
 													0,
 													100
 												)}
-												{templates[categoryIndex].descriptions[index].length >
+												{templateData[categoryIndex].descriptions[index].length >
 													100 && "..."}
 											</p>
 										</div>
@@ -240,9 +182,9 @@ export const TemplateSelection = ({
 						</h5>
 						<p className="text-[#e8eef2] text-xs sm:text-sm 3xl:text-lg opacity-80 leading-relaxed">
 							{
-								templates.find((t) => t.category === selectedCategory)
+								templateData.find((t) => t.category === selectedCategory)
 									?.descriptions[
-									templates
+									templateData
 										.find((t) => t.category === selectedCategory)
 										?.items.findIndex((item) => item === selectedTemplate) || 0
 								]

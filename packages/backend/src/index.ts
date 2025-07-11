@@ -18,6 +18,7 @@ import { codeSubmissionModule } from "./coding/code-submission/codeSubmission.mo
 import { aiModule } from "./ai/ai.module.js";
 import { codeExecutionModule } from "./coding/code-execution/code-execution.module.js";
 import { testCaseResultModule } from "./coding/test-case-result/testCaseResult.module.js";
+import { interviewService } from "./interview/interview.service.js";
 
 config();
 
@@ -39,6 +40,7 @@ try {
   await AppDataSource.initialize();
   databaseConnected = true;
   console.log("✅ Database connection established");
+  interviewService.initializeScheduler();
 } catch (error) {
   console.warn(
     "⚠️  Database connection failed (continuing without database):",

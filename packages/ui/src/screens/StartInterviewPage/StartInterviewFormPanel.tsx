@@ -11,11 +11,12 @@ import {
 import { CustomJobDescription } from "./CustomJobDescription";
 import { TemplateSelection } from "./TemplateSelection";
 import { LoadingOverlay } from "./LoadingOverlay";
-import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
-import { mapBackendToProblemSolving } from "../../utils/questionMappers";
+import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
+import { useCreateInterview, useStartInterview } from "../../lib/interview/interview-hooks";
+import { getTemplateDescription } from "./template-data";
 
 type InputMethod = "custom" | "template";
-type Question = MCQQuestion | ProblemSolvingQuestion;
+
 interface StartInterviewFormPanelProps {
 	inputMethod: InputMethod;
 	setInputMethod: (method: InputMethod) => void;
@@ -26,185 +27,80 @@ export const StartInterviewFormPanel = ({
 	setInputMethod,
 }: StartInterviewFormPanelProps) => {
 	const navigate = useNavigate();
+	const user = useCurrentUser();
+	
+	// Backend integration hooks
+	const createInterview = useCreateInterview();
+	const startInterview = useStartInterview();
 
 	// State for form data
 	const [jobDescription, setJobDescription] = useState("");
 	const [selectedTemplate, setSelectedTemplate] = useState("");
-	const [questions, setQuestions] = useState<Question[]>([
-		{
-			id: 1,
-			type: "mcq",
-			text: "Which of the following is NOT a React Hook?",
-			options: [
-				{ id: "a", text: "useState" },
-				{ id: "b", text: "useEffect" },
-				{ id: "c", text: "useHistory" },
-				{ id: "d", text: "useReactState" },
-			],
-			points: 10,
-			correctOptionId: "c",
-			explanation: "useHistory is from react-router v5, not a core React hook",
-		},
-		{
-			id: 2,
-			type: "mcq",
-			text: "What is the correct way to pass a prop called 'name' to a component?",
-			options: [
-				{ id: "a", text: "<Component {name='John'} />" },
-				{ id: "b", text: "<Component name='John' />" },
-				{ id: "c", text: '<Component name="John" />' },
-				{ id: "d", text: "<Component props={name: 'John'} />" },
-			],
-			points: 10,
-			correctOptionId: "c",
-			explanation:
-				"Props should be passed as JSX attributes with double quotes for strings",
-		},
-		{
-			id: 3,
-			type: "problem_solving",
-			title: "Two Sum",
-			category: "Arrays & Hashing",
-			difficulty: "Easy",
-			points: 20,
-			timeLimit: 30,
-			problemStatement:
-				"You are given an array of integers nums and an integer target. Your task is to return the indices of any two distinct elements in the array whose sum is equal to the target. If no such pair exists, print -1. Note that there may be multiple correct answers — returning any one valid pair is acceptable.",
-			examples: [
-				{
-					input: "nums = [2,7,11,15], target = 9",
-					output: "[0,1]",
-					explanation: "nums[0] + nums[1] = 2 + 7 = 9",
-				},
-				{
-					input: "nums = [3,2,4], target = 6",
-					output: "[1,2]",
-					explanation: "nums[1] + nums[2] = 2 + 4 = 6",
-				},
-			],
-			starterCodes: {
-				codeHeader: {
-					cpp: "#include <vector>\n#include <unordered_map>\nusing namespace std;",
-					java: "import java.util.*;",
-					python: "from typing import List",
-				},
-				codeStarter: {
-					cpp: "vector<int> twoSum(vector<int>& nums, int target) {\n",
-					java: "public int[] twoSum(int[] nums, int target) {\n",
-					python: "def twoSum(nums: List[int], target: int) -> List[int]:\n",
-				},
-				codeFooter: {
-					cpp: "}",
-					java: "}",
-					python: "",
-				},
-			},
-			constraints: [
-				"2 <= nums.length <= 10^4",
-				"-10^3 <= nums[i] <= 10^3",
-				"-10^4 <= target <= 10^4",
-			],
-			followUp: [
-				"How would you optimize if the input array is sorted?",
-				"Can you solve it in O(n log n) time?",
-			],
-			tags: ["Arrays", "Hash Table", "Sorting"],
-			testCases: [
-				{
-					input: "[2,7,11,15]\n9",
-					expectedOutput: "[0,1]",
-					isHidden: false,
-				},
-				{
-					input: "[3,2,4]\n6",
-					expectedOutput: "[1,2]",
-					isHidden: false,
-				},
-				{
-					input: "[3,3]\n6",
-					expectedOutput: "[0,1]",
-					isHidden: true,
-				},
-			],
-			solution: "Use a hash map to store visited elements",
-			explanation:
-				"Store each element's index as you iterate. For each number, check if its complement exists in the map",
-		},
-	]);
-
 	const [isLoading, setIsLoading] = useState(false);
+	const [isCompleted, setIsCompleted] = useState(false);
 
-	// Handle loading completion and navigation
+	// Handle loading completion - now only used for LoadingOverlay animation, not actual completion
 	const handleLoadingComplete = () => {
+		// Reset states after overlay finishes
 		setIsLoading(false);
-		// Navigate to interview-questions page
-		navigate("/interview-questions", {
-			state: {
-				inputMethod,
-				jobDescription,
-				selectedTemplate,
-			},
-		});
+		setIsCompleted(false);
 	};
 
-	// Handle form submission
+	// Handle form submission with backend integration
 	const handleStartInterview = async () => {
 		if (inputMethod === "custom" && !jobDescription.trim()) return;
 		if (inputMethod === "template" && !selectedTemplate) return;
+		if (!user.data?.id) return;
 
 		setIsLoading(true);
+		setIsCompleted(false);
 
 		try {
-			// Toggle between mock data and real backend
-			const useMockData = true; // Set to false when backend is ready
+			// Prepare the job description based on input method
+			const finalJobDescription = inputMethod === "custom" 
+				? jobDescription.trim()
+				: getTemplateDescription(selectedTemplate);
 
-			let finalQuestions: Question[];
+			// Create interview using backend API
+			const interviewData = {
+				userId: user.data.id,
+				jobDescription: finalJobDescription,
+				startTime: new Date().toISOString(),
+				timeLimit: 60, // 60 minutes default
+				notes: inputMethod === "template" ? `Template: ${selectedTemplate}` : undefined,
+			};
 
-			if (useMockData) {
-				// Use your existing mock data (already in correct format)
-				// Simulate API delay for testing
-				await new Promise((resolve) => setTimeout(resolve, 6000));
-				finalQuestions = questions;
-			} else {
-				// Real backend API call
-				const requestBody = {
-					method: inputMethod,
-					...(inputMethod === "custom"
-						? { jobDescription }
-						: { templateId: selectedTemplate }),
-				};
+			createInterview.mutate(interviewData, {
+				onSuccess: (interview) => {
+					startInterview.mutate(interview.id, {
+						onSuccess: () => {
+							// Mark as completed and let LoadingOverlay handle the navigation
+							setIsCompleted(true);
+							setTimeout(() => {
+								navigate(`/interview/${interview.id}`);
+							}, 1000); // Small delay to show completion state
+						},
+						onError: (error) => {
+							console.error("Failed to start interview:", error);
+							setIsLoading(false);
+							setIsCompleted(false);
+						},
+					});
+				},
+				onError: (error) => {
+					console.error("Failed to create interview:", error);
+					setIsLoading(false);
+					setIsCompleted(false);
+				},
+			});
 
-				const response = await fetch("/api/questions", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(requestBody),
-				});
-
-				if (!response.ok) {
-					throw new Error(`HTTP error! status: ${response.status}`);
-				}
-
-				const backendQuestions = await response.json();
-
-				// Separate MCQ and Problem Solving questions if backend returns mixed types
-				const problemSolvingQuestions = backendQuestions
-					.filter((q: any) => q.problemStatement) // Assuming this identifies problem solving
-					.map(mapBackendToProblemSolving);
-
-				const mcqQuestions = backendQuestions.filter((q: any) => q.options); // Assuming this identifies MCQ
-
-				finalQuestions = [...mcqQuestions, ...problemSolvingQuestions];
-			}
-
-			navigate("/interview-questions", { state: { questions: finalQuestions } });
 		} catch (error) {
-			console.error("Error fetching questions:", error);
-			// Handle error (e.g., show error toast/component)
-			// You might want to show an error message to the user here
-		} finally {
+			console.error("Error creating interview:", error);
 			setIsLoading(false);
+			setIsCompleted(false);
 		}
 	};
+
 	const [count, setCount] = useState(0);
 
 	// Check if form is valid
@@ -219,6 +115,9 @@ export const StartInterviewFormPanel = ({
 			<LoadingOverlay
 				isVisible={isLoading}
 				onComplete={handleLoadingComplete}
+				isCreating={createInterview.isPending}
+				isStarting={startInterview.isPending}
+				isComplete={isCompleted}
 			/>
 
 			<motion.div
@@ -361,16 +260,22 @@ export const StartInterviewFormPanel = ({
 						>
 							<Button
 								onClick={handleStartInterview}
-								disabled={!isFormValid || isLoading}
+								disabled={!isFormValid || isLoading || createInterview.isPending || startInterview.isPending || isCompleted}
 								className={`rounded-md h-12 sm:h-14 md:h-16 3xl:h-20 px-6 sm:px-8 md:px-10 3xl:px-14 transition-all duration-200 flex items-center gap-2 sm:gap-3 3xl:gap-4 border-0 ${
-									isFormValid && !isLoading
+									isFormValid && !isLoading && !createInterview.isPending && !startInterview.isPending && !isCompleted
 										? "bg-gradient-to-r from-[#0667D0] via-[#054E9D] to-[#033464] hover:opacity-90 cursor-pointer"
 										: "bg-gray-500 opacity-50 cursor-not-allowed"
 								}`}
 							>
 								<PlayIcon className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 3xl:h-8 3xl:w-8" />
 								<span className="font-['Nunito'] font-semibold text-white text-sm sm:text-base md:text-lg 3xl:text-2xl">
-									{isLoading ? "Preparing..." : "Start Interview"}
+									{isCompleted 
+										? "Interview Ready!" 
+										: createInterview.isPending 
+											? "Creating Interview..." 
+											: startInterview.isPending
+												? "Starting Interview..."
+												: "Start Interview"}
 								</span>
 							</Button>
 						</motion.div>
@@ -386,6 +291,50 @@ export const StartInterviewFormPanel = ({
 							{inputMethod === "custom"
 								? "Please enter a job description to continue"
 								: "Please select a template to continue"}
+						</motion.p>
+					)}
+
+					{/* Loading time expectation message */}
+					{createInterview.isPending && (
+						<motion.p
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							className="text-center text-[#e8eef2] text-xs sm:text-sm 3xl:text-lg opacity-70 mt-3"
+						>
+							This process may take 1-2 minutes to generate your personalized interview
+						</motion.p>
+					)}
+
+					{/* Starting message */}
+					{startInterview.isPending && !createInterview.isPending && (
+						<motion.p
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							className="text-center text-[#e8eef2] text-xs sm:text-sm 3xl:text-lg opacity-70 mt-3"
+						>
+							Starting your interview now...
+						</motion.p>
+					)}
+
+					{/* Completion message */}
+					{isCompleted && (
+						<motion.p
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							className="text-center text-green-400 text-xs sm:text-sm 3xl:text-lg opacity-90 mt-3"
+						>
+							Your interview is ready! Redirecting you now...
+						</motion.p>
+					)}
+
+					{/* Error message */}
+					{createInterview.isError && (
+						<motion.p
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							className="text-center text-red-400 text-xs sm:text-sm 3xl:text-lg mt-3"
+						>
+							Failed to create interview. Please try again.
 						</motion.p>
 					)}
 				</div>

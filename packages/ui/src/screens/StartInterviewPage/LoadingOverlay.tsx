@@ -1,81 +1,128 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, CheckCircle } from "lucide-react";
+import { Loader2, CheckCircle, Check } from "lucide-react";
 
 interface LoadingOverlayProps {
 	isVisible: boolean;
 	onComplete?: () => void;
+	currentStep?: number;
+	isCreating?: boolean;
+	isStarting?: boolean;
+	isComplete?: boolean;
 }
 
 export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 	isVisible,
 	onComplete,
+	currentStep = 0,
+	isCreating = false,
+	isStarting = false,
+	isComplete = false,
 }) => {
-	const [currentStep, setCurrentStep] = React.useState(0);
+	const [animatedStep, setAnimatedStep] = React.useState(0);
 	const [progress, setProgress] = React.useState(0);
-	const [isComplete, setIsComplete] = React.useState(false);
+	const [isPaused, setIsPaused] = React.useState(false);
 
 	const preparationSteps = [
-		"Analyzing job requirements...",
-		"Processing technical skills...",
-		"Generating interview questions...",
-		"Calibrating difficulty levels...",
-		"Setting up environment...",
-		"Preparing scenarios...",
-		"Finalizing sequences...",
-		"Almost ready!",
+		"Analyzing job description",
+		"Extracting key skills", 
+		"Matching skills",
+		"Selecting MCQ questions",
+		"Choosing coding problems",
+		"Finalizing your interview",
 	];
 
+	// Reset state when overlay becomes visible
 	React.useEffect(() => {
 		if (!isVisible) {
-			setCurrentStep(0);
+			setAnimatedStep(0);
 			setProgress(0);
-			setIsComplete(false);
 			return;
 		}
+	}, [isVisible]);
 
-		// Simplified timing - 90 seconds total
-		const totalDuration = 5000;
-		const stepDuration = totalDuration / preparationSteps.length; // ~11.25 seconds per step
-		const progressUpdateInterval = 500; // Update every 500ms for better performance
-		const progressIncrement = 100 / (totalDuration / progressUpdateInterval);
+	// Update progress based on actual backend state
+	React.useEffect(() => {
+		if (!isVisible) return;
 
-		let progressTimer: NodeJS.Timeout;
-		let stepTimers: NodeJS.Timeout[] = [];
+		let targetProgress = 0;
+		let targetStep = 0;
 
-		// Smooth progress updates
-		progressTimer = setInterval(() => {
-			setProgress((prev) => {
-				const newProgress = prev + progressIncrement;
-				if (newProgress >= 100) {
-					clearInterval(progressTimer);
-					setIsComplete(true);
-					// Call onComplete after a brief delay to show completion state
-					setTimeout(() => {
-						onComplete?.();
-					}, 1500);
-					return 100;
+		if (isCreating) {
+			// Interview creation phase - this is where all the work happens (95% progress)
+			targetProgress = 95;
+			targetStep = 5; // Steps 0-5 during creation
+		} else if (isStarting) {
+			// Interview starting phase - instant API call (95-98% progress)
+			targetProgress = 98;
+			targetStep = 6; // Just the final step
+		} else if (isComplete) {
+			// Complete phase
+			targetProgress = 100;
+			targetStep = preparationSteps.length - 1;
+		}
+
+		// Calculate progress per step
+		const progressPerStep = targetProgress / (targetStep + 1);
+		
+		// Smooth step animation during creation, faster during starting
+		const stepInterval = setInterval(() => {
+			setAnimatedStep((prev) => {
+				if (prev < targetStep) {
+					return prev + 1;
 				}
-				return newProgress;
+				return prev;
 			});
-		}, progressUpdateInterval);
+		}, isCreating ? 1200 : 300); // Slower during creation, faster during starting
 
-		// Schedule all step updates at once
-		preparationSteps.forEach((_, index) => {
-			if (index > 0) {
-				const timer = setTimeout(() => {
-					setCurrentStep(index);
-				}, stepDuration * index);
-				stepTimers.push(timer);
-			}
-		});
+		// Dynamic progress animation based on steps
+		const progressInterval = setInterval(() => {
+			setProgress((prev) => {
+				const currentTargetProgress = Math.min(
+					(animatedStep + 1) * progressPerStep,
+					targetProgress
+				);
+				
+				if (prev < currentTargetProgress) {
+					// Add occasional pauses for realism (10% chance)
+					if (!isPaused && Math.random() < 0.1) {
+						setIsPaused(true);
+						setTimeout(() => setIsPaused(false), Math.random() * 800 + 200);
+						return prev;
+					}
+					
+					// Dynamic increment: faster at start, slower near end
+					const remaining = currentTargetProgress - prev;
+					const baseIncrement = Math.max(
+						Math.min(remaining * 0.15, 8), // 15% of remaining, max 8%
+						0.5 // minimum 0.5%
+					);
+					
+					// Add variance to increment (±30%)
+					const variance = 0.7 + Math.random() * 0.6;
+					const increment = baseIncrement * variance;
+					
+					return Math.min(prev + increment, currentTargetProgress);
+				}
+				return prev;
+			});
+		}, 50); // Faster updates for smoother animation
 
-		// Cleanup
 		return () => {
-			if (progressTimer) clearInterval(progressTimer);
-			stepTimers.forEach((timer) => clearTimeout(timer));
+			clearInterval(progressInterval);
+			clearInterval(stepInterval);
 		};
-	}, [isVisible, onComplete]);
+	}, [isVisible, isCreating, isStarting, isComplete, animatedStep, isPaused]);
+
+	// Call onComplete when actually complete
+	React.useEffect(() => {
+		if (isComplete && progress >= 100) {
+			const timer = setTimeout(() => {
+				onComplete?.();
+			}, 500);
+			return () => clearTimeout(timer);
+		}
+	}, [isComplete, progress, onComplete]);
 
 	return (
 		<AnimatePresence>
@@ -84,105 +131,101 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
-					transition={{ duration: 0.2, ease: "easeOut" }}
-					className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+					transition={{ duration: 0.3 }}
+					className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
 					style={{
 						WebkitBackdropFilter: "blur(8px)",
 					}}
 				>
 					<motion.div
-						initial={{ opacity: 0, scale: 0.95 }}
-						animate={{ opacity: 1, scale: 1 }}
-						exit={{ opacity: 0, scale: 0.95 }}
-						transition={{ duration: 0.2, ease: "easeOut" }}
-						className="bg-[#1d1d20] rounded-xl p-6 sm:p-8 3xl:p-10 max-w-lg 3xl:max-w-[42rem] w-full mx-4 text-center shadow-2xl relative overflow-hidden"
+						initial={{ scale: 0.9, opacity: 0 }}
+						animate={{ scale: 1, opacity: 1 }}
+						exit={{ scale: 0.9, opacity: 0 }}
+						transition={{ duration: 0.3 }}
+						className="bg-[#1d1d20] rounded-xl p-8 sm:p-10 3xl:p-12 max-w-md sm:max-w-lg 3xl:max-w-xl w-full mx-4"
 					>
-						{/* Gradient overlay */}
-						<div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none" />
-
-						<div className="relative z-10 flex flex-col items-center space-y-6">
-							{/* Loading Icon - Optimized animation */}
-							<div className="relative">
-								{!isComplete ? (
-									<>
-										<Loader2 className="h-16 w-16 3xl:h-20 3xl:w-20 text-[#0667D0] animate-spin" />
-										<div className="absolute inset-0 rounded-full border-2 border-[#0667D0] animate-ping" />
-									</>
+						<div className="text-center">
+							{/* Icon */}
+							<div className="mb-6 3xl:mb-8">
+								{isComplete ? (
+									<CheckCircle className="w-16 h-16 3xl:w-20 3xl:h-20 text-green-400 mx-auto" />
 								) : (
-									<>
-										<CheckCircle className="h-16 w-16 3xl:h-20 3xl:w-20 text-green-400" />
-										<div className="absolute inset-0 rounded-full bg-green-400/20 animate-ping" />
-									</>
+									<Loader2 className="w-16 h-16 3xl:w-20 3xl:h-20 text-[#0667D0] animate-spin mx-auto" />
 								)}
 							</div>
 
 							{/* Title */}
-							<h3 className="font-['Nunito'] font-bold text-white text-xl sm:text-2xl 3xl:text-3xl">
+							<h3 className="text-xl sm:text-2xl 3xl:text-3xl font-bold text-white mb-6">
 								{isComplete ? "Interview Ready!" : "Preparing Your Interview"}
 							</h3>
 
-							{/* Current Step - Optimized transition */}
-							<div className="w-full min-h-[3rem] 3xl:min-h-[4rem] flex items-center justify-center">
-								<motion.p
-									key={currentStep}
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									transition={{ duration: 0.2 }}
-									className="text-[#e8eef2] text-sm sm:text-base 3xl:text-lg text-center"
-								>
-									{isComplete
-										? "Your personalized interview is ready to begin!"
-										: preparationSteps[currentStep]}
-								</motion.p>
-							</div>
-
-							{/* Progress Bar - Hardware accelerated */}
-							<div className="w-full space-y-3 3xl:space-y-4">
-								<div className="w-full bg-white/20 rounded-full h-3 3xl:h-4 overflow-hidden">
-									<div
-										style={{
-											width: `${progress}%`,
-											transform: "translateZ(0)", // Force hardware acceleration
-											willChange: "width",
-										}}
-										className="bg-gradient-to-r from-[#0667D0] to-[#033464] h-full rounded-full transition-all duration-300 ease-out"
-									/>
-								</div>
-
-								{/* Progress info */}
-								<div className="flex justify-between text-xs 3xl:text-sm text-[#e8eef2] opacity-80">
-									<span>{Math.round(progress)}% Complete</span>
-									<span>
-										{isComplete
-											? "Ready!"
-											: `${Math.max(
-													1,
-													Math.round(((100 - progress) * 5) / 100)
-											  )}s remaining`}
-									</span>
-								</div>
-							</div>
-
-							{/* Step Indicators - Optimized */}
-							<div className="flex justify-center space-x-2 3xl:space-x-3">
-								{preparationSteps.map((_, index) => (
+							{/* Steps */}
+							<div className="space-y-2 mb-6 text-left max-h-64 overflow-y-auto">
+								{preparationSteps.map((step, index) => (
 									<div
 										key={index}
-										style={{ transform: "translateZ(0)" }}
-										className={`w-2 h-2 3xl:w-[0.7rem] 3xl:h-[0.7rem] rounded-full transition-all duration-200 ${
-											index <= currentStep
-												? "bg-[#0667D0] scale-125"
-												: "bg-white/30"
+										className={`flex items-center space-x-3 transition-all duration-300 ${
+											index <= animatedStep
+												? "opacity-100"
+												: "opacity-40"
 										}`}
-									/>
+									>
+										<div
+											className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 flex-shrink-0 ${
+												index < animatedStep
+													? "bg-green-400"
+													: index === animatedStep
+													? "bg-[#0667D0] animate-pulse"
+													: "bg-white/20"
+											}`}
+										>
+											{index < animatedStep ? (
+												<Check className="w-3 h-3 text-[#1d1d20]" />
+											) : index === animatedStep ? (
+												<div className="w-2 h-2 bg-white rounded-full animate-ping" />
+											) : (
+												<div className="w-2 h-2 bg-white/40 rounded-full" />
+											)}
+										</div>
+										<span
+											className={`text-sm ${
+												index === animatedStep
+													? "text-white font-medium"
+													: index < animatedStep
+													? "text-[#e8eef2]"
+													: "text-[#e8eef2]/60"
+											}`}
+										>
+											{step}
+											{index === animatedStep && (
+												<span className="ml-1 text-[#0667D0] animate-pulse">
+													...
+												</span>
+											)}
+										</span>
+									</div>
 								))}
 							</div>
 
-							{/* Simple loading message */}
-							<p className="text-xs 3xl:text-sm text-[#e8eef2] opacity-60 text-center">
-								Please wait while we create your personalized interview
-								experience
-							</p>
+							{/* Progress Bar */}
+							<div className="relative w-full h-3 3xl:h-4 bg-white/20 rounded-full overflow-hidden">
+								<div
+									style={{
+										width: `${progress}%`,
+										transition: "width 0.3s ease-out",
+									}}
+									className="h-full bg-gradient-to-r from-[#0667D0] to-[#033464] rounded-full"
+								/>
+							</div>
+
+							{/* Progress info */}
+							<div className="flex justify-between text-xs 3xl:text-sm text-[#e8eef2]/80 mt-2">
+								<span>{Math.round(progress)}% Complete</span>
+								<span>
+									Step {Math.min(animatedStep + 1, preparationSteps.length)} of{" "}
+									{preparationSteps.length}
+								</span>
+							</div>
 						</div>
 					</motion.div>
 				</motion.div>

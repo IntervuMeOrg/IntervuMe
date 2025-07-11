@@ -2,7 +2,7 @@ import { AppDataSource } from "../../database/data-source";
 import { apId } from "../../common/id-generator";
 import { McqAnswerEntity } from "./mcq-answer.entity";
 import {
-  CreateMcqAnswerRequestBody,
+  UpsertMcqAnswerRequestBody,
   McqAnswer,
   UpdateMcqAnswerRequestBody,
 } from "./mcq-answer-types";
@@ -16,7 +16,7 @@ const mcqAnswerRepository = () => {
 };
 
 export const mcqAnswerService = {
-  async create(request: CreateMcqAnswerRequestBody): Promise<McqAnswer> {
+  async upsert(request: UpsertMcqAnswerRequestBody): Promise<McqAnswer> {
     const mcqQuestion = await mcqQuestionService.get(request.questionId);
     if (isNil(mcqQuestion)) {
       throw new Error("Mcq Question not found");
@@ -25,17 +25,6 @@ export const mcqAnswerService = {
     const interview = await interviewService.get(request.interviewId);
     if (isNil(interview) || interview.status === "COMPLETED") {
       throw new Error("Cannot submit answer - interview is completed");
-    }
-
-    const existingAnswer = await mcqAnswerRepository().findOne({
-      where: {
-        interviewId: request.interviewId,
-        questionId: request.questionId,
-      },
-    });
-
-    if (existingAnswer) {
-      throw new Error("Answer already exists for this question");
     }
 
     const selectedOption = mcqQuestion.options.find(
@@ -55,17 +44,27 @@ export const mcqAnswerService = {
 
     const isCorrect = selectedOption.isCorrect;
 
-    const answer = mcqAnswerRepository().create({
-      id: apId(),
+    // Use TypeORM's upsert method - if exists update, if doesn't exist create
+    await mcqAnswerRepository().upsert({
+      id: apId(), // This will be ignored if record exists
       interviewId: request.interviewId,
       questionId: request.questionId,
       selectedOptionId: request.selectedOptionId,
       correctOptionId: correctOption.id,
       isCorrect,
       timeSpent: request.timeSpent,
+    }, {
+      conflictPaths: ['interviewId', 'questionId'], // Unique constraint fields
+      skipUpdateIfNoValuesChanged: true
     });
 
-    return await mcqAnswerRepository().save(answer);
+    // Return the saved answer
+    return await mcqAnswerRepository().findOne({
+      where: {
+        interviewId: request.interviewId,
+        questionId: request.questionId,
+      },
+    }) as McqAnswer;
   },
 
   async get(id: string): Promise<McqAnswer> {

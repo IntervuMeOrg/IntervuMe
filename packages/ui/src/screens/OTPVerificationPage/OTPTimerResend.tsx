@@ -32,9 +32,10 @@ export const OTPTimerResend = ({
 					onClick={handleResendOTP}
 					disabled={!canResend}
 					className={`font-['Nunito'] font-medium text-xs sm:text-sm 3xl:text-lg p-0 h-auto transition-colors
-						${canResend
-							? "text-[#0667D0] hover:text-[#054E9D]"
-							: "text-[#c7d3dd] opacity-50 cursor-not-allowed"
+						${
+							canResend
+								? "text-[#0667D0] hover:text-[#054E9D]"
+								: "text-[#c7d3dd] opacity-50 cursor-not-allowed"
 						}`}
 				>
 					Resend Code

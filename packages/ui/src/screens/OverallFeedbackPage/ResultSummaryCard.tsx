@@ -1,13 +1,15 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { TrophyIcon } from "lucide-react";
-import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
+import { McqQuestion, CodingQuestion } from "../../types/questions";
 import { ResultSummaryOverallFeedback } from "./ResultSummaryOverallFeedback";
 import { ResultSummaryPerformanceBreakdown } from "./ResultSummaryPerformanceBreakdown";
 import { ResultSummaryStatsGrid } from "./ResultSummaryStatsGrid";
 import { ResultSummaryActionButtons } from "./ResultSummaryActionButtons";
+import { McqAnswer } from "../../types/mcq";
+import { CodeSubmissionWithResults } from "../../lib/interview/interview-api";
 
-type Question = MCQQuestion | ProblemSolvingQuestion;
+type Question = McqQuestion | CodingQuestion;
 
 interface ResultSummaryCardProps {
 	questions: Question[];
@@ -17,13 +19,15 @@ interface ResultSummaryCardProps {
 	totalQuestions: number;
 	overallPercentage:number;
 	accuracy:number;
-	userAnswers: Record<number, string>;
+	userAnswers: McqAnswer[];
+	codeSubmissions: CodeSubmissionWithResults[];
 	setShowDetailedFeedback: (show: boolean) => void;
 }
 
 export const ResultSummaryCard = ({
 	questions,
 	userAnswers,
+	codeSubmissions,
 	totalQuestions,
 	totalPoints,
 	earnedPoints,
@@ -134,15 +138,10 @@ export const ResultSummaryCard = ({
 				/>
 
 				{/* Overall Feedback Section */}
-				<ResultSummaryOverallFeedback
-					accuracy={accuracy}
-					totalQuestions={totalQuestions}
-					correctAnswers={correctAnswers}
-					overallPercentage={overallPercentage}
-				/>
+				<ResultSummaryOverallFeedback/>
 
 				{/* Performance Breakdown */}
-				<ResultSummaryPerformanceBreakdown questions={questions} userAnswers={userAnswers} />
+				<ResultSummaryPerformanceBreakdown questions={questions} userAnswers={userAnswers} codeSubmissions={codeSubmissions} />
 
 				{/* Action Buttons */}
 				<ResultSummaryActionButtons

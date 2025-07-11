@@ -12,7 +12,7 @@ import {
 import { AppDataSource } from "../database/data-source.js";
 import { profileService } from "../profile/profile.service.js";
 
-export const authService = {
+export const authService = {  
   async signUp(
     request: SignUpRequestBody,
     jwtSign: (payload: any) => string
@@ -78,6 +78,11 @@ export const authService = {
     if (!user) {
       throw new Error("Invalid email or password");
     }
+
+    if (user.provider === UserIdentityProvider.GOOGLE) {
+      
+      throw new Error("Invalid email or password");
+    } 
 
     // Validate password
     if (user.provider === UserIdentityProvider.EMAIL) {

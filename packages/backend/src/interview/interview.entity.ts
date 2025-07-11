@@ -63,6 +63,14 @@ export const InterviewEntity = new EntitySchema<InterviewSchema>({
       type: Boolean,
       default: true,
     },
+    jobTitle: {
+      type: String,
+      nullable: true,
+    },
+    feedback: {
+      type: "json",
+      nullable: true,
+    },
   },
   relations: {
     interviewQuestions: {

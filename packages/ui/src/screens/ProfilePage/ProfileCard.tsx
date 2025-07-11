@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 import { UserIcon, MailIcon, PhoneIcon, MapPinIcon, EditIcon } from "lucide-react";
 
 type UserProfile = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
+  firstName: any;
+  lastName: any;
+  email: any;
+  phone: any;
   location: string;
   bio: string;
   skills: string[];

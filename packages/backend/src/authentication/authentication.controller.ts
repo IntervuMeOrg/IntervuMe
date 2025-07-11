@@ -8,6 +8,7 @@ import {
   SignInRequestBody,
   ForgotPasswordRequestBody,
   ResetPasswordRequestBody,
+  VerifyOTPRequestBody,
 } from "./authentication-types.js";
 import { userService } from "../user/user.service.js";
 import { UserIdentityProvider } from "../user/user-types.js";
@@ -17,6 +18,7 @@ import {
   GoogleSignInRequestBody,
 } from "./authentication-types.js";
 import { OAuth2Client } from "google-auth-library";
+
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -38,9 +40,7 @@ export const authenticationController: FastifyPluginAsyncTypebox = async (
 
   app.post("/sign-in", SignInRequest, async (request) => {
     const body = request.body as SignInRequestBody;
-
     const response = await authService.signInWithPassword(body, app.jwt.sign);
-
     return response;
   });
 
@@ -109,6 +109,18 @@ export const authenticationController: FastifyPluginAsyncTypebox = async (
         .send({ message: (err as Error).message });
     }
   });
+  app.post("/verify-otp", VerifyOtpRequest, async (request, reply) => {
+    const { otp, email } = request.body as VerifyOTPRequestBody;
+
+    try {
+      await userService.verifyOTP(email, otp);
+      return reply.status(StatusCodes.OK).send({ message: "Valid OTP" });
+    } catch (err) {
+      return reply
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ message: (err as Error).message });
+    }
+  });
 };
 
 const SignUpRequest = {
@@ -142,6 +154,16 @@ const ForgotPasswordRequest = {
 const ResetPasswordRequest = {
   schema: {
     body: ResetPasswordRequestBody,
+    response: {
+      [StatusCodes.OK]: Type.Object({ message: Type.String() }),
+      [StatusCodes.BAD_REQUEST]: Type.Object({ message: Type.String() }),
+    },
+  },
+};
+
+const VerifyOtpRequest = {
+  schema: {
+    body: VerifyOTPRequestBody,
     response: {
       [StatusCodes.OK]: Type.Object({ message: Type.String() }),
       [StatusCodes.BAD_REQUEST]: Type.Object({ message: Type.String() }),

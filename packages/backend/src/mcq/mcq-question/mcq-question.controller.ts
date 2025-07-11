@@ -7,12 +7,13 @@ import {
 import { StatusCodes } from "http-status-codes";
 import { mcqQuestionService } from "./mcq-question.service";
 import { ApId } from "../../common/id-generator";
+import { UserRole } from "../../user/user-types";
 
 export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);
 
   app.post("/", createMcqQuestionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
@@ -25,7 +26,7 @@ export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
   });
 
   app.get("/", async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
@@ -49,7 +50,7 @@ export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
   });
 
   app.delete("/:id", GetMcqQuestionRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
@@ -57,6 +58,16 @@ export const mcqQuestionController: FastifyPluginAsyncTypebox = async (app) => {
 
     const { id } = request.params as { id: string };
     await mcqQuestionService.delete(id);
+  });
+
+  app.delete("/", async (request, reply) => {
+    if (request.user.role !== UserRole.ADMIN) {
+      return reply
+        .status(StatusCodes.FORBIDDEN)
+        .send({ message: "Forbidden: admins only" });
+    }
+
+    await mcqQuestionService.deleteAll();
   });
 };
 

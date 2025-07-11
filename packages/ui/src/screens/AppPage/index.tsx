@@ -6,8 +6,13 @@ import { ContactSection } from "../../components/layout/ContactSection";
 import { FAQSection } from "../../components/layout/FAQSection";
 import { AppHeroSection } from "./AppHeroSection";
 import { AppDashboardSection } from "./AppDashboardSection";
+import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
 
 export const AppPage = (): JSX.Element => {
+	const user = useCurrentUser();
+	const userName = user.data 
+		? `${user.data.firstName} ${user.data.lastName}`
+		: '';
 	// State for active navigation item tracking
 	const [activeNavItem, setActiveNavItem] = useState("Home");
 	// Reference to features section for scroll detection
@@ -18,11 +23,9 @@ export const AppPage = (): JSX.Element => {
 	const faqSectionRef = useRef<HTMLElement>(null);
 	// Reference to Home section for scroll detection
 	const homeSectionRef = useRef<HTMLElement>(null);
-	// State for logged in user (simulated)
-	const [userName, setUserName] = useState("Mohamed Essam");
 	// Navigation hook for routing
 	const navigate = useNavigate();
-
+	
 	// Set up intersection observer to update active nav item based on scroll position
 	useEffect(() => {
 		const observer = new IntersectionObserver(

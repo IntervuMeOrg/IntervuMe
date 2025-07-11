@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Toast } from "../../components/ui/Toast";
 import { SkillInputDialog } from "../../components/ui/SkillInputDialog";
 import { NavbarLayout } from "../../components/layout/NavbarLayout";
@@ -8,12 +8,15 @@ import { ProfileCard } from "./ProfileCard";
 import { ProfileSkillsExperience } from "./ProfileSkillsExperience";
 import { ProfileSkillAnalysis } from "./ProfileSkillAnalysis";
 import { ProfileStatsCards } from "./ProfileStatsCards";
+import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
 
 export const ProfilePage = (): JSX.Element => {
+  const user = useCurrentUser();
   // State for active navigation item tracking
   const activeNavItem = "";
-  // State for logged in user (simulated)
-  const [userName, setUserName] = useState("Mohamed Essam");
+	const userName = user.data 
+		? `${user.data.firstName} ${user.data.lastName}`
+		: '';
 
   // State for edit mode
   const [isEditing, setIsEditing] = useState(false);
@@ -56,10 +59,10 @@ export const ProfilePage = (): JSX.Element => {
 
   // User profile data
   const [userProfile, setUserProfile] = useState({
-    firstName: "Mohamed",
-    lastName: "Essam",
-    email: "me21@example.com",
-    phone: "+1012 3456 789",
+    firstName: user.data?.firstName,
+    lastName: user.data?.lastName,
+    email: user.data?.email,
+    phone: user.data?.phone, 
     location: "Cairo, Egypt",
     bio: "Frontend Developer with 3 years of experience specializing in React and TypeScript. Passionate about creating intuitive user interfaces and optimizing web performance.",
     skills: [
@@ -92,16 +95,6 @@ export const ProfilePage = (): JSX.Element => {
       },
     ],
   });
-
-  // Interview statistics
-  const interviewStats = {
-    totalInterviews: 12,
-    averageScore: 85,
-    totalHours: 8.5,
-    skillsImproved: 8,
-    topPerformingSkill: "React",
-    lowestPerformingSkill: "System Design",
-  };
 
   // Toggle edit mode
   const toggleEditMode = () => {
@@ -194,7 +187,7 @@ export const ProfilePage = (): JSX.Element => {
               </motion.section>
 
               {/* Interview Statistics Section */}
-              <motion.section
+              {/* <motion.section
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-10% 0px" }}
@@ -206,24 +199,24 @@ export const ProfilePage = (): JSX.Element => {
                   delay: 0.2,
                 }}
                 className="w-full"
-              >
-                <h2 className="font-['Nunito'] font-bold text-[#1d1d20] text-lg sm:text-xl md:text-2xl lg:text-3xl 3xl:text-[2.7rem] mb-6 sm:mb-8 3xl:mb-10">
+              > */}
+                {/* <h2 className="font-['Nunito'] font-bold text-[#1d1d20] text-lg sm:text-xl md:text-2xl lg:text-3xl 3xl:text-[2.7rem] mb-6 sm:mb-8 3xl:mb-10">
                   Interview Statistics
-                </h2>
+                </h2> */}
 
                 {/* Balanced Layout: Stats Cards + Skill Analysis */}
-                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 sm:gap-8">
+                {/* <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8"> */}
                   {/* Stats Cards - Takes 2/3 of the width on xl screens */}
-                  <div className="xl:col-span-2">
-                    <ProfileStatsCards interviewStats={interviewStats} />
+                  {/* <div className="xl:col-span-2">
+                    <ProfileStatsCards />
                   </div>
-                  
+                   */}
                   {/* Skill Analysis - Takes 1/3 of the width on xl screens */}
-                  <div className="xl:col-span-1">
+                  {/* <div className="xl:col-span-1">
                     <ProfileSkillAnalysis interviewStats={interviewStats} />
-                  </div>
-                </div>
-              </motion.section>
+                  </div> */}
+                {/* </div>
+              </motion.section> */}
             </div>
           </div>
         </div>

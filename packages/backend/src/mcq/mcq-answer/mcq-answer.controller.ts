@@ -5,7 +5,7 @@ import {
 import {
   McqAnswer,
   McqAnswerSummary,
-  CreateMcqAnswerRequestBody,
+  UpsertMcqAnswerRequestBody,
   UpdateMcqAnswerRequestBody,
 } from "./mcq-answer-types";
 import { mcqAnswerService } from "./mcq-answer.service";
@@ -15,9 +15,9 @@ import { ApId } from "../../common/id-generator";
 export const mcqAnswerController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);
 
-  app.post("/", CreateMcqAnswerRequest, async (request) => {
-    const body = request.body as CreateMcqAnswerRequestBody;
-    const answer = await mcqAnswerService.create(body);
+  app.post("/", UpsertMcqAnswerRequest, async (request) => {
+    const body = request.body as UpsertMcqAnswerRequestBody;
+    const answer = await mcqAnswerService.upsert(body);
     return answer;
   });
 
@@ -81,9 +81,9 @@ export const mcqAnswerController: FastifyPluginAsyncTypebox = async (app) => {
   });
 };
 
-const CreateMcqAnswerRequest = {
+const UpsertMcqAnswerRequest = {
   schema: {
-    body: CreateMcqAnswerRequestBody,
+    body: UpsertMcqAnswerRequestBody,
     response: {
       [StatusCodes.OK]: McqAnswer,
     },

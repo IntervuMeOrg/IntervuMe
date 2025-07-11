@@ -1,29 +1,25 @@
 import { motion } from "framer-motion";
 import { CheckCircleIcon } from "lucide-react";
-import { MCQQuestion } from "../../types/questions";
+import { McqQuestion } from "../../types/questions";
 
 type QuestionContentMCQProps = {
-	questions: MCQQuestion[];
+	question: McqQuestion;
 	userAnswers: Record<string, string>;
-	currentQuestionIndex: number;
-	setUserAnswers: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+	setUserAnswer: (questionId: string, selectedOptionId: string) => void;
 };
 
 export const QuestionContentMCQ = ({
-	questions,
+	question: currentQuestion,
 	userAnswers,
-	setUserAnswers,
-	currentQuestionIndex,
+	setUserAnswer,
 }: QuestionContentMCQProps) => {
-	const currentQuestion = questions[currentQuestionIndex];
-	const selectedAnswer = userAnswers[currentQuestion.id];
+	const questionId = currentQuestion.id;
+	const selectedAnswer = userAnswers[questionId];
+	
 
 	// Handle MCQ answer selection
-	const handleMCQAnswer = (questionId: number, optionId: string) => {
-		setUserAnswers((prev) => ({
-			...prev,
-			[questionId]: optionId,
-		}));
+	const handleMCQAnswer = (questionId: string, optionId: string) => {
+		setUserAnswer(questionId, optionId);
 	};
 
 	return (
@@ -48,7 +44,8 @@ export const QuestionContentMCQ = ({
 				</p>
 				
 				{currentQuestion.options.map((option, index) => {
-					const isSelected = selectedAnswer === option.id;
+					const optionId = option.id;
+					const isSelected = selectedAnswer === optionId;
 					const optionLetter = String.fromCharCode(65 + index);
 
 					return (
@@ -56,7 +53,7 @@ export const QuestionContentMCQ = ({
 							key={option.id}
 							whileHover={{ scale: 1.005 }}
 							whileTap={{ scale: 0.995 }}
-							onClick={() => handleMCQAnswer(currentQuestion.id, option.id)}
+							onClick={() => handleMCQAnswer(questionId, optionId)}
 							className={`
 								relative group cursor-pointer rounded-lg transition-all duration-200
 								${
@@ -84,7 +81,7 @@ export const QuestionContentMCQ = ({
 
 								{/* Option Text */}
 								<p className="flex-1 ml-3 font-['Nunito'] text-sm sm:text-base text-[#1d1d20] leading-snug">
-									{option.text}
+									{option.optionText}
 								</p>
 
 								{/* Selected Indicator */}

@@ -23,7 +23,7 @@ export const DashboardActionButtons = ({
                    hover:opacity-90 transition-opacity"
         onClick={() => {
           window.scrollTo(0, 0);
-          navigate("/start-interview");
+          navigate("/interview");
         }}
       >
         <span className="font-['Nunito'] font-semibold text-white text-sm sm:text-base 3xl:text-xl">

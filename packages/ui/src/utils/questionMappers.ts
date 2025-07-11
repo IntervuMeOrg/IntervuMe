@@ -1,9 +1,9 @@
-import { ProblemSolvingQuestion } from "../types/questions";
+import { CodingQuestion } from "../types/questions";
 
-export function mapBackendToProblemSolving(backendData: any): ProblemSolvingQuestion {
+export function mapBackendToCoding(backendData: any): CodingQuestion {
   return {
     id: parseInt(backendData.id),
-    type: "problem_solving",
+    type: "coding",
     title: backendData.title,
     category: backendData.category,
     difficulty: backendData.difficulty,
@@ -11,7 +11,7 @@ export function mapBackendToProblemSolving(backendData: any): ProblemSolvingQues
     timeLimit: backendData.timeLimit,
     problemStatement: backendData.problemStatement,
     examples: backendData.examples, // Already in correct format
-    starterCodes: backendData.starterCodes, // Already in correct format
+    starterCode: backendData.starterCodes, // Already in correct format
     constraints: backendData.constraints,
     followUp: backendData.follow_up,
     tags: backendData.tags,
@@ -20,7 +20,7 @@ export function mapBackendToProblemSolving(backendData: any): ProblemSolvingQues
       expectedOutput: testCase.expectedOutput,
       isHidden: testCase.isHidden
     })),
-    solution: undefined, // Will be filled later for feedback
+    solutionCode: undefined, // Will be filled later for feedback
     explanation: undefined // Will be filled later for feedback
   };
 }

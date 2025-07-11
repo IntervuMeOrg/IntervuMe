@@ -99,15 +99,9 @@ public:
         
     }
 }","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    n_nums = int(data[line_idx])
-    line_idx += 1
-    nums = list(map(int, data[line_idx].split()))
-    line_idx += 1
-    target = int(data[line_idx])
-    line_idx += 1
+    n_nums = int(input())
+    nums = list(map(int, input().split()))
+    target = int(input())
 
     sol = Solution()
     ans = sol.twoSum(nums, target)
@@ -242,11 +236,7 @@ public:
         
     }
 }","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    s = data[line_idx]
-    line_idx += 1
+    s = input()
 
     sol = Solution()
     ans = sol.isValid(s)
@@ -305,7 +295,7 @@ import java.util.*;","public class Main {
                 if not stack or mapping[char] != stack.pop():
                     return False
         
-        return not stack"
+        return not stack "
 3,Longest Palindromic Substring,"Given a string s, return the longest palindromic substring in s.
 Example 1:
 Input: s = ""babad""
@@ -323,9 +313,7 @@ Explanation: ""aba"" is also a valid answer.
 
 Test Case 2:
 Input: s = ""cbbd""
-Output: ""bb""","babad
-
-cbbd
+Output: ""bb""","cbbd
 
 a
 
@@ -343,8 +331,7 @@ banana
 
 babadada
 
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","aba
-bb
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","bb
 a
 a
 geeksskeeg
@@ -365,11 +352,7 @@ public:
         
     }
 }","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    s = data[line_idx]
-    line_idx += 1
+    s = input()
 
     sol = Solution()
     ans = sol.longestPalindrome(s)
@@ -431,9 +414,8 @@ import java.util.*;","public class Main {
             }
         }
 
-        return max_str;","if len(s) <= 1:
+        return max_str;","        if len(s) <= 1:
             return s
-        
         Max_Len=1
         Max_Str=s[0]
         for i in range(len(s)-1):
@@ -459,7 +441,7 @@ Output: 5
 Explanation:
 intention -> inention (remove 't') inention -> enention (replace 'i' with 'e') enention -> exention (replace 'n' with 'x') exention -> exection (replace 'n' with 'c') exection -> execution (insert 'u')
 Constraints:
-0 <= word1.length, word2.length <= 500
+0 <= word1.length,word2.length <= 500
 word1 and word2 consist of lowercase English letters.",Medium,"String, Dynamic Programming","Test Case 1:
 Input: word1 = ""horse"", word2 = ""ros""
 Output: 3
@@ -488,9 +470,7 @@ i k
 
 love movie
 
-iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-
+iiiiiii aaaaaaa
 
 nwlrbbmqbhcdarzowkkyhiddqscdxrjmowfrxsjybldbefsarcbynecdyggxxpklorellnmpapqfwkhopkmcoqhnwnkuewhsqmgbbuqcljjivswmdkqtbxixmvtrrbljptnsnfwzqfjmafadrrwsofsbcnuvqhffbsaqxwpqcacehchzvfrkmlnozjkpqpxrjxkitzyxacbhhkicqcoendtomfgdwdwfcgpxiqvkuytdlcgdewhtaciohordtqkvwcsgspqoqmsboaguwnnyqxnzlgdgwpbtrwblnsadeuguumoqcdrubetokyxhoachwdvmxxrdryxlmndqtukwagmlejuukwcibxubumenmeyatdrmydiajxloghiqfmzhlvihjouvsuyoypayulyeimuotehzriicfskpggkbbipzzrzucxamludfykgruowzgiooobppleqlwphapjnadqhdcnvwdtxjbmyppphauxnspusgdhii hqflvvgkvbwxultiqeesbcxxkmwxrldgiqzlrmdsvfxvyzmulwvshywxsaarrjefilyffhgjujkzqebijegwikbhqheoyqbmkgavvokwfddcpmqgxeknvrcrgpnllvfdjnhmhzqtkzdguzuxllqmizmvwhopkbzzvmukrqjkwuwybwbtpzlegfhitdejkjrldrecntsruwvbbecwkwiyhxnigzaxqxqzwajrckpeosnxfwaxyqbnuwcibilxnkepqwmamjkikgmviuaoqhhskrhtfaxaqjvnlqvfhmuxyoaoogikwxlovyniesrbiuwbqxpgrrlxlsrfghxknoequagfydooeqwcvrovogyhgysunxlgsxcudrfiabckzgtbfpcbdiopmosisjusofsycgoinybtlccwzmejaaevvcjttltowrugfoxzsealoiqtaciiivjjfykfqjbujdhuxkbxwhpqxnrdvgsjjjbuorhmjomaxbcc
 
@@ -504,7 +484,7 @@ vdzgnwsxco pjgxuuuymr","3
 0
 1
 2
-500
+7
 446
 448
 10","class Solution:
@@ -519,13 +499,9 @@ public:
         
     }
 }","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    word1 = data[line_idx]
-    line_idx += 1
-    word2 = data[line_idx]
-    line_idx += 1
+    line = input().split()
+    word1 = line[0]
+    word2 = line[1]
 
     sol = Solution()
     ans = sol.minDistance(word1, word2)
@@ -582,24 +558,24 @@ import java.util.*;","public class Main {
                 pre = temp;
             }
         }
-        return cur[n];","    m = len(word1)
-    n = len(word2)
-    dp = [[0] * (n + 1) for _ in range(m + 1)]
+        return cur[n];","        m = len(word1)
+        n = len(word2)
+        dp = [[0] * (n + 1) for _ in range(m + 1)]
 
-    for i in range(1, m + 1):
-      dp[i][0] = i
+        for i in range(1, m + 1):
+            dp[i][0] = i
 
-    for j in range(1, n + 1):
-      dp[0][j] = j
+        for j in range(1, n + 1):
+            dp[0][j] = j
 
-    for i in range(1, m + 1):
-      for j in range(1, n + 1):
-        if word1[i - 1] == word2[j - 1]:
-          dp[i][j] = dp[i - 1][j - 1]
-        else:
-          dp[i][j] = min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]) + 1
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                if word1[i - 1] == word2[j - 1]:
+                    dp[i][j] = dp[i - 1][j - 1]
+                else:
+                    dp[i][j] = min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]) + 1
 
-    return dp[m][n]"
+        return dp[m][n]"
 5,Max Points on a Line,"Given an array of points where points[i] = [x[i], y[i] ] represents a point on the X-Y plane, return the maximum number of points that lie on the same straight line.
 Example 1:
 Input: points = [[1,1],[2,2],[3,3]]
@@ -689,7 +665,7 @@ Output: 4","3 2
 
 1 2
 -1000 1000","3
-5
+4
 1
 2
 4
@@ -711,13 +687,11 @@ public:
         
     }
 }","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    n_points = int(data[line_idx])
-    line_idx += 1
-    points = list(map(int, data[line_idx].split()))
-    line_idx += 1
+    m_points, n_points = map(int, input().split())
+    points = []
+    for _ in range(m_points):
+        row = list(map(int, input().split()))
+        points.append(row)
 
     sol = Solution()
     ans = sol.maxPoints(points)
@@ -785,14 +759,16 @@ import java.util.*;","public class Main {
             }
         }
 
-        return max;","        if len(points) <= 2:
+        return max;","class Solution:
+    def maxPoints(self, points: List[List[int]]) -> int:
+        if len(points) <= 2:
             return len(points)
         
         def find_slope(p1, p2):
             x1, y1 = p1
             x2, y2 = p2
             if x1-x2 == 0:
-                return inf
+                return 100000001
             return (y1-y2)/(x1-x2)
         
         ans = 1
@@ -802,7 +778,7 @@ import java.util.*;","public class Main {
                 slope = find_slope(p1, p2)
                 slopes[slope] += 1
                 ans = max(slopes[slope], ans)
-        return ans+1"
+        return ans+1        "
 6,Minimum Window Substring,"Given two strings s and t of lengths m and n respectively, return the minimum window
 substring of s such that every character in t ( including duplicates ) is included in the window. If there is no such substring, return the empty string """".
 The testcases will be generated such that the answer is unique.
@@ -814,10 +790,6 @@ Example 2:
 Input: s = ""a"", t = ""a""
 Output: ""a""
 Explanation: The entire string s is the minimum window.
-Example 3:
-Input: s = ""a"", t = ""aa""
-Output: """"
-Explanation: Both 'a's from t must be included in the window. Since the largest window of s only has one 'a', return empty string.
 Constraints:
 m == s.length
 n == t.length
@@ -831,13 +803,7 @@ Explanation: The minimum window substring ""BANC"" includes 'A', 'B', and 'C' fr
 Test Case 2:
 Input: s = ""a"", t = ""a""
 Output: ""a""
-Explanation: The entire string s is the minimum window.
-
-Test Case 3:
-Input: s = ""a"", t = ""aa""
-Output: """"
-Explanation: Both 'a's from t must be included in the window.
-Since the largest window of s only has one 'a', return empty string.","ADOBECODEBANC ABC
+Explanation: The entire string s is the minimum window.","ADOBECODEBANC ABC
 
 a a
 
@@ -853,15 +819,15 @@ aaaaaaaaaaaaaab ab
 
 cabwefgewcwaefgcf cae
 
-ajaJAj aaj","BANC
+ajaJAj a","BANC
 a
 ba
 aa
 aac
 th
-aaaaaaaaaaaaaab ab
+ab
 cwae
-aja","class Solution:
+a","class Solution:
     def minWindow(self, s: str, t: str) -> str:
         ","class Solution {
 public:
@@ -873,13 +839,9 @@ public:
         
     }
 }","import sys, json, math, itertools, collections","if __name__ == ""__main__"":
-    data = sys.stdin.read().strip().splitlines()
-    line_idx = 0
-
-    s = data[line_idx]
-    line_idx += 1
-    t = data[line_idx]
-    line_idx += 1
+    line = input().split()
+    s = line[0]
+    t = line[1]
 
     sol = Solution()
     ans = sol.minWindow(s, t)

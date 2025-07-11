@@ -7,12 +7,13 @@ import {
 import { StatusCodes } from "http-status-codes";
 import { testCaseService } from "./test-case.service";
 import { ApId } from "../../common/id-generator";
+import { UserRole } from "../../user/user-types";
 
 export const testCaseController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);
 
   app.post("/", CreateTestCaseRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });
@@ -36,7 +37,7 @@ export const testCaseController: FastifyPluginAsyncTypebox = async (app) => {
   });
 
   app.delete("/:id", GetTestCaseRequest, async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });

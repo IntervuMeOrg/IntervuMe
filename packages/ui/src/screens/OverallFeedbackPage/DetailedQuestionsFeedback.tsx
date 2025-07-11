@@ -1,35 +1,37 @@
 import { motion } from "framer-motion";
 import { CheckCircleIcon, XCircleIcon, InfoIcon } from "lucide-react";
 import { QuestionContentMCQ } from "./QuestionContentMCQ";
-import { QuestionContentProblemSolving } from "./QuestionContentProblemSolving";
-import { QuestionContentPerformance } from "./QuestionContentPerformance";
-import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
-import { QuestionPerformance } from "../../types/performance";
+import { QuestionContentCoding } from "./QuestionContentCoding";
+import { McqQuestion, CodingQuestion } from "../../types/questions";
+import { useParams } from "react-router-dom";
+import { useMcqAnswers } from "../../lib/mcq/mcq-hooks";
+import { useCodeSubmissionsByInterviewAndQuestion } from "../../lib/coding/coding-hooks";
+import { CodeSubmission } from "../../lib/coding/coding-api";
 
-type Question = MCQQuestion | ProblemSolvingQuestion;
+type Question = McqQuestion | CodingQuestion;
 
 interface DetailedQuestionsFeedbackProps {
   questions: Question[];
-  userAnswers: Record<number, string>;
-  questionPerformances: Record<number, QuestionPerformance>;
 }
 
 export const DetailedQuestionsFeedback = ({
   questions,
-  userAnswers,
-  questionPerformances,
 }: DetailedQuestionsFeedbackProps) => {
+  const params = useParams(); 
+	const interviewId = params.id as string;
+  const { data: userAnswers } = useMcqAnswers(interviewId);
   return (
     <>
       {questions.map((question: Question, index: number) => {
-        const userAnswer = userAnswers[question.id];
-        const isCorrect =
-          question.type === "mcq"
-            ? userAnswer === question.correctOptionId
-            : !!(userAnswer && userAnswer.trim().length > 0);
-
-        // Get performance data from backend
-        const performance = questionPerformances[question.id];
+		  const userAnswer = (userAnswers || []).find((answer) => answer.questionId === question.id)?.selectedOptionId;
+      const { data: codeSubmissions } = useCodeSubmissionsByInterviewAndQuestion(interviewId, question.id);
+      const userCode = codeSubmissions?.data?.reduce((best: CodeSubmission | null, submission: CodeSubmission) => {
+        if (!best || submission.score > best.score) return submission;
+        return best;
+      }, null)?.code;
+      const isCorrect = question.type === "mcq" 
+        ? userAnswer === question.correctOptionId
+        : codeSubmissions?.data?.some(submission => question.type === "coding" && submission.score === question.testCases?.length);
 
         return (
           <motion.div
@@ -65,7 +67,7 @@ export const DetailedQuestionsFeedback = ({
                 >
                   {question.type === "mcq"
                     ? "Multiple Choice"
-                    : "Problem Solving"}
+                    : "Coding"}
                 </span>
 
                 <span className="text-[#e8eef2] text-sm">
@@ -73,59 +75,25 @@ export const DetailedQuestionsFeedback = ({
                 </span>
               </div>
 
-              {/* Question Text */}
-              <div className="mb-6">
-                <h3 className="font-['Nunito'] font-bold text-white text-lg mb-3">
-                  {question.type === "problem_solving"
-                    ? question.title
-                    : "Question"}
-                </h3>
-                <p className="text-[#e8eef2] text-base leading-relaxed">
-                  {question.type === "problem_solving"
-                  ? question.problemStatement
-                : question.text}
-                </p>
-              </div>
+
 
               {/* MCQ Specific Content */}
               {question.type === "mcq" && (
                 <QuestionContentMCQ
                   question={question}
-                  userAnswer={userAnswer}
+                  userAnswer={userAnswer || ""}
                 />
               )}
 
-              {/* Problem Solving Specific Content */}
-              {question.type === "problem_solving" && (
-                <QuestionContentProblemSolving
+              {/* Coding Specific Content */}
+              {question.type === "coding" && (
+                <QuestionContentCoding
                   question={question}
-                  userAnswer={userAnswer}
+                  userAnswer={userCode || ""}
                 />
               )}
 
-              {/* Explanation */}
-              <div className="bg-blue-400/10 p-4 rounded-lg border border-blue-400/30 mb-6">
-                <div className="flex items-start gap-3">
-                  <InfoIcon className="h-5 w-5 text-blue-400 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <h4 className="font-semibold text-blue-400 text-base mb-2">
-                      Explanation
-                    </h4>
-                    <p className="text-[#e8eef2] text-sm leading-relaxed">
-                      {question.explanation}
-                    </p>
-                  </div>
-                </div>
-              </div>
 
-              {/* Your Performance Section - Data from Backend */}
-              {performance && (
-                <QuestionContentPerformance
-                  question={question}
-                  performance={performance}
-                  isCorrect={isCorrect}
-                />
-              )}
             </div>
           </motion.div>
         );

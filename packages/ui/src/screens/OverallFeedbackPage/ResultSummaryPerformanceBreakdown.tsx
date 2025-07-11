@@ -1,15 +1,19 @@
 import { motion } from "framer-motion";
 import { CheckCircleIcon, XCircleIcon } from "lucide-react";
-import { MCQQuestion, ProblemSolvingQuestion } from "../../types/questions";
+import { McqQuestion, CodingQuestion } from "../../types/questions";
+import { McqAnswer } from "../../types/mcq";
+import { CodeSubmissionWithResults } from "../../lib/interview/interview-api";
 
 type ResultSummaryPerformanceBreakdownProps = {
-	questions: (MCQQuestion | ProblemSolvingQuestion)[];
-	userAnswers: Record<number, string>;
+	questions: (McqQuestion | CodingQuestion)[];
+	userAnswers: McqAnswer[];
+	codeSubmissions?: CodeSubmissionWithResults[];
 };
 
 export const ResultSummaryPerformanceBreakdown = ({
 	questions,
 	userAnswers,
+	codeSubmissions = [],
 }: ResultSummaryPerformanceBreakdownProps) => {
 	return (
 		<motion.div
@@ -26,11 +30,41 @@ export const ResultSummaryPerformanceBreakdown = ({
 
 			<div className="space-y-3">
 				{questions.map((question, index) => {
-					const userAnswer = userAnswers[question.id];
-					const isCorrect =
-						question.type === "mcq"
-							? userAnswer === question.correctOptionId
-							: userAnswer && userAnswer.trim().length > 0;
+					let isCorrect = false;
+					let earnedPoints = 0;
+
+					if (question.type === "mcq") {
+						const userAnswer = userAnswers.find(
+							(answer) => answer.questionId === question.id
+						)?.selectedOptionId;
+						isCorrect = userAnswer === question.correctOptionId;
+						earnedPoints = isCorrect ? question.points : 0;
+					} else {
+						// Get all submissions for this question
+						const questionSubmissions = codeSubmissions.filter(
+							(sub) => sub.questionId === question.id
+						);
+
+						if (questionSubmissions.length > 0) {
+							// Find the submission with the most passed test cases
+							const bestSubmission = questionSubmissions.reduce((best, current) => {
+								const bestPassedCount = best.passedTestCases ?? 
+									(best.testCaseResults?.filter((result) => result.passed === true).length || 0);
+								const currentPassedCount = current.passedTestCases ?? 
+									(current.testCaseResults?.filter((result) => result.passed === true).length || 0);
+								
+								return currentPassedCount > bestPassedCount ? current : best;
+							}, questionSubmissions[0]);
+
+							const passedCount = bestSubmission.passedTestCases ?? 
+								(bestSubmission.testCaseResults?.filter((result) => result.passed === true).length || 0);
+							const totalCount = bestSubmission.totalTestCases ?? 
+								(bestSubmission.testCaseResults?.length || 0);
+							
+							isCorrect = passedCount === totalCount && totalCount > 0;
+							earnedPoints = isCorrect ? question.points : 0;
+						}
+					}
 
 					return (
 						<div
@@ -45,11 +79,11 @@ export const ResultSummaryPerformanceBreakdown = ({
 								)}
 								<span className="text-[#e8eef2] text-sm">
 									Question {index + 1} (
-									{question.type === "mcq" ? "MCQ" : "Problem Solving"})
+									{question.type === "mcq" ? "MCQ" : "Coding"})
 								</span>
 							</div>
 							<span className="text-white font-semibold text-sm">
-								{isCorrect ? question.points : 0}/{question.points} pts
+								{earnedPoints}/{question.points} pts
 							</span>
 						</div>
 					);

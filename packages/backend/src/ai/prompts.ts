@@ -9,11 +9,18 @@ Analyze the following job description and extract relevant keywords. The extract
   "programming_languages": ["list of programming languages"],
   "tools_technologies": ["list of tools, platforms, cloud services, and frameworks"],
   "experience": "experience level or years",
+  "seniority": "Determine the seniority level based on the job requirements and responsibilities. Return exactly one of: 'entry' (junior/entry-level), 'mid' (mid-level/intermediate), or 'senior' (senior/expert-level)",
   "qualifications": ["list of qualifications"],
-  "company_name": "company name or N/A"
+  "company_name": "the company name"
 }
 
-Return only the JSON output.
+IMPORTANT: Only extract information that is explicitly mentioned in the job description. If any field cannot be found or is not clearly stated, leave it empty:
+- Use empty string "" for text fields that are not found
+- Use empty array [] for array fields that are not found
+- Do not assume, guess, or infer values that are not explicitly stated
+- Do not use placeholder values like "N/A", "Not specified", or similar
+
+Return only the JSON output without backticks.
 Job Description:
 ${jobDescription}
 `;
@@ -86,14 +93,37 @@ export const feedbackPrompt = (
 You are an expert technical interviewer and career coach. Analyze the following assessment results and provide comprehensive, actionable feedback for the candidate.
 
 Analysis Guidelines:
-1. Identify patterns in correct/incorrect answers by technology tags
-2. Assess problem-solving approach and logical thinking
-3. Provide specific, actionable recommendations
-4. Be encouraging but honest about areas needing improvement
-5. Prioritize recommendations based on job requirements
-6. Include specific learning resources and practice suggestions
+1. Scoring:
+   - MCQ: Count correct answers vs total questions
+   - Coding: Only count problems where tests_passed equals total_tests
+   - Include difficulty level in assessment
 
-Return only valid JSON with the feedback analysis.
+2. Language and Tone:
+   - Use simple, clear language
+   - Be encouraging while honest
+   - Focus on growth opportunities
+   - Don't use variable names in the feedback, use normal english words
+
+3. Content Focus:
+   - Only analyze data from the assessment
+   - Identify patterns in failed questions
+   - Link recommendations directly to assessment performance
+   - Keep feedback concise and actionable
+
+4. Structure:
+   - Start with strengths
+   - Group related gaps together
+   - Prioritize recommendations by impact
+   - Provide specific, achievable recommendations
+
+CRITICAL: Only provide recommendations related to the specific technologies, concepts, and question types that were actually tested in this assessment. Do not suggest learning unrelated technologies or concepts that weren't part of the assessment.
+
+Key Analysis Points:
+- Overall score should reflect actual performance across all questions
+- Problem-solving score should be based on completely solved problems only
+- Identify specific technology areas where the candidate struggled
+- Provide targeted recommendations for failed problem types and tags
+- All recommendations must be directly related to the tags and question types in the assessment
 
 Assessment Data:
 ${JSON.stringify(assessmentResults, null, 2)}
@@ -109,20 +139,19 @@ Return JSON:
     {"area": "skill/topic", "details": "what they did well"}
   ],
   "critical_gaps": [
-    {"area": "skill/topic", "details": "Specific details about areas needing improvement", "impact": "How this affects job readiness"}
+    {"area": "skill/topic", "details": "Specific gap or missing skill"}
   ],
   "recommendations": [
     {
-      "area": "skill/topic",
+      "area": "skill/topic", 
       "priority": "High|Medium|Low",
       "actions": ["specific step 1", "specific step 2"],
       "timeline": "time estimate"
     }
   ],
   "job_readiness": {
-    "current_level": "Entry Level|Junior|Mid-Level|Senior|Expert", 
-    "readiness_percentage": number,
-
+    "current_level": "Entry Level|Junior|Mid-Level|Senior|Expert",
+    "readiness_percentage": number
   },
   "next_steps": ["immediate action 1", "immediate action 2", "long-term goal 1"]
 }

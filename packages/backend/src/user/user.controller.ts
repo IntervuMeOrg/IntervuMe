@@ -9,6 +9,7 @@ import {
   UserWithoutPassword,
 } from "./user-types.js";
 import { StatusCodes } from "http-status-codes";
+import { UserRole } from "./user-types";
 
 export const userController: FastifyPluginAsyncTypebox = async (app) => {
   app.addHook("onRequest", app.authenticate);
@@ -20,7 +21,7 @@ export const userController: FastifyPluginAsyncTypebox = async (app) => {
   });
 
   app.get("/admin/users", async (request, reply) => {
-    if (request.user.role !== "admin") {
+    if (request.user.role !== UserRole.ADMIN) {
       return reply
         .status(StatusCodes.FORBIDDEN)
         .send({ message: "Forbidden: admins only" });

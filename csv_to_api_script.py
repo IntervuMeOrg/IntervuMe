@@ -23,7 +23,7 @@ import string
 from typing import List, Dict, Optional, Tuple
 
 # Add your authentication token
-AUTH_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1bVFPVHpHdW9tTFNtMnJZODJad24iLCJyb2xlIjoiYWRtaW4iLCJ0b2tlblZlcnNpb24iOiIwIiwiaWF0IjoxNzUxMzg1NTk5LCJleHAiOjE3NTE0NzE5OTl9.1P1VqK8C5zvkxXMisLaqmjZx2sSMF9ZQPew6wt7q5qc"
+AUTH_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJyRkY2STR2a0xodGZsc2RESU96UTYiLCJyb2xlIjoiYWRtaW4iLCJ0b2tlblZlcnNpb24iOiIwIiwiaWF0IjoxNzUxNjczNDIwLCJleHAiOjE3NTE3NTk4MjB9.hAANSAlWW-TUJFLBhxIgxLk3VxXKwuXl1_9ftUpbICI"
 
 # Common headers for all API requests
 API_HEADERS = {
@@ -150,11 +150,11 @@ def parse_test_cases(normalized_input: str, expected_output: str) -> List[Dict]:
     if len(inputs) != len(outputs):
         print(f"⚠️  Mismatch: {len(inputs)} inputs vs {len(outputs)} outputs")
         # choose the shorter length to avoid IndexError
-    for inp, out in zip(inputs, outputs):
+    for index, (inp, out) in enumerate(zip(inputs, outputs)):
         test_cases.append({
             "input": inp,
             "expectedOutput": out,
-            "isHidden": False
+            "isHidden": index >= 2  # First two test cases (index 0,1) are visible, rest are hidden
         })
     return test_cases
 
@@ -225,6 +225,8 @@ def create_coding_question_payload(row) -> Dict:
     # Parse test cases for later use (not included in initial payload)
     test_cases = parse_test_cases(row['normalized_input'], row['expected_output'])
     
+    solution_code = str(row['cpp_solution'])
+
     payload = {
         "title": str(row['name']),
         "category": "Algorithms",
@@ -234,7 +236,8 @@ def create_coding_question_payload(row) -> Dict:
         "problemStatement": main_statement,
         "examples": examples if examples else [{"input": "No examples provided", "output": "See problem statement"}],
         "starterCode": starter_codes,
-        "isActive": True
+        "isActive": True,
+        "solutionCode": solution_code
     }
     
     print(f"Debug - Category: '{payload['category']}'")
@@ -285,7 +288,7 @@ def process_csv_and_create_questions(csv_file_path: str, base_url: str = "http:/
         error_count = 0
         idx = 0
         for index, row in df.iterrows():
-            if idx >= 3:
+            if idx >= 20:
                 break
             idx += 1
             try:
@@ -399,7 +402,7 @@ def main():
     print("=== CSV to Coding Questions API Script ===\n")
     
     # Configuration
-    csv_file_path = "problems.csv"  # Update this to your CSV file path
+    csv_file_path = "testing_problems.csv"  # Update this to your CSV file path
     base_url = "http://localhost:3000"
     
     print(f"CSV File: {csv_file_path}")

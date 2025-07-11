@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavbarLayout } from "../../components/layout/NavbarLayout";
-import { motion } from "framer-motion";
 import { Toast } from "../../components/ui/Toast";
 import { SettingsHeader } from "./SettingsHeader";
 import { SettingsTabs } from "./SettingsTabs";
+import { useCurrentUser } from "../../lib/authentication/authentication-hooks";
 
 export const SettingsPage = (): JSX.Element => {
+  const user = useCurrentUser();
   // State for active navigation item tracking
   const activeNavItem = "";
-  // State for logged in user (simulated)
-  const [userName, setUserName] = useState("Mohamed Essam");
+	const userName = user.data 
+		? `${user.data.firstName} ${user.data.lastName}`
+		: '';
 
   // State for notification settings
   const [emailNotifications, setEmailNotifications] = useState(true);

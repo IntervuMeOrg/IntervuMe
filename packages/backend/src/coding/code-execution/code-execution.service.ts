@@ -1,5 +1,5 @@
 import axios from "axios";
-import { RunResult, Judge0Response, RunUserCode } from "./code-execution-types";
+import { RunResult, Judge0Response, RunCodeRequestBody, LANGUAGE_MAP } from "./code-execution-types";
 import { codingQuestionService } from "../coding-question/codingQuestion.service";
 import { CodingQuestion } from "../coding-question/codingQuestion-types";
 
@@ -7,12 +7,10 @@ const toBase64 = (s: string) => Buffer.from(s, "utf-8").toString("base64");
 const fromBase64 = (s: string) => Buffer.from(s, "base64").toString("utf-8");
 
 export const codeExecutionService = {
-  async run(request: RunUserCode): Promise<RunResult> {
+  async run(request: RunCodeRequestBody): Promise<RunResult> {
     const {
       questionId,
-      languageId,
       language,
-      userCode,
       stdin,
       expected,
       timeLimit,
@@ -22,6 +20,8 @@ export const codeExecutionService = {
 
     const sourceCode = await codeExecutionService.buildFullSource(question, request);
 
+    const normalized = language.toLowerCase().trim();
+    const languageId = LANGUAGE_MAP[normalized as keyof typeof LANGUAGE_MAP];
     // send to Judge0
     const resp = await axios.post<Judge0Response>(
       `${process.env.JUDGE0_URL}/submissions?base64_encoded=true&wait=true`,
@@ -33,6 +33,7 @@ export const codeExecutionService = {
       { headers: { "X-Auth-Token": process.env.JUDGE0_KEY! } }
     );
 
+
     const data = resp.data;
     let status = data.status.description;
     const timeUsed = parseFloat(data.time || "0");
@@ -42,19 +43,20 @@ export const codeExecutionService = {
     if ((data.memory ?? 0) > 131_072) status = "Memory Limit Exceeded";
 
     // decode output
-    const stdout = data.stdout ? fromBase64(data.stdout) : "";
+    const stdout = data.stdout && status === "Accepted" ? fromBase64(data.stdout) : "";
 
     // correctness check
     if (status === "Accepted") {
       status = stdout.trim() === expected.trim() ? "Correct" : "Wrong Answer";
     }
+    
 
-    return { stdout, status, time: timeUsed };
+    return { stdout, status: cleanStatus(status), time: timeUsed };
   },
 
   async buildFullSource(
     question: CodingQuestion,
-    request: RunUserCode
+    request: RunCodeRequestBody
   ): Promise<string> {
     const { language, userCode } = request;
     const { codeHeader, codeStarter, codeFooter } = question.starterCode;
@@ -69,20 +71,22 @@ export const codeExecutionService = {
       // ensure List import once
       const headerWithTyping = header.includes("from typing")
         ? header
-        : `${header}\nfrom typing import List`;
+        : `${header}\nfrom typing import List\nfrom collections import defaultdict`;
 
-      const indent = "        "; // 8 spaces
-      const indented = userCode
-        .split("\n")
-        .map((line) => indent + line)
-        .join("\n");
-
-      body = [headerWithTyping, starter, indented, footer].join("\n");
+      body = [headerWithTyping, userCode, footer].join("\n");
     } else {
       // C++/Java: no extra indentation required
-      body = [header, starter, userCode, footer].join("\n");
+      body = [header, userCode, footer].join("\n");
     }
 
     return body;
   },
+};
+
+
+const cleanStatus = (status: string): string => {
+  if(status === "Accepted" || status === "Correct" || status === "Wrong Answer" || status === "Runtime Error" || status === "Compilation Error" || status === "Memory Limit Exceeded" || status === "Time Limit Exceeded") {
+    return status;
+  }
+  return "Runtime Error";
 };
